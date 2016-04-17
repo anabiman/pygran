@@ -1,0 +1,6 @@
+*.so
+*.pyc
+in.*
+*.stl
+*.xyz
+visualize.py
