@@ -287,12 +287,12 @@ class DEM:
     self.lmp.command('neighbor 0.001 bin')
     self.lmp.command('neigh_modify delay 0')
 
-  def createProperty(self, var, prop, type, valueProp, valueType = None):
+  def createProperty(self, name, *args):
     """
     Material and interaction properties required
     """
-    logging.info('Creating proprety')
-    self.lmp.command('fix {} all property/global {} {} {}'.format(var, prop, type, valueProp))
+    logging.info('Creating proprety {} with args'.format(name) + ' %s ' * len(args) % args)
+    self.lmp.command('fix {} all property/global'.format(name) + ' %s ' * len(args) % args)
 
   def setupPhysics(self):
     """

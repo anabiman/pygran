@@ -38,11 +38,11 @@ if __name__ == '__main__':
 	sim.initialize()
 
 	# Setup material properties
-	sim.lmp.command('fix m1 all property/global youngsModulus peratomtype 5.e6 5.e6')
-	sim.lmp.command('fix m2 all property/global poissonsRatio peratomtype 0.45 0.45')
-	sim.lmp.command('fix m3 all property/global coefficientRestitution peratomtypepair 2 0.9 0.9 0.9 0.9')
-	sim.lmp.command('fix m4 all property/global coefficientFriction peratomtypepair 2 0.05 0.05 0.05 0.05')
-	sim.lmp.command('fix m5 all property/global characteristicVelocity scalar 2.0 2.0')
+	sim.createProperty('m1', *('youngsModulus', 'peratomtype', '5.e6', '5.e6'))
+	sim.createProperty('m2', *('poissonsRatio', 'peratomtype', '0.45', '0.45'))
+	sim.createProperty('m3', *('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
+	sim.createProperty('m4', *('coefficientFriction', 'peratomtypepair', '2', '0.05', '0.05', '0.05', '0.05'))
+	sim.createProperty('m5', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
 
 	# Import mesh hopper.stl file
 	sim.importMesh(var='hopper')
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 	sim.integrate(steps=params['insertionRun'])
 
 	# Monitor KE as a function of time
-	sim.monitor(name='globKE', group='all', var='ke')
+	# sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
@@ -75,4 +75,4 @@ if __name__ == '__main__':
 	sim.integrate(steps=params['productionRun'])
 
 	# Plot KE vs time, then save the figure as a pdf
-	sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
+	# sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
