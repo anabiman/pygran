@@ -1,7 +1,6 @@
 
-import matplotlib.pylab as plt
 from Liggghts import DEM
-import numpy as np
+import os
 
 if __name__ == '__main__':
 
@@ -10,26 +9,27 @@ if __name__ == '__main__':
 			  'units': 'si',
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
-			  'boundary': ('f','f','f'), # reflective BCs
+			  'boundary': ('p','p','p'), # periodic BCs
 			  'model': ('gran', 'model', 'hooke'),
-			  'restart': (10**4, 'restart/restart.*'),
-			  'dt': 10**-6,
+			  'restart': (10**4, 'restart', 'restart.*', False),
+			  'traj': ('all', 5 * 10**2, 'traj', 'traj.xyz'),
+			  'dt': 0.8 * 10**-6,
 			  'nSS': 1,  # number of components / subsystems
 			  'idSS': [1],
-			  'vel': [(0.001,-0.001,001)],
-			  'insertRate': [50000],
-			  'insertFreq': [1000],
+			  'vel': [(0.0,-0.01,0)],
+			  'insertRate': [10**6],
+			  'insertFreq': [10**3], # frequency of inserting particles
 			  'radius': [('constant', 0.00224)],
-			  'gravity': (0, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
-			  'box': (-2.1, 2.1, -0.1, 3.1, -2.1, 2.1), # simulation box size
-			  'Natoms': [10000],
-			  'print': ('time', 'atoms', 'ke', 'fmax'), # print the time, atom number, and kinetic energy
+			  'gravity': (9.81, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
+			  'box': (-0.21, 0.21, -0.01, 0.31, -0.21, 0.21), # simulation box size
+			  'Natoms': [30000],
+			  'print': ('time', 'atoms', 'ke', 'fmax'), # print the time, atom number, avg. kinetic energy, and max force
 			  'density': [2500.0], # kg /m^3
-			  'freq': 10**4, # frequency of saving/printing output
-			  'insertionRun': 10**6,
-			  'productionRun': 10**5, 
+			  'insertionRun': 5 * 10**4,
+			  'productionRun': 0.2 * 10**5,
+			  'freq': 10**4, # print output every freq steps
 			  'mesh': 'hopper.stl',
-			  'scaleMesh': 0.1
+			  'scaleMesh': 0.01
 			  }
 
 	# Create an instance of the Reaction class
@@ -52,31 +52,28 @@ if __name__ == '__main__':
 	sim.setupWall(var='hopper', wtype='mesh')
 
 	# Setup a piston wall
-	sim.setupWall(var='stopper', wtype='primitive', plane = 'yplane', peq = 0.0)
+	sim.setupWall(var='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
 
 	# Print output specified in 'print' every 'freq' steps
 	sim.printSetup(freq=params['freq'])
 
-	# Setup integration method
-	sim.setupIntegrate(name='integrator')
-
-	# Monitor temperature as a function of time
-	sim.monitor(name='globKE', group='all', var='ke')
+	# Setup integration method for insertion
+	sim.setupIntegrate(name='intInsert')
 
 	# Insertion stage
 	sim.integrate(steps=params['insertionRun'])
 
-	# Plot temperature vs time, then save the figure as a pdf
-	plt.rc('text', usetex=True)
-	time = np.array(range(len(sim.vars))) * params['freq'] * params['dt']
-	#plt.plot(time, sim.vars)
-	#plt.xlabel(r"Time (s)")
-	#plt.ylabel("KE (Joules)")
-	#plt.savefig("KE.pdf")
+	# Monitor temperature as a function of time
+	sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
-	sim.dumpSetup(sel='all', freq=params['freq'], traj='traj.xyz')
+	sim.dumpSetup()
+
+	# Setup integration method for equilibration
+	sim.setupIntegrate(name='intProd', dt=10**-5)
 
 	# Equilibration stage
 	sim.integrate(steps=params['productionRun'])
 
+	# Plot KE vs time, then save the figure as a pdf
+	sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
