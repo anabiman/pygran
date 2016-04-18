@@ -63,7 +63,7 @@ if __name__ == '__main__':
 	sim.integrate(steps=params['insertionRun'])
 
 	# Monitor KE as a function of time
-	# sim.monitor(name='globKE', group='all', var='ke')
+	sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
@@ -75,4 +75,4 @@ if __name__ == '__main__':
 	sim.integrate(steps=params['productionRun'])
 
 	# Plot KE vs time, then save the figure as a pdf
-	# sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
+	sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
