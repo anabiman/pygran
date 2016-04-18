@@ -32,7 +32,7 @@ if __name__ == '__main__':
 			  'scaleMesh': 0.01
 			  }
 
-	# Create an instance of the Reaction class
+	# Create an instance of the DEM class
 	sim = DEM(**params)
 
 	# Define the domain, create atoms, and initialize masses, velocities, etc.
@@ -45,13 +45,13 @@ if __name__ == '__main__':
 	sim.lmp.command('fix m4 all property/global coefficientFriction peratomtypepair 2 0.05 0.05 0.05 0.05')
 	sim.lmp.command('fix m5 all property/global characteristicVelocity scalar 2.0 2.0')
 
-	# Import mesh
+	# Import mesh hopper.stl file
 	sim.importMesh(var='hopper')
 
 	# Setup mesh as a wall
 	sim.setupWall(var='hopper', wtype='mesh')
 
-	# Setup a piston wall
+	# Setup a stopper wall along the xoz plane (y = 0.1)
 	sim.setupWall(var='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
 
 	# Print output specified in 'print' every 'freq' steps
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 	# Insertion stage
 	sim.integrate(steps=params['insertionRun'])
 
-	# Monitor temperature as a function of time
+	# Monitor KE as a function of time
 	sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
