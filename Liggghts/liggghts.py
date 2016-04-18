@@ -23,6 +23,9 @@ import logging
 from numpy.linalg import norm
 from scipy import spatial
 from mpi4py import MPI
+import os
+import matplotlib.pylab as plt
+import glob
 
 logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
@@ -205,6 +208,14 @@ class DEM:
     self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
     self.lmp.command('processors * * *') # let LIGGGHTS handle DD
 
+    logging.info('Creating i/o directories')
+
+    if not os.path.exists(self.pargs['traj'][2]):
+      os.makedirs(self.pargs['traj'][2])
+
+    if not os.path.exists(self.pargs['restart'][1]):
+      os.makedirs(self.pargs['restart'][1])
+
   def createDomain(self):
     """ Define the domain of the simulation
     @ nsys: number of subsystems
@@ -231,8 +242,8 @@ class DEM:
 
       self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + ' %s' * len(radius) % (radius))
       self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
-      self.lmp.command('region factory sphere 0 2.0 0 0.5 units box')
-      
+  
+      self.lmp.command('region factory sphere 0 0.2 0 0.1 units box')
       self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {} particlerate {} insert_every {} overlapcheck yes vel constant {} {} {} region factory ntry_mc 1000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], *self.pargs['vel'][ss]))
       #self.lmp.command('fix myInsRate all insert/rate/region seed 123481 distributiontemplate pdd \
        #nparticles {} particlerate {} insert_every {} \
@@ -273,7 +284,7 @@ class DEM:
     """
     """
     logging.info('Setting up nearest neighbor searching parameters')
-    self.lmp.command('neighbor 0.03 bin')
+    self.lmp.command('neighbor 0.001 bin')
     self.lmp.command('neigh_modify delay 0')
 
   def createProperty(self, var, prop, type, valueProp, valueType = None):
@@ -301,13 +312,22 @@ class DEM:
   def initialize(self):
     """
     """
-    self.lmp.command('restart {} {}'.format(*self.pargs['restart']))
-    self.createDomain()
-    #self.createGroup()
-    self.setupNeighbor()
-    self.setupPhysics()
-    self.insertParticles()
-    self.setupGravity()
+
+    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
+
+    if self.pargs['restart'][-1] == False:
+
+      self.createDomain()
+      #self.createGroup()
+      self.setupPhysics()
+      self.setupNeighbor()
+      self.insertParticles()
+      self.setupGravity()
+
+    else:
+      self.resume()
+      self.setupPhysics()
+      self.setupNeighbor()
 
   def setupIntegrate(self, name, dt = None):
     """
@@ -348,13 +368,13 @@ class DEM:
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
 
-  def dumpSetup(self, sel, freq, traj):
+  def dumpSetup(self):
     """
     """
     logging.info('Setting up trajectory i/o')
-    traj, trajFormat = traj.split('.')
+    traj, trajFormat = self.pargs['traj'][-1].split('.')
 
-    self.lmp.command('dump dump {} xyz {} {}.{}'.format(sel, freq, traj, trajFormat))
+    self.lmp.command('dump dump {} {} {} {}/{}'.format(self.pargs['traj'][0], trajFormat, self.pargs['traj'][1], self.pargs['traj'][2],  self.pargs['traj'][-1]))
 
   def extractCoords(self, coords):
     """
@@ -383,6 +403,28 @@ class DEM:
     """
     """
     self.monitorList.append((name, group, var))
+
+  def plot(self, name, xlabel, ylabel, output=None):
+    """
+    """
+      
+    plt.rc('text', usetex=True)
+    time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
+
+    plt.plot(time, sim.vars)
+    plt.xlabel(r"{}".format(xlabel))
+    plt.ylabel(ylabel)
+
+    if output is not None:
+      plt.savefig(output)
+
+  def resume(self):
+    """
+    """
+    rdir = '{}/*'.format(self.pargs['restart'][1])
+    rfile = max(glob.iglob(rdir), key=os.path.getctime)
+
+    self.lmp.command('read_restart {}'.format(rfile))
 
   def __del__(self):
     """ Destructor
