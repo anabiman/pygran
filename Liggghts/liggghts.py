@@ -1,6 +1,3 @@
-#   Python wrapper for LIGGGHTS library via ctypes
-#   Author: Andrew Abi-Mansour
-#
 # ----------------------------------------------------------------------
 #   Modified from  LAMMPS source code
 #   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
@@ -14,6 +11,8 @@
 #
 #   See the README file in the top-level LAMMPS directory.
 # -------------------------------------------------------------------------
+
+# Python wrapper on LAMMPS library via ctypes
 
 import sys,traceback,types
 from ctypes import *
@@ -29,259 +28,6 @@ import matplotlib.pylab as plt
 import glob
 
 logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
-
-class DEM:
-  """A class that implement a python interface for DEM simulations"""
-
-  def __init__(self, units, dim, style, **pargs):
-    """ Initialize some settings and specifications 
-    @ units: unit system (si, cgs, etc.)
-    @ dim: dimensions of the problems (2 or 3)
-    """
-    self.comm = MPI.COMM_WORLD
-    logging.info("Initialing MPI for a total of %d procs" % (self.comm.Get_size()))
-
-    logging.info('Initializing LAMMPS object')
-
-    self.lmp = liggghts()
-    self.pargs = pargs
-    self.monitorList = []
-    self.vars = []
-
-    logging.info('Setting up problem dimensions and boundaries')
-
-    self.lmp.command('units {}'.format(units))
-    self.lmp.command('dimension {}'.format(dim))
-    self.lmp.command('atom_style {}'.format(style))
-    self.lmp.command('atom_modify map array') # array is faster than hash in looking up atomic IDs, but the former takes more memory
-    self.lmp.command('boundary {} {} {}'.format(*pargs['boundary']))
-    self.lmp.command('newton off') # turn off newton's 3rd law ~ should lead to better scalability
-    self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
-    self.lmp.command('processors * * *') # let LIGGGHTS handle DD
-
-    logging.info('Creating i/o directories')
-
-    if not os.path.exists(self.pargs['traj'][2]):
-      os.makedirs(self.pargs['traj'][2])
-
-    if not os.path.exists(self.pargs['restart'][1]):
-      os.makedirs(self.pargs['restart'][1])
-
-  def createDomain(self):
-    """ Define the domain of the simulation
-    @ nsys: number of subsystems
-    @ pos: 6 x 1 tuple that defines the boundaries of the box 
-    """
-    logging.info('Creating domain')
-
-    self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
-    self.lmp.command('create_box {} domain'.format(self.pargs['nSS'] + 1))
-
-  def insertParticles(self):
-    """ Create atoms in a pre-defined region
-    @ N: max total number of particles to be inserted
-    @ density: initial density of the particles
-    @ vel: 3 x 1 tuple of initial velocities of all particles
-    @ args: dictionary of params
-    """
-    logging.info('Inserting particles')
-
-    for ss in range(self.pargs['nSS']):
-    
-      radius = self.pargs['radius'][ss]
-      density = self.pargs['density'][ss]
-
-      self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + ' %s' * len(radius) % (radius))
-      self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
-  
-      self.lmp.command('region factory sphere 0 0.2 0 0.1 units box')
-      self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {} particlerate {} insert_every {} overlapcheck yes vel constant {} {} {} region factory ntry_mc 1000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], *self.pargs['vel'][ss]))
-      #self.lmp.command('fix myInsRate all insert/rate/region seed 123481 distributiontemplate pdd \
-       #nparticles {} particlerate {} insert_every {} \
-       #overlapcheck yes vel constant {} region factory ntry_mc 10000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], \
-       #*self.pargs['vel'][ss]))
-
-  def importMesh(self, var):
-    """
-    """
-    logging.info('importing mesh')
-    fname = self.pargs['mesh']
-
-    logging.info('importing mesh from {}'.format(fname))
-    self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(var, fname, self.pargs['scaleMesh']))
-
-  def setupWall(self, var, wtype, mesh = None, plane = None, peq = None):
-    """
-    Use the imported mesh as granular wall
-    """
-
-    if wtype == 'mesh':
-      self.lmp.command('fix myMesh all wall/gran model hooke {} n_meshes 1 meshes {}'.format(wtype, var))
-    elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/gran model hooke {} type 1 {} {}'.format(var, wtype, plane, peq))
-    else:
-      raise ValueError('Wall type can be either primitive or mesh')
-
-  def createGroup(self, group = None):
-    """ Create groups of atoms 
-    """
-    logging.info('Creating atom group {}'.format(group))
-
-    if group is None:
-      for idSS in self.pargs['idSS']:
-        self.lmp.command('group group{} type {}'.format(idSS, idSS))
-
-  def setupNeighbor(self):
-    """
-    """
-    logging.info('Setting up nearest neighbor searching parameters')
-    self.lmp.command('neighbor 0.001 bin')
-    self.lmp.command('neigh_modify delay 0')
-
-  def createProperty(self, name, *args):
-    """
-    Material and interaction properties required
-    """
-    logging.info('Creating proprety {} with args'.format(name) + ' %s ' * len(args) % args)
-    self.lmp.command('fix {} all property/global'.format(name) + ' %s ' * len(args) % args)
-
-  def setupPhysics(self):
-    """
-    Specify the interation forces
-    """
-    logging.info('Setting up interaction parameters')
-
-    self.lmp.command('pair_style ' + ' %s '* len(self.pargs['model']) % self.pargs['model'])
-    self.lmp.command('pair_coeff * *')
-
-  def setupGravity(self):
-    """
-    Specify in which direction the gravitational force acts
-    """
-    self.lmp.command('fix myGravity all gravity {} vector {} {} {}'.format(*self.pargs['gravity']))
-
-  def initialize(self):
-    """
-    """
-
-    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
-
-    if self.pargs['restart'][-1] == False:
-
-      self.createDomain()
-      #self.createGroup()
-      self.setupPhysics()
-      self.setupNeighbor()
-      self.insertParticles()
-      self.setupGravity()
-
-    else:
-      self.resume()
-      self.setupPhysics()
-      self.setupNeighbor()
-
-  def setupIntegrate(self, name, dt = None):
-    """
-    Specify how Newton's eqs are integrated in time. 
-    @ name: name of the fixed simulation ensemble applied to all atoms
-    @ dt: timestep
-    @ ensemble: ensemble type (nvt, nve, or npt)
-    @ args: tuple args for npt or nvt simulations
-    """
-
-    logging.info('Setting up integration scheme parameters')
-
-    self.lmp.command('fix {} all nve/sphere'.format(name))
-
-    if dt is None:
-      self.lmp.command('timestep {}'.format(self.pargs['dt']))
-
-  def integrate(self, steps):
-    """
-    Run simulation in time
-    """
-    logging.info('Integrating the system for {} steps'.format(steps))
-
-    self.lmp.command('run {}'.format(steps))
-
-    for tup in self.monitorList:
-      self.lmp.command('compute {} {} {}'.format(*tup))
-      self.vars.append(self.lmp.extract_compute(tup[0], 0, 0))
-      self.lmp.command('uncompute {}'.format(tup[0]))
-
-  def printSetup(self, freq):
-    """
-    Specify which variables to write to file, and their format
-    """
-    logging.info('Setting up printing options')
-
-    self.lmp.command('thermo_style custom' + ' %s '*len(self.pargs['print']) % self.pargs['print'])
-    self.lmp.command('thermo {}'.format(freq))
-    self.lmp.command('thermo_modify norm no lost ignore')
-
-  def dumpSetup(self):
-    """
-    """
-    logging.info('Setting up trajectory i/o')
-    traj, trajFormat = self.pargs['traj'][-1].split('.')
-
-    self.lmp.command('dump dump {} {} {} {}/{}'.format(self.pargs['traj'][0], trajFormat, self.pargs['traj'][1], self.pargs['traj'][2],  self.pargs['traj'][-1]))
-
-  def extractCoords(self, coords):
-    """
-    Extracts atomic positions from a certian frame and adds it to coords
-    """
-    # Extract coordinates from liggghts
-    self.lmp.command('variable x atom x')
-    x = Rxn.lmp.extract_variable("x", "group1", 1)
-
-    self.lmp.command('variable y atom y')
-    y = Rxn.lmp.extract_variable("y", "group1", 1)
-
-    self.lmp.command('variable z atom z')
-    z = Rxn.lmp.extract_variable("z", "group1", 1)
-
-    for i in range(Rxn.lmp.get_natoms()):
-      coords[i,:] += x[i], y[i], z[i]
-
-    self.lmp.command('variable x delete')
-    self.lmp.command('variable y delete')
-    self.lmp.command('variable z delete')
-
-    return coords
-
-  def monitor(self, name, group, var):
-    """
-    """
-    self.monitorList.append((name, group, var))
-
-  def plot(self, name, xlabel, ylabel, output=None):
-    """
-    """
-      
-    plt.rc('text', usetex=True)
-    time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
-
-    plt.plot(time, sim.vars)
-    plt.xlabel(r"{}".format(xlabel))
-    plt.ylabel(ylabel)
-
-    if output is not None:
-      plt.savefig(output)
-
-  def resume(self):
-    """
-    """
-    rdir = '{}/*'.format(self.pargs['restart'][1])
-    rfile = max(glob.iglob(rdir), key=os.path.getctime)
-
-    self.lmp.command('read_restart {}'.format(rfile))
-
-  def __del__(self):
-    """ Destructor
-    """
-    self.lmp.close()
-    MPI.Finalize()
 
 class liggghts:
   def __init__(self,name="",cmdargs=None):
@@ -432,3 +178,282 @@ class liggghts:
 
   def scatter_atoms(self,name,type,count,data):
     self.lib.lammps_scatter_atoms(self.lmp,name,type,count,data)
+
+class DEM:
+  """A class that implement  apython interface for DEM simulations"""
+
+  def __init__(self, units, dim, style, **pargs):
+    """ Initialize some settings and specifications 
+    @ units: unit system (si, cgs, etc.)
+    @ dim: dimensions of the problems (2 or 3)
+    """
+    self.comm = MPI.COMM_WORLD
+    self.rank = self.comm.Get_rank()
+
+    if not self.rank:
+      logging.info("Initialing MPI for a total of %d procs" % (self.comm.Get_size()))
+      logging.info('Initializing LAMMPS object')
+
+    self.lmp = liggghts()
+    self.pargs = pargs
+    self.monitorList = []
+    self.vars = []
+
+    if not self.rank:
+      logging.info('Setting up problem dimensions and boundaries')
+
+    self.lmp.command('units {}'.format(units))
+    self.lmp.command('dimension {}'.format(dim))
+    self.lmp.command('atom_style {}'.format(style))
+    self.lmp.command('atom_modify map array') # array is faster than hash in looking up atomic IDs, but the former takes more memory
+    self.lmp.command('boundary {} {} {}'.format(*pargs['boundary']))
+    self.lmp.command('newton off') # turn off newton's 3rd law ~ should lead to better scalability
+    self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
+    self.lmp.command('processors * * *') # let LIGGGHTS handle DD
+
+    if not self.rank:
+      logging.info('Creating i/o directories')
+
+      if not os.path.exists(self.pargs['traj'][2]):
+        os.makedirs(self.pargs['traj'][2])
+
+      if not os.path.exists(self.pargs['restart'][1]):
+        os.makedirs(self.pargs['restart'][1])
+
+  def createDomain(self):
+    """ Define the domain of the simulation
+    @ nsys: number of subsystems
+    @ pos: 6 x 1 tuple that defines the boundaries of the box 
+    """
+    if not self.rank:
+      logging.info('Creating domain')
+
+    self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
+    self.lmp.command('create_box {} domain'.format(self.pargs['nSS'] + 1))
+
+  def insertParticles(self):
+    """ Create atoms in a pre-defined region
+    @ N: max total number of particles to be inserted
+    @ density: initial density of the particles
+    @ vel: 3 x 1 tuple of initial velocities of all particles
+    @ args: dictionary of params
+    """
+    if not self.rank:
+      logging.info('Inserting particles')
+
+    for ss in range(self.pargs['nSS']):
+    
+      radius = self.pargs['radius'][ss]
+      density = self.pargs['density'][ss]
+
+      self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + ' %s' * len(radius) % (radius))
+      self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
+  
+      self.lmp.command('region factory sphere 0 0.6 0 0.4 units box')
+      self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {} particlerate {} insert_every {} overlapcheck yes vel constant {} {} {} region factory ntry_mc 1000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], *self.pargs['vel'][ss]))
+      #self.lmp.command('fix myInsRate all insert/rate/region seed 123481 distributiontemplate pdd \
+       #nparticles {} particlerate {} insert_every {} \
+       #overlapcheck yes vel constant {} region factory ntry_mc 10000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], \
+       #*self.pargs['vel'][ss]))
+
+  def importMesh(self, name):
+    """
+    """
+    fname = self.pargs['mesh']
+
+    if not self.rank:
+      logging.info('importing mesh from {}'.format(fname))
+
+    self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, self.pargs['scaleMesh']))
+
+  def setupWall(self, name, wtype, plane = None, peq = None):
+    """
+    Creates a wall
+    @ name: name of the variable defining a wall or a mesh
+    @ wtype: type of the wall (primitive or mesh)
+    @ plane: x, y, or z plane for primitive walls
+    @ peq: plane equation for primitive walls
+    """
+
+    if wtype == 'mesh':
+      self.lmp.command('fix myMesh all wall/gran model hooke {} n_meshes 1 meshes {}'.format(wtype, name))
+    elif wtype == 'primitive':
+      self.lmp.command('fix {} all wall/gran model hooke {} type 1 {} {}'.format(name, wtype, plane, peq))
+    else:
+      raise ValueError('Wall type can be either primitive or mesh')
+
+  def remove(self, name):
+    """
+    Deletes a specified variable
+    """
+    self.lmp.command('unfix {}'.format(name))
+
+  def createGroup(self, group = None):
+    """ Create groups of atoms 
+    """
+    if not self.rank:
+      logging.info('Creating atom group {}'.format(group))
+
+    if group is None:
+      for idSS in self.pargs['idSS']:
+        self.lmp.command('group group{} type {}'.format(idSS, idSS))
+
+  def setupNeighbor(self):
+    """
+    """
+    if not self.rank:
+      logging.info('Setting up nearest neighbor searching parameters')
+
+    self.lmp.command('neighbor 0.001 bin')
+    self.lmp.command('neigh_modify delay 0')
+
+  def createProperty(self, name, *args):
+    """
+    Material and interaction properties required
+    """
+    if not self.rank:
+      logging.info('Creating proprety {} with args'.format(name) + ' %s ' * len(args) % args)
+
+    self.lmp.command('fix {} all property/global'.format(name) + ' %s ' * len(args) % args)
+
+  def setupPhysics(self):
+    """
+    Specify the interation forces
+    """
+    if not self.rank:
+      logging.info('Setting up interaction parameters')
+
+    self.lmp.command('pair_style ' + ' %s '* len(self.pargs['model']) % self.pargs['model'])
+    self.lmp.command('pair_coeff * *')
+
+  def setupGravity(self):
+    """
+    Specify in which direction the gravitational force acts
+    """
+    self.lmp.command('fix myGravity all gravity {} vector {} {} {}'.format(*self.pargs['gravity']))
+
+  def initialize(self):
+    """
+    """
+
+    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
+
+    if self.pargs['restart'][-1] == False:
+
+      self.createDomain()
+      #self.createGroup()
+      self.setupPhysics()
+      self.setupNeighbor()
+      self.insertParticles()
+      self.setupGravity()
+
+    else:
+      self.resume()
+      self.setupPhysics()
+      self.setupNeighbor()
+
+  def setupIntegrate(self, name, dt = None):
+    """
+    Specify how Newton's eqs are integrated in time. 
+    @ name: name of the fixed simulation ensemble applied to all atoms
+    @ dt: timestep
+    @ ensemble: ensemble type (nvt, nve, or npt)
+    @ args: tuple args for npt or nvt simulations
+    """
+    if not self.rank:
+      logging.info('Setting up integration scheme parameters')
+
+    self.lmp.command('fix {} all nve/sphere'.format(name))
+
+    if dt is None:
+      self.lmp.command('timestep {}'.format(self.pargs['dt']))
+
+  def integrate(self, steps):
+    """
+    Run simulation in time
+    """
+    if not self.rank:
+      logging.info('Integrating the system for {} steps'.format(steps))
+
+    self.lmp.command('run {}'.format(steps))
+
+    for tup in self.monitorList:
+      self.lmp.command('compute {} {} {}'.format(*tup))
+      self.vars.append(self.lmp.extract_compute(tup[0], 0, 0))
+      self.lmp.command('uncompute {}'.format(tup[0]))
+
+  def printSetup(self, freq):
+    """
+    Specify which variables to write to file, and their format
+    """
+    if not self.rank:
+      logging.info('Setting up printing options')
+
+    self.lmp.command('thermo_style custom' + ' %s '*len(self.pargs['print']) % self.pargs['print'])
+    self.lmp.command('thermo {}'.format(freq))
+    self.lmp.command('thermo_modify norm no lost ignore')
+
+  def dumpSetup(self):
+    """
+    """
+    if not self.rank:
+      logging.info('Setting up trajectory i/o')
+
+    traj, trajFormat = self.pargs['traj'][-1].split('.')
+
+    self.lmp.command('dump dump {} {} {} {}/{}'.format(self.pargs['traj'][0], trajFormat, self.pargs['traj'][1], self.pargs['traj'][2],  self.pargs['traj'][-1]))
+
+  def extractCoords(self, coords):
+    """
+    Extracts atomic positions from a certian frame and adds it to coords
+    """
+    # Extract coordinates from liggghts
+    self.lmp.command('variable x atom x')
+    x = Rxn.lmp.extract_variable("x", "group1", 1)
+
+    self.lmp.command('variable y atom y')
+    y = Rxn.lmp.extract_variable("y", "group1", 1)
+
+    self.lmp.command('variable z atom z')
+    z = Rxn.lmp.extract_variable("z", "group1", 1)
+
+    for i in range(Rxn.lmp.get_natoms()):
+      coords[i,:] += x[i], y[i], z[i]
+
+    self.lmp.command('variable x delete')
+    self.lmp.command('variable y delete')
+    self.lmp.command('variable z delete')
+
+    return coords
+
+  def monitor(self, name, group, var):
+    """
+    """
+    self.monitorList.append((name, group, var))
+
+  def plot(self, name, xlabel, ylabel, output=None):
+    """
+    """
+    plt.rc('text', usetex=True)
+    time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
+
+    plt.plot(time, sim.vars)
+    plt.xlabel(r"{}".format(xlabel))
+    plt.ylabel(ylabel)
+
+    if output is not None:
+      plt.savefig(output)
+
+  def resume(self):
+    """
+    """
+    rdir = '{}/*'.format(self.pargs['restart'][1])
+    rfile = max(glob.iglob(rdir), key=os.path.getctime)
+
+    self.lmp.command('read_restart {}'.format(rfile))
+
+  def __del__(self):
+    """ Destructor
+    """
+    self.lmp.close()
+    MPI.Finalize()

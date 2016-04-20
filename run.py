@@ -8,27 +8,27 @@ if __name__ == '__main__':
 			  'units': 'si',
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
-			  'boundary': ('p','p','p'), # periodic BCs
+			  'boundary': ('s','s','s'), # shrink-wrapping BCs
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
-			  'traj': ('all', 5 * 10**2, 'traj', 'traj.xyz'),
-			  'dt': 0.8 * 10**-6,
+			  'traj': ('all', 500, 'traj', 'traj.xyz'),
+			  'dt': 10**-5,
 			  'nSS': 1,  # number of components / subsystems
 			  'idSS': [1],
 			  'vel': [(0.0,-0.01,0)],
-			  'insertRate': [10**6],
+			  'insertRate': [10**7],
 			  'insertFreq': [10**3], # frequency of inserting particles
 			  'radius': [('constant', 0.00224)],
 			  'gravity': (9.81, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
-			  'box': (-0.21, 0.21, -0.01, 0.31, -0.21, 0.21), # simulation box size
-			  'Natoms': [30000],
+			  'box': (-0.84, 0.84, -0.01, 1.2, -0.84, 0.84), # simulation box size
+			  'Natoms': [1000000],
 			  'print': ('time', 'atoms', 'ke', 'fmax'), # print the time, atom number, avg. kinetic energy, and max force
 			  'density': [2500.0], # kg /m^3
-			  'insertionRun': 5 * 10**4,
-			  'productionRun': 0.2 * 10**5,
+			  'insertionRun': 10**4,
+			  'productionRun': 2 * 10**4,
 			  'freq': 10**4, # print output every freq steps
 			  'mesh': 'hopper.stl',
-			  'scaleMesh': 0.01
+			  'scaleMesh': 0.04
 			  }
 
 	# Create an instance of the DEM class
@@ -38,17 +38,17 @@ if __name__ == '__main__':
 	sim.initialize()
 
 	# Setup material properties
-	sim.createProperty('m1', *('youngsModulus', 'peratomtype', '5.e6', '5.e6'))
-	sim.createProperty('m2', *('poissonsRatio', 'peratomtype', '0.45', '0.45'))
-	sim.createProperty('m3', *('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
-	sim.createProperty('m4', *('coefficientFriction', 'peratomtypepair', '2', '0.05', '0.05', '0.05', '0.05'))
-	sim.createProperty('m5', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
+	sim.createProperty('mYmod', *('youngsModulus', 'peratomtype', '5.e6', '5.e6'))
+	sim.createProperty('mPratio', *('poissonsRatio', 'peratomtype', '0.45', '0.45'))
+	sim.createProperty('mCrest', *('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
+	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '0.05', '0.05', '0.05', '0.05'))
+	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
 
 	# Import mesh hopper.stl file
-	sim.importMesh(var='hopper')
+	sim.importMesh(name='hopper')
 
 	# Setup mesh as a wall
-	sim.setupWall(var='hopper', wtype='mesh')
+	sim.setupWall(name='hopper', wtype='mesh')
 
 	# Setup a stopper wall along the xoz plane (y = 0.1)
 	sim.setupWall(var='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
@@ -63,16 +63,16 @@ if __name__ == '__main__':
 	sim.integrate(steps=params['insertionRun'])
 
 	# Monitor KE as a function of time
-	sim.monitor(name='globKE', group='all', var='ke')
+	# sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
 
-	# Setup integration method for equilibration
+	# Remove stopper
+	sim.remove(name='stopper')
+
+	# Setup integration method for production run
 	sim.setupIntegrate(name='intProd', dt=10**-5)
 
-	# Equilibration stage
-	sim.integrate(steps=params['productionRun'])
-
-	# Plot KE vs time, then save the figure as a pdf
-	sim.plot(name='globKE', xlabel='Time (s)', ylabel='KE (J)')
+	# Production run
+	sim.integrate(steps=params['productionRun'])	
