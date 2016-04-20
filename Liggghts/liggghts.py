@@ -1,5 +1,5 @@
-# Python wrapper for LIGGGHTS library via ctypes
-# Author: Andrew Abi-Mansour
+#   Python wrapper for LIGGGHTS library via ctypes
+#   Author: Andrew Abi-Mansour
 #
 # ----------------------------------------------------------------------
 #   Modified from  LAMMPS source code
