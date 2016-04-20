@@ -13,6 +13,7 @@
 # -------------------------------------------------------------------------
 
 # Python wrapper on LAMMPS library via ctypes
+# Author: Andrew Abi-Mansour
 
 import sys,traceback,types
 from ctypes import *
