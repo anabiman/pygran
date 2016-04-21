@@ -4,3 +4,7 @@ in.*
 *.stl
 *.xyz
 visualize.py
+*.log
+restart
+traj
+log.*
