@@ -36,8 +36,11 @@ class liggghts:
     # if name = "g++", load liblammps_g++.so
     
     try:
-      if not name: self.lib = CDLL("Liggghts/libliggghts.so",RTLD_GLOBAL)
-      else: self.lib = CDLL("libliggghts_%s.so" % name,RTLD_GLOBAL)
+      if not name: 
+	cwd = os.getcwd()
+	self.lib = CDLL("{}/Liggghts/libliggghts.so".format(cwd),RTLD_GLOBAL)
+      else: 
+	self.lib = CDLL("libliggghts_%s.so" % name,RTLD_GLOBAL)
     except:
       type,value,tb = sys.exc_info()
       traceback.print_exception(type,value,tb)
@@ -246,7 +249,7 @@ class DEM:
       radius = self.pargs['radius'][ss]
       density = self.pargs['density'][ss]
 
-      self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + ' %s' * len(radius) % (radius))
+      self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + (' {}' * len(radius)).format(*radius))
       self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
   
       self.lmp.command('region factory sphere 0 0.6 0 0.4 units box')
@@ -312,9 +315,9 @@ class DEM:
     Material and interaction properties required
     """
     if not self.rank:
-      logging.info('Creating proprety {} with args'.format(name) + ' %s ' * len(args) % args)
+      logging.info('Creating proprety {} with args'.format(name) + (' {}' * len(args)).format(*args))
 
-    self.lmp.command('fix {} all property/global'.format(name) + ' %s ' * len(args) % args)
+    self.lmp.command('fix {} all property/global'.format(name) + (' {}' * len(args)).format(*args))
 
   def setupPhysics(self):
     """
@@ -323,7 +326,9 @@ class DEM:
     if not self.rank:
       logging.info('Setting up interaction parameters')
 
-    self.lmp.command('pair_style ' + ' %s '* len(self.pargs['model']) % self.pargs['model'])
+    args = self.pargs['model']
+
+    self.lmp.command('pair_style ' + (' {}' * len(args)).format(*args))
     self.lmp.command('pair_coeff * *')
 
   def setupGravity(self):
@@ -389,7 +394,8 @@ class DEM:
     if not self.rank:
       logging.info('Setting up printing options')
 
-    self.lmp.command('thermo_style custom' + ' %s '*len(self.pargs['print']) % self.pargs['print'])
+    args = self.pargs['print']
+    self.lmp.command('thermo_style custom' + (' {}' * len(args)).format(*args))
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
 
