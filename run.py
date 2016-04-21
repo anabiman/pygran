@@ -12,6 +12,7 @@ if __name__ == '__main__':
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': ('all', 500, 'traj', 'traj.xyz'),
+			  'clean': True,
 			  'dt': 10**-5,
 			  'nSS': 1,  # number of components / subsystems
 			  'idSS': [1],
@@ -21,14 +22,15 @@ if __name__ == '__main__':
 			  'radius': [('constant', 0.00224)],
 			  'gravity': (9.81, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
 			  'box': (-0.84, 0.84, -0.01, 1.2, -0.84, 0.84), # simulation box size
-			  'Natoms': [1000000],
+			  'Natoms': [1000],
 			  'print': ('time', 'atoms', 'ke', 'fmax'), # print the time, atom number, avg. kinetic energy, and max force
 			  'density': [2500.0], # kg /m^3
 			  'insertionRun': 10**4,
 			  'productionRun': 2 * 10**4,
 			  'freq': 10**4, # print output every freq steps
 			  'mesh': 'hopper.stl',
-			  'scaleMesh': 0.04
+			  'scaleMesh': 0.04,
+			  'nSim': 2
 			  }
 
 	# Create an instance of the DEM class
@@ -51,7 +53,7 @@ if __name__ == '__main__':
 	sim.setupWall(name='hopper', wtype='mesh')
 
 	# Setup a stopper wall along the xoz plane (y = 0.1)
-	sim.setupWall(var='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
+	sim.setupWall(name='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
 
 	# Print output specified in 'print' every 'freq' steps
 	sim.printSetup(freq=params['freq'])
@@ -61,9 +63,6 @@ if __name__ == '__main__':
 
 	# Insertion stage
 	sim.integrate(steps=params['insertionRun'])
-
-	# Monitor KE as a function of time
-	# sim.monitor(name='globKE', group='all', var='ke')
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()

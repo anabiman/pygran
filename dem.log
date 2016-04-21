@@ -1,0 +1,21 @@
+2016-04-21 16:33:18,654:INFO: Initializing MPI for a total of 4 procs
+2016-04-21 16:33:18,655:INFO: Instantiating LIGGGHTS object
+2016-04-21 16:33:18,655:INFO: Running 2 simulations: multi-mode on
+2016-04-21 16:33:18,755:INFO: Setting up problem dimensions and boundaries
+2016-04-21 16:33:18,755:INFO: Creating i/o directories
+2016-04-21 16:33:18,756:INFO: Creating domain
+2016-04-21 16:33:18,774:INFO: Setting up interaction parameters
+2016-04-21 16:33:18,774:INFO: Setting up nearest neighbor searching parameters
+2016-04-21 16:33:18,774:INFO: Inserting particles
+2016-04-21 16:33:18,775:INFO: Creating proprety mYmod with args youngsModulus peratomtype 5.e6 5.e6
+2016-04-21 16:33:18,775:INFO: Creating proprety mPratio with args poissonsRatio peratomtype 0.45 0.45
+2016-04-21 16:33:18,775:INFO: Creating proprety mCrest with args coefficientRestitution peratomtypepair 2 0.9 0.9 0.9 0.9
+2016-04-21 16:33:18,775:INFO: Creating proprety mCfric with args coefficientFriction peratomtypepair 2 0.05 0.05 0.05 0.05
+2016-04-21 16:33:18,775:INFO: Creating proprety mCvel with args characteristicVelocity scalar 2.0 2.0
+2016-04-21 16:33:18,775:INFO: importing mesh from hopper.stl
+2016-04-21 16:33:18,809:INFO: Setting up printing options
+2016-04-21 16:33:18,809:INFO: Setting up integration scheme parameters
+2016-04-21 16:33:18,809:INFO: Integrating the system for 10000 steps
+2016-04-21 16:33:53,134:INFO: Setting up trajectory i/o
+2016-04-21 16:33:53,134:INFO: Setting up integration scheme parameters
+2016-04-21 16:33:53,135:INFO: Integrating the system for 20000 steps

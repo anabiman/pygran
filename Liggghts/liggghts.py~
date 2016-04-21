@@ -19,8 +19,6 @@
 
 import sys,traceback,types
 from ctypes import *
-from os.path import dirname, abspath, join
-from inspect import getsourcefile
 
 import numpy as np
 import itertools
@@ -36,117 +34,51 @@ import sys
 logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
 class liggghts:
-  # detect if Python is using version of mpi4py that can pass a communicator
-  
-  has_mpi4py_v2 = False
-  try:
-    from mpi4py import MPI
-    from mpi4py import __version__ as mpi4py_version
-    if mpi4py_version.split('.')[0] == '2':
-      has_mpi4py_v2 = True
-  except:
-    pass
+  def __init__(self,name="",cmdargs=None):
 
-  # create instance of LIGGGHTS
- 
-  def __init__(self,name="",cmdargs=None,ptr=None,comm=None):
-
-    # determine module location
+    # load liblammps.so by default
+    # if name = "g++", load liblammps_g++.so
     
-    modpath = dirname(abspath(getsourcefile(lambda:0)))
-
-    # load libliggghts.so unless name is given.
-    # e.g. if name = "g++", load libliggghts_g++.so
-    # try loading the LIGGGHTS shared object from the location
-    # of liggghts.py with an absolute path (so that LD_LIBRARY_PATH
-    # does not need to be set for regular installations.
-    # fall back to loading with a relative path, which typically
-    # requires LD_LIBRARY_PATH to be set appropriately.
-
     try:
       if not name: 
 	cwd = os.getcwd()
-	self.lib = CDLL(join(modpath,"{}/Liggghts/libliggghts.so".format(cwd)),RTLD_GLOBAL)
-      else: self.lib = CDLL(join(modpath,"{}/Liggghts/libliggghts_{}.so".format(cwd, name)),RTLD_GLOBAL)
+	self.lib = CDLL("{}/Liggghts/libliggghts.so".format(cwd),RTLD_GLOBAL)
+      else: 
+	self.lib = CDLL("libliggghts_%s.so" % name,RTLD_GLOBAL)
     except:
-      if not name: self.lib = CDLL("{}/Liggghts/libliggghts.so".format(cwd), RTLD_GLOBAL)
-      else: self.lib = CDLL("{}/Liggghts/libliggghts_{}.so".format(cwd,name), RTLD_GLOBAL)
+      type,value,tb = sys.exc_info()
+      traceback.print_exception(type,value,tb)
+      raise OSError, "Could not load LIGGGHTS dynamic library"
 
-    # if no ptr provided, create an instance of LIGGGHTS
-    #   don't know how to pass an MPI communicator from PyPar
-    #   but we can pass an MPI communicator from mpi4py v2.0.0 and later
-    #   no_mpi call lets LIGGGHTS use MPI_COMM_WORLD
-    #   cargs = array of C strings from args
-    # if ptr, then are embedding Python in LIGGGHTS input script
-    #   ptr is the desired instance of LIGGGHTS
-    #   just convert it to ctypes ptr and store in self.lmp
+    # create an instance of LAMMPS
+    # don't know how to pass an MPI communicator from PyPar
+    # no_mpi call lets LAMMPS use MPI_COMM_WORLD
+    # cargs = array of C strings from args
     
-    if not ptr:
-      # with mpi4py v2, can pass MPI communicator to LIGGGHTS
-      # need to adjust for type of MPI communicator object
-      # allow for int (like MPICH) or void* (like OpenMPI)
-      
-      if liggghts.has_mpi4py_v2 and comm != None:
-        if liggghts.MPI._sizeof(liggghts.MPI.Comm) == sizeof(c_int):
-          MPI_Comm = c_int
-        else:
-          MPI_Comm = c_void_p
-
-        narg = 0
-        cargs = 0
-        if cmdargs:
-          cmdargs.insert(0,"liggghts.py")
-          narg = len(cmdargs)
-          cargs = (c_char_p*narg)(*cmdargs)
-          self.lib.liggghts_open.argtypes = [c_int, c_char_p*narg, \
-                                           MPI_Comm, c_void_p()]
-        else:
-          self.lib.liggghts_open.argtypes = [c_int, c_int, \
-                                           MPI_Comm, c_void_p()]
-
-        self.lib.liggghts_open.restype = None
-        self.opened = 1
-        self.lmp = c_void_p()
-        comm_ptr = liggghts.MPI._addressof(comm)
-        comm_val = MPI_Comm.from_address(comm_ptr)
-        self.lib.liggghts_open(narg,cargs,comm_val,byref(self.lmp))
-
-      else:
-        self.opened = 1
-        if cmdargs:
-          cmdargs.insert(0,"liggghts.py")
-          narg = len(cmdargs)
-          cargs = (c_char_p*narg)(*cmdargs)
-          self.lmp = c_void_p()
-          self.lib.liggghts_open_no_mpi(narg,cargs,byref(self.lmp))
-        else:
-          self.lmp = c_void_p()
-          self.lib.lammps_open_no_mpi(0,None,byref(self.lmp))
-          # could use just this if LIGGGHTS lib interface supported it
-          # self.lmp = self.lib.lammps_open_no_mpi(0,None)
-          
+    if cmdargs:
+      cmdargs.insert(0,"liggghts.py")
+      narg = len(cmdargs)
+      cargs = (c_char_p*narg)(*cmdargs)
+      self.lmp = c_void_p()
+      self.lib.lammps_open_no_mpi(narg,cargs,byref(self.lmp))
     else:
-      self.opened = 0
-      # magic to convert ptr to ctypes ptr
-      pythonapi.PyCObject_AsVoidPtr.restype = c_void_p
-      pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
-      self.lmp = c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
+      self.lmp = c_void_p()
+      self.lib.lammps_open_no_mpi(0,None,byref(self.lmp))
+      # could use just this if LAMMPS lib interface supported it
+      # self.lmp = self.lib.lammps_open_no_mpi(0,None)
 
   def __del__(self):
-    if self.lmp and self.opened: self.lib.lammps_close(self.lmp)
+    if self.lmp: self.lib.lammps_close(self.lmp)
 
   def close(self):
-    if self.opened: self.lib.lammps_close(self.lmp)
+    self.lib.lammps_close(self.lmp)
     self.lmp = None
-
-  def version(self):
-    return self.lib.lammps_version(self.lmp)
 
   def file(self,file):
     self.lib.lammps_file(self.lmp,file)
 
   def command(self,cmd):
-    self.lib.lammps_command(self.lmp,cmd)
+    self.lib.lammps_command(self.lmp, cmd)
 
   def extract_global(self,name,type):
     if type == 0:
@@ -190,23 +122,22 @@ class liggghts:
   # double was allocated by library interface function
   
   def extract_fix(self,id,style,type,i=0,j=0):
-    if style == 0:
+    if type == 0:
+      if style > 0: return None
       self.lib.lammps_extract_fix.restype = POINTER(c_double)
       ptr = self.lib.lammps_extract_fix(self.lmp,id,style,type,i,j)
       result = ptr[0]
       self.lib.lammps_free(ptr)
       return result
-    elif (style == 1) or (style == 2):
-      if type == 1:
-        self.lib.lammps_extract_fix.restype = POINTER(c_double)
-      elif type == 2:
-        self.lib.lammps_extract_fix.restype = POINTER(POINTER(c_double))
-      else:
-        return None
+    if type == 1:
+      self.lib.lammps_extract_fix.restype = POINTER(c_double)
       ptr = self.lib.lammps_extract_fix(self.lmp,id,style,type,i,j)
       return ptr
-    else:
-      return None
+    if type == 2:
+      self.lib.lammps_extract_fix.restype = POINTER(POINTER(c_double))
+      ptr = self.lib.lammps_extract_fix(self.lmp,id,style,type,i,j)
+      return ptr
+    return None
 
   # free memory for 1 double or 1 vector of doubles via lammps_free()
   # for vector, must copy nlocal returned values to local c_double vector
@@ -230,13 +161,6 @@ class liggghts:
       self.lib.lammps_free(ptr)
       return result
     return None
-
-  # set variable value
-  # value is converted to string
-  # returns 0 for success, -1 if failed
-  
-  def set_variable(self,name,value):
-    return self.lib.lammps_set_variable(self.lmp,name,str(value))
 
   # return total number of atoms in system
   
@@ -262,21 +186,33 @@ class liggghts:
   def scatter_atoms(self,name,type,count,data):
     self.lib.lammps_scatter_atoms(self.lmp,name,type,count,data)
 
-class DEMPy:
-  """A class that implements a python interface for DEM computations"""
+class DEM:
+  """A class that implement  apython interface for DEM simulations"""
 
-  def __init__(self, rank, split, units, dim, style, **pargs):
+  def __init__(self, units, dim, style, **pargs):
     """ Initialize some settings and specifications 
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
     # style: granular, atom, or ...
     """
-    self.rank = rank
+
+    self.comm = MPI.COMM_WORLD
+    self.rank = self.comm.Get_rank()
+    nProcs = self.comm.Get_size()
+
+    nPart = nProcs // pargs['nSim']
+
+    for i in range(pargs['nSim']):
+      if self.rank < nPart * (i + 1):
+        self.color = i
+
+    self.split = self.comm.Split(self.color, key=0)
 
     if not self.rank:
-      logging.info('Instantiating LIGGGHTS object')
-     
-    self.lmp = liggghts(comm=split)
+      logging.info("Initializing MPI for a total of %d procs" % (self.split.Get_size()))
+      logging.info('Instantiating LAMMPS object')
+
+    self.lmp = liggghts(comm=self.split)
     self.pargs = pargs
     self.monitorList = []
     self.vars = []
@@ -545,35 +481,4 @@ class DEMPy:
     if self.pargs['clean'] == True:
 	os.system('rm -r restart/ traj/ *.log log.*')
 
-class DEM:
-  """A clss that handles communication for the DEM object"
-
-  def __init__(self, nSim, **pargs):
-    """ Initialize COMM and partition proccesors based on user input """
-
-    self.comm = MPI.COMM_WORLD
-    self.rank = self.comm.Get_rank()
-    nProcs = self.comm.Get_size()
-
-    if not self.rank:
-      logging.info("Initializing MPI for a total of %d procs" % (self.comm.Get_size()))
-
-    nPart = nProcs // nSim
-
-    if nSim > 1:
-      logging.info('Running {} simulations: multi-mode on'.format(nSim))
-
-    self.dem = []
-
-    for i in range(nSim):
-      if self.rank < nPart * (i + 1):
-        self.color = i
-        self.split = self.comm.Split(self.color, key=0)
-
-        dem.append(DEMPy(self.rank, self.split, **pargs))           
-        break
-
-   def __del__(self):
-
-     MPI.Finalize()
-	
+    MPI.Finalize()
