@@ -12,9 +12,8 @@ if __name__ == '__main__':
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': ('all', 500, 'traj', 'traj.xyz'),
-			  'nSim': 1,
+			  'nSim': 4,
 			  'output': 'out',
-			  'clean': True,
 			  'dt': 10**-5,
 			  'nSS': 1,  # number of components / subsystems
 			  'idSS': [1],
@@ -43,9 +42,16 @@ if __name__ == '__main__':
 	# Setup material properties
 	sim.createProperty('mYmod', *('youngsModulus', 'peratomtype', '5.e6', '5.e6'))
 	sim.createProperty('mPratio', *('poissonsRatio', 'peratomtype', '0.45', '0.45'))
-	sim.createProperty('mCrest', *('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
 	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '0.05', '0.05', '0.05', '0.05'))
 	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
+
+	# Modify material property ~ useful for sensitivity analysis / series of simulations
+	coeffRest = [('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'),
+				 ('coefficientRestitution', 'peratomtypepair', '2', '1.1', '1.1', '1.1', '1.1'),
+				 ('coefficientRestitution', 'peratomtypepair', '2', '1.3', '1.3', '1.3', '1.3'),
+				 ('coefficientRestitution', 'peratomtypepair', '2', '1.5', '1.5', '1.5', '1.5')]
+
+	sim.createProperty(name='mCrest', values=coeffRest)
 
 	# Import mesh hopper.stl file
 	sim.importMesh(name='hopper')

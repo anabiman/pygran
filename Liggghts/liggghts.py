@@ -24,7 +24,6 @@ from inspect import getsourcefile
 
 import numpy as np
 import itertools
-import logging
 from numpy.linalg import norm
 from scipy import spatial
 from mpi4py import MPI
@@ -32,6 +31,7 @@ import os
 import matplotlib.pylab as plt
 import glob
 import sys
+from importlib import import_module
 
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
@@ -63,12 +63,11 @@ class liggghts:
 
     try:
       if not name: 
-	cwd = os.getcwd()
-	self.lib = CDLL(join(modpath,"{}/Liggghts/libliggghts.so".format(cwd)),RTLD_GLOBAL)
-      else: self.lib = CDLL(join(modpath,"{}/Liggghts/libliggghts_{}.so".format(cwd, name)),RTLD_GLOBAL)
+        self.lib = CDLL(join(modpath,"libliggghts.so"), RTLD_GLOBAL)
+      else: self.lib = CDLL(join(modpath,"Liggghts/libliggghts_{}.so".format(name)),RTLD_GLOBAL)
     except:
-      if not name: self.lib = CDLL("{}/Liggghts/libliggghts.so".format(cwd), RTLD_GLOBAL)
-      else: self.lib = CDLL("{}/Liggghts/libliggghts_{}.so".format(cwd,name), RTLD_GLOBAL)
+      if not name: self.lib = CDLL(join(modpath,"libliggghts.so"), RTLD_GLOBAL)
+      else: self.lib = CDLL("Liggghts/libliggghts_{}.so".format(name), RTLD_GLOBAL)
 
     # if no ptr provided, create an instance of LIGGGHTS
     #   don't know how to pass an MPI communicator from PyPar
@@ -96,18 +95,18 @@ class liggghts:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
           cargs = (c_char_p*narg)(*cmdargs)
-          self.lib.liggghts_open.argtypes = [c_int, c_char_p*narg, \
+          self.lib.lammps_open.argtypes = [c_int, c_char_p*narg, \
                                            MPI_Comm, c_void_p()]
         else:
-          self.lib.liggghts_open.argtypes = [c_int, c_int, \
+          self.lib.lammps_open.argtypes = [c_int, c_int, \
                                            MPI_Comm, c_void_p()]
 
-        self.lib.liggghts_open.restype = None
+        self.lib.lammps_open.restype = None
         self.opened = 1
         self.lmp = c_void_p()
         comm_ptr = liggghts.MPI._addressof(comm)
         comm_val = MPI_Comm.from_address(comm_ptr)
-        self.lib.liggghts_open(narg,cargs,comm_val,byref(self.lmp))
+        self.lib.lammps_open(narg,cargs,comm_val,byref(self.lmp))
 
       else:
         self.opened = 1
@@ -116,7 +115,7 @@ class liggghts:
           narg = len(cmdargs)
           cargs = (c_char_p*narg)(*cmdargs)
           self.lmp = c_void_p()
-          self.lib.liggghts_open_no_mpi(narg,cargs,byref(self.lmp))
+          self.lib.lammps_open_no_mpi(narg,cargs,byref(self.lmp))
         else:
           self.lmp = c_void_p()
           self.lib.lammps_open_no_mpi(0,None,byref(self.lmp))
@@ -271,20 +270,23 @@ class DEMPy:
     """
     self.rank = split.Get_rank()
 
-    self.lmp = liggghts(comm=split)
     self.pargs = pargs
     self.monitorList = []
     self.vars = []
     self.path = os.getcwd()
 
+    self.output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
+
     if not self.rank:
 
-      output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
+      if not os.path.exists(self.output):
+        os.makedirs(self.output)
 
-      if not os.path.exists(output):
-        os.makedirs(output)
+      global logging
 
-      os.chdir(output)
+      os.chdir(self.output)
+      logging = import_module(name='logging')
+
       logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
       logging.info('Creating i/o directories')
@@ -295,8 +297,9 @@ class DEMPy:
       if not os.path.exists(self.pargs['restart'][1]):
         os.makedirs(self.pargs['restart'][1])
 
-
       logging.info('Instantiating LIGGGHTS object')
+
+    self.lmp = liggghts(comm=split, cmdargs=['-log', 'liggghts.log'])
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
@@ -352,7 +355,7 @@ class DEMPy:
     fname = self.path + '/' + self.pargs['mesh']
 
     if not self.rank:
-      logging.info('importing mesh from {}'.format(fname))
+      logging.info('Importing mesh from {}'.format(fname))
 
     self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, self.pargs['scaleMesh']))
 
@@ -550,9 +553,6 @@ class DEMPy:
     """
     self.lmp.close()
 
-    if self.pargs['clean'] == True:
-	os.system('rm -r restart/ traj/ *.log log.*')
-
 class DEM:
   """A class that handles communication for the DEM object"""
 
@@ -564,23 +564,21 @@ class DEM:
     self.tProcs = self.comm.Get_size()
     self.nSim = pargs['nSim']
 
-    if not self.rank:
-      logging.info("Initializing MPI for a total of {} procs".format(self.tProcs))
-
     self.nPart = self.tProcs // self.nSim
-
-    if self.nSim > 1:
-      logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
-
-    self.dem = []
 
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         self.color = i
         self.split = self.comm.Split(self.color, key=0)
 
-        self.dem = DEMPy(i, self.split, **pargs)         
+        self.dem = DEMPy(i, self.split, **pargs) # logging module imported here      
         break
+
+    if not self.rank:
+      logging.info("Initializing MPI for a total of {} procs".format(self.tProcs))
+
+      if self.nSim > 1:
+        logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
 
   def initialize(self):
 
