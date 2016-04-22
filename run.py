@@ -45,11 +45,13 @@ if __name__ == '__main__':
 	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '0.05', '0.05', '0.05', '0.05'))
 	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
 
+	# For 4 simulations, we need four tuples for the coefficient of restitution
 	coeffRest = [('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'),
 			('coefficientRestitution', 'peratomtypepair', '2', '1.1', '1.1', '1.1', '1.1'),
 			('coefficientRestitution', 'peratomtypepair', '2', '1.3', '1.3', '1.3', '1.3'),
 			('coefficientRestitution', 'peratomtypepair', '2', '1.5', '1.5', '1.5', '1.5')]
 
+	# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
 	sim.createProperty(name='mCrest', values=coeffRest)
 
 	# Import mesh hopper.stl file
