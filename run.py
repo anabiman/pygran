@@ -12,6 +12,8 @@ if __name__ == '__main__':
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': ('all', 500, 'traj', 'traj.xyz'),
+			  'nSim': 1,
+			  'output': 'out',
 			  'clean': True,
 			  'dt': 10**-5,
 			  'nSS': 1,  # number of components / subsystems
@@ -29,8 +31,7 @@ if __name__ == '__main__':
 			  'productionRun': 2 * 10**4,
 			  'freq': 10**4, # print output every freq steps
 			  'mesh': 'hopper.stl',
-			  'scaleMesh': 0.04,
-			  'nSim': 2
+			  'scaleMesh': 0.04
 			  }
 
 	# Create an instance of the DEM class

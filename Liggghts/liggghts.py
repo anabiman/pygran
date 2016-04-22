@@ -33,8 +33,6 @@ import matplotlib.pylab as plt
 import glob
 import sys
 
-logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
-
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
   
@@ -265,21 +263,40 @@ class liggghts:
 class DEMPy:
   """A class that implements a python interface for DEM computations"""
 
-  def __init__(self, rank, split, units, dim, style, **pargs):
+  def __init__(self, sid, split, units, dim, style, **pargs):
     """ Initialize some settings and specifications 
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
     # style: granular, atom, or ...
     """
-    self.rank = rank
+    self.rank = split.Get_rank()
 
-    if not self.rank:
-      logging.info('Instantiating LIGGGHTS object')
-     
     self.lmp = liggghts(comm=split)
     self.pargs = pargs
     self.monitorList = []
     self.vars = []
+    self.path = os.getcwd()
+
+    if not self.rank:
+
+      output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
+
+      if not os.path.exists(output):
+        os.makedirs(output)
+
+      os.chdir(output)
+      logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
+
+      logging.info('Creating i/o directories')
+
+      if not os.path.exists(self.pargs['traj'][2]):
+        os.makedirs(self.pargs['traj'][2])
+
+      if not os.path.exists(self.pargs['restart'][1]):
+        os.makedirs(self.pargs['restart'][1])
+
+
+      logging.info('Instantiating LIGGGHTS object')
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
@@ -292,15 +309,6 @@ class DEMPy:
     self.lmp.command('newton off') # turn off newton's 3rd law ~ should lead to better scalability
     self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
     self.lmp.command('processors * * *') # let LIGGGHTS handle DD
-
-    if not self.rank:
-      logging.info('Creating i/o directories')
-
-      if not os.path.exists(self.pargs['traj'][2]):
-        os.makedirs(self.pargs['traj'][2])
-
-      if not os.path.exists(self.pargs['restart'][1]):
-        os.makedirs(self.pargs['restart'][1])
 
   def createDomain(self):
     """ Define the domain of the simulation
@@ -341,7 +349,7 @@ class DEMPy:
   def importMesh(self, name):
     """
     """
-    fname = self.pargs['mesh']
+    fname = self.path + '/' + self.pargs['mesh']
 
     if not self.rank:
       logging.info('importing mesh from {}'.format(fname))
@@ -546,34 +554,121 @@ class DEMPy:
 	os.system('rm -r restart/ traj/ *.log log.*')
 
 class DEM:
-  """A clss that handles communication for the DEM object"
+  """A class that handles communication for the DEM object"""
 
-  def __init__(self, nSim, **pargs):
+  def __init__(self, **pargs):
     """ Initialize COMM and partition proccesors based on user input """
 
     self.comm = MPI.COMM_WORLD
     self.rank = self.comm.Get_rank()
-    nProcs = self.comm.Get_size()
+    self.tProcs = self.comm.Get_size()
+    self.nSim = pargs['nSim']
 
     if not self.rank:
-      logging.info("Initializing MPI for a total of %d procs" % (self.comm.Get_size()))
+      logging.info("Initializing MPI for a total of {} procs".format(self.tProcs))
 
-    nPart = nProcs // nSim
+    self.nPart = self.tProcs // self.nSim
 
-    if nSim > 1:
-      logging.info('Running {} simulations: multi-mode on'.format(nSim))
+    if self.nSim > 1:
+      logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
 
     self.dem = []
 
-    for i in range(nSim):
-      if self.rank < nPart * (i + 1):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
         self.color = i
         self.split = self.comm.Split(self.color, key=0)
 
-        dem.append(DEMPy(self.rank, self.split, **pargs))           
+        self.dem = DEMPy(i, self.split, **pargs)         
         break
 
-   def __del__(self):
+  def initialize(self):
 
-     MPI.Finalize()
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.initialize()
+        break
+   
+  def createProperty(self, name, *args):
+    """
+    Material and interaction properties required
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.createProperty(name, *args)
+        break
+
+  def importMesh(self, name):
+    """
+    Imports a mesh file (STL or VTK)
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.importMesh(name)
+        break
+
+  def setupWall(self, name, wtype, plane = None, peq = None):
+    """
+    Creates a wall
+    @ name: name of the variable defining a wall or a mesh
+    @ wtype: type of the wall (primitive or mesh)
+    @ plane: x, y, or z plane for primitive walls
+    @ peq: plane equation for primitive walls
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.setupWall(name, wtype, plane, peq)
+        break
+
+  def printSetup(self, freq):
+    """
+    Specify which variables to write to file, and their format
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.printSetup(freq)
+        break
+
+  def dumpSetup(self):
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.dumpSetup()
+        break
+
+  def setupIntegrate(self, name, dt = None):
+    """
+    Specify how Newton's eqs are integrated in time. 
+    @ name: name of the fixed simulation ensemble applied to all atoms
+    @ dt: timestep
+    @ ensemble: ensemble type (nvt, nve, or npt)
+    @ args: tuple args for npt or nvt simulations
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.setupIntegrate(name, dt)
+        break
+
+  def integrate(self, steps):
+    """
+    Run simulation in time
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.integrate(steps)
+        break
+
+  def remove(self, name):
+    """
+    Delete variable/object
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.remove(name)
+        break
+
+  def __del__(self):
+
+    MPI.Finalize()
 	
