@@ -47,9 +47,9 @@ if __name__ == '__main__':
 
 	# Modify material property ~ useful for sensitivity analysis / series of simulations
 	coeffRest = [('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'),
-				 ('coefficientRestitution', 'peratomtypepair', '2', '1.1', '1.1', '1.1', '1.1'),
-				 ('coefficientRestitution', 'peratomtypepair', '2', '1.3', '1.3', '1.3', '1.3'),
-				 ('coefficientRestitution', 'peratomtypepair', '2', '1.5', '1.5', '1.5', '1.5')]
+				('coefficientRestitution', 'peratomtypepair', '2', '1.1', '1.1', '1.1', '1.1'),
+				('coefficientRestitution', 'peratomtypepair', '2', '1.3', '1.3', '1.3', '1.3'),
+				('coefficientRestitution', 'peratomtypepair', '2', '1.5', '1.5', '1.5', '1.5')]
 
 	sim.createProperty(name='mCrest', values=coeffRest)
 
