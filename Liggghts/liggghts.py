@@ -272,8 +272,9 @@ class DEMPy:
 
     self.pargs = pargs
     self.monitorList = []
-    self.vars = []
+    self.vars = {}
     self.path = os.getcwd()
+    self.nSS = len(self.pargs['SS'])
 
     self.output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
 
@@ -322,7 +323,7 @@ class DEMPy:
       logging.info('Creating domain')
 
     self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
-    self.lmp.command('create_box {} domain'.format(self.pargs['nSS'] + 1))
+    self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
   def insertParticles(self):
     """ Create atoms in a pre-defined region
@@ -334,30 +335,30 @@ class DEMPy:
     if not self.rank:
       logging.info('Inserting particles')
 
-    for ss in range(self.pargs['nSS']):
-    
-      radius = self.pargs['radius'][ss]
-      density = self.pargs['density'][ss]
+    for i, ss in enumerate(self.pargs['SS']):
 
-      self.lmp.command('fix pts all particletemplate/sphere 1 atom_type 1 density constant {} radius'.format(density) + (' {}' * len(radius)).format(*radius))
-      self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
+      if ss['insert'] == True:
+      	radius = self.pargs['radius'][i]
+
+     	self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+      	self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
   
-      self.lmp.command('region factory sphere 0 0.6 0 0.4 units box')
-      self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {} particlerate {} insert_every {} overlapcheck yes vel constant {} {} {} region factory ntry_mc 1000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], *self.pargs['vel'][ss]))
-      #self.lmp.command('fix myInsRate all insert/rate/region seed 123481 distributiontemplate pdd \
-       #nparticles {} particlerate {} insert_every {} \
-       #overlapcheck yes vel constant {} region factory ntry_mc 10000'.format(self.pargs['Natoms'][ss], self.pargs['insertRate'][ss], self.pargs['insertFreq'][ss], \
-       #*self.pargs['vel'][ss]))
+      	self.lmp.command('region factory ' + ('{} ' * len(ss['region'])).format(*ss['region']) + 'units box')
+      	self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {natoms} particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) + ' {} {} {} region factory ntry_mc 1000'.format(*self.pargs['vel'][i] ))
 
-  def importMesh(self, name):
+  def importMesh(self, name, file, scale = None):
     """
+    TODO: fix type for mesh
     """
-    fname = self.path + '/' + self.pargs['mesh']
+    fname = self.path + '/' + file
 
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
 
-    self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, self.pargs['scaleMesh']))
+    if scale == None:
+	self.lmp.command('fix {} all mesh/surface file {} type 2'.format(name, fname))
+    else:
+    	self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, scale))
 
   def setupWall(self, name, wtype, plane = None, peq = None):
     """
@@ -374,7 +375,7 @@ class DEMPy:
       self.lmp.command('fix {} all wall/gran model hooke {} type 1 {} {}'.format(name, wtype, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
-
+ 
   def remove(self, name):
     """
     Deletes a specified variable
@@ -387,7 +388,7 @@ class DEMPy:
     if not self.rank:
       logging.info('Creating atom group {}'.format(group))
 
-    if group is None:
+    if group == None:
       for idSS in self.pargs['idSS']:
         self.lmp.command('group group{} type {}'.format(idSS, idSS))
 
@@ -405,7 +406,7 @@ class DEMPy:
     Material and interaction properties required
     """
     if not self.rank:
-      logging.info('Creating proprety {} with args'.format(name) + (' {}' * len(args)).format(*args))
+      logging.info('Creating property {} with args'.format(name) + (' {}' * len(args)).format(*args))
 
     self.lmp.command('fix {} all property/global'.format(name) + (' {}' * len(args)).format(*args))
 
@@ -446,8 +447,9 @@ class DEMPy:
       self.resume()
       self.setupPhysics()
       self.setupNeighbor()
+      self.setupGravity()
 
-  def setupIntegrate(self, name, dt = None):
+  def setupIntegrate(self, name):
     """
     Specify how Newton's eqs are integrated in time. 
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -460,31 +462,35 @@ class DEMPy:
 
     self.lmp.command('fix {} all nve/sphere'.format(name))
 
-    if dt is None:
-      self.lmp.command('timestep {}'.format(self.pargs['dt']))
-
-  def integrate(self, steps):
+  def integrate(self, steps, dt = None):
     """
     Run simulation in time
     """
     if not self.rank:
       logging.info('Integrating the system for {} steps'.format(steps))
 
+    for tup in self.monitorList:
+      self.vars[tup[0]] = [] # initialize all monitored vals to zero
+      self.lmp.command('compute {} {} {}'.format(*tup))
+
+    if dt is not None:
+      self.lmp.command('timestep {}'.format(dt))
+
     self.lmp.command('run {}'.format(steps))
 
     for tup in self.monitorList:
-      self.lmp.command('compute {} {} {}'.format(*tup))
-      self.vars.append(self.lmp.extract_compute(tup[0], 0, 0))
+      self.vars[tup[0]].append(self.lmp.extract_compute(tup[0], 0, 0)) # should do this on the master proc
       self.lmp.command('uncompute {}'.format(tup[0]))
 
-  def printSetup(self, freq):
+  def printSetup(self):
     """
     Specify which variables to write to file, and their format
     """
     if not self.rank:
       logging.info('Setting up printing options')
 
-    args = self.pargs['print']
+    freq, args = self.pargs['print'][0], self.pargs['print'][1:]
+
     self.lmp.command('thermo_style custom' + (' {}' * len(args)).format(*args))
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
@@ -530,15 +536,32 @@ class DEMPy:
   def plot(self, name, xlabel, ylabel, output=None):
     """
     """
-    plt.rc('text', usetex=True)
-    time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
+    if not self.rank:
+      try:
+     	plt.rc('text', usetex=True)
+     	time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
 
-    plt.plot(time, sim.vars)
-    plt.xlabel(r"{}".format(xlabel))
-    plt.ylabel(ylabel)
+      	plt.plot(time, self.vars[name])
+     	plt.xlabel(r"{}".format(xlabel))
+      	plt.ylabel(ylabel)
 
-    if output is not None:
-      plt.savefig(output)
+      	if output is not None:
+          plt.savefig(output)
+      except:
+	print "Unexpected error:", sys.exc_info()[0]
+	raise	
+
+  def saveas(self, name, fname):
+    """
+    """
+    if not self.rank:
+      print self.vars
+
+      try:
+      	np.savetxt(fname, np.array(self.vars[name]))
+      except:
+	print "Unexpected error:", sys.exc_info()[0]
+        raise
 
   def resume(self):
     """
@@ -563,6 +586,10 @@ class DEM:
     self.rank = self.comm.Get_rank()
     self.tProcs = self.comm.Get_size()
     self.nSim = pargs['nSim']
+
+    if self.nSim > self.tProcs:
+      print "Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs)
+      sys.exit(0)
 
     self.nPart = self.tProcs // self.nSim
 
@@ -593,16 +620,19 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.createProperty(name, *args)
+        if type(args[0]) is tuple:
+          self.dem.createProperty(name, *args[i])
+        else:
+          self.dem.createProperty(name, *args)
         break
 
-  def importMesh(self, name):
+  def importMesh(self, name, file, scale = None):
     """
     Imports a mesh file (STL or VTK)
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.importMesh(name)
+        self.dem.importMesh(name, file, scale)
         break
 
   def setupWall(self, name, wtype, plane = None, peq = None):
@@ -618,13 +648,13 @@ class DEM:
         self.dem.setupWall(name, wtype, plane, peq)
         break
 
-  def printSetup(self, freq):
+  def printSetup(self):
     """
     Specify which variables to write to file, and their format
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.printSetup(freq)
+        self.dem.printSetup()
         break
 
   def dumpSetup(self):
@@ -635,7 +665,7 @@ class DEM:
         self.dem.dumpSetup()
         break
 
-  def setupIntegrate(self, name, dt = None):
+  def setupIntegrate(self, name):
     """
     Specify how Newton's eqs are integrated in time. 
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -645,16 +675,16 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupIntegrate(name, dt)
+        self.dem.setupIntegrate(name)
         break
 
-  def integrate(self, steps):
+  def integrate(self, steps, dt):
     """
     Run simulation in time
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.integrate(steps)
+        self.dem.integrate(steps, dt)
         break
 
   def remove(self, name):
@@ -664,6 +694,22 @@ class DEM:
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         self.dem.remove(name)
+        break
+
+  def monitor(self, name, group, var):
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.monitor(name, group, var)
+        break
+
+  def saveas(self, name, fname):
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.saveas(name, fname)
         break
 
   def __del__(self):

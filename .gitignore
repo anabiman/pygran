@@ -10,3 +10,4 @@ traj
 log.*
 *.py~
 *.pyc~
+out*

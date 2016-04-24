@@ -12,25 +12,22 @@ if __name__ == '__main__':
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': ('all', 500, 'traj', 'traj.xyz'),
-			  'nSim': 4,
+			  'nSim': 1,
 			  'output': 'out',
-			  'dt': 10**-5,
-			  'nSS': 1,  # number of components / subsystems
-			  'idSS': [1],
-			  'vel': [(0.0,-0.01,0)],
-			  'insertRate': [10**7],
-			  'insertFreq': [10**3], # frequency of inserting particles
-			  'radius': [('constant', 0.00224)],
+			  'SS': ({'id':1, 'natoms': 5000, 'density': 2500, 'insert':True, 'rate':10**6, 'freq':10**3, 'region': ('sphere' , 0, 0.15, 0, 0.05)}, ),
+			  'nSS': 2, 
+			  # rate of particles inserted = insertRate x dt x insertFreq
+			  'vel': ((0,0,0),),
+			  'radius': (('constant', 0.00224),),
 			  'gravity': (9.81, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
-			  'box': (-0.84, 0.84, -0.01, 1.2, -0.84, 0.84), # simulation box size
-			  'Natoms': [1000],
-			  'print': ('time', 'atoms', 'ke', 'fmax'), # print the time, atom number, avg. kinetic energy, and max force
-			  'density': [2500.0], # kg /m^3
-			  'insertionRun': 10**4,
-			  'productionRun': 2 * 10**4,
-			  'freq': 10**4, # print output every freq steps
-			  'mesh': 'hopper.stl',
-			  'scaleMesh': 0.04
+			  'box':  (-0.21, 0.21, -0.01, 0.31, -0.21, 0.21), # simulation box size
+			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke'), # print the time, atom number, avg. kinetic energy, and max force
+			  'insertionRun':  {'steps': 5 * 10**4, 'dt': 10**-5},
+			  'productionRun': {'steps': 5 * 10**4, 'dt': 10**-5},
+
+			  'surfMesh': {
+					'hopper': {'file': 'hopper.stl', 'scale':0.01},
+				      },
 			  }
 
 	# Create an instance of the DEM class
@@ -46,40 +43,42 @@ if __name__ == '__main__':
 	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
 
 	# For 4 simulations, we need four tuples for the coefficient of restitution
-	coeffRest = [('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'),
-			('coefficientRestitution', 'peratomtypepair', '2', '1.1', '1.1', '1.1', '1.1'),
-			('coefficientRestitution', 'peratomtypepair', '2', '1.3', '1.3', '1.3', '1.3'),
-			('coefficientRestitution', 'peratomtypepair', '2', '1.5', '1.5', '1.5', '1.5')]
+	coeffRest = ('coefficientRestitution', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0')
+			#('coefficientRestitution', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
 
 	# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-	sim.createProperty(name='mCrest', values=coeffRest)
+	sim.createProperty('mCrest', *coeffRest)
 
-	# Import mesh hopper.stl file
-	sim.importMesh(name='hopper')
+	# Import all meshes
+	for mesh in params['surfMesh'].keys():
+		sim.importMesh(name=mesh, **params['surfMesh'][mesh])
 
-	# Setup mesh as a wall
+	# Setup hopper mesh as a wall
 	sim.setupWall(name='hopper', wtype='mesh')
 
-	# Setup a stopper wall along the xoz plane (y = 0.1)
-	sim.setupWall(name='stopper', wtype='primitive', plane = 'yplane', peq = 0.1)
+	# Setup a stopper wall along the xoz plane (y = 0.0)
+	sim.setupWall(name='stopper', wtype='primitive', plane = 'yplane', peq = 0.0)
 
 	# Print output specified in 'print' every 'freq' steps
-	sim.printSetup(freq=params['freq'])
+	sim.printSetup()
 
-	# Setup integration method for insertion
-	sim.setupIntegrate(name='intInsert')
+	# Create an NVE (micro canonical) integrator
+	sim.setupIntegrate(name='intMicro')
 
-	# Insertion stage
-	sim.integrate(steps=params['insertionRun'])
+	# Insertion run
+	sim.integrate(**params['insertionRun'])
 
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
 
 	# Remove stopper
-	sim.remove(name='stopper')
+	# sim.remove(name='stopper')
 
-	# Setup integration method for production run
-	sim.setupIntegrate(name='intProd', dt=10**-5)
+	# Monitor rotational KE
+    	sim.monitor(name='globKE', group='all', var='ke')
 
 	# Production run
-	sim.integrate(steps=params['productionRun'])	
+	sim.integrate(**params['productionRun'])	
+
+	# Save rotational KE to dat file
+	# sim.saveas(name='globKE', fname='KE.dat')
