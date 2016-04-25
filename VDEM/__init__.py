@@ -1,9 +1,7 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*- 
 '''
-Created on March 30, 2016
+Created on April 25, 2016
 
 @author: Andrew Abi-Mansour
 '''
-
-from liggghts import liggghts, DEM

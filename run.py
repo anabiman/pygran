@@ -1,3 +1,5 @@
+# !/usr/bin/python
+# -*- coding: utf8 -*-
 
 from Liggghts import DEM
 
