@@ -14,7 +14,7 @@ if __name__ == '__main__':
 			  'model': ('gran', 'model', 'hooke'),
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': ('all', 500, 'traj', 'traj.xyz'),
-			  'nSim': 1,
+			  'nSim': 2,
 			  'output': 'out',
 			  'SS': ({'id':1, 'natoms': 5000, 'density': 2500, 'insert':True, 'rate':10**6, 'freq':10**3, 'region': \
 				('sphere' , 0, 0.25, 0, 0.05)}, ), # rate of particles inserted = rate x dt x freq
@@ -44,9 +44,9 @@ if __name__ == '__main__':
 	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
 	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
 
-	# For 4 simulations, we need four tuples for the coefficient of restitution
-	coeffRest = ('coefficientRestitution', 'peratomtypepair', '2', '0.051', '0.051', '0.051', '0.051')
-			#('coefficientRestitution', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
+	# For 'm' simulations, we need 'm' tuples for the coefficient of restitution
+	coeffRest = ('coefficientRestitution', 'peratomtypepair', '2', '0.051', '0.051', '0.051', '0.051'),
+		    ('coefficientRestitution', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
 
 	# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
 	sim.createProperty('mCrest', *coeffRest)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 	# Remove stopper
 	# sim.remove(name='stopper')
 
-	# Monitor rotational KE
+	# Monitor translational and rotational <KE>
     	sim.monitor(name='ke', group='all', var='globKE', file='ke.dat')
 	sim.monitor(name='erotate/sphere', group='all', var='globRE', file='re.dat')
 
