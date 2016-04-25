@@ -11,3 +11,4 @@ log.*
 *.py~
 *.pyc~
 out*
+*.pdf

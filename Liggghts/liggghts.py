@@ -470,17 +470,12 @@ class DEMPy:
       logging.info('Integrating the system for {} steps'.format(steps))
 
     for tup in self.monitorList:
-      self.vars[tup[0]] = [] # initialize all monitored vals to zero
       self.lmp.command('compute {} {} {}'.format(*tup))
 
     if dt is not None:
       self.lmp.command('timestep {}'.format(dt))
 
     self.lmp.command('run {}'.format(steps))
-
-    for tup in self.monitorList:
-      self.vars[tup[0]].append(self.lmp.extract_compute(tup[0], 0, 0)) # should do this on the master proc
-      self.lmp.command('uncompute {}'.format(tup[0]))
 
   def printSetup(self):
     """
@@ -528,24 +523,31 @@ class DEMPy:
 
     return coords
 
-  def monitor(self, name, group, var):
+  def monitor(self, name, group, var, file):
     """
     """
-    self.monitorList.append((name, group, var))
+    self.lmp.command('compute {} all {}'.format(var, name))
+    self.lmp.command('fix my{} {} ave/time 1 1 1 c_{} file {}'.format(var, group, var, file))
 
-  def plot(self, name, xlabel, ylabel, output=None):
+  def plot(self, fname, xlabel, ylabel, output=None, xscale=None):
     """
     """
     if not self.rank:
       try:
-     	plt.rc('text', usetex=True)
-     	time = np.array(range(len(sim.vars))) * self.pargs['traj'][1] * self.pargs['dt']
+     	#plt.rc('text', usetex=True)
+     	data = np.loadtxt(fname, comments='#')
 
-      	plt.plot(time, self.vars[name])
+	time = data[:,0]
+
+	if xscale is not None:
+		time *= xscale
+
+      	plt.plot(time, data[:,1])
      	plt.xlabel(r"{}".format(xlabel))
       	plt.ylabel(ylabel)
+	plt.grid()
 
-      	if output is not None:
+      	if output:
           plt.savefig(output)
       except:
 	print "Unexpected error:", sys.exc_info()[0]
@@ -555,7 +557,6 @@ class DEMPy:
     """
     """
     if not self.rank:
-      print self.vars
 
       try:
       	np.savetxt(fname, np.array(self.vars[name]))
@@ -696,12 +697,20 @@ class DEM:
         self.dem.remove(name)
         break
 
-  def monitor(self, name, group, var):
+  def monitor(self, name, group, var, file):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.monitor(name, group, var)
+        self.dem.monitor(name, group, var, file)
+        break
+
+  def plot(self, fname, xlabel, ylabel, output=None, xscale=None):
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.plot(fname, xlabel, ylabel, output, xscale)
         break
 
   def saveas(self, name, fname):
