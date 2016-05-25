@@ -141,7 +141,7 @@ def visualize(meshFname = None, dumpFname = None):
                     Natoms = int(line)
                     sphereData = np.zeros(Natoms)
                 else:
-                    sphereData[count] = float(line[])
+                    sphereData[count] = float(line)
 
             print sphereData.shape()
 

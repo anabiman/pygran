@@ -292,8 +292,8 @@ class DEMPy:
 
       logging.info('Creating i/o directories')
 
-      if not os.path.exists(self.pargs['traj'][2]):
-        os.makedirs(self.pargs['traj'][2])
+      if not os.path.exists(self.pargs['traj']['dir']):
+        os.makedirs(self.pargs['traj']['dir'])
 
       if not os.path.exists(self.pargs['restart'][1]):
         os.makedirs(self.pargs['restart'][1])
@@ -338,13 +338,13 @@ class DEMPy:
     for i, ss in enumerate(self.pargs['SS']):
 
       if ss['insert'] == True:
-      	radius = self.pargs['radius'][i]
+        radius = self.pargs['radius'][i]
 
-     	self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
-      	self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
-  
-      	self.lmp.command('region factory ' + ('{} ' * len(ss['region'])).format(*ss['region']) + 'units box')
-      	self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {natoms} particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) + ' {} {} {} region factory ntry_mc 1000'.format(*self.pargs['vel'][i] ))
+        self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+        self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
+
+        self.lmp.command('region factory ' + ('{} ' * len(ss['region'])).format(*ss['region']) + 'units box')
+        self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {natoms} particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) + ' {} {} {} region factory ntry_mc 1000'.format(*self.pargs['vel'][i] ))
 
   def importMesh(self, name, file, scale = None):
     """
@@ -496,9 +496,7 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up trajectory i/o')
 
-    traj, trajFormat = self.pargs['traj'][-1].split('.')
-
-    self.lmp.command('dump dump {} {} {} {}/{}'.format(self.pargs['traj'][0], trajFormat, self.pargs['traj'][1], self.pargs['traj'][2],  self.pargs['traj'][-1]))
+    self.lmp.command('dump dump {sel} custom {freq} {dir}/{file}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
 
   def extractCoords(self, coords):
     """
