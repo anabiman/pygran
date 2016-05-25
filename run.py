@@ -7,29 +7,44 @@ if __name__ == '__main__':
 
 	# Create a dictionary of simulation parameters
 	params = {
+
+			  # Define the system
 			  'units': 'si',
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
 			  'boundary': ('s','s','s'), # shrink-wrapping BCs
 			  'model': ('gran', 'model', 'hooke'),
+			  'box':  (-0.032, 0.032, -0.032, 0.032, 0, 0.122), # simulation box size
+
+			  # Define component(s)
+			  'SS': ({'id':1, 'natoms': 80000, 'density': 2500, 'insert':True, 'rate':10**6, 'freq':10**3, 'region': \
+				('sphere' , 0, 0, 0.03, 0.02)}, ), # rate of particles inserted = rate x dt x freq
+			  'nSS': 2, 
+			  'vel': ((0,0.0,0), ),
+			  'radius': (('constant', 1.12e-3),),
+
+			  # Apply gravitional force in the negative direction along the y-axis
+			  'gravity': (9.81, 0, 0, -1), 
+
+			  # I/O parameters
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': {'sel':'all', 'freq':500, 'dir':'traj', 'file':'traj.custom', 'args': ('x', 'y', 'z', 'radius')},
 			  'nSim': 1,
 			  'output': 'out',
-			  'SS': ({'id':1, 'natoms': 5000, 'density': 2500, 'insert':True, 'rate':10**6, 'freq':10**3, 'region': \
-				('sphere' , 0, 0.25, 0, 0.05)}, ), # rate of particles inserted = rate x dt x freq
-			  'nSS': 2, 
-			  'vel': ((0,0.0,0), ),
-			  'radius': (('constant', 0.00224),),
-			  'gravity': (9.81, 0, -1, 0), # apply gravitional force in the negative direction along the y-axis
-			  'box':  (-0.42, 0.42, -0.01, 0.62, -0.42, 0.42), # simulation box size
 			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke'), # print the time, atom number, avg. kinetic energy, and max force
-			  'insertionRun':  {'steps':  10**4, 'dt': 10**-5},
-			  'productionRun': {'steps': 5 * 10**4, 'dt': 10**-5},
 
+			  # Stage runs
+			  'insertionRun':  {'steps':  10**6, 'dt': 10**-4},
+
+			  # Meshes
 			  'surfMesh': {
-					'hopper': {'file': 'crude_2d_mesh.stl', 'scale':0.01},
+					'hopper': {'file': 'hopper.stl', 'scale':0.001},
 				      },
+
+			  # Nearest neighbor searching paramers
+			  'nns_skin': 1e-3,
+			  'nns_type': 'bin',
+
 			  }
 
 	# Create an instance of the DEM class
@@ -39,13 +54,13 @@ if __name__ == '__main__':
 	sim.initialize()
 
 	# Setup material properties
-	sim.createProperty('mYmod', *('youngsModulus', 'peratomtype', '50.e6', '50.e6'))
-	sim.createProperty('mPratio', *('poissonsRatio', 'peratomtype', '0.45', '0.45'))
-	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
-	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '2.0', '2.0'))
+	sim.createProperty('mYmod', *('youngsModulus', 'peratomtype', '7.1e7', '7.1e7'))
+	sim.createProperty('mPratio', *('poissonsRatio', 'peratomtype', '0.22', '0.22'))
+	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '0.1', '0.1', '0.1', '0.1'))
+	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '0.01', '0.01'))
 
 	# For 'm' simulations, we need 'm' tuples for the coefficient of restitution
-	coeffRest = (('coefficientRestitution', 'peratomtypepair', '2', '0.051', '0.051', '0.051', '0.051'))
+	coeffRest = (('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
 
 	# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
 	sim.createProperty('mCrest', *coeffRest)
@@ -58,7 +73,7 @@ if __name__ == '__main__':
 	sim.setupWall(name='hopper', wtype='mesh')
 
 	# Setup a stopper wall along the xoz plane (y = 0.0)
-	sim.setupWall(name='stopper', wtype='primitive', plane = 'yplane', peq = 0.0)
+	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
 
 	# Print output specified in 'print' every 'freq' steps
 	sim.printSetup()
@@ -66,11 +81,11 @@ if __name__ == '__main__':
 	# Create an NVE (micro canonical) integrator
 	sim.setupIntegrate(name='intMicro')
 
-	# Insertion run
-	sim.integrate(**params['insertionRun'])
-
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
+
+	# Insertion run
+	sim.integrate(**params['insertionRun'])
 
 	# Remove stopper
 	# sim.remove(name='stopper')
@@ -78,9 +93,6 @@ if __name__ == '__main__':
 	# Monitor translational and rotational <KE>
    	sim.monitor(name='ke', group='all', var='globKE', file='ke.dat')
 	sim.monitor(name='erotate/sphere', group='all', var='globRE', file='re.dat')
-
-	# Production run
-	sim.integrate(**params['productionRun'])	
 
 	# Save rotational KE to dat file
 	sim.plot(fname='ke.dat', xlabel='Time (s)', ylabel='KE (J/atom)', output='ke.pdf', xscale = params['productionRun']['dt'])

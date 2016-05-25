@@ -1,5 +1,9 @@
 import numpy as np
 
+"""
+TODO: compute mass flow rate, density, nns distribution (radial distribution function)
+"""
+
 def readCustomTraj(fname):
 	"""
 	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory

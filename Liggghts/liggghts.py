@@ -395,13 +395,13 @@ class DEMPy:
       for idSS in self.pargs['idSS']:
         self.lmp.command('group group{} type {}'.format(idSS, idSS))
 
-  def setupNeighbor(self):
+  def setupNeighbor(self, **params):
     """
     """
     if not self.rank:
       logging.info('Setting up nearest neighbor searching parameters')
 
-    self.lmp.command('neighbor 0.001 bin')
+    self.lmp.command('neighbor {nns_skin} {nns_type}'.format(**params))
     self.lmp.command('neigh_modify delay 0')
 
   def createProperty(self, name, *args):
@@ -431,7 +431,7 @@ class DEMPy:
     """
     self.lmp.command('fix myGravity all gravity {} vector {} {} {}'.format(*self.pargs['gravity']))
 
-  def initialize(self):
+  def initialize(self, **params):
     """
     """
 
@@ -442,7 +442,7 @@ class DEMPy:
       self.createDomain()
       #self.createGroup()
       self.setupPhysics()
-      self.setupNeighbor()
+      self.setupNeighbor(**self.pargs)
       self.insertParticles()
       self.setupGravity()
 
