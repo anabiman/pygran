@@ -33,6 +33,11 @@ import glob
 import sys
 from importlib import import_module
 
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
   
@@ -47,27 +52,19 @@ class liggghts:
 
   # create instance of LIGGGHTS
  
-  def __init__(self,name="",cmdargs=None,ptr=None,comm=None):
+  def __init__(self,name="libliggghts.so",cmdargs=None,ptr=None,comm=None):
 
     # determine module location
-    
-    modpath = dirname(abspath(getsourcefile(lambda:0)))
+    print "Looking for {} ...".format(name)
+    foundliggghts = find(name, "/")
+ 
+    if foundliggghts:
+      print "Using " + foundliggghts
+    else:
+      print "Make sure a " + name + " is installed on your system"
+      sys.exit()
 
-    # load libliggghts.so unless name is given.
-    # e.g. if name = "g++", load libliggghts_g++.so
-    # try loading the LIGGGHTS shared object from the location
-    # of liggghts.py with an absolute path (so that LD_LIBRARY_PATH
-    # does not need to be set for regular installations.
-    # fall back to loading with a relative path, which typically
-    # requires LD_LIBRARY_PATH to be set appropriately.
-
-    try:
-      if not name: 
-        self.lib = CDLL(join(modpath,"libliggghts.so"), RTLD_GLOBAL)
-      else: self.lib = CDLL(join(modpath,"Liggghts/libliggghts_{}.so".format(name)),RTLD_GLOBAL)
-    except:
-      if not name: self.lib = CDLL(join(modpath,"libliggghts.so"), RTLD_GLOBAL)
-      else: self.lib = CDLL("Liggghts/libliggghts_{}.so".format(name), RTLD_GLOBAL)
+    self.lib = CDLL(foundliggghts, RTLD_GLOBAL)
 
     # if no ptr provided, create an instance of LIGGGHTS
     #   don't know how to pass an MPI communicator from PyPar
