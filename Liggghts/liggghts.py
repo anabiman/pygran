@@ -54,14 +54,20 @@ class liggghts:
  
   def __init__(self,name="libliggghts.so",cmdargs=None,ptr=None,comm=None):
 
+    comm = MPI.COMM_WORLD
+
     # determine module location
-    print "Looking for {} ...".format(name)
+    if not comm.Get_rank():
+      print "Looking for {} ...".format(name)
+    
     foundliggghts = find(name, "/")
  
     if foundliggghts:
-      print "Using " + foundliggghts
+      if not comm.Get_rank():
+        print "Using " + foundliggghts
     else:
-      print "Make sure a " + name + " is installed on your system"
+      if not comm.Get_rank():
+        print "Make sure a " + name + " is installed on your system"
       sys.exit()
 
     self.lib = CDLL(foundliggghts, RTLD_GLOBAL)
