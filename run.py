@@ -12,13 +12,12 @@ if __name__ == '__main__':
 			  'units': 'si',
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
-			  'boundary': ('s','s','s'), # shrink-wrapping BCs
+			  'boundary': ('f','f','f'), # shrink-wrapping BCs
 			  'model': ('gran', 'model', 'hooke'),
-			  'box':  (-0.032, 0.032, -0.032, 0.032, 0, 0.122), # simulation box size
+			  'box':  (-0.032, 0.032, -0.032, 0.032, -0.01, 0.122), # simulation box size
 
 			  # Define component(s)
-			  'SS': ({'id':1, 'natoms': 80000, 'density': 2500, 'insert':True, 'rate':10**6, 'freq':10**3, 'region': \
-				('sphere' , 0, 0, 0.03, 0.02)}, ), # rate of particles inserted = rate x dt x freq
+			  'SS': ({'id':1, 'natoms': 30000, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
 			  'nSS': 2, 
 			  'vel': ((0,0.0,0), ),
 			  'radius': (('constant', 1.12e-3),),
@@ -34,7 +33,8 @@ if __name__ == '__main__':
 			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke'), # print the time, atom number, avg. kinetic energy, and max force
 
 			  # Stage runs
-			  'insertionRun':  {'steps':  10**6, 'dt': 10**-4},
+			  'insertion':  {'steps':  10**4, 'dt': 10**-4},
+			  'flow': {'steps': 10**5, 'dt': 10**-4},
 
 			  # Meshes
 			  'surfMesh': {
@@ -84,16 +84,27 @@ if __name__ == '__main__':
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
 
-	# Insertion run
-	sim.integrate(**params['insertionRun'])
+	# Insert particles for stage 1
+	sim.insertParticles('lowerSphere', *('sphere', 0, 0, 0.03, 0.02))
+	sim.integrate(**params['insertion'])
+
+	# Insert particles for stage 2
+	sim.insertParticles('midSphere', *('sphere', 0, 0, 0.06, 0.02))
+	sim.integrate(**params['insertion'])
+
+	# Insert particles for stage 3
+	sim.insertParticles('higherSphere', *('sphere', 0, 0, 0.09, 0.02))
+	sim.integrate(**params['insertion'])
 
 	# Remove stopper
-	# sim.remove(name='stopper')
+	sim.remove(name='stopper')
+
+	sim.integrate(**params['flow'])
 
 	# Monitor translational and rotational <KE>
    	sim.monitor(name='ke', group='all', var='globKE', file='ke.dat')
 	sim.monitor(name='erotate/sphere', group='all', var='globRE', file='re.dat')
 
 	# Save rotational KE to dat file
-	sim.plot(fname='ke.dat', xlabel='Time (s)', ylabel='KE (J/atom)', output='ke.pdf', xscale = params['productionRun']['dt'])
-	sim.plot(fname='re.dat', xlabel='Time (s)', ylabel='RE (J/atom)', output='re.pdf', xscale = params['productionRun']['dt'])
+	sim.plot(fname='ke.dat', xlabel='Time (s)', ylabel='KE (J/atom)', output='ke.pdf', xscale = params['flow']['dt'])
+	sim.plot(fname='re.dat', xlabel='Time (s)', ylabel='RE (J/atom)', output='re.pdf', xscale = params['flow']['dt'])

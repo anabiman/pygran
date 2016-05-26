@@ -4,6 +4,13 @@ import numpy as np
 TODO: compute mass flow rate, density, nns distribution (radial distribution function)
 """
 
+def computeFlow(data, *region):
+	"""
+	Computes flow rate: (Ni - No) / (ti - to) in a window defined by *region
+	@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
+
+	"""
+
 def select(data, *region):	
 	"""
 	Create a selection of particles based on a subsystem defined by region

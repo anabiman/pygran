@@ -328,15 +328,11 @@ class DEMPy:
     self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
-  def insertParticles(self):
+  def setupParticles(self):
     """ Create atoms in a pre-defined region
-    @ N: max total number of particles to be inserted
-    @ density: initial density of the particles
-    @ vel: 3 x 1 tuple of initial velocities of all particles
-    @ args: dictionary of params
     """
     if not self.rank:
-      logging.info('Inserting particles')
+      logging.info('Setting up particles')
 
     for i, ss in enumerate(self.pargs['SS']):
 
@@ -346,8 +342,24 @@ class DEMPy:
         self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
         self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
 
-        self.lmp.command('region factory ' + ('{} ' * len(ss['region'])).format(*ss['region']) + 'units box')
-        self.lmp.command('fix ins all insert/rate/region seed 123481 distributiontemplate pdd nparticles {natoms} particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) + ' {} {} {} region factory ntry_mc 1000'.format(*self.pargs['vel'][i] ))
+  def insertParticles(self, name, *region):
+    """
+    """
+    if not self.rank:
+      logging.info('Inserting particles')
+
+    for i, ss in enumerate(self.pargs['SS']):
+
+      natoms = ss['natoms'] - self.lmp.get_natoms()
+
+      if natoms < 0:
+         if not self.rank: 
+            print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
+            raise
+            
+      self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+      self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(np.random.randint(0,10**6), natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+        + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
 
   def importMesh(self, name, file, scale = None):
     """
@@ -359,7 +371,7 @@ class DEMPy:
       logging.info('Importing mesh from {}'.format(fname))
 
     if scale == None:
-	self.lmp.command('fix {} all mesh/surface file {} type 2'.format(name, fname))
+      self.lmp.command('fix {} all mesh/surface file {} type 2'.format(name, fname))
     else:
     	self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, scale))
 
@@ -443,7 +455,7 @@ class DEMPy:
       #self.createGroup()
       self.setupPhysics()
       self.setupNeighbor(**self.pargs)
-      self.insertParticles()
+      self.setupParticles()
       self.setupGravity()
 
     else:
@@ -615,7 +627,21 @@ class DEM:
       if self.rank < self.nPart * (i + 1):
         self.dem.initialize()
         break
-   
+  
+  def insertParticles(self, name, *args):
+
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.insertParticles(name, *args)
+        break
+
+  def setupParticles(self):
+
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.setupParticles()
+        break
+
   def createProperty(self, name, *args):
     """
     Material and interaction properties required
