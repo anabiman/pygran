@@ -7,3 +7,4 @@ Created on April 25, 2016
 '''
 
 from visualize import *
+from analyze import *
