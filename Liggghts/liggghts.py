@@ -356,10 +356,13 @@ class DEMPy:
          if not self.rank: 
             print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
             raise
-            
+
+      randName = np.random.randint(0,10**6)
       self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
-      self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(np.random.randint(0,10**6), natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+      self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
         + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+
+      return randName
 
   def importMesh(self, name, file, scale = None):
     """
@@ -632,8 +635,7 @@ class DEM:
 
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.insertParticles(name, *args)
-        break
+        return self.dem.insertParticles(name, *args)
 
   def setupParticles(self):
 
