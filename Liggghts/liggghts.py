@@ -357,12 +357,14 @@ class DEMPy:
             print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
             raise
 
-      randName = np.random.randint(0,10**6)
-      self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
-      self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-        + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+      if natoms > 0:
+        randName = np.random.randint(0,10**6)
+        self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+        self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+          + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+        print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
 
-      return randName
+        return randName
 
   def importMesh(self, name, file, scale = None):
     """

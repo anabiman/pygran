@@ -17,10 +17,10 @@ if __name__ == '__main__':
 			  'box':  (-0.032, 0.032, -0.032, 0.032, -0.01, 0.122), # simulation box size
 
 			  # Define component(s)
-			  'SS': ({'id':1, 'natoms': 3000, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
+			  'SS': ({'id':1, 'natoms': 5e5, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
 			  'nSS': 2, 
 			  'vel': ((0,0.0,0), ),
-			  'radius': (('constant', 2.24e-3),),
+			  'radius': (('constant', 4.48e-4),),
 
 			  # Apply gravitional force in the negative direction along the y-axis
 			  'gravity': (9.81, 0, 0, -1), 
@@ -29,12 +29,12 @@ if __name__ == '__main__':
 			  'restart': (10**4, 'restart', 'restart.*', False),
 			  'traj': {'sel':'all', 'freq':100, 'dir':'traj', 'file':'traj.custom', 'args': ('x', 'y', 'z', 'omegax', 'omegay', 'omegaz', 'radius')},
 			  'nSim': 1,
-			  'output': 'out-3000',
+			  'output': 'out-5e5-16cores',
 			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu'), # print the time, atom number, avg. kinetic energy, and max force
 
 			  # Stage runs
-			  'insertion':  {'steps':  2 * 10**4, 'dt': 10**-4},
-			  'flow': {'steps': 10**5, 'dt': 10**-4},
+			  'insertion':  {'steps':  2 * 10**4, 'dt': 4 * 10**-5},
+			  'flow': {'steps': 10**4, 'dt': 4 * 10**-5},
 
 			  # Meshes
 			  'surfMesh': {
@@ -85,19 +85,14 @@ if __name__ == '__main__':
 	sim.dumpSetup()
 
 	# Insert particles for stage 1
-	lowerSphere = sim.insertParticles('lowerSphere', *('sphere', 0, 0, 0.03, 0.02))
+	lowerSphere = sim.insertParticles('lowerSphere', *('sphere', 0, 0, 0.03, 0.03))
 	sim.integrate(**params['insertion'])
 	sim.remove(lowerSphere)
 
 	# Insert particles for stage 2
-	midSphere = sim.insertParticles('midSphere', *('sphere', 0, 0, 0.06, 0.02))
+	midSphere = sim.insertParticles('midSphere', *('sphere', 0, 0, 0.08, 0.03))
 	sim.integrate(**params['insertion'])
 	sim.remove(midSphere)
-
-	# Insert particles for stage 3
-	upperSphere = sim.insertParticles('upperSphere', *('sphere', 0, 0, 0.09, 0.02))
-	sim.integrate(**params['insertion'])
-	sim.remove(upperSphere)
 
 	# Remove stopper
 	sim.remove(name='stopper')

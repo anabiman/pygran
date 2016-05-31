@@ -4,12 +4,16 @@ import numpy as np
 TODO: compute mass flow rate, density, nns distribution (radial distribution function)
 """
 
-def computeFlow(data, *region):
+def computeFlow(data, sel):
 	"""
-	Computes flow rate: (Ni - No) / (ti - to) in a window defined by *region
+	Computes flow rate: N/t for a selection *sel*
 	@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
-
 	"""
+	
+	if data['TIMESTEP'] <= 0:
+		return 0
+	else:
+		return np.float(len(sel)) / data['TIMESTEP']
 
 def select(data, *region):	
 	"""
@@ -47,11 +51,14 @@ def select(data, *region):
 	except:
 		raise
 
-def readCustomTraj(fname):
+def readCustomTraj(fname, flow = False, region = ()):
 	"""
 	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory
 	"""
 	dicList = []
+
+	if flow:
+		flowRate = []
 
 	with open(fname,'r') as fp:
 		while True:
@@ -62,6 +69,11 @@ def readCustomTraj(fname):
 				line = fp.readline()
 
 				if not line: 
+
+					if flow:
+						flowRate = np.array(flowRate)
+						np.savetxt('flow.dat', flowRate)
+
 					return dicList
 
 				if line.find('TIMESTEP') >= 0:
@@ -97,6 +109,14 @@ def readCustomTraj(fname):
 				for j, key in enumerate(keys):
 					dic[key][i] = float(var[j]) 
 
+			if flow:
+				sel = select(dic)
+				flowRate.append(computeFlow(dic, sel))
+
 			dicList.append(dic)
+
+	if flow:
+		flowRate = np.array(flowRate)
+		np.savetxt('flow.dat', flowRate)
 
 	return dicList
