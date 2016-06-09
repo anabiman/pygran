@@ -52,7 +52,7 @@ class liggghts:
 
   # create instance of LIGGGHTS
  
-  def __init__(self,name="libliggghts.so",cmdargs=None,ptr=None,comm=None):
+  def __init__(self,name="libliggghts.so",path=None, cmdargs=None,ptr=None,comm=None):
 
     comm = MPI.COMM_WORLD
 
@@ -60,7 +60,10 @@ class liggghts:
     if not comm.Get_rank():
       print "Looking for {} ...".format(name)
     
-    foundliggghts = find(name, "/")
+    if path:
+      foundliggghts = path + name
+    else:
+      foundliggghts = find(name, "/")
  
     if foundliggghts:
       if not comm.Get_rank():
@@ -265,7 +268,7 @@ class liggghts:
 class DEMPy:
   """A class that implements a python interface for DEM computations"""
 
-  def __init__(self, sid, split, units, dim, style, **pargs):
+  def __init__(self, sid, split, units, dim, style, path, **pargs):
     """ Initialize some settings and specifications 
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
@@ -288,11 +291,15 @@ class DEMPy:
 
       global logging
 
-      os.chdir(self.output)
+    # Make sure all procs change to working dir
+    os.chdir(self.output)
+
+    if not self.rank:
       logging = import_module(name='logging')
 
       logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
+      logging.info("Working in {}".format(self.path))
       logging.info('Creating i/o directories')
 
       if not os.path.exists(self.pargs['traj']['dir']):
@@ -303,7 +310,7 @@ class DEMPy:
 
       logging.info('Instantiating LIGGGHTS object')
 
-    self.lmp = liggghts(comm=split, cmdargs=['-log', 'liggghts.log'])
+    self.lmp = liggghts(comm=split, path=path, cmdargs=['-log', 'liggghts.log'])
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
@@ -362,9 +369,10 @@ class DEMPy:
         self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
         self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
           + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
-        print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
-
         return randName
+      else:
+        print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
+        raise 
 
   def importMesh(self, name, file, scale = None):
     """
@@ -466,7 +474,7 @@ class DEMPy:
     else:
       self.resume()
       self.setupPhysics()
-      self.setupNeighbor()
+      self.setupNeighbor(**self.pargs)
       self.setupGravity()
 
   def setupIntegrate(self, name):

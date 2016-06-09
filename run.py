@@ -1,6 +1,9 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
+# ffmpeg -start_number 84 -i island_sizes-CSH\(II\)-%03d.png output.mpg
+
+
 from Liggghts import DEM
 
 if __name__ == '__main__':
@@ -13,28 +16,28 @@ if __name__ == '__main__':
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
 			  'boundary': ('f','f','f'), # fixed BCs
-			  'model': ('gran', 'model', 'hooke', 'tangential', 'history'),
+			  'model': ('gran', 'model', 'hooke', 'tangential', 'history', 'tangential_damping', 'on',),
 			  'box':  (-0.032, 0.032, -0.032, 0.032, -0.01, 0.122), # simulation box size
 
 			  # Define component(s)
-			  'SS': ({'id':1, 'natoms': 5e5, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
+			  'SS': ({'id':1, 'natoms': 5e3, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
 			  'nSS': 2, 
 			  'vel': ((0,0.0,0), ),
 			  'radius': (('constant', 4.48e-4),),
 
-			  # Apply gravitional force in the negative direction along the y-axis
+			  # Apply gravitional force in the negative direction along the z-axis
 			  'gravity': (9.81, 0, 0, -1), 
 
 			  # I/O parameters
-			  'restart': (10**4, 'restart', 'restart.*', False),
-			  'traj': {'sel':'all', 'freq':100, 'dir':'traj', 'file':'traj.custom', 'args': ('x', 'y', 'z', 'omegax', 'omegay', 'omegaz', 'radius')},
+			  'restart': (10**4, 'restart', 'restart.*', True),
+			  'traj': {'sel':'all', 'freq':10000, 'dir':'traj', 'file':'traj.custom', 'args': ('x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', 'fx', 'fy', 'fz')},
 			  'nSim': 1,
-			  'output': 'out-5e5-16cores',
+			  'output': 'out-5e5-1cores',
 			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu'), # print the time, atom number, avg. kinetic energy, and max force
 
 			  # Stage runs
-			  'insertion':  {'steps':  2 * 10**4, 'dt': 4 * 10**-5},
-			  'flow': {'steps': 10**4, 'dt': 4 * 10**-5},
+			  'insertion':  {'steps':  2 * 10**4, 'dt': 10**-5},
+			  'flow': {'steps': 10**4, 'dt': 10**-5},
 
 			  # Meshes
 			  'surfMesh': {
@@ -45,6 +48,8 @@ if __name__ == '__main__':
 			  'nns_skin': 1e-3,
 			  'nns_type': 'bin',
 
+			  # grab shared libraries from here
+			  'path': '/usr/lib64/',
 			  }
 
 	# Create an instance of the DEM class
@@ -85,14 +90,14 @@ if __name__ == '__main__':
 	sim.dumpSetup()
 
 	# Insert particles for stage 1
-	lowerSphere = sim.insertParticles('lowerSphere', *('sphere', 0, 0, 0.03, 0.03))
-	sim.integrate(**params['insertion'])
-	sim.remove(lowerSphere)
+	# lowerSphere = sim.insertParticles('lowerSphere', *('sphere', 0, 0, 0.03, 0.03))
+	# sim.integrate(**params['insertion'])
+	# sim.remove(lowerSphere)
 
 	# Insert particles for stage 2
-	midSphere = sim.insertParticles('midSphere', *('sphere', 0, 0, 0.08, 0.03))
-	sim.integrate(**params['insertion'])
-	sim.remove(midSphere)
+	# midSphere = sim.insertParticles('midSphere', *('sphere', 0, 0, 0.08, 0.03))
+	# sim.integrate(**params['insertion'])
+	# sim.remove(midSphere)
 
 	# Remove stopper
 	sim.remove(name='stopper')
