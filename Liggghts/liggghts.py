@@ -275,7 +275,7 @@ class DEMPy:
     # style: granular, atom, or ...
     """
     self.rank = split.Get_rank()
-
+    self.split = split
     self.pargs = pargs
     self.monitorList = []
     self.vars = {}
@@ -285,11 +285,12 @@ class DEMPy:
     self.output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
 
     if not self.rank:
-
       if not os.path.exists(self.output):
         os.makedirs(self.output)
-
+    
       global logging
+
+    self.split.Barrier() # wait for all procs to synchronize
 
     # Make sure all procs change to working dir
     os.chdir(self.output)
