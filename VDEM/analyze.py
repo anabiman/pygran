@@ -7,16 +7,19 @@ TODO: compute mass flow rate, density, nns distribution (radial distribution fun
 
 """
 
-def computeFlow(data, t0 = 0, N0 = 0, sel = None):
+def computeFlow(data, density, t0 = 0, N0 = 0, sel = None, dt = 1e-4):
 	"""
 	Computes flow rate: N/t for a selection *sel*
 	@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
+
+	TODO: Get this working for a particle distribution
 	"""
-	
-	if data['TIMESTEP'] - t0 <= 0:
+
+	if N0 == None or t0 == None:
 		return 0
 	else:
-		return - (np.float(len(sel)) - N0) / (data['TIMESTEP'] - t0)
+		mass = np.sum(density * 4.0 / 3.0 * np.pi * (data['radius'][sel])**3.0) - N0 * density * 4.0 / 3.0 * np.pi * np.mean(data['radius'][sel])**3.0
+		return - mass / ((data['TIMESTEP'] - t0) * dt)
 
 def computeDensity(data, density, shape = 'box', sel = None):
 	"""
@@ -88,18 +91,17 @@ def select(data, *region):
 	except:
 		raise
 
-def readCustomTraj(fname, flow = False, density = None, shape = 'box', region = ()):
+def readCustomTraj(fname, flow = False, density = None, shape = None, region = (), dt = 1e-4):
 	"""
 	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory
 	"""
 	dicList = []
-	foundT0 = False
-	foundN0 = False
+	t0, N0 = None, None
 
 	if flow:
 		flowRate = []
 
-	if density:
+	if shape:
 		bDensity = []
 
 	with open(fname,'r') as fp:
@@ -116,7 +118,7 @@ def readCustomTraj(fname, flow = False, density = None, shape = 'box', region = 
 						flowRate = np.array(flowRate)
 						np.savetxt('flow.dat', flowRate)
 
-					if density:
+					if shape:
 						bDensity = np.array(bDensity)
 						np.savetxt('density.dat', bDensity)
 
@@ -126,17 +128,9 @@ def readCustomTraj(fname, flow = False, density = None, shape = 'box', region = 
 					timestep = int(fp.readline())
 					dic['TIMESTEP'] = timestep
 
-					if not foundT0:
-						t0 = timestep
-						foundT0 = True
-
 				if line.find('NUMBER OF ATOMS') >= 0:
 					natoms = int(fp.readline())
 					dic['NATOMS'] = natoms
-
-					if not foundN0:
-						N0 = natoms
-						foundN0 = True
 
 				if line.find('BOX') >= 0:
 					boxX = fp.readline().split()
@@ -164,12 +158,15 @@ def readCustomTraj(fname, flow = False, density = None, shape = 'box', region = 
 					dic[key][i] = float(var[j]) 
 
 			sel = select(dic)
-			
-			if flow:
-				flowRate.append(computeFlow(dic, t0, N0, sel))
 
-			if density:
+			if flow:
+				flowRate.append(computeFlow(dic, density, t0, N0, sel, dt))
+
+			if shape:
 				bDensity.append(computeDensity(dic, density, shape, sel))
+
+			t0 = timestep
+			N0 = natoms
 
 			dicList.append(dic)
 
@@ -177,7 +174,7 @@ def readCustomTraj(fname, flow = False, density = None, shape = 'box', region = 
 		flowRate = np.array(flowRate)
 		np.savetxt('flow.dat', flowRate)
 
-	if density:
+	if shape:
 		bDensity = np.array(bDensity)
 		np.savetxt('density.dat', bDensity)
 
