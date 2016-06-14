@@ -100,7 +100,7 @@ def initialize():
 
     return ren, iren, renWin
 
-def visualize(meshFname = None, dumpFname = None):
+def plotSphereMesh(meshFname = None, dumpFname = None):
 
     # Create a rendering window and renderer
     transform = vtk.vtkTransform()

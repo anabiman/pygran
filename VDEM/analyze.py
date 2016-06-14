@@ -74,17 +74,17 @@ def select(data, *region):
 		x, y, z = data['x'], data['y'], data['z']
 
 		# This is so hackish!
-		indices = np.where(x > xmin)
-		indices = indices + np.where(x < xmax)
-		indices = np.unique(indices)
+		if len(x) > 0:
 
-		indices = indices + np.where(y > ymin)
-		indices = indices + np.where(y < ymax)
-		indices = np.unique(indices)
+			indices = np.intersect1d(np.where(x > xmin)[0], np.where(x < xmax)[0])
+			indices = np.intersect1d(np.where(y > ymin)[0], indices)
+			indices = np.intersect1d(np.where(y < ymax)[0], indices)
 
-		indices = indices + np.where(z > zmin)
-		indices = indices + np.where(z < zmax)
-		indices = np.unique(indices)
+			indices = np.intersect1d(np.where(z > zmin)[0], indices)
+			indices = np.intersect1d(np.where(z < zmax)[0], indices)
+
+		else:
+			indices = []
 
 		return indices
 
@@ -157,13 +157,18 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 				for j, key in enumerate(keys):
 					dic[key][i] = float(var[j]) 
 
-			sel = select(dic)
+			sel = select(dic, *region)
 
-			if flow:
-				flowRate.append(computeFlow(dic, density, t0, N0, sel, dt))
+			if len(region):
+				print "Found {} particles based on user-supplied selection".format(len(sel))
 
-			if shape:
-				bDensity.append(computeDensity(dic, density, shape, sel))
+			if len(sel): # Make sure the frame contains NATOMS > 0 else dont bother compute anything
+
+				if flow:
+					flowRate.append(computeFlow(dic, density, t0, N0, sel, dt))
+
+				if shape:
+					bDensity.append(computeDensity(dic, density, shape, sel))
 
 			t0 = timestep
 			N0 = natoms
