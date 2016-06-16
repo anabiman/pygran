@@ -171,7 +171,7 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 					bDensity.append(computeDensity(dic, density, shape, sel))
 
 			t0 = timestep
-			N0 = natoms
+			N0 = len(sel)
 
 			dicList.append(dic)
 
