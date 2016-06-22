@@ -18,7 +18,7 @@ def computeFlow(data, density, t0 = 0, N0 = 0, sel = None, dt = 1e-4):
 	if N0 == None or t0 == None:
 		return 0
 	else:
-		mass = np.sum(density * 4.0 / 3.0 * np.pi * (data['radius'][sel])**3.0) - N0 * density * 4.0 / 3.0 * np.pi * np.mean(data['radius'][sel])**3.0
+		mass = density * 4.0 / 3.0 * np.pi * (len(sel) - N0) * np.mean(data['radius'][sel])**3.0
 		return - mass / ((data['TIMESTEP'] - t0) * dt)
 
 def computeDensity(data, density, shape = 'box', sel = None):
@@ -36,17 +36,17 @@ def computeDensity(data, density, shape = 'box', sel = None):
 	if shape == 'box':
 		volume = (xmax - xmin) * (ymax - ymin) * (zmax - zmin)
 
-	elif shape == 'cylinderZ':
+	elif shape == 'cylinder-z':
 		height = zmax - zmin
 		radius = (ymax - ymin) * 0.25 + (xmax - xmin) * 0.25
 		volume = np.pi * radius**2.0 * height
 
-	elif shape == 'cylinderY':
+	elif shape == 'cylinder-y':
 		height = ymax - ymin
 		radius = (zmax - zmin) * 0.25 + (xmax - xmin) * 0.25
 		volume = np.pi * radius**2.0 * height
 
-	elif shape == 'cylinderX':
+	elif shape == 'cylinder-x':
 		height = xmax - xmin
 		radius = (ymax - ymin) * 0.25 + (zmax - zmin) * 0.25
 		volume = np.pi * radius**2.0 * height
@@ -54,6 +54,26 @@ def computeDensity(data, density, shape = 'box', sel = None):
 	mass = np.sum(density * 4.0 / 3.0 * np.pi * (data['radius'][sel])**3.0)
 
 	return mass / volume
+
+def computeHeight(data, axis):
+	"""
+	Computes the mean max height of an N-particle system along the x, y, or z axis.
+	"""
+	height = data[axis].max()
+	hmin = height * 0.9
+	hmax = height * 1.1
+
+	if axis == 'x':
+		region = (hmin, hmax, -np.inf, np.inf, -np.inf, np.inf)
+	elif axis == 'y':
+		region = (-np.inf, np.inf, hmin, hmax, -np.inf, np.inf)
+	elif axis == 'z':
+		region = (-np.inf, np.inf, -np.inf, np.inf, hmin, hmax)
+	else:
+		print "axis must be x, y, or z"
+		raise
+
+	return data[axis][select(data, *region)].mean()
 
 def select(data, *region):	
 	"""
@@ -91,11 +111,11 @@ def select(data, *region):
 	except:
 		raise
 
-def readCustomTraj(fname, flow = False, density = None, shape = None, region = (), dt = 1e-4):
+def readCustomTraj(fname, height = False, flow = False, density = None, shape = None, region = (), dt = 1e-4):
 	"""
 	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory
 	"""
-	dicList = []
+	dicList = [] # Keep this empty for now to avoid large memory buffers
 	t0, N0 = None, None
 
 	if flow:
@@ -103,6 +123,10 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 
 	if shape:
 		bDensity = []
+
+	if height:
+		hdist = []
+		axis = shape[-1]
 
 	with open(fname,'r') as fp:
 		while True:
@@ -121,6 +145,10 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 					if shape:
 						bDensity = np.array(bDensity)
 						np.savetxt('density.dat', bDensity)
+
+					if height:
+						hdist = np.array(hdist)
+						np.savetxt('height.dat', hdist)
 
 					return dicList
 
@@ -170,10 +198,11 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 				if shape:
 					bDensity.append(computeDensity(dic, density, shape, sel))
 
+				if height:
+					hdist.append(computeHeight(dic, axis))
+
 			t0 = timestep
 			N0 = len(sel)
-
-			dicList.append(dic)
 
 	if flow:
 		flowRate = np.array(flowRate)
@@ -183,4 +212,6 @@ def readCustomTraj(fname, flow = False, density = None, shape = None, region = (
 		bDensity = np.array(bDensity)
 		np.savetxt('density.dat', bDensity)
 
-	return dicList
+	if height:
+		hdist = np.array(hdist)
+		np.savetxt('height.dat', hdist)
