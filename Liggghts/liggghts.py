@@ -389,19 +389,29 @@ class DEMPy:
     else:
     	self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, scale))
 
-  def setupWall(self, name, wtype, plane = None, peq = None):
+  def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
     @ wtype: type of the wall (primitive or mesh)
     @ plane: x, y, or z plane for primitive walls
     @ peq: plane equation for primitive walls
+!
     """
 
+    gran = 'gran' # VERY HACKISH
+    model = []
+
+    for item in self.pargs['model']:
+      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce':
+        model.append(item)
+
+    model = tuple(model) 
+
     if wtype == 'mesh':
-      self.lmp.command('fix myMesh all wall/gran model hooke {} n_meshes 1 meshes {}'.format(wtype, name))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes 1 meshes {}'.format(wtype, meshName))
     elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/gran model hooke {} type 1 {} {}'.format(name, wtype, plane, peq))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type 1 {} {}'.format(wtype, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
  
@@ -660,6 +670,7 @@ class DEM:
     """
     Material and interaction properties required
     """
+
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         if type(args[0]) is tuple:
@@ -677,7 +688,7 @@ class DEM:
         self.dem.importMesh(name, file, scale)
         break
 
-  def setupWall(self, name, wtype, plane = None, peq = None):
+  def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -687,7 +698,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupWall(name, wtype, plane, peq)
+        self.dem.setupWall(name, wtype, meshName, plane, peq)
         break
 
   def printSetup(self):

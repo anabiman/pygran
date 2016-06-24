@@ -60,8 +60,8 @@ def computeHeight(data, axis):
 	Computes the mean max height of an N-particle system along the x, y, or z axis.
 	"""
 	height = data[axis].max()
-	hmin = height * 0.9
-	hmax = height * 1.1
+	hmin = height * 0.99
+	hmax = height * 1.01
 
 	if axis == 'x':
 		region = (hmin, hmax, -np.inf, np.inf, -np.inf, np.inf)
