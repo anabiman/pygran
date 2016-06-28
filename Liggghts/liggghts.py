@@ -325,6 +325,12 @@ class DEMPy:
     self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
     self.lmp.command('processors * * *') # let LIGGGHTS handle DD
 
+    if not self.rank:
+      from sys import argv
+      scriptFile = argv[0]
+      logging.info('Backing up {} file'.format(scriptFile))
+      os.system('cp {}/{}')
+
   def createDomain(self):
     """ Define the domain of the simulation
     @ nsys: number of subsystems
@@ -401,15 +407,19 @@ class DEMPy:
 
     gran = 'gran' # VERY HACKISH
     model = []
+    modelExtra = []
 
     for item in self.pargs['model']:
       if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce':
         model.append(item)
+      elif item != 'gran':
+        modelExtra.append(item)
 
     model = tuple(model) 
 
     if wtype == 'mesh':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes 1 meshes {}'.format(wtype, meshName))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes 1 meshes {} '.format(wtype, meshName) \
+        + ('{} ' * len(modelExtra)).format(*modelExtra))
     elif wtype == 'primitive':
       self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type 1 {} {}'.format(wtype, plane, peq))
     else:
