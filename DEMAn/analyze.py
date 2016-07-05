@@ -6,6 +6,36 @@ TODO: compute mass flow rate, density, nns distribution (radial distribution fun
 - 
 
 """
+def computeAngleRepos(data, *args):
+	"""
+	Computes the angle of repos theta = arctan(h_max/L)
+	in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]
+	"""
+	Lx, Ly = args
+	x, y, z = data['x'], data['y'], data['z']
+	r = data['radius'].mean()
+
+	h_max = z.max()
+
+	# Select all particles close to the walls (within r distance)
+	z = z[x**2.0 + y**2.0 >= (0.5 * (Lx + Ly) - r)**2.0]
+
+	print len(z)
+
+	if len(z):
+		zm = z.max()
+
+		dzMin = zm * 0.9
+		dzMax = zm 
+
+		z = z[z >= dzMin]
+		z = z[z <= dzMax]
+		h_max -= z.mean()
+
+		print np.arctan(h_max / Lx) * 180.0 / np.pi
+		return np.arctan(h_max / Lx)
+	else:
+		return 0
 
 def computeFlow(data, density, t0 = 0, N0 = 0, sel = None, dt = 1e-4):
 	"""
@@ -111,7 +141,7 @@ def select(data, *region):
 	except:
 		raise
 
-def readCustomTraj(fname, height = False, flow = False, density = None, shape = None, region = (), dt = 1e-4):
+def readCustomTraj(fname, height = False, flow = False, density = None, shape = None, angle = None, region = (), dt = 1e-4):
 	"""
 	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory
 	"""
@@ -123,6 +153,9 @@ def readCustomTraj(fname, height = False, flow = False, density = None, shape = 
 
 	if shape:
 		bDensity = []
+
+	if angle:
+		rAngle = []
 
 	if height:
 		hdist = []
@@ -149,6 +182,10 @@ def readCustomTraj(fname, height = False, flow = False, density = None, shape = 
 					if height:
 						hdist = np.array(hdist)
 						np.savetxt('height.dat', hdist)
+
+					if angle:
+						rAngle = np.array(rAngle)
+						np.savetxt('angle.dat', rAngle)
 
 					return dicList
 
@@ -201,6 +238,9 @@ def readCustomTraj(fname, height = False, flow = False, density = None, shape = 
 				if height:
 					hdist.append(computeHeight(dic, axis))
 
+				if angle:
+					rAngle.append(computeAngleRepos(dic, *angle))
+
 			t0 = timestep
 			N0 = len(sel)
 
@@ -215,3 +255,7 @@ def readCustomTraj(fname, height = False, flow = False, density = None, shape = 
 	if height:
 		hdist = np.array(hdist)
 		np.savetxt('height.dat', hdist)
+
+	if angle:
+		rAngle = np.array(rAngle)
+		np.savetxt('angle.dat', rAngle)

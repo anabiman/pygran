@@ -329,7 +329,7 @@ class DEMPy:
       from sys import argv
       scriptFile = argv[0]
       logging.info('Backing up {} file'.format(scriptFile))
-      os.system('cp {}/{}')
+      os.system('cp {}/{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
 
   def createDomain(self):
     """ Define the domain of the simulation
