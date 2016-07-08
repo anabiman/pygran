@@ -69,6 +69,7 @@ def pairCorrelationFunction(x, y, z, S, rMax, dr):
 
         (result, bins) = histogram(d, bins=edges, normed=False)
         g[p,:] = result / numberDensity
+        print result
 
     # Average g(r) for all interior particles and compute radii
     g_average = zeros(num_increments)

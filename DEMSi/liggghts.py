@@ -545,7 +545,8 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up trajectory i/o')
 
-    self.lmp.command('dump dump {sel} custom {freq} {dir}/{file}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+    self.lmp.command('dump dump {sel} {style} {freq} {dir}/{file}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+
     self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
   def extractCoords(self, coords):
