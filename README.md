@@ -1,6 +1,7 @@
-=============================
-Python interface for LIGGGHTS
-=============================
+============================
+Python modules for running 
+& analyzing DEM simulations
+============================
 
 AUTHOR
 ======
