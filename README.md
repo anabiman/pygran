@@ -1,6 +1,8 @@
-====================================================
-Python modules for running analyzing DEM simulations
-====================================================
+==========================
+Python modules for running
+===========================
+& analyzing DEM simulations
+===========================
 
 AUTHOR
 ======
