@@ -1,0 +1,3 @@
+numpy
+pyvtk
+pytools>=2011.2
