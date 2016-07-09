@@ -12,3 +12,5 @@ log.*
 out*
 *.pdf
 build
+PyDEM.egg-info
+dist
