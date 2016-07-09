@@ -1,15 +1,15 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-# ffmpeg -start_number 84 -i island_sizes-CSH\(II\)-%03d.png output.mpg
-
-
-from Liggghts import DEM
+from DEM import DEMSi
 
 if __name__ == '__main__':
 
 	# Create a dictionary of simulation parameters
 	params = {
+
+			  # Use LIGGGHTS as the DEM computational engine
+			  'modName': 'liggghts',
 
 			  # Define the system
 			  'units': 'si',
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 			  }
 
 	# Create an instance of the DEM class
-	sim = DEM(**params)
+	sim = DEMSi.DEM(**params)
 
 	# Define the domain, create atoms, and initialize masses, velocities, etc.
 	sim.initialize()

@@ -6,4 +6,4 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from liggghts import liggghts, DEM
+from DEM import *
