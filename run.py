@@ -1,6 +1,14 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
+'''
+Created on May 6, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
+
 from DEM import DEMSi
 
 if __name__ == '__main__':

@@ -1,4 +1,16 @@
-#   Author: Andrew Abi-Mansour
+'''
+Created on July 10, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
+
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
+#
+# ----------------------------------------------------------------------
+#
 #   Python module for visualing DEM simulations with VTK library
 #
 # ----------------------------------------------------------------------

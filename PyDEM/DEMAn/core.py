@@ -1,14 +1,184 @@
+'''
+Created on July 10, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
+
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
+# -------------------------------------------------------------------------
+#
+#   Python module for creating the basic DEM (Granular) object for analysis
+#
+# --------------------------------------------------------------------------
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+
+#   You should have received a copy of the GNU General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# -------------------------------------------------------------------------
+
 import numpy as np
 from xlrd import open_workbook
 from numbers import Number
 from numpy import zeros, sqrt, where, pi, mean, arange, histogram
 
-"""
-TODO: compute mass flow rate, density, nns distribution (radial distribution function)
-- Compute BEVERLO coefficients
-- 
+class Granular(object):
+	"""The Global class contains all the information describing a ganular system.
+	A system always requires a trajectory file to read. A trajectory is a (time) 
+	series corresponding to the coordinates of all particles in the system. It can 
+	also contain other variables such as momenta, angular velocities, forces, radii,
+	etc. """
 
-"""
+	def __init__(self, fname):
+
+		self._fname = fname
+		self._fp = open(fname, 'r')
+
+		self.nFrames = None
+		self.frame = 0
+		self.data = {}
+		self.dt = dt
+
+	def __iter__(self):
+		return self
+
+	def extract(key):
+
+		if key in self.data:
+			return self.data[key]
+		else:
+			return None
+
+	def goto(self, frame):
+		""" Go to a specific frame in the trajectory """
+
+		if frame == self.frame:
+			return 0
+
+		if frame < self.frame:
+			self.rewind()
+
+		while self.frame < frame:
+
+			line = self._fp.readline()
+
+			if not line:
+				raise StopIteration
+
+			if line.find('TIMESTEP') >= 0:
+				self.frame += 1
+
+			if self.frame == frame:
+
+				timestep = int(self._fp.readline())
+				self.data['TIMESTEP'] = timestep
+
+				while True:
+
+					line = self._fp.readline()
+
+					if not line:
+						raise StopIteration
+
+					if line.find('NUMBER OF ATOMS') >= 0:
+						natoms = int(self._fp.readline())
+						self.data['NATOMS'] = natoms
+
+					if line.find('BOX') >= 0:
+						boxX = self._fp.readline().split()
+						boxY = self._fp.readline().split()
+						boxZ = self._fp.readline().split()
+
+						boxX = [float(i) for i in boxX]
+						boxY = [float(i) for i in boxY]
+						boxZ = [float(i) for i in boxZ]
+
+						self.data['BOX'] = (boxX, boxY, boxZ)
+
+						keys = line.split()[2:] # remove ITEM: and ATOMS keywords
+
+						for key in keys:
+							self.data[key] = np.zeros(natoms)
+
+						for i in range(natoms):
+							var = self._fp.readline().split()
+
+							for j, key in enumerate(keys):
+								self.data[key][i] = float(var[j])
+
+						break 
+
+	def rewind(self):
+		"""Read trajectory from the beginning"""
+		self._fp.close()
+		self._fp = open(self._fname)
+
+	def __next__(self):
+		"""Forward one step to next frame when using the next builtin function."""
+		return self.next()
+
+	def next(self):
+		while True:
+
+			line = self._fp.readline()
+
+			if not line:
+				raise StopIteration
+			
+			if line.find('TIMESTEP') >= 0:
+				timestep = int(self._fp.readline())
+				self.data['TIMESTEP'] = timestep
+
+			if line.find('NUMBER OF ATOMS') >= 0:
+				natoms = int(self._fp.readline())
+				self.data['NATOMS'] = natoms
+
+			if line.find('BOX') >= 0:
+				boxX = self._fp.readline().split()
+				boxY = self._fp.readline().split()
+				boxZ = self._fp.readline().split()
+
+				boxX = [float(i) for i in boxX]
+				boxY = [float(i) for i in boxY]
+				boxZ = [float(i) for i in boxZ]
+
+				self.data['BOX'] = (boxX, boxY, boxZ)
+
+			self.frame += 1
+
+			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
+
+			for key in keys:
+				self.data[key] = np.zeros(natoms)
+
+			for i in range(natoms):
+				var = self._fp.readline().split()
+
+				for j, key in enumerate(keys):
+					self.data[key][i] = float(var[j])
+
+			break
+
+		return timestep
+
+	@property
+	def granular(self):
+		return self
+
+	def __del__(self):
+		self._fp.close()
 
 def pairCorrelationFunction(x, y, z, S, rMax, dr):
     """Compute the three-dimensional pair correlation function for a set of
@@ -51,9 +221,7 @@ def pairCorrelationFunction(x, y, z, S, rMax, dr):
     num_interior_particles = len(interior_indices)
 
     if num_interior_particles < 1:
-        raise  RuntimeError ("No particles found for which a sphere of radius rMax\
-        	will lie entirely within a cube of side length S.  Decrease rMax\
-                or increase the size of the cube.")
+        raise  RuntimeError ("No particles found for which a sphere of radius rMax will lie entirely within a cube of side length S.  Decrease rMax or increase the size of the cube.")
 
     edges = arange(0., rMax + 1.1 * dr, dr)
     num_increments = len(edges) - 1
@@ -82,7 +250,6 @@ def pairCorrelationFunction(x, y, z, S, rMax, dr):
     return (g_average, radii, interior_indices)
     # Number of particles in shell/total number of particles/volume of shell/number density
     # shell volume = 4/3*pi(r_outer**3-r_inner**3)
-
 
 def readExcel(fname):
 
@@ -242,122 +409,3 @@ def select(data, *region):
 
 	except:
 		raise
-
-def readCustomTraj(fname, height = False, flow = False, density = None, shape = None, angle = None, region = (), dt = 1e-4):
-	"""
-	transforms a LAMMPS/LIGGGHTS custom dump file(s) to a python trajectory
-	"""
-	dicList = [] # Keep this empty for now to avoid large memory buffers
-	t0, N0 = None, None
-
-	if flow:
-		flowRate = []
-
-	if shape:
-		bDensity = []
-
-	if angle:
-		rAngle = []
-
-	if height:
-		hdist = []
-		axis = shape[-1]
-
-	with open(fname,'r') as fp:
-		while True:
-
-			dic = {}
-
-			while True:
-				line = fp.readline()
-
-				if not line: 
-
-					if flow:
-						flowRate = np.array(flowRate)
-						np.savetxt('flow.dat', flowRate)
-
-					if shape:
-						bDensity = np.array(bDensity)
-						np.savetxt('density.dat', bDensity)
-
-					if height:
-						hdist = np.array(hdist)
-						np.savetxt('height.dat', hdist)
-
-					if angle:
-						rAngle = np.array(rAngle)
-						np.savetxt('angle.dat', rAngle)
-
-					return dicList
-
-				if line.find('TIMESTEP') >= 0:
-					timestep = int(fp.readline())
-					dic['TIMESTEP'] = timestep
-
-				if line.find('NUMBER OF ATOMS') >= 0:
-					natoms = int(fp.readline())
-					dic['NATOMS'] = natoms
-
-				if line.find('BOX') >= 0:
-					boxX = fp.readline().split()
-					boxY = fp.readline().split()
-					boxZ = fp.readline().split()
-
-					boxX = [float(i) for i in boxX]
-					boxY = [float(i) for i in boxY]
-					boxZ = [float(i) for i in boxZ]
-
-					dic['BOX'] = (boxX, boxY, boxZ)
-
-				if line.find('ITEM: ATOMS') >= 0:
-					break
-
-			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
-
-			for key in keys:
-				dic[key] = np.zeros(natoms)
-
-			for i in range(natoms):
-				var = fp.readline().split()
-
-				for j, key in enumerate(keys):
-					dic[key][i] = float(var[j]) 
-
-			sel = select(dic, *region)
-
-			if len(region):
-				print "Found {} particles based on user-supplied selection".format(len(sel))
-
-			if len(sel): # Make sure the frame contains NATOMS > 0 else dont bother compute anything
-
-				if flow:
-					flowRate.append(computeFlow(dic, density, t0, N0, sel, dt))
-
-				if shape:
-					bDensity.append(computeDensity(dic, density, shape, sel))
-
-				if height:
-					hdist.append(computeHeight(dic, axis))
-
-				if angle:
-					rAngle.append(computeAngleRepos(dic, *angle))
-
-			t0 = timestep
-			N0 = len(sel)
-
-	if flow:
-		flowRate = np.array(flowRate)
-		np.savetxt('flow.dat', flowRate)
-
-	if shape:
-		bDensity = np.array(bDensity)
-		np.savetxt('density.dat', bDensity)
-
-	if height:
-		hdist = np.array(hdist)
-		np.savetxt('height.dat', hdist)
-
-	if angle:
-		rAngle = np.array(rAngle)
-		np.savetxt('angle.dat', rAngle)

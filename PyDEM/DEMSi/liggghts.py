@@ -1,4 +1,8 @@
-#   Author: Andrew Abi-Mansour
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
+#
+# ----------------------------------------------------------------------
+#
 #   Python wrapper for LIGGGHTS library via ctypes
 #
 # ----------------------------------------------------------------------
@@ -16,6 +20,13 @@
 #   See the README file in the top-level LAMMPS directory.
 #
 # -------------------------------------------------------------------------
+'''
+Created on March 30, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
 
 import sys,traceback,types
 from ctypes import *
