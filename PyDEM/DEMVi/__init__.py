@@ -1,4 +1,13 @@
-# --------------------------------------------------------------------------
+'''
+Created on July 11, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
+
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,6 +24,4 @@
 
 # -------------------------------------------------------------------------
 
-import DEMSi
-import DEMAn
-import DEMVi
+from visualize import *

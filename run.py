@@ -9,7 +9,7 @@ Center for Materials Sci. & Eng.,
 Merck Inc., West Point
 '''
 
-from DEM import DEMSi
+from PyDEM import DEMSi
 
 if __name__ == '__main__':
 
@@ -38,7 +38,8 @@ if __name__ == '__main__':
 
 			  # I/O parameters
 			  'restart': (5000, 'restart', 'restart.*', False),
-			  'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'file': 'traj.custom', 'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
+			  'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'file': 'traj.custom', 'style': 'custom', 'args': \
+			  ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
 			  'dump_modify': ('append', 'yes'),
 			  'nSim': 1,
 			  'output': 'out-radius-400-gaussian-roll-0.9-0.9',

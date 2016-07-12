@@ -29,8 +29,10 @@ Merck Inc., West Point
 
 # -------------------------------------------------------------------------
 
-def pairCorrelationFunction(x, y, z, S, rMax, dr):
-    """Compute the three-dimensional pair correlation function for a set of
+from numpy import zeros, sqrt, where, pi, mean, arange, histogram
+
+def rdf(x, y, z, S, rMax, dr):
+    """Computes the three-dimensional radial distribution function for a set of
     spherical particles contained in a cube with side length S.  This simple
     function finds reference particles such that a sphere of radius rMax drawn
     around the particle will fit entirely within the cube, eliminating the need
@@ -86,7 +88,6 @@ def pairCorrelationFunction(x, y, z, S, rMax, dr):
 
         (result, bins) = histogram(d, bins=edges, normed=False)
         g[p,:] = result / numberDensity
-        print result
 
     # Average g(r) for all interior particles and compute radii
     g_average = zeros(num_increments)

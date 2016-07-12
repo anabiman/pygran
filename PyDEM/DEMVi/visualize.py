@@ -34,6 +34,50 @@ import vtk
 import numpy as np
 import sys
  
+def surfMesh(positions):
+    """ Creates a Delaunay traingulation from a set of particle positions.
+    """
+
+    points = vtk.vtkPoints()
+
+    for i, r in enumerate(positions):
+        points.InsertPoint(i, r[0], r[1], r[2])
+        profile = vtk.vtkPolyData()
+        profile.SetPoints(points)
+
+    delny = vtk.vtkDelaunay3D()
+    delny.SetInputData(profile)
+    delny.SetTolerance(0.01)
+    delny.SetAlpha(0.2)
+    delny.BoundingTriangulationOff()
+
+    # Create the mapper that corresponds the objects of the vtk file
+    # into graphics elements
+    mapper = vtk.vtkDataSetMapper()
+    mapper.SetInputConnection(delny.GetOutputPort())
+
+    actor = vtk.vtkActor()
+    actor.SetMapper(mapper)
+    actor.GetProperty().SetColor(1, 0, 0)
+
+    # Create the Renderer
+    renderer = vtk.vtkRenderer()
+    renderer.AddActor(actor)
+    renderer.SetBackground(1, 1, 1) # Set background to white
+
+    # Create the RendererWindow
+    renderer_window = vtk.vtkRenderWindow()
+    renderer_window.AddRenderer(renderer)
+    renderer_window.SetSize(250, 250)
+
+    # Create the RendererWindowInteractor and display the vtk_file
+    interactor = vtk.vtkRenderWindowInteractor()
+    interactor.SetRenderWindow(renderer_window)
+
+    interactor.Initialize()
+    renderer_window.Render()
+    interactor.Start()
+
 def loadStl(fname):
     """Load the given STL file, and return a vtkPolyData object for it."""
 

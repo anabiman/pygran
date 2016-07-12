@@ -55,12 +55,17 @@ class DEM:
         self.split = self.comm.Split(self.color, key=0)
 
 
-        module = import_module(pargs['modName'])
+        module = import_module('PyDEM.DEMSi.' + pargs['modName'])
 
         self.dem = module.DEMPy(i, self.split, **pargs) # logging module imported here      
         break
 
     if not self.rank:
+      global logging
+
+      logging = import_module(name='logging')
+      logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
+
       logging.info("Initializing MPI for a total of {} procs".format(self.tProcs))
 
       if self.nSim > 1:
