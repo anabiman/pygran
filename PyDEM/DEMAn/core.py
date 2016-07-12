@@ -32,6 +32,7 @@ Merck Inc., West Point
 import numpy as np
 from xlrd import open_workbook
 from numbers import Number
+import types
 
 class Granular(object):
 	"""The Granular class contains all the information describing a ganular system.
@@ -49,17 +50,38 @@ class Granular(object):
 		self.frame = 0
 		self.data = {}
 
+		# Read frame 0 to initialize function getters
 		self.__next__()
+		self.constructGetters()
 
 	def __iter__(self):
 		return self
 
-	def extract(self, key):
+	def constructGetters(self):
+		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
+		for key in self.keys:
+			getter = 'def get_{}(self): return self.data["{}"] \n'.format(key, key) + \
+					 'self.get_{} = types.MethodType(get_{}, self)'.format(key, key)
+			exec(getter)
 
-		if key in self.data:
-			return self.data[key]
-		else:
-			return None
+	def _chkGetters(self):
+		""" Checks if the trajectory file supports reduction in key getters """
+
+		# TODO: make sure difference styles are supported depending on the trajectory extension
+		keys = self.keys
+
+		if self._fname.split('.')[-1] == 'dump':
+			if 'x' in keys and 'y' in keys and 'z' in keys:
+				self.data['positions'] = np.array([self.data['x'], self.data['y'], self.data['z']]).T
+
+			if 'vx' in keys and 'vy' in keys and 'vz' in keys:
+				self.data['velocities'] = np.array([self.data['vx'], self.data['vy'], self.data['vz']]).T
+
+			if 'omegax' in keys and 'omegay' in keys and 'omegaz' in keys:
+				self.data['angVelocities'] = np.array([self.data['wx'], self.data['wy'], self.data['wz']]).T
+
+			if 'fx' in keys and 'fy' in keys and 'fz' in keys:
+				self.data['forces'] = np.array([self.data['fx'], self.data['fy'], self.data['fz']]).T
 
 	def goto(self, frame):
 		""" Go to a specific frame in the trajectory """
@@ -70,7 +92,6 @@ class Granular(object):
 		# rewind if necessary (better than reading file backwads?)
 		if frame < self.frame:
 			self.rewind()
-
 
 		# find the right frame number
 		while self.frame < frame:
@@ -87,7 +108,7 @@ class Granular(object):
 		if self.frame == frame:
 
 			timestep = int(self._fp.readline())
-			self.data['TIMESTEP'] = timestep
+			self.data['timestep'] = timestep
 
 			while True:
 
@@ -98,7 +119,7 @@ class Granular(object):
 
 				if line.find('NUMBER OF ATOMS') >= 0:
 					natoms = int(self._fp.readline())
-					self.data['NATOMS'] = natoms
+					self.data['natoms'] = natoms
 
 				if line.find('BOX') >= 0:
 					boxX = self._fp.readline().split()
@@ -109,7 +130,7 @@ class Granular(object):
 					boxY = [float(i) for i in boxY]
 					boxZ = [float(i) for i in boxZ]
 
-					self.data['BOX'] = (boxX, boxY, boxZ)
+					self.data['box'] = (boxX, boxY, boxZ)
 					break
 
 			line = self._fp.readline()
@@ -127,8 +148,17 @@ class Granular(object):
 
 				for j, key in enumerate(keys):
 					self.data[key][i] = float(var[j])
+
+			# for convenience, concatenate the x,y,z components
+			self._updateSystem()
+
 		else:
-			print 'Cannot find frame {} in current trajectory'.format(frame)
+			raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+
+	@property
+	def keys(self):
+		""" returns the key objects found in the trajctory files """
+		return self.data.keys()
 
 	def rewind(self):
 		"""Read trajectory from the beginning"""
@@ -142,8 +172,8 @@ class Granular(object):
 		return self.next()
 
 	def next(self):
+		""" This method updates the system attributes! """
 		while True:
-
 			line = self._fp.readline()
 
 			if not line:
@@ -151,11 +181,11 @@ class Granular(object):
 			
 			if line.find('TIMESTEP') >= 0:
 				timestep = int(self._fp.readline())
-				self.data['TIMESTEP'] = timestep
+				self.data['timestep'] = timestep
 
 			if line.find('NUMBER OF ATOMS') >= 0:
 				natoms = int(self._fp.readline())
-				self.data['NATOMS'] = natoms
+				self.data['natoms'] = natoms
 
 			if line.find('BOX') >= 0:
 				boxX = self._fp.readline().split()
@@ -166,7 +196,7 @@ class Granular(object):
 				boxY = [float(i) for i in boxY]
 				boxZ = [float(i) for i in boxZ]
 
-				self.data['BOX'] = (boxX, boxY, boxZ)
+				self.data['box'] = (boxX, boxY, boxZ)
 				break
 
 		line = self._fp.readline()
@@ -178,15 +208,22 @@ class Granular(object):
 		keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 		for key in keys:
-			self.data[key] = np.zeros(self.data['NATOMS'])
+			self.data[key] = np.zeros(self.data['natoms'])
 
-		for i in range(self.data['NATOMS']):
+		for i in range(self.data['natoms']):
 			var = self._fp.readline().split()
 
 			for j, key in enumerate(keys):
 				self.data[key][i] = float(var[j])
 
+		self._updateSystem()
+
 		return timestep
+
+	def _updateSystem(self):
+		""" Makes sure the system is aware of any update in its attribvtes caused by
+		a frame change. """
+		self._chkGetters()
 
 	@property
 	def granular(self):
