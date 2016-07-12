@@ -1,89 +1,102 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-'''
-Created on May 6, 2016
-@author: Andrew Abi-Mansour
-
-Center for Materials Sci. & Eng.,
-Merck Inc., West Point
-'''
-
 from PyDEM import DEMSi
+import PyDEM.DEMAn.models as models
 
 if __name__ == '__main__':
 
-	# Create a dictionary of simulation parameters
-	params = {
-
-			  # Use LIGGGHTS as the DEM computational engine
-			  'modName': 'liggghts',
+	# Create a dictionary of physical parameters
+	physParams = {
 
 			  # Define the system
 			  'units': 'si',
 			  'dim': 3,
 			  'style': 'granular', # spherical deformable particles
 			  'boundary': ('f','f','f'), # fixed BCs
-			  'model': ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', 'cdt', 'tangential_damping', 'on', 'limitForce', 'on'), # the order matters here
+			  'model': ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
+                        'cdt', 'tangential_damping', 'on', 'limitForce', 'on'), # the order matters here
 			  'box':  (-0.016, 0.016, -0.016, 0.016, -0.01, 0.061), # simulation box size
 
 			  # Define component(s)
-			  'SS': ({'id':1, 'natoms': 2.5e5, 'density': 2500, 'insert': True, 'rate':10**6, 'freq': 10**3}, ), # rate of particles inserted = rate x dt x freq
-			  'nSS': 2, 
+			  'SS': ({'id':1, 'natoms': 1e5, 'density': 2500.0, 'insert': True, 'rate': 1e6, 'freq': 1e3}, ), # number of particles inserted = rate * dt * freq every freq steps
+			  'nSS': 2,
 			  'vel': ((0,0,0), ),
-			  'radius': (('gaussian number', 4.0e-4, 4.0e-5),),
+			  'radius': (('gaussian number', 4e-4, 4e-5),),
+
+			  # Material properties
+			  'materials': {
+			  				'yMod': ('youngsModulus', 'peratomtype', '7.1e7', '7.1e7'),
+			  				'pRatio': ('poissonsRatio', 'peratomtype', '0.22', '0.22'),
+			  				'cFric': ('coefficientFriction', 'peratomtypepair', '2', '0.5', '0.5', '0.5', '0.5'),
+			  				'cRollFric': ('coefficientRollingFriction', 'peratomtypepair', '2', '5e-4', '5e-4', '5e-4', '5e-4'),
+			  				'cVel': ('characteristicVelocity', 'scalar', '0.1', '0.1'),
+			  				'cRest': (('coefficientRestitution', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'))
+			  				},
 
 			  # Apply gravitional force in the negative direction along the z-axis
 			  'gravity': (9.81, 0, 0, -1), 
+			}
 
-			  # I/O parameters
-			  'restart': (5000, 'restart', 'restart.*', False),
-			  'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'file': 'traj.custom', 'style': 'custom', 'args': \
-			  ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
-			  'dump_modify': ('append', 'yes'),
-			  'nSim': 1,
-			  'output': 'out-radius-400-gaussian-roll-0.9-0.9',
-			  'print': (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu', 'density'), # print the time, atom number, avg. kinetic energy, and max force
+	# Create a dictionary of dynamical parameters for a linear spring model
+	dynamicParams = {
 
-			  # Stage runs
-			  'insertion':  {'steps':  5e4, 'dt': 1e-5},
-			  'flow': {'steps': 3e5, 'dt': 2e-5},
+				'lsModel': models.LinearSpring(**physParams),
+                'alpha': 0.25,
+        
+				# Stage runs
+				'insertion': 1e6,
+				'flow': 0e6
+				}
+    
+    # Estimate allowed sim timestep
+	dynamicParams['dt'] = (dynamicParams['alpha'] * dynamicParams['lsModel'].contactTime()).min()
 
-			  # Meshes
-			  'surfMesh': {
-					'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale':5e-4},
+	for ss in physParams['SS']:
+		print 'Attempting to insert {} particles every {} steps for component {}'.format(ss['rate'] * ss['freq'] * dynamicParams['dt'], ss['freq'], ss['id'])
+
+	compParams = {
+
+				# Use LIGGGHTS as the DEM computational engine
+				'modName': 'liggghts',
+
+				# I/O parameters
+				'restart': (5000, 'restart', 'restart.binary', False),
+				'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
+				       'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
+				                'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
+				'dump_modify': ('append', 'yes'),
+				'nSim': 1,
+				'output': 'out-radius-400-repos',
+				'print': (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu', 'density'),
+
+				# Meshes
+				'surfMesh': {
+					'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale': 5e-4},
 				      },
 
-			  # Nearest neighbor searching paramers
-			  'nns_skin': 1e-3,
-			  'nns_type': 'bin',
+				# Nearest neighbor searching params
+				'nns_skin': 1e-3,
+				'nns_type': 'bin',
 
-			  # grab shared libraries from here
-			  'path': '/usr/lib64/',
+				# grab shared libraries from here
+				'path': '/usr/lib64/',
 			  }
 
 	# Create an instance of the DEM class
-	sim = DEMSi.DEM(**params)
+	sim = DEMSi.DEM(**dict(physParams, **compParams))
 
 	# Define the domain, create atoms, and initialize masses, velocities, etc.
 	sim.initialize()
 
 	# Setup material properties
-	sim.createProperty('mYmod', *('youngsModulus', 'peratomtype', '7.1e7', '7.1e7'))
-	sim.createProperty('mPratio', *('poissonsRatio', 'peratomtype', '0.22', '0.22'))
-	sim.createProperty('mCfric', *('coefficientFriction', 'peratomtypepair', '2', '0.1', '0.9', '0.9', '0.9'))
-	sim.createProperty('mRfric', *('coefficientRollingFriction', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
-	sim.createProperty('mCvel', *('characteristicVelocity', 'scalar', '0.01', '0.01'))
-
-	# For 'm' simulations, we need 'm' tuples for the coefficient of restitution
-	coeffRest = (('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9'))
-
-	# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-	sim.createProperty('mCrest', *coeffRest)
+	for item in physParams['materials'].keys():
+		# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
+		sim.createProperty(item, *physParams['materials'][item])
 
 	# Import and setup all meshes as rigid wall
-	for mesh in params['surfMesh'].keys():
-		sim.importMesh(name=mesh, **params['surfMesh'][mesh])
+	for mesh in compParams['surfMesh'].keys():
+		sim.importMesh(name=mesh, **compParams['surfMesh'][mesh])
 		sim.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
 
 	# Setup a stopper wall along the xoz plane (y = 0.0)
@@ -98,13 +111,13 @@ if __name__ == '__main__':
 	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
 	sim.dumpSetup()
 
-	if not params['restart'][3]:
-		# Insert particles for stage 1
-		cylinder = sim.insertParticles('void', *('cylinder', 'z', 0, 0, 0.014, 0.005, 0.055))
-		sim.integrate(**params['insertion'])
+	if not compParams['restart'][3]:
+		# Insert particles if not restarting/resuming sim
+		cylinder = sim.insertParticles('void', *('cylinder', 'z', 0, 0, 0.001, 0.02, 0.045))
+		sim.integrate(dynamicParams['insertion'], dynamicParams['dt'])
 		sim.remove(cylinder)
 
 	# Remove stopper
 	sim.remove(name='stopper')
 
-	sim.integrate(**params['flow'])
+	sim.integrate(dynamicParams['flow'], dynamicParams['dt'])
