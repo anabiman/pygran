@@ -87,35 +87,36 @@ def loadStl(fname):
     polydata = reader.GetOutput()
     return polydata
 
-def polyDataToActor(polydata):
-    """Wrap the provided vtkPolyData object in a mapper and an actor, returning the actor."""
-
-    mapper = vtk.vtkPolyDataMapper()
-    
-    if vtk.VTK_MAJOR_VERSION <= 5:
-        mapper.SetInput(polydata)
-    else:
-	mapper.SetInputData(polydata)
-	
-    actor = vtk.vtkActor()
-    actor.SetMapper(mapper)
-
-    actor.GetProperty().SetColor(0.5, 0.5, 1.0)
-    return actor
-
-def plotSpheres(ren, positions, radii):
+def plotSpheres(ren, polydata, positions, radii):
 
     source = vtk.vtkSphereSource()
-    source.SetCenter(positions[:,0], positions[:,1], positions[:,2])
-    source.SetRadius(radii)
+    source.SetRadius(radii[0])
 
-    # mapper
+    radii_vtk = vtk.vtkFloatArray()
+
+    for rad in radii:
+        radii_vtk.InsertNextValue(rad)
+
+    radii_vtk.SetName("radius")
+
+    polydata.GetPointData().SetActiveScalars("radius")
+
+    ballGlyph = vtk.vtkGlyph3D()
+
+    if vtk.VTK_MAJOR_VERSION <= 5:
+        ballGlyph.SetSource(source.GetOutput())
+    else:
+        ballGlyph.SetSourceConnection(source.GetOutputPort())
+
+    ballGlyph.SetInputData(polydata)
+    #ballGlyph.SetScaleModeToDataScalingOn() 
+
     mapper = vtk.vtkPolyDataMapper()
 
     if vtk.VTK_MAJOR_VERSION <= 5:
-	   mapper.SetInput(source.GetOutput())
+	   mapper.SetInput(ballGlyph.GetOutput())
     else:
-	   mapper.SetInputConnection(source.GetOutputPort())
+	   mapper.SetInputConnection(ballGlyph.GetOutputPort())
  
     # actor
     actor = vtk.vtkActor()
@@ -126,27 +127,39 @@ def plotSpheres(ren, positions, radii):
 
 def visSpheres(positions, radii):
 
+    points = vtk.vtkPoints()
+    
+    for i, r in enumerate(positions):
+        points.InsertPoint(i, r[0], r[1], r[2])
+    
+    profile = vtk.vtkPolyData()
+    profile.SetPoints(points)
+
+    xc, yc, zc = np.mean(positions ,axis=0)
+    
     axes = vtk.vtkAxesActor()
+    axes.SetPosition(xc, yc, zc)
+    axes.VisibilityOff()
 
-    ren = vtk.vtkRenderer()
+    ren = vtk.vtkRenderer() 
     ren.AddActor(axes)
-    ren.ResetCamera()
-
-    renWin = vtk.vtkRenderWindow()
-    renWin.AddRenderer(renderer)
 
      # Create a RenderWindowInteractor to permit manipulating the camera
+    plotSpheres(ren, profile, positions, radii)
+
+    renWin = vtk.vtkRenderWindow()
+    renWin.AddRenderer(ren)
+
     iren = vtk.vtkRenderWindowInteractor()
     iren.SetRenderWindow(renWin)
     style = vtk.vtkInteractorStyleTrackballCamera()
     iren.SetInteractorStyle(style)
 
-    plotSpheres(ren, positions, radii)
-
     camera = vtk.vtkCamera()
-    camera.SetFocalPoint(0, 0, 0);
-    renderer.SetActiveCamera(camera);
-
+    camera.SetFocalPoint(0, 0, 0)
+    camera.SetPosition(xc, yc, zc)
+    ren.SetActiveCamera(camera)
+    
     iren.Initialize()
     renWin.Render()
     iren.Start()
