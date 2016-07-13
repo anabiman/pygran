@@ -84,27 +84,32 @@ class Granular(object):
 				self.data['forces'] = np.array([self.data['fx'], self.data['fy'], self.data['fz']]).T
 
 	def goto(self, frame):
-		""" Go to a specific frame in the trajectory """
+		""" Go to a specific frame in the trajectory. If frame is -1
+		then this function will read the last frame """
 
+		# nothing to do
 		if frame == self.frame:
 			return 0
 
 		# rewind if necessary (better than reading file backwads?)
-		if frame < self.frame:
+		if frame < self.frame and frame >= 0:
 			self.rewind()
 
 		# find the right frame number
-		while self.frame < frame:
+		while self.frame < frame or frame == -1:
 
 			line = self._fp.readline()
 
-			if not line:
-				raise StopIteration
+			if not line and frame >= 0:
+				raise StopIteration('End of file reached.')
+			elif not line and frame == -1:
+				break
 
 			if line.find('TIMESTEP') >= 0:
 				self.frame += 1
 
 		# assert self.frame == frame else something's wrong
+		# or the user wants to go to the last frame
 		if self.frame == frame:
 
 			timestep = int(self._fp.readline())
@@ -114,8 +119,8 @@ class Granular(object):
 
 				line = self._fp.readline()
 
-				if not line:
-					raise StopIteration
+				if not line and frame >= 0:
+					raise StopIteration('End of file reached.')
 
 				if line.find('NUMBER OF ATOMS') >= 0:
 					natoms = int(self._fp.readline())
@@ -135,8 +140,8 @@ class Granular(object):
 
 			line = self._fp.readline()
 
-			if not line:
-					raise StopIteration
+			if not line and frame >=0:
+					raise StopIteration('End of file reached')
 
 			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
@@ -153,7 +158,15 @@ class Granular(object):
 			self._updateSystem()
 
 		else:
-			raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+			if frame == -1:
+				# this is very low and inefficient -- can't we move the file pointer backwards?
+				tmp = self.frame
+				self.rewind()
+				self.goto(tmp)
+			else:
+				raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+
+		return self.frame
 
 	@property
 	def keys(self):
