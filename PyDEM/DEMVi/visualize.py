@@ -103,11 +103,11 @@ def polyDataToActor(polydata):
     actor.GetProperty().SetColor(0.5, 0.5, 1.0)
     return actor
 
-def plotSpheres(ren, *args):
+def plotSpheres(ren, positions, radii):
 
     source = vtk.vtkSphereSource()
-    source.SetCenter(args[0], args[1], args[2])
-    source.SetRadius(args[3])
+    source.SetCenter(positions[:,0], positions[:,1], positions[:,2])
+    source.SetRadius(radii)
 
     # mapper
     mapper = vtk.vtkPolyDataMapper()
@@ -124,56 +124,13 @@ def plotSpheres(ren, *args):
     # assign actor to the renderer
     ren.AddActor(actor)
 
-def initialize():
+def visSpheres(positions, radii):
 
-    # Create a rendering window and renderer
-    transform = vtk.vtkTransform()
-    transform.Scale(10.0, 10.0, 10.0)
-     
     axes = vtk.vtkAxesActor()
-    axes.SetUserTransform(transform)
-
-    transform.Translate(3.0, -2.0, 0.0)
-    axes.SetUserTransform(transform)
 
     ren = vtk.vtkRenderer()
     ren.AddActor(axes)
     ren.ResetCamera()
-
-    renWin = vtk.vtkRenderWindow()
-    renWin.AddRenderer(ren)
-
-    # Create a RenderWindowInteractor to permit manipulating the camera
-    iren = vtk.vtkRenderWindowInteractor()
-    iren.SetRenderWindow(renWin)
-    style = vtk.vtkInteractorStyleTrackballCamera()
-    iren.SetInteractorStyle(style)
-
-    # enable user interface interactor
-    iren.Initialize()
-    renWin.Render()
-    iren.Start()
-
-    return ren, iren, renWin
-
-def plotSphereMesh(meshFname = None, dumpFname = None):
-
-    # Create a rendering window and renderer
-    transform = vtk.vtkTransform()
-    transform.Scale(10.0, 10.0, 10.0)
-     
-    axes = vtk.vtkAxesActor()
-    axes.SetUserTransform(transform)
-
-    transform.Translate(2.0, -1.0, 0.0)
-    axes.SetUserTransform(transform)
-
-    renderer = vtk.vtkRenderer()
-    renderer.AddActor(axes)
-    
-    camera = vtk.vtkCamera()
-    camera.SetFocalPoint(0, 0, 0);
-    renderer.SetActiveCamera(camera);
 
     renWin = vtk.vtkRenderWindow()
     renWin.AddRenderer(renderer)
@@ -184,34 +141,11 @@ def plotSphereMesh(meshFname = None, dumpFname = None):
     style = vtk.vtkInteractorStyleTrackballCamera()
     iren.SetInteractorStyle(style)
 
-    scale = 0.1
+    plotSpheres(ren, positions, radii)
 
-    if dumpFname is not None:
-        with open(dumpFname) as fp:
-            lines = (line for line in fp if not line.strip()[:3].isalpha())
-
-            for line in lines:
-                data = line.split()
-                
-                if len(data) == 1:
-                    Natoms = int(line)
-                    sphereData = np.zeros(Natoms)
-                else:
-                    sphereData[count] = float(line)
-
-            print sphereData.shape()
-
-            for data in sphereData:
-                plotSpheres(ren, data[1] * scale, data[2] * scale, data[3] * scale, 0.00224)
-
-    if meshFname is not None:
-        polydata = loadStl(meshFname)
-        renderer.AddActor(polyDataToActor(polydata))
-        renderer.SetBackground(0.1, 0.1, 0.1)
-
-    style = vtk.vtkInteractorStyleTrackballCamera()
-    iren.SetInteractorStyle(style)
-    renderer.ResetCamera()
+    camera = vtk.vtkCamera()
+    camera.SetFocalPoint(0, 0, 0);
+    renderer.SetActiveCamera(camera);
 
     iren.Initialize()
     renWin.Render()

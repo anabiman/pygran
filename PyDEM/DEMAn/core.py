@@ -78,7 +78,7 @@ class Granular(object):
 				self.data['velocities'] = np.array([self.data['vx'], self.data['vy'], self.data['vz']]).T
 
 			if 'omegax' in keys and 'omegay' in keys and 'omegaz' in keys:
-				self.data['angVelocities'] = np.array([self.data['wx'], self.data['wy'], self.data['wz']]).T
+				self.data['angVelocities'] = np.array([self.data['omegax'], self.data['omegay'], self.data['omegaz']]).T
 
 			if 'fx' in keys and 'fy' in keys and 'fz' in keys:
 				self.data['forces'] = np.array([self.data['fx'], self.data['fy'], self.data['fz']]).T
