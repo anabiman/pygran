@@ -33,7 +33,8 @@ Merck Inc., West Point
 import vtk
 import numpy as np
 import sys
- 
+from vtk.util import numpy_support
+
 def surfMesh(positions):
     """ Creates a Delaunay traingulation from a set of particle positions.
     """
@@ -87,19 +88,10 @@ def loadStl(fname):
     polydata = reader.GetOutput()
     return polydata
 
-def plotSpheres(ren, polydata, positions, radii):
+def plotSpheres(ren, points, radius):
 
     source = vtk.vtkSphereSource()
-    source.SetRadius(radii[0])
-
-    radii_vtk = vtk.vtkFloatArray()
-
-    for rad in radii:
-        radii_vtk.InsertNextValue(rad)
-
-    radii_vtk.SetName("radius")
-
-    polydata.GetPointData().SetActiveScalars("radius")
+    source.SetRadius(0.01)
 
     ballGlyph = vtk.vtkGlyph3D()
 
@@ -108,9 +100,14 @@ def plotSpheres(ren, polydata, positions, radii):
     else:
         ballGlyph.SetSourceConnection(source.GetOutputPort())
 
-    ballGlyph.SetInputData(polydata)
-    #ballGlyph.SetScaleModeToDataScalingOn() 
+    grid = vtk.vtkUnstructuredGrid()
+    grid.SetPoints(points)
+    grid.GetPointData().AddArray(radius)
+    grid.GetPointData().SetActiveScalars("radius")
 
+    ballGlyph.SetInputData(grid)
+
+    #ballGlyph.SetScaleModeToDataScalingOn() 
     mapper = vtk.vtkPolyDataMapper()
 
     if vtk.VTK_MAJOR_VERSION <= 5:
@@ -125,17 +122,20 @@ def plotSpheres(ren, polydata, positions, radii):
     # assign actor to the renderer
     ren.AddActor(actor)
 
-def visSpheres(positions, radii):
+def visSpheres(positions, radius):
+
+    positions_vtk = numpy_support.numpy_to_vtk(num_array=positions.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+    positions_vtk.SetName("positions")
+
+    radius_vtk = numpy_support.numpy_to_vtk(num_array=radius.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+    radius_vtk.SetName("radius")
 
     points = vtk.vtkPoints()
     
     for i, r in enumerate(positions):
         points.InsertPoint(i, r[0], r[1], r[2])
-    
-    profile = vtk.vtkPolyData()
-    profile.SetPoints(points)
 
-    xc, yc, zc = np.mean(positions ,axis=0)
+    xc, yc, zc = np.mean(positions, axis=0)
     
     axes = vtk.vtkAxesActor()
     axes.SetPosition(xc, yc, zc)
@@ -145,7 +145,7 @@ def visSpheres(positions, radii):
     ren.AddActor(axes)
 
      # Create a RenderWindowInteractor to permit manipulating the camera
-    plotSpheres(ren, profile, positions, radii)
+    plotSpheres(ren, points, radius_vtk)
 
     renWin = vtk.vtkRenderWindow()
     renWin.AddRenderer(ren)
