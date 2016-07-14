@@ -35,164 +35,143 @@ import numpy as np
 import sys
 from vtk.util import numpy_support
 
-def surfMesh(positions):
-    """ Creates a Delaunay traingulation from a set of particle positions.
-    """
-
-    points = vtk.vtkPoints()
-
-    for i, r in enumerate(positions):
-        points.InsertPoint(i, r[0], r[1], r[2])
-        profile = vtk.vtkPolyData()
-        profile.SetPoints(points)
-
-    delny = vtk.vtkDelaunay3D()
-    delny.SetInputData(profile)
-    delny.SetTolerance(0.01)
-    delny.SetAlpha(0.2)
-    delny.BoundingTriangulationOff()
-
-    # Create the mapper that corresponds the objects of the vtk file
-    # into graphics elements
-    mapper = vtk.vtkDataSetMapper()
-    mapper.SetInputConnection(delny.GetOutputPort())
-
-    actor = vtk.vtkActor()
-    actor.SetMapper(mapper)
-    actor.GetProperty().SetColor(1, 0, 0)
-
-    # Create the Renderer
-    renderer = vtk.vtkRenderer()
-    renderer.AddActor(actor)
-    renderer.SetBackground(1, 1, 1) # Set background to white
-
-    # Create the RendererWindow
-    renderer_window = vtk.vtkRenderWindow()
-    renderer_window.AddRenderer(renderer)
-    renderer_window.SetSize(250, 250)
-
-    # Create the RendererWindowInteractor and display the vtk_file
-    interactor = vtk.vtkRenderWindowInteractor()
-    interactor.SetRenderWindow(renderer_window)
-
-    interactor.Initialize()
-    renderer_window.Render()
-    interactor.Start()
-
-def loadStl(fname):
-    """Load the given STL file, and return a vtkPolyData object for it."""
-
-    reader = vtk.vtkSTLReader()
-    reader.SetFileName(fname)
-    reader.Update()
-    polydata = reader.GetOutput()
-    return polydata
-
-def plotSpheres(ren, points, radius):
-
-    source = vtk.vtkSphereSource()
-    source.SetRadius(0.01)
-
-    ballGlyph = vtk.vtkGlyph3D()
-
-    if vtk.VTK_MAJOR_VERSION <= 5:
-        ballGlyph.SetSource(source.GetOutput())
-    else:
-        ballGlyph.SetSourceConnection(source.GetOutputPort())
-
-    grid = vtk.vtkUnstructuredGrid()
-    grid.SetPoints(points)
-    grid.GetPointData().AddArray(radius)
-    grid.GetPointData().SetActiveScalars("radius")
-
-    ballGlyph.SetInputData(grid)
-
-    #ballGlyph.SetScaleModeToDataScalingOn() 
-    mapper = vtk.vtkPolyDataMapper()
-
-    if vtk.VTK_MAJOR_VERSION <= 5:
-	   mapper.SetInput(ballGlyph.GetOutput())
-    else:
-	   mapper.SetInputConnection(ballGlyph.GetOutputPort())
- 
-    # actor
-    actor = vtk.vtkActor()
-    actor.SetMapper(mapper)
- 
-    # assign actor to the renderer
-    ren.AddActor(actor)
-
-def visSpheres(positions, radius):
-
-    positions_vtk = numpy_support.numpy_to_vtk(num_array=positions.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-    positions_vtk.SetName("positions")
-
-    radius_vtk = numpy_support.numpy_to_vtk(num_array=radius.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-    radius_vtk.SetName("radius")
-
-    points = vtk.vtkPoints()
+class Visualizer:
+    """ A general purpose class for visualizing data using vtk """
     
-    for i, r in enumerate(positions):
-        points.InsertPoint(i, r[0], r[1], r[2])
+    def __init__(self):
+        #self._ren.AddActor(self._axes)
+        
+        self._axes = vtk.vtkAxesActor()
+        self._ren = vtk.vtkRenderer() 
+        
+        self._style = vtk.vtkInteractorStyleTrackballCamera()
 
-    xc, yc, zc = np.mean(positions, axis=0)
-    
-    axes = vtk.vtkAxesActor()
-    axes.SetPosition(xc, yc, zc)
-    axes.VisibilityOff()
+        self._renWin = vtk.vtkRenderWindow()
+        self._renWin.AddRenderer(self._ren)
+        self._renWin.SetWindowName("DEM Visualizer")
 
-    ren = vtk.vtkRenderer() 
-    ren.AddActor(axes)
+        self._iren = vtk.vtkRenderWindowInteractor()
+        self._iren.SetRenderWindow(self._renWin)
 
-     # Create a RenderWindowInteractor to permit manipulating the camera
-    plotSpheres(ren, points, radius_vtk)
+    def render(self):
+        """ initialize renderer """
+        
+        self._ren.SetBackground(0, 0, 0)
+        #ren.AddActor(arrowActor)
 
-    renWin = vtk.vtkRenderWindow()
-    renWin.AddRenderer(ren)
+        self._iren.Initialize()
+        self._iren.SetInteractorStyle(self._style)
+        self._iren.Start()
 
-    iren = vtk.vtkRenderWindowInteractor()
-    iren.SetRenderWindow(renWin)
-    style = vtk.vtkInteractorStyleTrackballCamera()
-    iren.SetInteractorStyle(style)
+        self._close_window()
 
-    camera = vtk.vtkCamera()
-    camera.SetFocalPoint(0, 0, 0)
-    camera.SetPosition(xc, yc, zc)
-    ren.SetActiveCamera(camera)
-    
-    iren.Initialize()
-    renWin.Render()
-    iren.Start()
+    def loadStl(self, fname):
+        """Load the given STL file into a vtkPolyData object"""
 
-def visualize_Vtk(file_name):
-    # Read the source file.
-    reader = vtk.vtkUnstructuredGridReader()
-    reader.SetFileName(file_name)
-    reader.Update() # Needed because of GetScalarRange
-    output = reader.GetOutput()
-    scalar_range = output.GetScalarRange()
+        reader = vtk.vtkSTLReader()
+        reader.SetFileName(fname)
+        reader.Update()
+        self._stl = reader.GetOutput() # polydata
 
-    # Create the mapper that corresponds the objects of the vtk file
-    # into graphics elements
-    mapper = vtk.vtkDataSetMapper()
-    mapper.SetInputData(output)
-    mapper.SetScalarRange(scalar_range)
+    @property
+    def axes(self):
+        return self.axes
 
-    # Create the Actor
-    actor = vtk.vtkActor()
-    actor.SetMapper(mapper)
+    def visSpheres(self, positions, velocities, radius):
 
-    # Create the Renderer
-    renderer = vtk.vtkRenderer()
-    renderer.AddActor(actor)
-    renderer.SetBackground(1, 1, 1) # Set background to white
+        self._camera = vtk.vtkCamera()
+        self._camera.SetFocalPoint(0, 0, 0)
+        self._camera.SetPosition(np.mean(positions, axis=0))
+        self._ren.SetActiveCamera(self._camera)
 
-    # Create the RendererWindow
-    renderer_window = vtk.vtkRenderWindow()
-    renderer_window.AddRenderer(renderer)
+        self.positions_vtk = numpy_support.numpy_to_vtk(num_array=positions.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        self.positions_vtk.SetName("positions")
 
-    # Create the RendererWindowInteractor and display the vtk_file
-    interactor = vtk.vtkRenderWindowInteractor()
-    interactor.SetRenderWindow(renderer_window)
-    interactor.Initialize()
-    interactor.Start()
+        self.radius_vtk = numpy_support.numpy_to_vtk(num_array=radius.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        self.radius_vtk.SetName("radius")
+
+        self.points = vtk.vtkPoints()
+        self.velPoints = vtk.vtkPoints()
+        
+        for i, r in enumerate(positions):
+            self.points.InsertPoint(i, r[0], r[1], r[2])
+
+        for i, v in enumerate(velocities):
+            self.velPoints.InsertPoint(i, v[0], v[1], v[2])
+
+        self.source = vtk.vtkSphereSource()
+        self.source.SetRadius(1.0)
+
+        self.ballGlyph = vtk.vtkGlyph3D()
+
+        if vtk.VTK_MAJOR_VERSION <= 5:
+            self.ballGlyph.SetSource(self.source.GetOutput())
+        else:
+            self.ballGlyph.SetSourceConnection(self.source.GetOutputPort())
+
+        self.grid = vtk.vtkUnstructuredGrid()
+        self.grid.SetPoints(self.points)
+        self.grid.GetPointData().AddArray(self.radius_vtk)
+        self.grid.GetPointData().SetActiveScalars("radius") # this scales the source (sphere) radius (1.0)
+
+        self.ballGlyph.SetInputData(self.grid)
+
+        # Create a color transfer function to be used for both the balls and arrows.
+        colorTransferFunction = vtk.vtkColorTransferFunction()
+        colorTransferFunction.AddRGBPoint(5.0 , 0.0, 0.0, 1.0)
+        colorTransferFunction.AddRGBPoint(10.0, 0.0, 1.0, 1.0)
+        colorTransferFunction.AddRGBPoint(15.0, 0.0, 1.0, 0.0)
+        colorTransferFunction.AddRGBPoint(20.0, 1.0, 1.0, 0.0)
+        colorTransferFunction.AddRGBPoint(25.0, 1.0, 0.0, 0.0)
+        colorTransferFunction.AddRGBPoint(30.0, 1.0, 0.0, 1.0)
+
+        #ballGlyph.SetScaleModeToDataScalingOn() 
+        self.mapper = vtk.vtkPolyDataMapper()
+
+        if vtk.VTK_MAJOR_VERSION <= 5:
+           self.mapper.SetInput(self.ballGlyph.GetOutput())
+        else:
+           self.mapper.SetInputConnection(self.ballGlyph.GetOutputPort())
+
+        # Set colors depending on the color transfer functions
+        self.mapper.SetLookupTable(colorTransferFunction)
+
+        #Put an arrow (vector) at each ball
+        arrow = vtk.vtkArrowSource()
+        arrow.SetTipRadius(0.05)
+        arrow.SetShaftRadius(0.05)
+
+        self.poly = vtk.vtkPolyData()
+        self.poly.SetPoints(self.points)
+
+        arrowGlyph = vtk.vtkGlyph3D()
+        arrowGlyph.SetInputData(self.poly)
+        arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
+        arrowGlyph.SetScaleFactor(1e-3)
+
+        # We do not want the Arrow's size to depend on the Scalar
+        #arrowGlyph.SetScaleModeToDataScalingOff()
+        arrowMapper = vtk.vtkPolyDataMapper()
+        arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
+
+        # Set colors depending on the color transfer functions
+        arrowMapper.SetLookupTable(colorTransferFunction)
+
+        # actor
+        self.ballActor = vtk.vtkActor()
+        self.ballActor.SetMapper(self.mapper)
+     
+        arrowActor = vtk.vtkActor()
+        arrowActor.SetMapper(arrowMapper)
+        arrowActor.GetProperty().SetColor(0,1,1)
+
+        self._ren.AddActor(self.ballActor)
+        self._ren.AddActor(arrowActor)
+
+    def _close_window(self):
+        """ kills any active renderer / windows """
+        render_window = self._iren.GetRenderWindow()
+        render_window.Finalize()
+        self._iren.TerminateApp()
+
+        del render_window, self._iren, self._ren, self._renWin
