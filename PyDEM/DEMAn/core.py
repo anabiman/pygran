@@ -34,11 +34,75 @@ from xlrd import open_workbook
 from numbers import Number
 import types
 
+class Particles(object):
+	""" The Particle class stores all particle properties and the methods that operate on
+	these properties """
+
+	def __init__(self, style, sel = None, **data):
+
+		self.style = style
+		self.data = data
+
+		if style == 'dump':
+			if 'radius' in data:
+				self._radius = data['radius'][sel]
+				self.keys.append('radius')
+
+			if 'x' in data and 'y' in data and 'z' in data:
+				self._positions = np.array([data['x'][sel], data['y'][sel], data['z'][sel]]).T
+				self.keys.append('positions')
+
+			if 'vx' in data and 'vy' in data and 'vz' in data:
+				self._velocities = np.array([data['vx'][sel], data['vy'][sel], data['vz'][sel]]).T
+				self.keys.append('velocities')
+
+			if 'omegax' in data and 'omegay' in data and 'omegaz' in data:
+				self._omega = np.array([data['omegax'][sel], data['omegay'][sel], data['omegaz'][sel]]).T
+				self.keys.append('omega')
+
+			if 'fx' in data and 'fy' in data and 'fz' in data:
+				self._forces = np.array([data['fx'][sel], data['fy'][sel], data['fz'][sel]]).T
+				self.keys.append('forces')
+
+		# Checks if the trajectory file supports reduction in key getters
+		self.constructGetters()
+
+	def constructGetters(self):
+		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
+		for key in self.keys:
+			getter = '@property\ndef {}(self): return self.{}\n'.format(key, key) + \
+					 'self.{} = types.MethodType({}, self)'.format(key, key)
+			exec(getter)
+
+	def select(self, sel):
+		""" Creates a particle group based on sel string 
+		Possible string selections are:
+
+		- bynum 0:N : select particles 0 till N - 1
+		- bydist x y z cutoff : select all particles around point (x,y,z) within a distance 'cutoff'
+		- byrad radius : select all particles larger
+
+		"""
+		sType, sArgs = sel.split()
+
+		if sType == 'bynum':
+			s1, s2 = (sArgs.split()[1]).split(':')
+			s1, s2 = np.int(s1), np.int(s2)
+			sel = np.array(s1,s2)
+
+		if sType == 'byrad':
+			radius = np.float(sArgs.split()[1])
+			sel = np.find(self.radius >= radius)
+
+		return Particles(self.style, sel, self.data)
+
 class Granular(object):
 	"""The Granular class contains all the information describing a ganular system.
 	A system always requires a trajectory file to read. A trajectory is a (time) 
-	series corresponding to the coordinates of all particles in the system. It can 
-	also contain other variables such as momenta, angular velocities, forces, radii,
+	series corresponding to the coordinates of all particles in the system. Granular
+	handles the time frame and controls i/o operations. It contains a subclass 
+	'Paticles' which stores all the particle attributes read from the trajectory file 
+	(variables uch as momenta, angular velocities, forces, radii, etc.).
 	etc. """
 
 	def __init__(self, fname):
@@ -50,38 +114,16 @@ class Granular(object):
 		self.frame = 0
 		self.data = {}
 
+		# Do some checking here on the traj extension to make sure
+		# it's supported
+		self.style = fname.split('.')[-1]
+
 		# Read frame 0 to initialize function getters
 		self.__next__()
-		self.constructGetters()
+		self._updateSystem()
 
 	def __iter__(self):
 		return self
-
-	def constructGetters(self):
-		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
-		for key in self.keys:
-			getter = 'def get_{}(self): return self.data["{}"] \n'.format(key, key) + \
-					 'self.get_{} = types.MethodType(get_{}, self)'.format(key, key)
-			exec(getter)
-
-	def _chkGetters(self):
-		""" Checks if the trajectory file supports reduction in key getters """
-
-		# TODO: make sure difference styles are supported depending on the trajectory extension
-		keys = self.keys
-
-		if self._fname.split('.')[-1] == 'dump':
-			if 'x' in keys and 'y' in keys and 'z' in keys:
-				self.data['positions'] = np.array([self.data['x'], self.data['y'], self.data['z']]).T
-
-			if 'vx' in keys and 'vy' in keys and 'vz' in keys:
-				self.data['velocities'] = np.array([self.data['vx'], self.data['vy'], self.data['vz']]).T
-
-			if 'omegax' in keys and 'omegay' in keys and 'omegaz' in keys:
-				self.data['angVelocities'] = np.array([self.data['omegax'], self.data['omegay'], self.data['omegaz']]).T
-
-			if 'fx' in keys and 'fy' in keys and 'fz' in keys:
-				self.data['forces'] = np.array([self.data['fx'], self.data['fy'], self.data['fz']]).T
 
 	def goto(self, frame):
 		""" Go to a specific frame in the trajectory. If frame is -1
@@ -236,7 +278,7 @@ class Granular(object):
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attribvtes caused by
 		a frame change. """
-		self._chkGetters()
+		self.Particles = Particles(self.style, **self.data)
 
 	@property
 	def granular(self):
