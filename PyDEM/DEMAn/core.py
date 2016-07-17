@@ -35,44 +35,34 @@ from numbers import Number
 import types
 
 class Particles(object):
-	""" The Particle class stores all particle properties and the methods that operate on
-	these properties """
+	""" The Particle class stores all particle properties and the methods that operate on \
+these properties """
 
-	def __init__(self, style, sel = None, **data):
+	def __init__(self, sel = None, **data):
 
-		self.style = style
 		self.data = data
+		self.keys = self.data.keys()
 
-		if style == 'dump':
-			if 'radius' in data:
-				self._radius = data['radius'][sel]
-				self.keys.append('radius')
-
-			if 'x' in data and 'y' in data and 'z' in data:
-				self._positions = np.array([data['x'][sel], data['y'][sel], data['z'][sel]]).T
-				self.keys.append('positions')
-
-			if 'vx' in data and 'vy' in data and 'vz' in data:
-				self._velocities = np.array([data['vx'][sel], data['vy'][sel], data['vz'][sel]]).T
-				self.keys.append('velocities')
-
-			if 'omegax' in data and 'omegay' in data and 'omegaz' in data:
-				self._omega = np.array([data['omegax'][sel], data['omegay'][sel], data['omegaz'][sel]]).T
-				self.keys.append('omega')
-
-			if 'fx' in data and 'fy' in data and 'fz' in data:
-				self._forces = np.array([data['fx'][sel], data['fy'][sel], data['fz'][sel]]).T
-				self.keys.append('forces')
+		if sel is not None:
+			for key in self.keys:
+				self.data[key] = self.data[key][sel]
 
 		# Checks if the trajectory file supports reduction in key getters
-		self.constructGetters()
+		self.constructAttributes()
 
-	def constructGetters(self):
+	def _metaget(self, key):
+		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
+		and return as numpy arrays for numerical computations / manipulations"""
+		return np.array(self.data[key])
+
+	def constructAttributes(self):
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
 		for key in self.keys:
-			getter = '@property\ndef {}(self): return self.{}\n'.format(key, key) + \
-					 'self.{} = types.MethodType({}, self)'.format(key, key)
-			exec(getter)
+			method = lambda self: Particles._metaget(self, key)
+
+			# We cannot know the information for any property function until that property is created, 
+			# so we define the metaget function and particularize it only later with a lambda function
+			setattr(Particles, key, property(fget=method, doc='Extracts particle attribute'))
 
 	def select(self, sel):
 		""" Creates a particle group based on sel string 
@@ -94,7 +84,11 @@ class Particles(object):
 			radius = np.float(sArgs.split()[1])
 			sel = np.find(self.radius >= radius)
 
-		return Particles(self.style, sel, self.data)
+		return Particles(self.style, sel, **self.data)
+
+	def __getitem__(self, sel):
+		return Particles(sel, **self.data)
+
 
 class Granular(object):
 	"""The Granular class contains all the information describing a ganular system.
@@ -177,7 +171,7 @@ class Granular(object):
 					boxY = [float(i) for i in boxY]
 					boxZ = [float(i) for i in boxZ]
 
-					self.data['box'] = (boxX, boxY, boxZ)
+					self.data['box'] = [boxX, boxY, boxZ]
 					break
 
 			line = self._fp.readline()
@@ -188,7 +182,7 @@ class Granular(object):
 			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 			for key in keys:
-				self.data[key] = np.zeros(natoms)
+				self.data[key] = [None] * natoms
 
 			for i in range(natoms):
 				var = self._fp.readline().split()
@@ -251,7 +245,7 @@ class Granular(object):
 				boxY = [float(i) for i in boxY]
 				boxZ = [float(i) for i in boxZ]
 
-				self.data['box'] = (boxX, boxY, boxZ)
+				self.data['box'] = [boxX, boxY, boxZ]
 				break
 
 		line = self._fp.readline()
@@ -263,7 +257,7 @@ class Granular(object):
 		keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 		for key in keys:
-			self.data[key] = np.zeros(self.data['natoms'])
+			self.data[key] = [None] * natoms
 
 		for i in range(self.data['natoms']):
 			var = self._fp.readline().split()
