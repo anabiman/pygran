@@ -1,7 +1,7 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyDEM import DEMSi, DEMAn, DEMVi
+from PyDEM import Simulator as Simulator, Analyzer, Visualizer
 
 
 if __name__ == '__main__':
