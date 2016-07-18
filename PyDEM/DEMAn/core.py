@@ -65,7 +65,7 @@ these properties """
 			setattr(Particles, key, property(fget=method, doc='Extracts particle attribute'))
 
 	def select(self, sel):
-		""" Creates a particle group based on sel string 
+		""" Creates a particle group based on sel string.
 		Possible string selections are:
 
 		- bynum 0:N : select particles 0 till N - 1
