@@ -55,7 +55,7 @@ class DEM:
         self.split = self.comm.Split(self.color, key=0)
 
 
-        module = import_module('PyDEM.DEMSi.' + pargs['engine'])
+        module = import_module('PyDEM.Simulator.' + pargs['engine'])
 
         self.dem = module.DEMPy(i, self.split, **pargs) # logging module imported here      
         break

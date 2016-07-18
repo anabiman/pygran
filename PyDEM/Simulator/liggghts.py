@@ -420,7 +420,7 @@ class DEMPy:
     model = []
     modelExtra = []
 
-    for item in self.pargs['model']:
+    for item in self.pargs['model-args']:
       if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce':
         model.append(item)
       elif item != 'gran':
@@ -477,7 +477,7 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up interaction parameters')
 
-    args = self.pargs['model']
+    args = self.pargs['model-args']
 
     self.lmp.command('pair_style ' + (' {}' * len(args)).format(*args))
     self.lmp.command('pair_coeff * *')

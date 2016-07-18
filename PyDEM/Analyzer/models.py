@@ -31,14 +31,47 @@ Merck Inc., West Point
 
 import numpy as np
 
-
 class Model:
 	def __init__(self, **params):
+
+		self.params = params
+		self.params['nSS'] = len(self.params['SS']) + len(self.params['surfMesh'])
+
+		if 'style' not in self.params: 
+			self.params['style'] = 'granular'\
+
+		if 'units' not in self.params:	
+			self.params['units'] = 'si'
+
+		if 'dim' not in self.params:
+			self.params['dim'] = 3
+
+		if 'vel' not in self.params:
+			self.params['vel'] = ()
+
+			# the user did not specify the initial velocities, so we assume they're zero
+			for comp in range(len(self.params['SS'])):
+				self.params['vel'] += ((0,0,0),)
+
+		if 'nns_skin' not in self.params:
+			self.params['nns_skin'] = 1e-3
+
+		if 'nns_type' not in self.params:
+			self.params['nns_type'] = 'bin'
+
+		if 'restart' not in self.params:
+			self.params['restart'] = (5000, 'restart', 'restart.binary', False)
+
+		if 'dump_modify' not in self.params:
+			self.params['dump_modify'] = ('append', 'yes')
+
+		if 'nSim' not in self.params:
+			self.params['nSim'] =  1
 
 		self.materials = {}
 
 		for item in params['materials']:
-			if params['materials'][item][2] == '2':
+			if params['materials'][item][1] == 'peratomtype':
 				self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
 					it in params['materials'][item][3:]]).mean()
 			else:	
@@ -49,6 +82,9 @@ class Model:
 		self.radius = np.array([radius[1] for radius in params['radius']])
 		self.mass = np.array([4.0/3.0 * np.pi * self.radius[i]**3 * self.SS[i]['density'] for \
 								i in range(len(self.SS))])
+
+		# Estimate the allowed sim timestep
+		self.params['dt'] = (0.25 * self.contactTime()).min()
 
 	def contactTime(self):
 		pass
@@ -65,13 +101,19 @@ class Model:
 	def tangForce(self):
 		pass
 
-class LinearSpring(Model):
+class SpringDashpot(Model):
 	"""
 	A class that implements the linear spring model for granular materials
 	"""
 
 	def __init__(self, **params):
 		Model.__init__(self, **params)
+
+		if 'model-args' not in self.params:
+			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
+						'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
+		else:
+			self.params['model-args'] = self.params['model-args']
 
 	def springStiff(self, radius = None, yMod = None, mass = None, v0 = None):
 		""" Computes the spring constant kn for 

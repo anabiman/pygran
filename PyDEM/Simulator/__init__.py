@@ -26,3 +26,18 @@ Merck Inc., West Point
 '''
 
 from DEM import *
+from glob import glob as _glob
+
+class _findEngines:
+	def __init__(self):
+
+		ext = __file__.split('__init__.py')[0]
+		pyFiles = _glob(ext + '*.py')
+
+		for file in pyFiles:
+			if file != ext + 'DEM.py' and file != ext + '__init__.py':
+				
+				engine, _ = file.split(ext)[1].split('.py')
+				setattr(self, engine, engine)
+
+engines = _findEngines()
