@@ -15,6 +15,6 @@
 
 # -------------------------------------------------------------------------
 
-import DEMSi
-import DEMAn
-import DEMVi
+import Simulator
+import Analyzer
+import Visualizer
