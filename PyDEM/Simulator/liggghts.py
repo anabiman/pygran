@@ -63,7 +63,7 @@ class liggghts:
 
   # create instance of LIGGGHTS
  
-  def __init__(self,name="libliggghts.so",path=None, cmdargs=None,ptr=None,comm=None):
+  def __init__(self, name="libliggghts.so", style = 'granular', dim = 3, units = 'si', path=None, cmdargs=None, ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
 

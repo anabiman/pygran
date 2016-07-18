@@ -43,17 +43,20 @@ these properties """
 		self.data = data
 		self.keys = self.data.keys()
 
-		if sel is not None:
-			for key in self.keys:
-				self.data[key] = self.data[key][sel]
+		for key in self.keys:
+			self.data[key] = self.data[key][sel]
+
+		if sel is not None: # we are creating a subclass
+			if 'natoms' in self.data:
+				self.data['natoms'] = len(self.data['radius'])
 
 		# Checks if the trajectory file supports reduction in key getters
 		self.constructAttributes()
 
 	def _metaget(self, key):
-		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
-		and return as numpy arrays for numerical computations / manipulations"""
-		return np.array(self.data[key])
+		"""A meta function for returning dynamic class attributes treated as numpy 
+		arrays for numerical computations / manipulations"""
+		return self.data[key]
 
 	def constructAttributes(self):
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
@@ -171,7 +174,7 @@ class Granular(object):
 					boxY = [float(i) for i in boxY]
 					boxZ = [float(i) for i in boxZ]
 
-					self.data['box'] = [boxX, boxY, boxZ]
+					self.data['box'] = np.array([boxX, boxY, boxZ])
 					break
 
 			line = self._fp.readline()
@@ -182,7 +185,7 @@ class Granular(object):
 			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 			for key in keys:
-				self.data[key] = [None] * natoms
+				self.data[key] = np.zeros(natoms)
 
 			for i in range(natoms):
 				var = self._fp.readline().split()
@@ -257,7 +260,7 @@ class Granular(object):
 		keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 		for key in keys:
-			self.data[key] = [None] * natoms
+			self.data[key] = np.zeros(natoms)
 
 		for i in range(self.data['natoms']):
 			var = self._fp.readline().split()

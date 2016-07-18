@@ -1,8 +1,8 @@
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyDEM import DEMSi
-import PyDEM.DEMAn.models as models
+from PyDEM import Simulator as Simulator, Analyzer, Visualizer
+
 
 if __name__ == '__main__':
 
@@ -10,9 +10,6 @@ if __name__ == '__main__':
 	physParams = {
 
 			  # Define the system
-			  'units': 'si',
-			  'dim': 3,
-			  'style': 'granular', # spherical deformable particles
 			  'boundary': ('f','f','f'), # fixed BCs
 			  'model': ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
                         'cdt', 'tangential_damping', 'on', 'limitForce', 'on'), # the order matters here
@@ -37,13 +34,13 @@ if __name__ == '__main__':
 			  # Apply gravitional force in the negative direction along the z-axis
 			  'gravity': (9.81, 0, 0, -1), 
 			}
-
+			
 	# Create a dictionary of dynamical parameters for a linear spring model
-	dynamicParams = {
+	coreParams = {
 
-				'lsModel': models.LinearSpring(**physParams),
-                'alpha': 0.25,
-        
+				'model': DEMAn.models.LinearSpring(**physParams),
+                'engine': DEMSi.engines.liggghts,
+
 				# Stage runs
 				'insertion': 1e6,
 				'flow': 0e6

@@ -1,3 +1,17 @@
+'''
+Created on July 18, 2016
+@author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
+'''
+
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
+# -------------------------------------------------------------------------
+#
+#   Python module for storing material properties
+#
 # --------------------------------------------------------------------------
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -14,7 +28,3 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # -------------------------------------------------------------------------
-
-import Simulator
-import Analyzer
-import Visualizer
