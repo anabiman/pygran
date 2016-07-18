@@ -30,8 +30,6 @@ Merck Inc., West Point
 # -------------------------------------------------------------------------
 
 import numpy as np
-from xlrd import open_workbook
-from numbers import Number
 import types
 
 class Particles(object):

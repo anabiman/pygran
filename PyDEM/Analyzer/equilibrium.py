@@ -29,9 +29,11 @@ Merck Inc., West Point
 
 # -------------------------------------------------------------------------
 
-from numpy import zeros, sqrt, where, pi, mean, arange, histogram
+from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array
+from xlrd import open_workbook
+from numbers import Number
 
-def rdf(x, y, z, S, rMax, dr):
+def rdf(x, y, z, dr = None, center = True):
     """Computes the three-dimensional radial distribution function for a set of
     spherical particles contained in a cube with side length S.  This simple
     function finds reference particles such that a sphere of radius rMax drawn
@@ -55,9 +57,20 @@ def rdf(x, y, z, S, rMax, dr):
     """
     
     # center positions around 0
-    x -= x.min()
-    y -= y.min()
-    z -= z.min()
+    if center:
+    	x -= x.min()
+    	y -= y.min()
+    	z -= z.min()
+
+    S = min(x.max(), y.max(), z.max())
+
+    rMax = S / 4.0
+
+    if dr is None:
+    	dr = rMax / 100
+
+    print 'Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S, rMax)
+    print 'Resolution chosen is {}'.format(dr)
 
     # Find particles which are close enough to the cube center that a sphere of radius
     # rMax will not cross any face of the cube
@@ -124,8 +137,10 @@ def readExcel(fname):
 					else:
 						print cell.value, ' ignored'
 
-	return data
+	for key in data.keys():
+		data[key] = array(data[key])
 
+	return data
 
 def computeAngleRepose(data, *args):
 	"""
