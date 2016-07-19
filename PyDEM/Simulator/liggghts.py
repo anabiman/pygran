@@ -32,6 +32,7 @@ import sys,traceback,types
 from ctypes import *
 from os.path import dirname, abspath, join
 from inspect import getsourcefile
+from datetime import datetime
 
 import numpy as np
 import itertools
@@ -285,6 +286,19 @@ class DEMPy:
     @ dim: dimensions of the problem (2 or 3)
     # style: granular, atom, or ...
     """
+    # Setup I/O parameters if not supplied by the user
+    if 'traj' not in pargs:
+      pargs['traj'] = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
+                       'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
+                       'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+      
+    if 'print' not in pargs:
+      pargs['print'] = (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu', 'density')
+
+    if 'out' not in pargs:
+      time = datetime.now()
+      pargs['output'] = 'out-{}:{}:{}-{}.{}.{}'.format(time.hour, time.minute, time.second, time.day, time.month, time.year)
+
     self.rank = split.Get_rank()
     self.split = split
     self.pargs = pargs
@@ -486,7 +500,8 @@ class DEMPy:
     """
     Specify in which direction the gravitational force acts
     """
-    self.lmp.command('fix myGravity all gravity {} vector {} {} {}'.format(*self.pargs['gravity']))
+    if 'gravity' in self.pargs:
+      self.lmp.command('fix myGravity all gravity {} vector {} {} {}'.format(*self.pargs['gravity']))
 
   def initialize(self, **params):
     """

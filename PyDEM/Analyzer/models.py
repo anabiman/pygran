@@ -108,7 +108,7 @@ class SpringDashpot(Model):
 
 	def __init__(self, **params):
 
-		params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.1', '0.1')
+		params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.2', '0.2')
 
 		Model.__init__(self, **params)
 

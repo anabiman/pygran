@@ -30,13 +30,6 @@ if __name__ == '__main__':
 			'insertion': 1e6,
 			'flow': 0e6,
 
-			# I/O parameters
-			'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
-			       'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
-			                'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
-			'output': 'out-radius-400-repos',
-			'print': (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu', 'density'),
-
 			# Meshes
 			'surfMesh': {
 				'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale': 5e-4},
