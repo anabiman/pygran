@@ -9,7 +9,7 @@ if __name__ == '__main__':
 	# Create a dictionary of physical parameters
 	params = {
 
-			'model': Analyzer.models.SpringDashpot,
+			'model': Analyzer.models.HertzMindlin,
             'engine': Simulator.engines.liggghts,
 
 			# Define the system
@@ -17,7 +17,7 @@ if __name__ == '__main__':
 			'box':  (-0.016, 0.016, -0.016, 0.016, -0.01, 0.061), # simulation box size
 
 			# Define component(s)
-			'SS': ({'id':1, 'natoms': 1e5, 'density': 2500.0, 'insert': True, 'rate': 1e6, 'freq': 1e3}, ), # number of particles inserted = rate * dt * freq every freq steps
+			'SS': ({'id':1, 'natoms': 3e4, 'density': 2500.0, 'insert': True, 'rate': 1e6, 'freq': 1e3}, ), # number of particles inserted = rate * dt * freq every freq steps
 			'radius': (('gaussian number', 4e-4, 4e-5),),
 
 			# Material properties
@@ -60,13 +60,13 @@ if __name__ == '__main__':
 	sim.initialize()
 
 	# Setup material properties
-	for item in params['materials'].keys():
+	for item in cModel.params['materials'].keys():
 		# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-		sim.createProperty(item, *params['materials'][item])
+		sim.createProperty(item, *cModel.params['materials'][item])
 
 	# Import and setup all meshes as rigid wall
-	for mesh in params['surfMesh'].keys():
-		sim.importMesh(name=mesh, **params['surfMesh'][mesh])
+	for mesh in cModel.params['surfMesh'].keys():
+		sim.importMesh(name=mesh, **cModel.params['surfMesh'][mesh])
 		sim.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
 
 	# Setup a stopper wall along the xoz plane (y = 0.0)
@@ -89,4 +89,4 @@ if __name__ == '__main__':
 	# Remove stopper
 	sim.remove(name='stopper')
 
-	sim.integrate(params['flow'], params['dt'])
+	sim.integrate(cModel.params['flow'], cModel.params['dt'])

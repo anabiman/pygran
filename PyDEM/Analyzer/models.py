@@ -107,6 +107,9 @@ class SpringDashpot(Model):
 	"""
 
 	def __init__(self, **params):
+
+		params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.1', '0.1')
+
 		Model.__init__(self, **params)
 
 		if 'model-args' not in self.params:
@@ -116,8 +119,7 @@ class SpringDashpot(Model):
 			self.params['model-args'] = self.params['model-args']
 
 	def springStiff(self, radius = None, yMod = None, mass = None, v0 = None):
-		""" Computes the spring constant kn for 
-			F = - kn * \delta
+		""" Computes the spring constant kn for F = - kn * \delta
 		"""
 		if yMod is None:
 			yMod = self.materials['youngsModulus']
@@ -146,6 +148,42 @@ class SpringDashpot(Model):
 			cR = self.materials['coefficientRestitution']
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(cR)) / kn) 
+
+	def normalForce(self, ):
+		return - self.springStiff
+
+class HertzMindlin(Model):
+	"""
+	A class that implements the linear spring model for granular materials
+	"""
+
+	def __init__(self, **params):
+		Model.__init__(self, **params)
+
+		if 'model-args' not in self.params:
+			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'rolling_friction', \
+						'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
+		else:
+			self.params['model-args'] = self.params['model-args']
+
+	def springStiff(self, radius = None, yMod = None, mass = None, v0 = None):
+		""" Computes the spring constant kn for 
+			F = - kn * \delta
+		"""
+		if yMod is None:
+			yMod = self.materials['youngsModulus']
+
+		if mass is None:
+			mass = self.mass
+
+		if radius is None:
+			radius = self.radius
+
+		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
+			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
+
+	def contactTime(self, mass = None, cR = None, kn = None):
+		return 2.5e-5 * np.ones(2)
 
 	def normalForce(self, ):
 		return - self.springStiff
