@@ -29,16 +29,25 @@ Merck Inc., West Point
 
 # -------------------------------------------------------------------------
 
+# TODO: Support 2-particle analysis by replacing mass radius, etc. with reduces mass, radius, etc.
+# i.e. 1/m_ij = 1/m_i + 1/m_j
+
 import numpy as np
 
 class Model:
 	def __init__(self, **params):
 
 		self.params = params
-		self.params['nSS'] = len(self.params['SS']) + len(self.params['surfMesh'])
+		self.params['nSS'] = 0
+
+		if 'SS' in self.params:
+			self.params['nSS'] += len(self.params['SS'])
+
+		if 'surfMesh' in self.params:
+			self.params['nSS'] += len(self.params['surfMesh'])
 
 		if 'style' not in self.params: 
-			self.params['style'] = 'granular'\
+			self.params['style'] = 'granular'
 
 		if 'units' not in self.params:	
 			self.params['units'] = 'si'
@@ -49,9 +58,10 @@ class Model:
 		if 'vel' not in self.params:
 			self.params['vel'] = ()
 
-			# the user did not specify the initial velocities, so we assume they're zero
-			for comp in range(len(self.params['SS'])):
-				self.params['vel'] += ((0,0,0),)
+			if 'SS' in self.params:
+				# the user did not specify the initial velocities, so we assume they're zero
+				for comp in range(len(self.params['SS'])):
+					self.params['vel'] += ((0,0,0),)
 
 		if 'nns_skin' not in self.params:
 			self.params['nns_skin'] = 1e-3
@@ -70,36 +80,43 @@ class Model:
 
 		self.materials = {}
 
-		for item in params['materials']:
-			if params['materials'][item][1] == 'peratomtype':
-				self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
-					it in params['materials'][item][3:]]).mean()
-			else:	
-				self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
-					it in params['materials'][item][2:]]).mean()
+		if 'materials' in self.params:
+			for item in self.params['materials']:
+				if self.pparams['materials'][item][1] == 'peratomtype':
+					self.materials[self.pparams['materials'][item][0]] = np.array([np.float(it) for \
+						it in self.pparams['materials'][item][3:]]).mean()
+				else:	
+					self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
+						it in params['materials'][item][2:]]).mean()
 
-		self.SS = params['SS']
-		self.radius = np.array([radius[1] for radius in params['radius']])
-		self.mass = np.array([4.0/3.0 * np.pi * self.radius[i]**3 * self.SS[i]['density'] for \
-								i in range(len(self.SS))])
+		if 'SS' in self.params:
+			self.SS = params['SS']
+			self.radius = np.array([radius[1] for radius in params['radius']])
+			self.mass = np.array([4.0/3.0 * np.pi * self.radius[i]**3 * self.SS[i]['density'] for \
+									i in range(len(self.SS))])
 
-		# Estimate the allowed sim timestep
-		self.params['dt'] = (0.25 * self.contactTime()).min()
+			# Estimate the allowed sim timestep
+			self.params['dt'] = (0.25 * self.contactTime()).min()
+		else:
+			print 'Warning: no components found in your supplied dictionary!'
 
 	def contactTime(self):
-		pass
+		raise NotImplementedError('Not yet implemented')
 
 	def overlap(self):
-		pass
+		raise NotImplementedError('Not yet implemented')
 
-	def contactForce(self):
-		pass
+	def dissCoef(self):
+		raise NotImplementedError('Not yet implemented')
+
+	def springStiff(self):
+		raise NotImplementedError('Not yet implemented')
 
 	def normalForce(self):
-		pass
+		raise NotImplementedError('Not yet implemented')
 
 	def tangForce(self):
-		pass
+		raise NotImplementedError('Not yet implemented')
 
 class SpringDashpot(Model):
 	"""
@@ -136,6 +153,19 @@ class SpringDashpot(Model):
 		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
+	def dissCoef(self, radius = None, yMod = None, mass = None, v0 = None, rest = None):
+
+		if rest is None:
+			rest = self.materials['coefficientRestitution']
+
+		if mass is None:
+			mass = self.mass
+
+		kn = self.springStiff(radius, yMod, mass, v0)
+		loge = np.log(rest)
+
+		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
+
 	def contactTime(self, mass = None, cR = None, kn = None):
 
 		if kn is None:
@@ -149,8 +179,14 @@ class SpringDashpot(Model):
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(cR)) / kn) 
 
-	def normalForce(self, ):
-		return - self.springStiff
+	def overlap(self, ):
+		pass
+
+	def normalForce(self, delta = None, radius = None, yMod = None, mass = None, v0 = None):
+		if delta is None:
+			delta = overlap()
+
+		return - self.springStiff(radius, yMod, mass, v0) * delta
 
 class HertzMindlin(Model):
 	"""
@@ -179,11 +215,10 @@ class HertzMindlin(Model):
 		if radius is None:
 			radius = self.radius
 
-		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
-			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
+		pass
 
 	def contactTime(self, mass = None, cR = None, kn = None):
 		return 2.5e-5 * np.ones(2)
 
 	def normalForce(self, ):
-		return - self.springStiff
+		pass

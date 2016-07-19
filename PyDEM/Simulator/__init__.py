@@ -27,6 +27,7 @@ Merck Inc., West Point
 
 from DEM import *
 from glob import glob as _glob
+from models import *
 
 class _findEngines:
 	def __init__(self):

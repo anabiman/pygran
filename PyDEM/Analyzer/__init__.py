@@ -26,4 +26,3 @@ Merck Inc., West Point
 
 from core import *
 from equilibrium import *
-from models import *
