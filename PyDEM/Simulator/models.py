@@ -135,11 +135,15 @@ class SpringDashpot(Model):
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-	def springStiff(self, radius = None, yMod = None, mass = None, v0 = None):
+	def springStiff(self, radius = None, yMod = None, poiss = None, mass = None, v0 = None):
 		""" Computes the spring constant kn for F = - kn * \delta
 		"""
+		if poiss is None:
+			poiss = self.materials['poissonsRatio']
+
 		if yMod is None:
 			yMod = self.materials['youngsModulus']
+			yMod /= 2.0 * (1.0  - poiss )
 
 		if v0 is None:
 			v0 = self.materials['characteristicVelocity']
@@ -153,7 +157,7 @@ class SpringDashpot(Model):
 		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-	def dissCoef(self, radius = None, yMod = None, mass = None, v0 = None, rest = None):
+	def dissCoef(self, radius = None, yMod = None, poiss = None, mass = None, v0 = None, rest = None):
 
 		if rest is None:
 			rest = self.materials['coefficientRestitution']
@@ -161,12 +165,12 @@ class SpringDashpot(Model):
 		if mass is None:
 			mass = self.mass
 
-		kn = self.springStiff(radius, yMod, mass, v0)
+		kn = self.springStiff(radius, yMod, poiss, mass, v0)
 		loge = np.log(rest)
 
 		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
 
-	def contactTime(self, mass = None, cR = None, kn = None):
+	def contactTime(self, mass = None, rest = None, kn = None):
 
 		if kn is None:
 			 kn = self.springStiff()
@@ -174,19 +178,36 @@ class SpringDashpot(Model):
 		if mass is None:
 			mass = self.mass
 
-		if cR is None:
-			cR = self.materials['coefficientRestitution']
+		if rest is None:
+			rest = self.materials['coefficientRestitution']
 
-		return np.sqrt(mass * (np.pi**2.0 + np.log(cR)) / kn) 
+		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn) 
 
-	def overlap(self, ):
-		pass
+	def overlap(self, delta = None, radius = None, yMod = None, poiss = None, mass = None, v0 = None, rest = None):
+		""" Computes the overlap distance """
+		kn = self.springStiff(radius, yMod, poiss, mass, v0)
+		cn = self.dissCoef(radius, yMod, poiss, mass, v0, rest)
+		dt = self.contactTime(mass, rest, kn)
 
-	def normalForce(self, delta = None, radius = None, yMod = None, mass = None, v0 = None):
+		time = np.arange(0, dt*100, dt)
+
+		if v0 is None:
+			v0 = self.materials['characteristicVelocity']
+
+		if mass is None:
+			mass = self.mass
+
+		if radius is None:
+			radius = self.radius
+
+		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
+		return np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
+
+	def normalForce(self, delta = None, radius = None, yMod = None, poiss = None, mass = None, v0 = None):
 		if delta is None:
-			delta = overlap()
+			delta = self.overlap()
 
-		return - self.springStiff(radius, yMod, mass, v0) * delta
+		return - self.springStiff(radius, yMod, poiss, mass, v0) * delta
 
 class HertzMindlin(Model):
 	"""

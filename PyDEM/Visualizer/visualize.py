@@ -66,12 +66,20 @@ class Visualizer:
         self._close_window()
 
     def loadStl(self, fname):
-        """Load the given STL file into a vtkPolyData object"""
+        """Load a given STL file into a vtkPolyData object"""
 
         reader = vtk.vtkSTLReader()
         reader.SetFileName(fname)
         reader.Update()
         self._stl = reader.GetOutput() # polydata
+
+    def loadVtk(self, fname):
+        """ Load a given VTK file into a vtkPolyData object """
+
+        reader = vtk.vtkUnstructuredGridReader()
+        reader.SetFileName(filename)
+        reader.Update()
+        self._vtk = reader.GetOutput()
 
     @property
     def axes(self):
