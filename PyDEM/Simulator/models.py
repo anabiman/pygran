@@ -82,9 +82,9 @@ class Model:
 
 		if 'materials' in self.params:
 			for item in self.params['materials']:
-				if self.pparams['materials'][item][1] == 'peratomtype':
-					self.materials[self.pparams['materials'][item][0]] = np.array([np.float(it) for \
-						it in self.pparams['materials'][item][3:]]).mean()
+				if self.params['materials'][item][1] == 'peratomtype':
+					self.materials[self.params['materials'][item][0]] = np.array([np.float(it) for \
+						it in self.params['materials'][item][3:]]).mean()
 				else:	
 					self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
 						it in params['materials'][item][2:]]).mean()
@@ -131,7 +131,7 @@ class SpringDashpot(Model):
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
-						'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
+						'cdt', 'tangential_damping', 'on', 'limitForce', 'on', 'ktToKnUser', 'on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
 
