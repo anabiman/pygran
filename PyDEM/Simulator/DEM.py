@@ -32,6 +32,12 @@ Merck Inc., West Point
 from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
+import os
+
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
 
 class DEM:
   """A class that handles communication for the DEM object"""
@@ -45,11 +51,31 @@ class DEM:
     self.nSim = pargs['nSim']
     self.model = str(pargs['model']).split('.')[-1]
     self.pargs = pargs
+    self.library = None
+    self._dir, _ = __file__.split('DEM.py')
+
+    # Check if .config files eixsts else create it
+    # Only one process needs to do this
+    if not self.rank:
+      if os.path.isfile(self._dir + '../.config'):
+        with open(self._dir + '../.config', 'r+') as fp:
+          self.library = fp.read().split('=')[-1]
+
+          # Make sure the library exists; else, find it somewhere else 
+          if not os.path.isfile(self.library):
+            self.library = find('lib' + self.pargs['engine'] + '.so', '/')
+            fp.seek(0,0)
+            fp.write('library=' + self.library)
+            print 'WARNING: Could not find user-specified library. Will use {} instead ...'.format(self.library)
+      else:
+        with open(self._dir + '../.config', 'w') as fp:
+          self.library = find('lib' + self.pargs['engine'] + '.so', '/')
+          print 'WARNING: No config file found. Creating one for {}'.format(self.library)
+          fp.write('library=' + self.library)
 
     if 'out' not in self.pargs:
       time = datetime.now()
       self.pargs['output'] = 'out-{}-{}:{}:{}-{}.{}.{}'.format(self.model, time.hour, time.minute, time.second, time.day, time.month, time.year)
-
 
     if self.nSim > self.tProcs:
       print "Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs)
@@ -62,11 +88,17 @@ class DEM:
         self.color = i
         self.split = self.comm.Split(self.color, key=0)
 
-
         module = import_module('PyDEM.Simulator.' + self.pargs['engine'])
         self.output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
-        self.dem = module.DEMPy(i, self.split, **self.pargs) # logging module imported here      
+        if not self.split.rank:
+          if os.path.exists(self.output):
+            print 'WARNING: output dir {} already exists. Proceeding ...'.format(self.output)
+          else:
+            os.mkdir(self.output)
+
+        self.split.Barrier() # wait for all procs to synchronize
+        self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here      
         break
 
     if not self.rank:

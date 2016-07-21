@@ -43,11 +43,6 @@ import glob
 import sys
 from importlib import import_module
 
-def find(name, path):
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
-
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
   
@@ -62,28 +57,19 @@ class liggghts:
 
   # create instance of LIGGGHTS
  
-  def __init__(self, name="libliggghts.so", style = 'granular', dim = 3, units = 'si', path=None, cmdargs=None, ptr=None, comm=None):
+  def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=None, ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
 
-    # determine module location
-    if not comm.Get_rank():
-      print "Looking for {} ...".format(name)
-    
-    if path:
-      foundliggghts = path + name
-    else:
-      foundliggghts = find(name, "/")
- 
-    if foundliggghts:
+    if library:
       if not comm.Get_rank():
-        print "Using " + foundliggghts
+        print "Using " + library
     else:
       if not comm.Get_rank():
-        print "Make sure a " + name + " is installed on your system"
+        print "Make sure a " + library + " is installed on your system"
       sys.exit()
 
-    self.lib = CDLL(foundliggghts, RTLD_GLOBAL)
+    self.lib = CDLL(library, RTLD_GLOBAL)
 
     # if no ptr provided, create an instance of LIGGGHTS
     #   don't know how to pass an MPI communicator from PyPar
@@ -262,10 +248,10 @@ class liggghts:
     natoms = self.lib.lammps_get_natoms(self.lmp)
     if type == 0:
       data = ((count*natoms)*c_int)()
-      self.lib.lammps_gather_atoms(self.lmp,name,type,count,data)
+      self.lib.lammps_gather_atoms(self.lmp, name, type, count, data)
     elif type == 1:
       data = ((count*natoms)*c_double)()
-      self.lib.lammps_gather_atoms(self.lmp,name,type,count,data)
+      self.lib.lammps_gather_atoms(self.lmp, name, type, count, data)
     else: return None
     return data
 
@@ -280,7 +266,7 @@ class DEMPy:
   # TODO: This class should be generic (not specific to liggghts), must
   # handle all I/O, garbage collection, etc. and then moved to DEM.py
 
-  def __init__(self, sid, split, units, dim, style, path, **pargs):
+  def __init__(self, sid, split, library, units, dim, style, **pargs):
     """ Initialize some settings and specifications 
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
@@ -305,14 +291,10 @@ class DEMPy:
     self.output = self.pargs['output']
 
     if not self.rank:
-      if not os.path.exists(self.output):
-        os.makedirs(self.output)
-    
       global logging
 
-    self.split.Barrier() # wait for all procs to synchronize
-
     # Make sure all procs change to working dir
+    self.split.Barrier()
     os.chdir(self.output)
 
     if not self.rank:
@@ -331,7 +313,7 @@ class DEMPy:
 
       logging.info('Instantiating LIGGGHTS object')
 
-    self.lmp = liggghts(comm=split, path=path, cmdargs=['-log', 'liggghts.log'])
+    self.lmp = liggghts(comm=split, library=library, cmdargs=['-log', 'liggghts.log'])
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
