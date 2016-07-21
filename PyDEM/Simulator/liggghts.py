@@ -430,7 +430,7 @@ class DEMPy:
     modelExtra = []
 
     for item in self.pargs['model-args']:
-      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce':
+      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser':
         model.append(item)
       elif item != 'gran':
         modelExtra.append(item)
