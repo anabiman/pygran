@@ -32,8 +32,6 @@ import sys,traceback,types
 from ctypes import *
 from os.path import dirname, abspath, join
 from inspect import getsourcefile
-from datetime import datetime
-
 import numpy as np
 import itertools
 from numpy.linalg import norm
@@ -279,6 +277,8 @@ class liggghts:
 
 class DEMPy:
   """A class that implements a python interface for DEM computations"""
+  # TODO: This class should be generic (not specific to liggghts), must
+  # handle all I/O, garbage collection, etc. and then moved to DEM.py
 
   def __init__(self, sid, split, units, dim, style, path, **pargs):
     """ Initialize some settings and specifications 
@@ -295,10 +295,6 @@ class DEMPy:
     if 'print' not in pargs:
       pargs['print'] = (10**4, 'time', 'atoms', 'fmax', 'ke', 'cpu', 'cu', 'density')
 
-    if 'out' not in pargs:
-      time = datetime.now()
-      pargs['output'] = 'out-{}:{}:{}-{}.{}.{}'.format(time.hour, time.minute, time.second, time.day, time.month, time.year)
-
     self.rank = split.Get_rank()
     self.split = split
     self.pargs = pargs
@@ -306,8 +302,7 @@ class DEMPy:
     self.vars = {}
     self.path = os.getcwd()
     self.nSS = len(self.pargs['SS'])
-
-    self.output = self.pargs['output'] if self.pargs['nSim'] == 1 else (self.pargs['output'] + '{}'.format(sid))
+    self.output = self.pargs['output']
 
     if not self.rank:
       if not os.path.exists(self.output):

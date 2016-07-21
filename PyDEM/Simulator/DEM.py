@@ -31,6 +31,7 @@ Merck Inc., West Point
 
 from mpi4py import MPI
 from importlib import import_module
+from datetime import datetime
 
 class DEM:
   """A class that handles communication for the DEM object"""
@@ -42,6 +43,13 @@ class DEM:
     self.rank = self.comm.Get_rank()
     self.tProcs = self.comm.Get_size()
     self.nSim = pargs['nSim']
+    self.model = str(pargs['model']).split('.')[-1]
+    self.pargs = pargs
+
+    if 'out' not in self.pargs:
+      time = datetime.now()
+      self.pargs['output'] = 'out-{}-{}:{}:{}-{}.{}.{}'.format(self.model, time.hour, time.minute, time.second, time.day, time.month, time.year)
+
 
     if self.nSim > self.tProcs:
       print "Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs)
@@ -55,9 +63,10 @@ class DEM:
         self.split = self.comm.Split(self.color, key=0)
 
 
-        module = import_module('PyDEM.Simulator.' + pargs['engine'])
+        module = import_module('PyDEM.Simulator.' + self.pargs['engine'])
+        self.output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
-        self.dem = module.DEMPy(i, self.split, **pargs) # logging module imported here      
+        self.dem = module.DEMPy(i, self.split, **self.pargs) # logging module imported here      
         break
 
     if not self.rank:
