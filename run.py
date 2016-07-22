@@ -29,6 +29,9 @@ if __name__ == '__main__':
 			# Stage runs
 			'stages': {'insertion': 1e6},
 
+			# Add cohesion
+			'cohesion': 'sjk',
+
 			# Meshes
 			'mesh': {
 				'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale': 5e-4},
