@@ -9,7 +9,7 @@ if __name__ == '__main__':
 	# Create a dictionary of physical parameters
 	params = {
 
-			'model': Analyzer.models.HertzMindlin,
+			'model': Simulator.models.HertzMindlin,
             'engine': Simulator.engines.liggghts,
 
 			# Define the system

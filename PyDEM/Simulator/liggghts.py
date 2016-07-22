@@ -63,10 +63,12 @@ class liggghts:
 
     if library:
       if not comm.Get_rank():
-        print "Using " + library
+        print "Using " + library + " as a shared library for DEM computations"
     else:
       if not comm.Get_rank():
-        print "Make sure a " + library + " is installed on your system"
+        print "Make sure " + library + " is properly installed on your system"
+      else:
+        print 'Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library)
       sys.exit()
 
     self.lib = CDLL(library, RTLD_GLOBAL)
@@ -273,6 +275,7 @@ class DEMPy:
     # style: granular, atom, or ...
     """
     # Setup I/O parameters if not supplied by the user
+
     if 'traj' not in pargs:
       pargs['traj'] = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
                        'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
@@ -293,8 +296,6 @@ class DEMPy:
     if not self.rank:
       global logging
 
-    # Make sure all procs change to working dir
-    self.split.Barrier()
     os.chdir(self.output)
 
     if not self.rank:

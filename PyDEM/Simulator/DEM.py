@@ -53,6 +53,7 @@ class DEM:
     self.pargs = pargs
     self.library = None
     self._dir, _ = __file__.split('DEM.py')
+    self.pargs['output'] = None
 
     # Check if .config files eixsts else create it
     # Only one process needs to do this
@@ -73,9 +74,23 @@ class DEM:
           print 'WARNING: No config file found. Creating one for {}'.format(self.library)
           fp.write('library=' + self.library)
 
+      for slave in range(1,self.tProcs):
+          self.comm.send(self.library, dest=slave)
+    else:
+      self.library = self.comm.recv(source=0)
+
     if 'out' not in self.pargs:
-      time = datetime.now()
-      self.pargs['output'] = 'out-{}-{}:{}:{}-{}.{}.{}'.format(self.model, time.hour, time.minute, time.second, time.day, time.month, time.year)
+      # The idea is to create a unique output name that depends on the current time. Since the processes are not in sunc, it's safer
+      # to create the output name on the master processor and then send it to the slaves.
+      if not self.rank:
+        time = datetime.now()
+        self.pargs['output'] = 'out-{}-{}:{}:{}-{}.{}.{}'.format(self.model, time.hour, time.minute, time.second, time.day, time.month, time.year)
+        
+        for slave in range(1,self.tProcs):
+          self.comm.send(self.pargs['output'], dest=slave)
+
+      else:
+        self.pargs['output'] = self.comm.recv(source=0)
 
     if self.nSim > self.tProcs:
       print "Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs)
@@ -91,13 +106,13 @@ class DEM:
         module = import_module('PyDEM.Simulator.' + self.pargs['engine'])
         self.output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
-        if not self.split.rank:
+        if not self.split.Get_rank():
           if os.path.exists(self.output):
             print 'WARNING: output dir {} already exists. Proceeding ...'.format(self.output)
           else:
             os.mkdir(self.output)
 
-        self.split.Barrier() # wait for all procs to synchronize
+        self.split.barrier() # Synchronize all procs
         self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here      
         break
 
