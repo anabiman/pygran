@@ -40,7 +40,7 @@ def find(name, path):
             return os.path.join(root, name)
 
 class DEM:
-  """A class that handles communication for the DEM object"""
+  """A *generic* class that handles communication for a DEM object independent of the engine used"""
 
   def __init__(self, **pargs):
     """ Initializes COMM and partition proccesors based on user input """
@@ -126,6 +126,30 @@ class DEM:
 
       if self.nSim > 1:
         logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
+
+    # All I/O done ~ phew! Now initialize DEM
+    self.initialize()
+
+    # Setup material properties
+    if 'materials' in self.pargs:
+      for item in self.pargs['materials'].keys():
+        # Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
+        self.createProperty(item, *self.pargs['materials'][item])
+
+    # Import and setup all meshes as rigid walls
+    if 'mesh' in self.pargs:
+      for mesh in self.pargs['mesh'].keys():
+        self.importMesh(name=mesh, **self.pargs['mesh'][mesh])
+        self.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
+
+    self.printSetup()
+
+    # Write output to trajectory by default unless the user specifies otherwise
+    if 'dump' in self.pargs:
+      if self.pargs['dump'] == True:
+        self.dumpSetup()
+    else:
+      self.dumpSetup()
 
   def initialize(self):
 
@@ -255,5 +279,6 @@ class DEM:
         break
 
   def __del__(self):
-
+    """
+    """
     MPI.Finalize()

@@ -43,8 +43,8 @@ class Model:
 		if 'SS' in self.params:
 			self.params['nSS'] += len(self.params['SS'])
 
-		if 'surfMesh' in self.params:
-			self.params['nSS'] += len(self.params['surfMesh'])
+		if 'mesh' in self.params:
+			self.params['nSS'] += len(self.params['mesh'])
 
 		if 'style' not in self.params: 
 			self.params['style'] = 'granular'

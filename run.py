@@ -27,59 +27,31 @@ if __name__ == '__main__':
 			'gravity': (9.81, 0, 0, -1),
 
 			# Stage runs
-			'insertion': 1e6,
-			'flow': 0e6,
+			'stages': {'insertion': 1e6},
 
 			# Meshes
-			'surfMesh': {
+			'mesh': {
 				'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale': 5e-4},
 			      },
-
-			# grab shared libraries from here
-			'path': '/usr/lib64/',
 		  }
 
 	# Instantiate a linear spring dashpot class
 	params['model'] = params['model'](**params)
 	cModel = params['model']
 
-	for ss in cModel.params['SS']:
-		print 'Attempting to insert {} particles every {} steps for component {}'.format(ss['rate'] * ss['freq'] * cModel.params['dt'], ss['freq'], ss['id'])
-
 	# Create an instance of the DEM class
 	sim = Simulator.DEM(**cModel.params)
-
-	# Define the domain, create atoms, and initialize masses, velocities, etc.
-	sim.initialize()
-
-	# Setup material properties
-	for item in cModel.params['materials'].keys():
-		# Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-		sim.createProperty(item, *cModel.params['materials'][item])
-
-	# Import and setup all meshes as rigid wall
-	for mesh in cModel.params['surfMesh'].keys():
-		sim.importMesh(name=mesh, **cModel.params['surfMesh'][mesh])
-		sim.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
 
 	# Setup a stopper wall along the xoz plane (y = 0.0)
 	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
 
-	# Print output specified in 'print' every 'freq' steps
-	sim.printSetup()
-
 	# Create an NVE (micro canonical) integrator
 	sim.setupIntegrate(name='intMicro')
 
-	# Write 'all' coordinates to 'traj.xyz' file every 'freq' steps
-	sim.dumpSetup()
-
 	# Insert particles if not restarting/resuming sim
 	cylinder = sim.insertParticles('void', *('cylinder', 'z', 0, 0, 0.001, 0.02, 0.045))
-	sim.integrate(cModel.params['insertion'], cModel.params['dt'])
+	sim.integrate(cModel.params['stages']['insertion'], cModel.params['dt'])
 	sim.remove(cylinder)
 
 	# Remove stopper
 	sim.remove(name='stopper')
-
-	sim.integrate(cModel.params['flow'], cModel.params['dt'])
