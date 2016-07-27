@@ -359,14 +359,6 @@ class DEMPy:
         self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
         self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
 
-  def addCohesion(self):
-    """ Adds cohesion to the model """
-    if 'cohesion' in self.pargs:
-      if not self.rank:
-        logging.info('Adding cohesion using {}'.format(self.pargs['cohesion']))
-
-      self.lmp.command('cohesion {}'.format(self.pargs['cohesion']))
-
   def insertParticles(self, name, *region):
     """
     """
@@ -503,14 +495,12 @@ class DEMPy:
       self.setupNeighbor(**self.pargs)
       self.setupParticles()
       self.setupGravity()
-      self.addCohesion()
 
     else:
       self.resume()
       self.setupPhysics()
       self.setupNeighbor(**self.pargs)
       self.setupGravity()
-      self.addCohesion()
       
   def setupIntegrate(self, name):
     """
