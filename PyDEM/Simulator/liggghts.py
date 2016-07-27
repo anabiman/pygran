@@ -363,9 +363,9 @@ class DEMPy:
     """ Adds cohesion to the model """
     if 'cohesion' in self.pargs:
       if not self.rank:
-        logging.info('Adding cohesion using {}'.model(self.pargs['cohesion']))
+        logging.info('Adding cohesion using {}'.format(self.pargs['cohesion']))
 
-      self.lmp.command('cohesion {}'.self.pargs['cohesion'])
+      self.lmp.command('cohesion {}'.format(self.pargs['cohesion']))
 
   def insertParticles(self, name, *region):
     """
