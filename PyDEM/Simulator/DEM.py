@@ -162,8 +162,9 @@ class DEM:
 
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        return self.dem.insertParticles(name, *args)
-
+        self.dem.insertParticles(name, *args)
+        break
+        
   def setupParticles(self):
 
     for i in range(self.nSim):

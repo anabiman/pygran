@@ -238,7 +238,6 @@ class liggghts:
   
   def set_variable(self,name,value):
     return self.lib.lammps_set_variable(self.lmp,name,str(value))
-
   # return total number of atoms in system
   
   def get_natoms(self):
@@ -362,6 +361,8 @@ class DEMPy:
   def insertParticles(self, name, *region):
     """
     """
+    self.setupIntegrate(name='intMicro')
+
     if not self.rank:
       logging.info('Inserting particles')
 
@@ -379,10 +380,12 @@ class DEMPy:
         self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
         self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
           + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
-        return randName
       else:
         print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
         raise 
+
+    self.integrate(self.pargs['stages']['insertion'], self.pargs['dt'])
+    self.remove(randName)
 
   def importMesh(self, name, file, scale = None):
     """

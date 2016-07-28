@@ -45,13 +45,6 @@ if __name__ == '__main__':
 	# Setup a stopper wall along the xoz plane (y = 0.0)
 	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
 
-	# Create an NVE (micro canonical) integrator
-	sim.setupIntegrate(name='intMicro')
-
-	# Insert particles if not restarting/resuming sim
-	cylinder = sim.insertParticles('void', *('cylinder', 'z', 0, 0, 0.001, 0.02, 0.045))
-	sim.integrate(cModel.params['stages']['insertion'], cModel.params['dt'])
-	sim.remove(cylinder)
-
-	# Remove stopper
+	sim.insertParticles('void', *('cylinder', 'z', 0, 0, 0.001, 0.02, 0.045))
+	
 	sim.remove(name='stopper')
