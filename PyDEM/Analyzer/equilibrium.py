@@ -33,7 +33,7 @@ from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array
 from xlrd import open_workbook
 from numbers import Number
 
-def rdf(x, y, z, dr = None, center = True):
+def computeRDF(x, y, z, dr = None, center = True, rMax=None):
     """Computes the three-dimensional radial distribution function for a set of
     spherical particles contained in a cube with side length S.  This simple
     function finds reference particles such that a sphere of radius rMax drawn
@@ -56,32 +56,34 @@ def rdf(x, y, z, dr = None, center = True):
         reference_indices   indices of reference particles
     """
     
-    # center positions around 0
+    # center positions around 0 \\uswsps0002\USWPPR2041
     if center:
-    	x -= x.min()
-    	y -= y.min()
-    	z -= z.min()
+    	x -= x.mean()
+    	y -= y.mean()
+    	z -= z.mean()
 
     S = min(x.max(), y.max(), z.max())
 
-    rMax = S / 4.0
+    if rMax is None:
+    	rMax = S / 2.0
 
     if dr is None:
     	dr = rMax / 100
 
-    print 'Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S, rMax)
-    print 'Resolution chosen is {}'.format(dr)
-
     # Find particles which are close enough to the cube center that a sphere of radius
     # rMax will not cross any face of the cube
-    bools1 = x > rMax
-    bools2 = x < (S - rMax)
-    bools3 = y > rMax
-    bools4 = y < (S - rMax)
-    bools5 = z > rMax
-    bools6 = z < (S - rMax)
 
-    interior_indices, = where(bools1 * bools2 * bools3 * bools4 * bools5 * bools6)
+	print 'Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S * 2.0, rMax)
+	print 'Resolution chosen is {}'.format(dr)
+
+	bools1 = x > rMax - S
+	bools2 = x < (S - rMax)
+	bools3 = y > rMax - S
+	bools4 = y < (S - rMax)
+	bools5 = z > rMax - S
+	bools6 = z < (S - rMax)
+
+	interior_indices, = where(bools1 * bools2 * bools3 * bools4 * bools5 * bools6)    
     num_interior_particles = len(interior_indices)
 
     if num_interior_particles < 1:
