@@ -40,7 +40,10 @@ class Visualizer:
     
     def __init__(self):
         #self._ren.AddActor(self._axes)
+        self._init()
         
+    def _init(self):
+
         self._axes = vtk.vtkAxesActor()
         self._ren = vtk.vtkRenderer() 
         
@@ -64,6 +67,8 @@ class Visualizer:
         self._iren.Start()
 
         self._close_window()
+
+        self._init()
 
     def loadStl(self, fname):
         """Load a given STL file into a vtkPolyData object"""
@@ -125,13 +130,12 @@ class Visualizer:
         self.ballGlyph.SetInputData(self.grid)
 
         # Create a color transfer function to be used for both the balls and arrows.
-        colorTransferFunction = vtk.vtkColorTransferFunction()
-        colorTransferFunction.AddRGBPoint(5.0 , 0.0, 0.0, 1.0)
-        colorTransferFunction.AddRGBPoint(10.0, 0.0, 1.0, 1.0)
-        colorTransferFunction.AddRGBPoint(15.0, 0.0, 1.0, 0.0)
-        colorTransferFunction.AddRGBPoint(20.0, 1.0, 1.0, 0.0)
-        colorTransferFunction.AddRGBPoint(25.0, 1.0, 0.0, 0.0)
-        colorTransferFunction.AddRGBPoint(30.0, 1.0, 0.0, 1.0)
+        self.colorTransferFunction = vtk.vtkColorTransferFunction()
+        self.colorTransferFunction.AddRGBPoint(-1.0 , 0.0, 0.0, 1.0)
+        self.colorTransferFunction.AddRGBPoint(-0.5, 0.0, 1.0, 1.0)
+        self.colorTransferFunction.AddRGBPoint(0, 0.0, 1.0, 0.0)
+        self.colorTransferFunction.AddRGBPoint(0.5, 1.0, 1.0, 0.0)
+        self.colorTransferFunction.AddRGBPoint(1, 1.0, 0.0, 0.0)
 
         #ballGlyph.SetScaleModeToDataScalingOn() 
         self.mapper = vtk.vtkPolyDataMapper()
@@ -142,12 +146,12 @@ class Visualizer:
            self.mapper.SetInputConnection(self.ballGlyph.GetOutputPort())
 
         # Set colors depending on the color transfer functions
-        self.mapper.SetLookupTable(colorTransferFunction)
+        self.mapper.SetLookupTable(self.colorTransferFunction)
 
         #Put an arrow (vector) at each ball
         arrow = vtk.vtkArrowSource()
-        arrow.SetTipRadius(0.05)
-        arrow.SetShaftRadius(0.05)
+        arrow.SetTipRadius(0.5)
+        arrow.SetShaftRadius(0.1)
 
         self.poly = vtk.vtkPolyData()
         self.poly.SetPoints(self.points)
@@ -155,7 +159,7 @@ class Visualizer:
         arrowGlyph = vtk.vtkGlyph3D()
         arrowGlyph.SetInputData(self.poly)
         arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
-        arrowGlyph.SetScaleFactor(1e-3)
+        arrowGlyph.SetScaleFactor(1e-1)
 
         # We do not want the Arrow's size to depend on the Scalar
         #arrowGlyph.SetScaleModeToDataScalingOff()
@@ -163,7 +167,7 @@ class Visualizer:
         arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
 
         # Set colors depending on the color transfer functions
-        arrowMapper.SetLookupTable(colorTransferFunction)
+        arrowMapper.SetLookupTable(self.colorTransferFunction)
 
         # actor
         self.ballActor = vtk.vtkActor()
@@ -175,6 +179,13 @@ class Visualizer:
 
         self._ren.AddActor(self.ballActor)
         self._ren.AddActor(arrowActor)
+
+    def addScalarBar(self):
+
+        self.scalarBar = vtk.vtkScalarBarActor()
+        self.scalarBar.SetLookupTable(self.colorTransferFunction)
+        self.scalarBar.SetTitle("Colorbar")
+        self._ren.AddActor2D(self.scalarBar)
 
     def _close_window(self):
         """ kills any active renderer / windows """
