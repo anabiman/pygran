@@ -10,7 +10,7 @@ vel = 1.0 - 2.0 * array([rand(N), rand(N), rand(N)]).T
 rad = rand(N) * 0.5
 
 v = Visualizer.Visualizer()
-# v.loadStl('hopper-2cm-6cm.stl', scale=(1e-3, 1e-3, 1e-3))
+v.attach_stl('hopper-2cm-6cm.stl', scale=(1e-1, 1e-1, 1e-1))
 
 v.attach_pos(pos, rad)
 v.attach_vel(vel, rad)
