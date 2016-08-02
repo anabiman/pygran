@@ -34,19 +34,25 @@ import vtk
 import numpy as np
 import sys
 from vtk.util import numpy_support
+from numpy.linalg import norm
 
 class Visualizer:
     """ A general purpose class for visualizing data using vtk """
     
     def __init__(self):
-        #self._ren.AddActor(self._axes)
         self._init()
         
     def _init(self):
 
         self._axes = vtk.vtkAxesActor()
+
         self._ren = vtk.vtkRenderer() 
-        
+        self._camera = vtk.vtkCamera()
+
+        self._camera.SetFocalPoint(0, 0, 0)
+        self._camera.SetPosition(0,0,0)
+        self._ren.SetActiveCamera(self._camera)
+
         self._style = vtk.vtkInteractorStyleTrackballCamera()
 
         self._renWin = vtk.vtkRenderWindow()
@@ -56,18 +62,33 @@ class Visualizer:
         self._iren = vtk.vtkRenderWindowInteractor()
         self._iren.SetRenderWindow(self._renWin)
 
+        self._ren.AddActor(self._axes)
+
+    def _setupColorFunction(self, minV, maxV):
+
         # Create a color transfer function to be used for both the balls and arrows.
-        self.colorTransferFunction = vtk.vtkColorTransferFunction()
-        self.colorTransferFunction.AddRGBPoint(-1.0 , 0.0, 0.0, 1.0)
-        self.colorTransferFunction.AddRGBPoint(-0.5, 0.0, 1.0, 1.0)
-        self.colorTransferFunction.AddRGBPoint(0, 0.0, 1.0, 0.0)
-        self.colorTransferFunction.AddRGBPoint(0.5, 1.0, 1.0, 0.0)
-        self.colorTransferFunction.AddRGBPoint(1, 1.0, 0.0, 0.0)
+        self._colorTransferFunction = vtk.vtkColorTransferFunction()
+        self._colorTransferFunction.AddRGBPoint(minV, 1.0, 0.0, 0.0)
+        self._colorTransferFunction.AddRGBPoint(0.5*(minV + maxV), 0.0, 1.0, 0.0)
+        self._colorTransferFunction.AddRGBPoint(maxV, 0.0, 0.0, 1.0)
 
     def render(self):
         """ initialize renderer """
         
+        transform = vtk.vtkTransform()
+        radMean, posMean = self._rad.mean() * 10, self._pos.mean(axis=0)
+        posMean *= 1.2
+
+        transform.Scale(radMean, radMean, radMean)
+
+        self._axes.SetUserTransform(transform)
+        transform.Translate(posMean)
+        self._axes.SetUserTransform(transform)
+
         self._ren.SetBackground(0, 0, 0)
+        self._camera.SetPosition(self._pos.mean(axis=0))
+        self._ren.SetActiveCamera(self._camera)
+
         #ren.AddActor(arrowActor)
 
         self._iren.Initialize()
@@ -122,103 +143,118 @@ class Visualizer:
     def axes(self):
         return self.axes
 
-    def visSpheres(self, positions, velocities, radius):
+    def attach_vel(self, vel, rad):
 
-        self._camera = vtk.vtkCamera()
-        self._camera.SetFocalPoint(0, 0, 0)
-        self._camera.SetPosition(np.mean(positions, axis=0))
-        self._ren.SetActiveCamera(self._camera)
+        velMag = norm(vel, axis=1)
+        velMag /= velMag.max()
 
-        self.positions_vtk = numpy_support.numpy_to_vtk(num_array=positions.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-        self.positions_vtk.SetName("positions")
+        print velMag.max()
 
-        self.radius_vtk = numpy_support.numpy_to_vtk(num_array=radius.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-        self.radius_vtk.SetName("radius")
-
-        self.points = vtk.vtkPoints()
-        self.velPoints = vtk.vtkPoints()
+        velMag_vtk = numpy_support.numpy_to_vtk(num_array=velMag.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        velMag_vtk.SetName("veloMag")
 
         vecVel = vtk.vtkFloatArray()
         vecVel.SetNumberOfComponents(3)
 
-        for i, v in enumerate(velocities):
+        for i, v in enumerate(vel):
             vecVel.InsertTuple3(i, v[0], v[1], v[2])
+
+
+        #Put an arrow (vector) at each ball
+        arrow = vtk.vtkArrowSource()
+        arrow.SetTipRadius(rad.mean() * 0.2)
+        arrow.SetShaftRadius(rad.mean() * 0.2)
+
+        poly = vtk.vtkPolyData()
+        poly.SetPoints(self._points)
+
+        poly.GetPointData().AddArray(velMag_vtk)
+        poly.GetPointData().SetActiveScalars("veloMag")
+
+        arrowGlyph = vtk.vtkGlyph3D()
         
-        for i, r in enumerate(positions):
-            self.points.InsertPoint(i, r[0], r[1], r[2])
+        arrowGlyph.SetInputData(poly)
+        arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
+        arrowGlyph.SetVectorModeToUseVector()
 
-        for i, v in enumerate(velocities):
-            self.velPoints.InsertPoint(i, v[0], v[1], v[2])
+        poly.GetPointData().SetVectors(vecVel)
 
-        self.source = vtk.vtkSphereSource()
-        self.source.SetRadius(1.0)
+        # If we do not want the Arrow's size to depend on the Scalar
+        # then arrowGlyph.SetScaleModeToDataScalingOff() must be called
+        arrowMapper = vtk.vtkPolyDataMapper()
+        arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
 
-        self.ballGlyph = vtk.vtkGlyph3D()
+        self._addScalarBar(velMag)
+        arrowMapper.SetLookupTable(self._colorTransferFunction)
+
+        arrowActor = vtk.vtkActor()
+        arrowActor.SetMapper(arrowMapper)
+        arrowActor.GetProperty().SetColor(1,1,0)
+
+        self._ren.AddActor(arrowActor)
+
+    def attach_pos(self, pos, rad):
+
+        self._pos = pos
+        self._rad = rad
+
+        positions_vtk = numpy_support.numpy_to_vtk(num_array=pos.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        positions_vtk.SetName("positions")
+
+        radius_vtk = numpy_support.numpy_to_vtk(num_array=rad.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        radius_vtk.SetName("radius")
+
+        self._points = vtk.vtkPoints()
+        
+        for i, r in enumerate(pos):
+            self._points.InsertPoint(i, r[0], r[1], r[2])
+
+        sphere = vtk.vtkSphereSource()
+        sphere.SetRadius(1.0)
+
+        ballGlyph = vtk.vtkGlyph3D()
 
         if vtk.VTK_MAJOR_VERSION <= 5:
-            self.ballGlyph.SetSource(self.source.GetOutput())
+            ballGlyph.SetSource(sphere.GetOutput())
         else:
-            self.ballGlyph.SetSourceConnection(self.source.GetOutputPort())
+            ballGlyph.SetSourceConnection(sphere.GetOutputPort())
 
         polydata = vtk.vtkPolyData()
-        polydata.SetPoints(self.points)
-        polydata.GetPointData().AddArray(self.radius_vtk)
+        polydata.SetPoints(self._points)
+        polydata.GetPointData().AddArray(radius_vtk)
         polydata.GetPointData().SetActiveScalars("radius") # this scales the source (sphere) radius (1.0)
-        polydata.GetPointData().SetVectors(vecVel)
-
-        self.ballGlyph.SetInputData(polydata)
+        
+        ballGlyph.SetInputData(polydata)
 
         #ballGlyph.SetScaleModeToDataScalingOn() 
         mapper = vtk.vtkPolyDataMapper()
 
         if vtk.VTK_MAJOR_VERSION <= 5:
-           mapper.SetInput(self.ballGlyph.GetOutput())
+           mapper.SetInput(ballGlyph.GetOutput())
         else:
-           mapper.SetInputConnection(self.ballGlyph.GetOutputPort())
+           mapper.SetInputConnection(ballGlyph.GetOutputPort())
 
         # Set colors depending on the color transfer functions
         # mapper.SetLookupTable(self.colorTransferFunction)
-
-        #Put an arrow (vector) at each ball
-        arrow = vtk.vtkArrowSource()
-        arrow.SetTipRadius(0.05)
-        arrow.SetShaftRadius(0.01)
-
-        self.poly = vtk.vtkPolyData()
-        self.poly.SetPoints(self.velPoints)
-
-        arrowGlyph = vtk.vtkGlyph3D()
-        
-        arrowGlyph.SetInputData(self.poly)
-        arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
-        arrowGlyph.SetScaleFactor(1e-1)
-
-        arrowGlyph.SetScaleModeToDataScalingOff()
-        arrowGlyph.SetVectorModeToUseVector()
-
-        # We do not want the Arrow's size to depend on the Scalar
-        #arrowGlyph.SetScaleModeToDataScalingOff()
-        arrowMapper = vtk.vtkPolyDataMapper()
-        arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
 
         # actor
         ballActor = vtk.vtkActor()
         ballActor.GetProperty().SetColor(0,0,1)
         ballActor.SetMapper(mapper)
-     
-        arrowActor = vtk.vtkActor()
-        arrowActor.SetMapper(arrowMapper)
-        arrowActor.GetProperty().SetColor(1,1,0)
 
         self._ren.AddActor(ballActor)
-        self._ren.AddActor(arrowActor)
 
-    def addScalarBar(self):
+    def _addScalarBar(self, val):
 
-        self.scalarBar = vtk.vtkScalarBarActor()
-        self.scalarBar.SetLookupTable(self.colorTransferFunction)
-        self.scalarBar.SetTitle("Colorbar")
-        self._ren.AddActor2D(self.scalarBar)
+        if len(val.shape) > 1:
+            val = norm(val, axis=1)
+
+        self._setupColorFunction(val.min(), val.max())
+        self._scalarBar = vtk.vtkScalarBarActor()
+        self._scalarBar.SetLookupTable(self._colorTransferFunction)
+        self._scalarBar.SetTitle("Velocities (m/s)")
+        self._ren.AddActor2D(self._scalarBar)
+        
 
     def _close_window(self):
         """ kills any active renderer / windows """

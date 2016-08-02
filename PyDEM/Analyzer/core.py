@@ -268,7 +268,7 @@ class Granular(object):
 		return timestep
 
 	def _updateSystem(self):
-		""" Makes sure the system is aware of any update in its attribvtes caused by
+		""" Makes sure the system is aware of any update in its attributes caused by
 		a frame change. """
 		self.Particles = Particles(self.style, **self.data)
 
