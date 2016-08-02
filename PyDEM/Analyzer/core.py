@@ -31,6 +31,8 @@ Merck Inc., West Point
 
 import numpy as np
 import types
+from random import choice
+from string import ascii_uppercase
 
 class Particles(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
@@ -41,26 +43,32 @@ these properties """
 		self.data = data
 		self.keys = self.data.keys()
 
-		if sel is not None:
-			for key in self.keys:
-				self.data[key] = self.data[key][sel]
+		#for key in self.keys:
+		#	if type(self.data[key]) == 'numpy.ndarray':
+		#		self.data[key] = self.data[key][sel]
 
 		# Checks if the trajectory file supports reduction in key getters
-		self.constructAttributes()
+		# It's important to construct a (lambda) function for each attribute individually
+		# so that each dynamically created (property) function would have its own unique
+		# key. For instance, placing the for loop below in  _constructAttributes would make
+		# all property functions return the same (last) key variable.
+		for key in self.keys:
+			self._constructAttributes(key)
 
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
 		and return as numpy arrays for numerical computations / manipulations"""
-		return np.array(self.data[key])
+		
+		return self.data[key]
 
-	def constructAttributes(self):
+	def _constructAttributes(self, key):
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
-		for key in self.keys:
-			method = lambda self: Particles._metaget(self, key)
 
-			# We cannot know the information for any property function until that property is created, 
-			# so we define the metaget function and particularize it only later with a lambda function
-			setattr(Particles, key, property(fget=method, doc='Extracts particle attribute'))
+		# We cannot know the information for any property function until that property is created, 
+		# so we define the metaget function and particularize it only later with a lambda function			
+		method = lambda self: Particles._metaget(self, key)
+
+		setattr(Particles, key, property(fget=method, doc='Extracts {} variable'.format(key)))
 
 	def select(self, sel):
 		""" Creates a particle group based on sel string.
@@ -82,7 +90,7 @@ these properties """
 			radius = np.float(sArgs.split()[1])
 			sel = np.find(self.radius >= radius)
 
-		return Particles(self.style, sel, **self.data)
+		return Particles(sel, **self.data)
 
 	def __getitem__(self, sel):
 		return Particles(sel, **self.data)
@@ -102,13 +110,13 @@ class Granular(object):
 		self._fname = fname
 		self._fp = open(fname, 'r')
 
-		self.nFrames = None
 		self.frame = 0
-		self.data = {}
+		self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
+		# scalars (natoms, ) or tuples (box size). ONLY arrays can be slices based on user selection.
 
 		# Do some checking here on the traj extension to make sure
 		# it's supported
-		self.style = fname.split('.')[-1]
+		self._format = fname.split('.')[-1]
 
 		# Read frame 0 to initialize function getters
 		self.__next__()
@@ -169,7 +177,7 @@ class Granular(object):
 					boxY = [float(i) for i in boxY]
 					boxZ = [float(i) for i in boxZ]
 
-					self.data['box'] = [boxX, boxY, boxZ]
+					self.data['box'] = (boxX, boxY, boxZ)
 					break
 
 			line = self._fp.readline()
@@ -180,7 +188,7 @@ class Granular(object):
 			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 			for key in keys:
-				self.data[key] = [None] * natoms
+				self.data[key] = np.zeros(natoms)
 
 			for i in range(natoms):
 				var = self._fp.readline().split()
@@ -243,19 +251,20 @@ class Granular(object):
 				boxY = [float(i) for i in boxY]
 				boxZ = [float(i) for i in boxZ]
 
-				self.data['box'] = [boxX, boxY, boxZ]
+				self.data['box'] = (boxX, boxY, boxZ)
 				break
 
 		line = self._fp.readline()
+
 		if not line:
-					raise StopIteration
+			raise StopIteration
 
 		self.frame += 1
 
 		keys = line.split()[2:] # remove ITEM: and ATOMS keywords
 
 		for key in keys:
-			self.data[key] = [None] * natoms
+			self.data[key] = np.zeros(natoms)
 
 		for i in range(self.data['natoms']):
 			var = self._fp.readline().split()
@@ -270,16 +279,15 @@ class Granular(object):
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attributes caused by
 		a frame change. """
-		self.Particles = Particles(self.style, **self.data)
 
+		self.Particles = Particles(**self.data)
+		
 	@property
 	def granular(self):
 		return self
 
 	def __del__(self):
 		self._fp.close()
-
-
 
 def select(data, *region):	
 	"""

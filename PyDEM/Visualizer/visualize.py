@@ -77,7 +77,9 @@ class Visualizer:
         
         transform = vtk.vtkTransform()
         radMean, posMean = self._rad.mean() * 10, self._pos.mean(axis=0)
-        posMean *= 1.2
+        posMean[0] *= 1.2
+        posMean[1] *= 0.8
+        posMean[2] *= 1.2
 
         transform.Scale(radMean, radMean, radMean)
 
@@ -99,7 +101,7 @@ class Visualizer:
 
         self._init()
 
-    def loadStl(self, fname, scale=None):
+    def attach_stl(self, fname, scale=None):
         """Load a given STL file into a vtkPolyData object"""
 
         reader = vtk.vtkSTLReader()
@@ -142,56 +144,6 @@ class Visualizer:
     @property
     def axes(self):
         return self.axes
-
-    def attach_vel(self, vel, rad):
-
-        velMag = norm(vel, axis=1)
-        velMag /= velMag.max()
-
-        print velMag.max()
-
-        velMag_vtk = numpy_support.numpy_to_vtk(num_array=velMag.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-        velMag_vtk.SetName("veloMag")
-
-        vecVel = vtk.vtkFloatArray()
-        vecVel.SetNumberOfComponents(3)
-
-        for i, v in enumerate(vel):
-            vecVel.InsertTuple3(i, v[0], v[1], v[2])
-
-
-        #Put an arrow (vector) at each ball
-        arrow = vtk.vtkArrowSource()
-        arrow.SetTipRadius(rad.mean() * 0.2)
-        arrow.SetShaftRadius(rad.mean() * 0.2)
-
-        poly = vtk.vtkPolyData()
-        poly.SetPoints(self._points)
-
-        poly.GetPointData().AddArray(velMag_vtk)
-        poly.GetPointData().SetActiveScalars("veloMag")
-
-        arrowGlyph = vtk.vtkGlyph3D()
-        
-        arrowGlyph.SetInputData(poly)
-        arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
-        arrowGlyph.SetVectorModeToUseVector()
-
-        poly.GetPointData().SetVectors(vecVel)
-
-        # If we do not want the Arrow's size to depend on the Scalar
-        # then arrowGlyph.SetScaleModeToDataScalingOff() must be called
-        arrowMapper = vtk.vtkPolyDataMapper()
-        arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
-
-        self._addScalarBar(velMag)
-        arrowMapper.SetLookupTable(self._colorTransferFunction)
-
-        arrowActor = vtk.vtkActor()
-        arrowActor.SetMapper(arrowMapper)
-        arrowActor.GetProperty().SetColor(1,1,0)
-
-        self._ren.AddActor(arrowActor)
 
     def attach_pos(self, pos, rad):
 
@@ -243,6 +195,56 @@ class Visualizer:
         ballActor.SetMapper(mapper)
 
         self._ren.AddActor(ballActor)
+
+    def attach_vel(self, vel, rad):
+
+        velMag = norm(vel, axis=1)
+        velMag /= velMag.max()
+
+        print velMag.max()
+
+        velMag_vtk = numpy_support.numpy_to_vtk(num_array=velMag.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+        velMag_vtk.SetName("veloMag")
+
+        vecVel = vtk.vtkFloatArray()
+        vecVel.SetNumberOfComponents(3)
+
+        for i, v in enumerate(vel):
+            vecVel.InsertTuple3(i, v[0], v[1], v[2])
+
+
+        #Put an arrow (vector) at each ball
+        arrow = vtk.vtkArrowSource()
+        arrow.SetTipRadius(rad.mean() * 0.2)
+        arrow.SetShaftRadius(rad.mean() * 0.2)
+
+        poly = vtk.vtkPolyData()
+        poly.SetPoints(self._points)
+
+        poly.GetPointData().AddArray(velMag_vtk)
+        poly.GetPointData().SetActiveScalars("veloMag")
+
+        arrowGlyph = vtk.vtkGlyph3D()
+        
+        arrowGlyph.SetInputData(poly)
+        arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
+        arrowGlyph.SetVectorModeToUseVector()
+
+        poly.GetPointData().SetVectors(vecVel)
+
+        # If we do not want the Arrow's size to depend on the Scalar
+        # then arrowGlyph.SetScaleModeToDataScalingOff() must be called
+        arrowMapper = vtk.vtkPolyDataMapper()
+        arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
+
+        self._addScalarBar(velMag)
+        arrowMapper.SetLookupTable(self._colorTransferFunction)
+
+        arrowActor = vtk.vtkActor()
+        arrowActor.SetMapper(arrowMapper)
+        arrowActor.GetProperty().SetColor(1,1,0)
+
+        self._ren.AddActor(arrowActor)
 
     def _addScalarBar(self, val):
 
