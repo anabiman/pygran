@@ -1,17 +1,14 @@
-from PyDEM import Visualizer
+from PyDEM import Visualizer, Analyzer
 from numpy import array
 from numpy.random import rand
+import wx
 
 N, scale = 1000, 10.0
 
-pos = array([rand(N), rand(N), rand(N)]).T * scale
+g = Analyzer.Granular('traj.dump')
+g.next()
 
-vel = 1.0 - 2.0 * array([rand(N), rand(N), rand(N)]).T
-rad = rand(N) * 0.5
-
-v = Visualizer.Visualizer()
-v.attach_stl('hopper-2cm-6cm.stl', scale=(1e-1, 1e-1, 1e-1))
-
-v.attach_pos(pos, rad)
-v.attach_vel(vel, rad)
-v.render()
+app = wx.App(redirect=False)
+frame = Visualizer.Visualizer(None, g.Particles, "Lights, Cameras, Action")
+frame.Show()
+app.MainLoop()
