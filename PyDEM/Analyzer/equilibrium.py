@@ -29,12 +29,23 @@ Merck Inc., West Point
 
 # -------------------------------------------------------------------------
 
-from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array
+from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array, dot
 from xlrd import open_workbook
 from numbers import Number
 
+def computeROG(x, y, z):
+	""" Computes the radius of gyration (ROG) for an N-particle system:
+	ROG = <\sqrt(\sum_i (r_i - rm)^2)> where rm is the mean position of all
+	particles, and <...> is the ensemble average. Alternatively, one can
+	compute ROG as \sum_i <r_i^T r_i> - rm ^T rm
+	"""
+	rm = array([x.mean(), y.mean(), z.mean()])
+	N = len(rm)
+
+	return (dot(x,x) + dot(y,y) + dot(z,z)) / N - dot(rm, rm)
+
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
-    """Computes the three-dimensional radial distribution function for a set of
+    """ Computes the three-dimensional radial distribution function for a set of
     spherical particles contained in a cube with side length S.  This simple
     function finds reference particles such that a sphere of radius rMax drawn
     around the particle will fit entirely within the cube, eliminating the need
