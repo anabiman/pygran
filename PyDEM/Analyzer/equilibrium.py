@@ -53,7 +53,7 @@ def computeRadius(x, y, z):
 	""" Computes the maximum radius of an N-particle (spherical) system """
 	rm = array([x.mean(), y.mean(), z.mean()])
 
-	return ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).max()
+	return sqrt(((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).max())
 
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
     """ Computes the three-dimensional radial distribution function for a set of
