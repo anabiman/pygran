@@ -56,7 +56,9 @@ def computeRadius(x, y, z, N = 100):
 	"""
 	rm = array([x.mean(), y.mean(), z.mean()])
 
-	r = ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).sort()
+	r = ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0)
+	r.sort()
+	
 	return r[-N:].mean()
 
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
