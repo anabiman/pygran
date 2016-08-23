@@ -58,8 +58,8 @@ def computeRadius(x, y, z, N = 100):
 
 	r = ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0)
 	r.sort()
-	
-	return r[-N:].mean()
+
+	return sqrt(r[-N:]).mean()
 
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
     """ Computes the three-dimensional radial distribution function for a set of
