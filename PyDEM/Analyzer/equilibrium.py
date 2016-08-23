@@ -49,11 +49,15 @@ def computeROG(x, y, z):
 
 	return sqrt((dot(x,x) + dot(y,y) + dot(z,z)) / N - dot(rm, rm))
 
-def computeRadius(x, y, z):
-	""" Computes the maximum radius of an N-particle (spherical) system """
+def computeRadius(x, y, z, N = 100):
+	""" Computes the maximum radius of an N-particle (spherical) system
+	by sorting the radial components and returning the average of the sqrt
+	of the radius of the first N max data points. 
+	"""
 	rm = array([x.mean(), y.mean(), z.mean()])
 
-	return sqrt(((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).max())
+	r = ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).sort()
+	return r[-N:].mean()
 
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
     """ Computes the three-dimensional radial distribution function for a set of
