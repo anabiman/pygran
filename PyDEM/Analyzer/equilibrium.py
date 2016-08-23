@@ -29,8 +29,13 @@ Merck Inc., West Point
 
 # -------------------------------------------------------------------------
 
-from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array, dot
-from xlrd import open_workbook
+from numpy import zeros, sqrt, where, pi, mean, arange, histogram, array, dot, sqrt
+
+try:
+	from xlrd import open_workbook
+except:
+	pass
+
 from numbers import Number
 
 def computeROG(x, y, z):
@@ -42,7 +47,13 @@ def computeROG(x, y, z):
 	rm = array([x.mean(), y.mean(), z.mean()])
 	N = len(rm)
 
-	return (dot(x,x) + dot(y,y) + dot(z,z)) / N - dot(rm, rm)
+	return sqrt((dot(x,x) + dot(y,y) + dot(z,z)) / N - dot(rm, rm))
+
+def computeRadius(x, y, z):
+	""" Computes the maximum radius of an N-particle (spherical) system """
+	rm = array([x.mean(), y.mean(), z.mean()])
+
+	return ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0).max()
 
 def computeRDF(x, y, z, dr = None, center = True, rMax=None):
     """ Computes the three-dimensional radial distribution function for a set of
