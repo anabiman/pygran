@@ -105,10 +105,13 @@ class Granular(object):
 	(variables uch as momenta, angular velocities, forces, radii, etc.).
 	etc. """
 
-	def __init__(self, fname):
+	def __init__(self, fname, const = False):
 
 		self._fname = fname
 		self._fp = open(fname, 'r')
+		self._length = None # number of lines between two consecutive timesteps
+		# this is useful for reading constant N trajectories (i.e. const = True)
+		self._const = const
 
 		self.frame = 0
 		self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
@@ -136,6 +139,26 @@ class Granular(object):
 		# rewind if necessary (better than reading file backwads?)
 		if frame < self.frame and frame >= 0:
 			self.rewind()
+
+		if self._length:
+			self._goto_fast(frame)
+		else:
+			self._goto_slow(frame)
+
+	def _goto_fast(self, frame):
+		""" A fast way of reading a constant N trajectory
+		"""
+		for i in range((frame - self.frame - 1) * self._length ):
+			next(self._fp)
+
+		self.frame += frame - 1
+
+		_goto_slow(frame)
+
+	def _goto_slow(self, frame):
+		""" This function assumes self._length is a variable, thus we're reading
+		a non-const trajectory. 
+		"""
 
 		# find the right frame number
 		while self.frame < frame or frame == -1:
@@ -228,6 +251,8 @@ class Granular(object):
 
 	def next(self):
 		""" This method updates the system attributes! """
+		count = 0
+
 		while True:
 			line = self._fp.readline()
 
@@ -254,6 +279,8 @@ class Granular(object):
 				self.data['box'] = (boxX, boxY, boxZ)
 				break
 
+			count += 1
+
 		line = self._fp.readline()
 
 		if not line:
@@ -272,7 +299,12 @@ class Granular(object):
 			for j, key in enumerate(keys):
 				self.data[key][i] = float(var[j])
 
+		count += self.data['natoms'] + 1
+
 		self._updateSystem()
+
+		if self._const:
+			self._length = count
 
 		return timestep
 
