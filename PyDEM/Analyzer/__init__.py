@@ -1,9 +1,6 @@
 '''
 Created on April 25, 2016
 @author: Andrew Abi-Mansour
-
-Center for Materials Sci. & Eng.,
-Merck Inc., West Point
 '''
 
 # !/usr/bin/python

@@ -23,9 +23,6 @@
 '''
 Created on March 30, 2016
 @author: Andrew Abi-Mansour
-
-Center for Materials Sci. & Eng.,
-Merck Inc., West Point
 '''
 
 import sys,traceback,types

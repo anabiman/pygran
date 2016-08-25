@@ -1,3 +1,8 @@
+'''
+Created on July 9, 2016
+@author: Andrew Abi-Mansour
+'''
+
 import wx
 import vtk
 from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor

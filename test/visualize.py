@@ -1,3 +1,8 @@
+'''
+Created on July 9, 2016
+@author: Andrew Abi-Mansour
+'''
+
 from PyDEM import Visualizer, Analyzer
 from numpy import array
 from numpy.random import rand
