@@ -1,6 +1,9 @@
 '''
 Created on July 10, 2016
 @author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
 '''
 
 # !/usr/bin/python
@@ -27,6 +30,7 @@ Created on July 10, 2016
 # -------------------------------------------------------------------------
 
 import numpy as np
+cimport numpy as np
 import types
 from random import choice
 from string import ascii_uppercase
@@ -102,13 +106,13 @@ class Granular(object):
 	(variables uch as momenta, angular velocities, forces, radii, etc.).
 	etc. """
 
-	def __init__(self, fname, const = False):
+	def __init__(self, fname, constN = False):
 
 		self._fname = fname
 		self._fp = open(fname, 'r')
 		self._length = None # number of lines between two consecutive timesteps
-		# this is useful for reading constant N trajectories (i.e. const = True)
-		self._const = const
+		# this is useful for reading constant N trajectories (i.e. constN = True)
+		self._const = constN
 
 		self.frame = 0
 		self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
@@ -145,12 +149,11 @@ class Granular(object):
 	def _goto_fast(self, frame):
 		""" A fast way of reading a constant N trajectory
 		"""
-		for i in range((frame - self.frame - 1) * self._length ):
-			next(self._fp)
+		#for i in range((frame - self.frame - 1) * self._length ):
+		#	next(self._fp)
 
-		self.frame += frame - 1
-
-		_goto_slow(frame)
+		#self.frame += frame - 1
+		#_goto_slow(frame)
 
 	def _goto_slow(self, frame):
 		""" This function assumes self._length is a variable, thus we're reading

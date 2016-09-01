@@ -1,6 +1,9 @@
 '''
 Created on July 9, 2016
 @author: Andrew Abi-Mansour
+
+Center for Materials Sci. & Eng.,
+Merck Inc., West Point
 '''
 
 #   This program is free software: you can redistribute it and/or modify
@@ -19,7 +22,9 @@ Created on July 9, 2016
 # -------------------------------------------------------------------------
 
 import os
+import numpy
 from setuptools import setup, find_packages
+from Cython.Build import cythonize
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -43,4 +48,6 @@ setup(
         "License :: GNU License",
     ],
     zip_safe=True,
+    ext_modules=cythonize("PyDEM/Analyzer/*.pyx"),
+	include_dirs=[numpy.get_include()]
 )
