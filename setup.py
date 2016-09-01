@@ -30,7 +30,7 @@ setup(
     name = "PyDEM",
     version = "0.0.1",
     author = "Andrew Abi-Mansour",
-    author_email = "andrew.abi.mansour@merck.com",
+    author_email = "andrew.gaam@gmail.com",
     description = ("A set of tools for running and analyzing DEM simulations"),
     license = "GNU",
     keywords = "Discrete Element Method, Granular Materials",
