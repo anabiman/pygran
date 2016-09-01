@@ -1,9 +1,6 @@
 '''
 Created on July 9, 2016
 @author: Andrew Abi-Mansour
-
-Center for Materials Sci. & Eng.,
-Merck Inc., West Point
 '''
 
 #   This program is free software: you can redistribute it and/or modify
