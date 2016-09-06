@@ -12,9 +12,9 @@ from PyDEM.Materials import glass
 if __name__ == '__main__':
 
 	# Create a dictionary of physical parameters
-	params = {
+	pDict = {
 
-			'model': Simulator.models.HertzMindlin,
+			'model': Simulator.models.Hysteresis,
             'engine': Simulator.engines.liggghts,
 
 			# Define the system
@@ -22,14 +22,17 @@ if __name__ == '__main__':
 			'box':  (-0.016, 0.016, -0.016, 0.016, -0.01, 0.061), # simulation box size
 
 			# Define component(s)
-			'SS': ({'id':1, 'natoms': 3e4, 'density': 2500.0, 'insert': True, 'rate': 1e6, 'freq': 1e3}, ), # number of particles inserted = rate * dt * freq every freq steps
+			'SS': ({'id':1, 'natoms': 1e4, 'density': 2500.0, 'insert': True, 'rate': 1e6, 'freq': 1e3}, ), # number of particles inserted = rate * dt * freq every freq steps
 			'radius': (('gaussian number', 4e-4, 4e-5),),
 
 			# Material properties
 			'materials': glass,
 
 			# Apply gravitional force in the negative direction along the z-axis
-			'gravity': (9.81, 0, 0, -1),
+			 'gravity': (9.81, 0, 0, -1),
+
+			# Assign initial velocity along the z-direction. TODO: Must assign velocities AFTER particles are created.
+			#'velocity': (('all', 'set', 0, -1e-3, 0),),
 
 			# Stage runs
 			'stages': {'insertion': 1e6},
@@ -41,11 +44,10 @@ if __name__ == '__main__':
 		  }
 
 	# Instantiate a linear spring dashpot class
-	params['model'] = params['model'](**params)
-	cModel = params['model']
+	pDict['model'] = pDict['model']('thorn', **pDict)
 
 	# Create an instance of the DEM class
-	sim = Simulator.DEM(**cModel.params)
+	sim = Simulator.DEM(**pDict['model'].params)
 
 	# Setup a stopper wall along the xoz plane (y = 0.0)
 	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)

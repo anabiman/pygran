@@ -474,6 +474,12 @@ class DEMPy:
     self.lmp.command('pair_style ' + (' {}' * len(args)).format(*args))
     self.lmp.command('pair_coeff * *')
 
+  def velocity(self, *args):
+    """
+    Assigns velocity to selected particles.
+    """
+    self.lmp.command('velocity' + (' {}' * len(args)).format(*args))
+
   def setupGravity(self):
     """
     Specify in which direction the gravitational force acts

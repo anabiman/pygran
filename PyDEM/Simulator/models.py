@@ -93,7 +93,11 @@ class Model:
 									i in range(len(self.SS))])
 
 			# Estimate the allowed sim timestep
-			self.params['dt'] = (0.25 * self.contactTime()).min()
+			try:
+				self.params['dt'] = (0.25 * self.contactTime()).min()
+			except:
+				self.params['dt'] = 1e-6
+				print 'Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt'])
 		else:
 			print 'Warning: no components found in your supplied dictionary!'
 
@@ -240,3 +244,16 @@ class HertzMindlin(Model):
 
 	def normalForce(self, ):
 		pass
+
+class Hysteresis(Model):
+	"""
+	A basic class that implements the Thornton/hysteresis model
+	"""
+
+	def __init__(self, name, **params):
+		Model.__init__(self, **params)
+
+		if 'model-args' not in self.params:
+			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name))
+		else:
+			self.params['model-args'] = self.params['model-args']
