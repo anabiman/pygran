@@ -27,11 +27,11 @@ Created on July 18, 2016
 # -------------------------------------------------------------------------
 
 glass = {
-		'yMod': ('youngsModulus', 'peratomtype', '7.1e8', '7.1e8'),
+		'yMod': ('youngsModulus', 'peratomtype', '7.1e10', '7.1e10'),
 		'pRatio': ('poissonsRatio', 'peratomtype', '0.22', '0.22'),
 		'cFric': ('coefficientFriction', 'peratomtypepair', '2', '0.5', '0.5', '0.5', '0.5'),
 		'cRollFric': ('coefficientRollingFriction', 'peratomtypepair', '2', '5e-4', '5e-4', '5e-4', '5e-4'),
 		'cEnerDen': ('cohesionEnergyDensity', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'),
 		'cRest': (('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9')),
-		'yPoint': ('yieldPoint', 'peratomtype', '0.05', '0.05'),
+		'yPoint': ('yieldPoint', 'peratomtype', '0.005', '0.005'),
 		}

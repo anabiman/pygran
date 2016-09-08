@@ -355,34 +355,68 @@ class DEMPy:
         self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
         self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
 
-  def insertParticles(self, name, *region):
+  def insert(self, name, *region):
     """
+    This function inserts particles, and assigns particle velocities if requested by the user. 
     """
     self.setupIntegrate(name='intMicro')
 
-    if not self.rank:
-      logging.info('Inserting particles')
-
     for i, ss in enumerate(self.pargs['SS']):
 
-      natoms = ss['natoms'] - self.lmp.get_natoms()
+      if ss['insert'] == True:
+        if not self.rank:
+          logging.info('Inserting particles for species {}'.format(i))
 
-      if natoms < 0:
-         if not self.rank: 
-            print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
-            raise
+        natoms = ss['natoms'] - self.lmp.get_natoms()
 
-      if natoms > 0:
-        randName = np.random.randint(0,10**6)
-        self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
-        self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-          + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
-      else:
-        print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
-        raise 
+        if natoms < 0:
+           if not self.rank: 
+              print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
+              raise
 
-    self.integrate(self.pargs['stages']['insertion'], self.pargs['dt'])
+        if natoms > 0:
+          randName = np.random.randint(0,10**6)
+          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+          self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+            + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+        else:
+          print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
+          raise 
+
+    if not self.rank:
+      logging.info('Inserting particles for species {}'.format(i))
+
+    if 'insertion' in self.pargs['stages']:
+      self.integrate(self.pargs['stages']['insertion'], self.pargs['dt'])
+    
     self.remove(randName)
+
+    # Check if the user has supplied any initial velocities
+    if 'velocity' in self.pargs:
+      for comp in self.pargs['velocity']:
+        self.velocity(*comp)
+
+  def run(self, nsteps=None, dt=None):
+    """ runs a simulation for number of steps specified by the user """
+    
+    if 'run' in self.pargs['stages']:
+      if not nsteps:
+        if 'run' in self.pargs['stages']:
+          nsteps = self.pargs['stages']['run']
+        else:
+          if not self.rank:
+            print 'Could not find run steps in user-supplied dictionary. Aborting ...'
+            return 1
+
+      if not dt:
+        if 'dt' in self.pargs:
+          dt = self.pargs['dt']
+        else:
+          if not self.rank:
+            print 'Could not find dt in user-supplied dictionary. Aborting ...'
+            return 1
+
+      self.integrate(nsteps, dt)
 
   def importMesh(self, name, file, scale = None):
     """

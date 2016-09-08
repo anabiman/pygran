@@ -127,11 +127,6 @@ class DEM:
     # All I/O done ~ phew! Now initialize DEM
     self.initialize()
 
-    # Check if the user has supplied any initial velocities
-    if 'velocity' in self.pargs:
-      for comp in self.pargs['velocity']:
-        self.velocity(*comp)
-
     # Setup material properties
     if 'materials' in self.pargs:
       for item in self.pargs['materials'].keys():
@@ -166,11 +161,16 @@ class DEM:
           self.dem.velocity(*args)
           break
 
-  def insertParticles(self, name, *args):
-
+  def insert(self, name, *args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.insertParticles(name, *args)
+        self.dem.insert(name, *args)
+        break
+
+  def run(self, nsteps=None, dt=None):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.run(nsteps, dt)
         break
         
   def setupParticles(self):
