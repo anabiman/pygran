@@ -46,12 +46,13 @@ def computeROG(positions):
 
 	return np.sqrt(rog/N)
 
-def computeRadius(x, y, z, N = 100):
+def computeRadius(positions, N = 100):
 	""" Computes the maximum radius of an N-particle (spherical) system
 	by sorting the radial components and returning the average of the sqrt
 	of the radius of the first N max data points. 
 	"""
-	rm = np.array([x.mean(), y.mean(), z.mean()])
+	x,y,z = np.split(positions.T, 3)
+	rm = positions.mean(axis=0)
 
 	r = ((x - rm[0])**2.0 + (y - rm[1])**2.0 + (z - rm[2])**2.0)
 	r.sort()
