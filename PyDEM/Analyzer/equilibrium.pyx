@@ -29,16 +29,22 @@ Created on July 10, 2016
 import numpy as np
 cimport numpy as np
 
-def computeROG(x, y, z):
+def computeROG(positions):
 	""" Computes the radius of gyration (ROG) for an N-particle system:
 	ROG = <\sqrt(\sum_i (r_i - rm)^2)> where rm is the mean position of all
 	particles, and <...> is the ensemble average. Alternatively, one can
 	compute ROG as \sum_i <r_i^T r_i> - rm ^T rm
 	"""
-	rm = np.array([x.mean(), y.mean(), z.mean()])
-	N = len(rm)
+	rm = positions.mean(axis=0)
+	N = len(positions)
 
-	return np.sqrt((np.dot(x,x) + np.dot(y,y) + np.dot(z,z)) / N - np.dot(rm, rm))
+	dr = positions - rm
+	rog = .0
+
+	for pos in dr:
+		rog += np.dot(pos,pos)
+
+	return np.sqrt(rog/N)
 
 def computeRadius(x, y, z, N = 100):
 	""" Computes the maximum radius of an N-particle (spherical) system
