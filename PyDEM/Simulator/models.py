@@ -91,15 +91,16 @@ class Model:
 			self.radius = np.array([radius[1] for radius in params['radius']])
 			self.mass = np.array([4.0/3.0 * np.pi * self.radius[i]**3 * self.SS[i]['density'] for \
 									i in range(len(self.SS))])
+		else:
+			print 'Warning: no components found in your supplied dictionary!'
 
+		if 'dt' not in self.params:
 			# Estimate the allowed sim timestep
 			try:
 				self.params['dt'] = (0.25 * self.contactTime()).min()
 			except:
 				self.params['dt'] = 1e-6
 				print 'Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt'])
-		else:
-			print 'Warning: no components found in your supplied dictionary!'
 
 	def contactTime(self):
 		raise NotImplementedError('Not yet implemented')

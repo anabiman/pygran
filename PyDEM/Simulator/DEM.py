@@ -51,7 +51,7 @@ class DEM:
     self.library = None
     self._dir, _ = __file__.split('DEM.py')
     self.pargs['output'] = None
-
+    
     # Check if .config files eixsts else create it
     # Only one process needs to do this
     if not self.rank:
@@ -61,13 +61,13 @@ class DEM:
 
           # Make sure the library exists; else, find it somewhere else 
           if not os.path.isfile(self.library):
-            self.library = find('lib' + self.pargs['engine'] + '.so', '/')
+            self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
             fp.seek(0,0)
             fp.write('library=' + self.library)
             print 'WARNING: Could not find user-specified library. Will use {} instead ...'.format(self.library)
       else:
         with open(self._dir + '../.config', 'w') as fp:
-          self.library = find('lib' + self.pargs['engine'] + '.so', '/')
+          self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
           print 'WARNING: No config file found. Creating one for {}'.format(self.library)
           fp.write('library=' + self.library)
 

@@ -33,5 +33,5 @@ glass = {
 		'cRollFric': ('coefficientRollingFriction', 'peratomtypepair', '2', '5e-4', '5e-4', '5e-4', '5e-4'),
 		'cEnerDen': ('cohesionEnergyDensity', 'peratomtypepair', '2', '1.0', '1.0', '1.0', '1.0'),
 		'cRest': (('coefficientRestitution', 'peratomtypepair', '2', '0.9', '0.9', '0.9', '0.9')),
-		'yPoint': ('yieldPoint', 'peratomtype', '0.005', '0.005'),
+		'yPoint': ('yieldPoint', 'peratomtype', '0.02', '0.02'),
 		}

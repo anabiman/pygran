@@ -20,9 +20,6 @@
 '''
 Created on March 30, 2016
 @author: Andrew Abi-Mansour
-
-Center for Materials Sci. & Eng.,
-Merck Inc., West Point
 '''
 
 from DEM import *
@@ -31,14 +28,19 @@ from models import *
 
 class _findEngines:
 	def __init__(self):
+		# Any engine module *must* follow the naming convention: engine_foo.py
+		# If the engine is found, it will be linked via setattr to be imported
+		# in DEM.py as PyDEM.Simulator.engine_foo. The engine is set by the user
+		# as DEM.Simulator.engines.foo
 
-		ext = __file__.split('__init__.py')[0]
-		pyFiles = _glob(ext + '*.py')
+		_dir, _ = __file__.split('__init__.py')
+		pyFiles = _glob(_dir + '*.py')
 
 		for file in pyFiles:
-			if file != ext + 'DEM.py' and file != ext + '__init__.py':
-				
-				engine, _ = file.split(ext)[1].split('.py')
-				setattr(self, engine, engine)
+			_, fileName = file.split(_dir)
+
+			if fileName.startswith('engine_'):	
+				engine, _ = fileName.split('.py')
+				setattr(self, engine.split('engine_')[1], engine)
 
 engines = _findEngines()
