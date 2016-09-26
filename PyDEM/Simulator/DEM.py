@@ -161,10 +161,10 @@ class DEM:
           self.dem.velocity(*args)
           break
 
-  def insert(self, name, *args):
+  def insert(self, name, species, *args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.insert(name, *args)
+        self.dem.insert(name, species, *args)
         break
 
   def run(self, nsteps=None, dt=None):

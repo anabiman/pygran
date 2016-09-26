@@ -278,7 +278,7 @@ class DEMPy:
                        'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
       
     if 'print' not in pargs:
-      pargs['print'] = (10**4, 'time', 'atoms', 'fmax', 'ke')
+      pargs['print'] = (10**4, 'time', 'atoms')
 
     self.rank = split.Get_rank()
     self.split = split
@@ -342,81 +342,86 @@ class DEMPy:
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
   def setupParticles(self):
-    """ Create atoms in a pre-defined region
+    """ Setup particle for insertion if requested by the user
     """
-    if not self.rank:
-      logging.info('Setting up particles')
 
-    for i, ss in enumerate(self.pargs['SS']):
+    for ss in self.pargs['SS']:
+
+      if not self.rank:
+        logging.info('Setting up particles for group{id}'.format(**ss))
 
       if ss['insert'] == True:
-        radius = self.pargs['radius'][i]
+        radius = ss['radius']
 
-        self.lmp.command('fix pts all particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
-        self.lmp.command('fix pdd all particledistribution/discrete 63243 1 pts 1.0')
+        randName = np.random.randint(0,10**6)
+        pddName = 'pdd' + '{}'.format(np.random.randint(0,10**6))
 
-  def insert(self, name, *region):
+        self.lmp.command('group group{id} type {id}'.format(**ss))
+        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 63243 1'.format(**ss) + ' {} 1.0'.format(randName))
+
+        #Do NOT unfix randName! Will cause a memory corruption error
+
+        self.pddName.append(pddName)
+
+  def insert(self, name, species, *region):
     """
     This function inserts particles, and assigns particle velocities if requested by the user. 
     """
-    self.setupIntegrate(name='intMicro')
+    if not self.pddName:
+      print 'Probability distribution not set for particle insertion. Exiting ...'
+      sys.exit()
 
-    for i, ss in enumerate(self.pargs['SS']):
-
+    def insert_loc(self, ss, i, name, *region):
       if ss['insert'] == True:
         if not self.rank:
           logging.info('Inserting particles for species {}'.format(i))
-
+    
         natoms = ss['natoms'] - self.lmp.get_natoms()
 
         if natoms < 0:
-           if not self.rank: 
-              print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
-              raise
+          if not self.rank: 
+            print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
+          raise
 
         if natoms > 0:
-          randName = np.random.randint(0,10**6)
+          randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
           self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
-          self.lmp.command('fix {} all insert/rate/region seed 123481 distributiontemplate pdd nparticles {}'.format(randName, natoms) + ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+          self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
+            ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
             + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+
         else:
-          print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
-          raise 
+          if not self.rank:
+            print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
+          raise
 
-    if not self.rank:
-      logging.info('Inserting particles for species {}'.format(i))
-
-    if 'insertion' in self.pargs['stages']:
-      self.integrate(self.pargs['stages']['insertion'], self.pargs['dt'])
-    
-    self.remove(randName)
+    if species != 'all':
+      i, ss = species - 1, self.pargs['SS'][species - 1]
+      insert_loc(self, ss, i, name, *region)
+    else:
+      for i, ss in enumerate(self.pargs['SS']):
+        insert_loc(self, ss, i, name, *region)
 
     # Check if the user has supplied any initial velocities
     if 'velocity' in self.pargs:
       for comp in self.pargs['velocity']:
         self.velocity(*comp)
 
-  def run(self, nsteps=None, dt=None):
+  def run(self, nsteps, dt=None):
     """ runs a simulation for number of steps specified by the user """
     
-    if 'run' in self.pargs['stages']:
-      if not nsteps:
-        if 'run' in self.pargs['stages']:
-          nsteps = self.pargs['stages']['run']
-        else:
-          if not self.rank:
-            print 'Could not find run steps in user-supplied dictionary. Aborting ...'
-            return 1
+    self.setupIntegrate(name='intMicro')
 
-      if not dt:
-        if 'dt' in self.pargs:
-          dt = self.pargs['dt']
-        else:
-          if not self.rank:
-            print 'Could not find dt in user-supplied dictionary. Aborting ...'
-            return 1
+    if not dt:
+      if 'dt' in self.pargs:
+        dt = self.pargs['dt']
+      else:
+        if not self.rank:
+          print 'Could not find dt in user-supplied dictionary. Aborting ...'
+        sys.exit()
 
-      self.integrate(nsteps, dt)
+    self.integrate(nsteps, dt)
 
   def importMesh(self, name, file, scale = None):
     """
@@ -447,7 +452,8 @@ class DEMPy:
     modelExtra = []
 
     for item in self.pargs['model-args']:
-      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser' and item != 'off':
+      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser' \
+        and item != 'off' and item != 'radiusGrowth':
         model.append(item)
       elif item != 'gran':
         modelExtra.append(item)
@@ -526,6 +532,7 @@ class DEMPy:
     """
 
     self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
+    self.pddName = []
 
     if self.pargs['restart'][-1] == False:
 
@@ -535,7 +542,6 @@ class DEMPy:
       self.setupNeighbor(**self.pargs)
       self.setupParticles()
       self.setupGravity()
-
     else:
       self.resume()
       self.setupPhysics()

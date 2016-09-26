@@ -75,6 +75,16 @@ class Model:
 		if 'nSim' not in self.params:
 			self.params['nSim'] =  1
 
+
+		# Expand material properties based on number of components
+		if 'materials' in self.params:
+			for item in self.params['materials']:
+				if self.params['materials'][item][1] == 'peratomtype':
+					self.params['materials'][item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
+				if self.params['materials'][item][1] == 'peratomtypepair':
+					self.params['materials'][item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
+
+		# Compute mean material properties
 		self.materials = {}
 
 		if 'materials' in self.params:
@@ -87,10 +97,17 @@ class Model:
 						it in params['materials'][item][2:]]).mean()
 
 		if 'SS' in self.params:
-			self.SS = params['SS']
-			self.radius = np.array([radius[1] for radius in params['radius']])
-			self.mass = np.array([4.0/3.0 * np.pi * self.radius[i]**3 * self.SS[i]['density'] for \
-									i in range(len(self.SS))])
+
+			self.radius = []
+			self.mass = []
+
+			for ss in self.params['SS']:
+				self.radius.append(ss['radius'][1])
+				self.mass.append(4.0/3.0 * np.pi * self.radius[-1]**3.0 * ss['density'])
+
+			self.radius = np.array(self.radius)
+			self.mass = np.array(self.mass)
+
 		else:
 			print 'Warning: no components found in your supplied dictionary!'
 
@@ -251,10 +268,15 @@ class Hysteresis(Model):
 	A basic class that implements the Thornton/hysteresis model
 	"""
 
-	def __init__(self, name, **params):
+	def __init__(self, **params):
 		Model.__init__(self, **params)
 
+		if 'name' not in params:
+			name = 'thorn'
+		else:
+			name = params['name']
+
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name))
+			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), 'radiusGrowth', 'off')
 		else:
 			self.params['model-args'] = self.params['model-args']
