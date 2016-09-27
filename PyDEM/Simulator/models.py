@@ -30,6 +30,7 @@ Created on July 1, 2016
 # i.e. 1/m_ij = 1/m_i + 1/m_j
 
 import numpy as np
+from scipy.integrate import ode
 
 class Model:
 	def __init__(self, **params):
@@ -117,13 +118,43 @@ class Model:
 				self.params['dt'] = (0.25 * self.contactTime()).min()
 			except:
 				self.params['dt'] = 1e-6
-				print 'Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt'])
+
+				if 'model' in self.params:
+					print 'Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt'])
 
 	def contactTime(self):
 		raise NotImplementedError('Not yet implemented')
 
-	def overlap(self):
-		raise NotImplementedError('Not yet implemented')
+	def overlap(self, mass = None, radius = None, yMod = None, poiss = None, v0 = None, dt = None, t1 = None):
+
+		if v0 is None:
+			if 'characteristicVelocity' in self.materials:
+				v0 = self.materials['characteristicVelocity']
+			else:
+				v0 = .0
+
+		if dt is None:
+			dt = 1e-6
+
+		y0 = np.array([0, v0])
+		t0 = .0
+
+		inte = ode(self.normalForce)
+		inte.set_f_params(*(mass, radius, yMod, poiss))
+		inte.set_integrator('dopri5')
+		inte.set_initial_value(y0, t0)
+
+		if t1 is None:
+			t1 = dt * 1000.0
+
+		time, soln = [], []
+
+		while inte.successful() and inte.t < t1:
+			inte.integrate(inte.t + dt)
+			time.append(inte.t + dt)
+			soln.append(inte.y)
+
+		return np.array(time), np.array(soln)
 
 	def dissCoef(self):
 		raise NotImplementedError('Not yet implemented')
@@ -144,7 +175,8 @@ class SpringDashpot(Model):
 
 	def __init__(self, **params):
 
-		params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.2', '0.2')
+		if 'materials' in params:
+			params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.2', '0.2')
 
 		Model.__init__(self, **params)
 
@@ -162,10 +194,14 @@ class SpringDashpot(Model):
 
 		if yMod is None:
 			yMod = self.materials['youngsModulus']
-			yMod /= 2.0 * (1.0  - poiss )
+		
+		yMod /= 2.0 * (1.0  - poiss )
 
 		if v0 is None:
-			v0 = self.materials['characteristicVelocity']
+			if 'characteristicVelocity' in self.materials:
+				v0 = self.materials['characteristicVelocity']
+			else:
+				v0 = 0.1 # default value of 0.1 m/s
 
 		if mass is None:
 			mass = self.mass
@@ -202,11 +238,17 @@ class SpringDashpot(Model):
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn) 
 
-	def overlap(self, delta = None, radius = None, yMod = None, poiss = None, mass = None, v0 = None, rest = None):
+	def overlap2(self, mass = None, radius = None, yMod = None, poiss = None, v0 = None, dt = None, rest = 0):
 		""" Computes the overlap distance """
 		kn = self.springStiff(radius, yMod, poiss, mass, v0)
-		cn = self.dissCoef(radius, yMod, poiss, mass, v0, rest)
-		dt = self.contactTime(mass, rest, kn)
+
+		if rest:
+			cn = self.dissCoef(radius, yMod, poiss, mass, v0, rest)
+		else:
+			cn = 0
+
+		if dt is None:
+			dt = self.contactTime(mass, rest, kn)
 
 		time = np.arange(0, dt*100, dt)
 
@@ -220,13 +262,17 @@ class SpringDashpot(Model):
 			radius = self.radius
 
 		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
-		return np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
+		return time, np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
 
-	def normalForce(self, delta = None, radius = None, yMod = None, poiss = None, mass = None, v0 = None):
-		if delta is None:
-			delta = self.overlap()
+	def normalForce(self, time, delta, mass = None, radius = None, yMod = None, poiss = None, v0 = None):
+		""" Returns the normal force based on Hooke's law: Fn = kn * delta """
 
-		return - self.springStiff(radius, yMod, poiss, mass, v0) * delta
+		kn = self.springStiff(radius, yMod, poiss, mass, v0)
+
+		if len(delta) > 1:
+			return np.array([delta[1], - kn * delta[0] / mass])
+		else:
+			return - kn * delta
 
 class HertzMindlin(Model):
 	"""
@@ -246,8 +292,13 @@ class HertzMindlin(Model):
 		""" Computes the spring constant kn for 
 			F = - kn * \delta
 		"""
+		if poiss is None:
+			poiss = self.materials['poissonsRatio']
+
 		if yMod is None:
-			yMod = self.materials['youngsModulus']
+			yEff = self.materials['youngsModulus']
+		
+		yEff = yMod * 0.5 / (1.0  - poiss )
 
 		if mass is None:
 			mass = self.mass
@@ -260,8 +311,24 @@ class HertzMindlin(Model):
 	def contactTime(self, mass = None, cR = None, kn = None):
 		return 2.5e-5 * np.ones(2)
 
-	def normalForce(self, ):
-		pass
+	def normalForce(self, time, delta, mass = None, radius = None, yMod = None, poiss = None, v0 = None):
+		""" Computes the Hertzian normal force"""
+
+		if poiss is None:
+			poiss = self.materials['poissonsRatio']
+
+		if yMod is None:
+			yMod = self.materials['youngsModulus']
+		
+		yEff = yMod * 0.5 / (1.0  - poiss )
+
+		if radius is None:
+			radius = self.radius
+
+		if len(delta) > 1:
+			return np.array([delta[1], - 4.0/3.0 * yEff / mass * np.sqrt(radius * delta[0]) * delta[0]])
+		else: 
+			return - 4.0/3.0 * yEff * np.sqrt(radius * delta) * delta
 
 class Hysteresis(Model):
 	"""
