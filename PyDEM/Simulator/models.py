@@ -76,26 +76,45 @@ class Model:
 		if 'nSim' not in self.params:
 			self.params['nSim'] =  1
 
+		# Compute mean material properties
+		self.materials = {}
 
 		# Expand material properties based on number of components
 		if 'materials' in self.params:
 			for item in self.params['materials']:
 				if self.params['materials'][item][1] == 'peratomtype':
-					self.params['materials'][item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
+					self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
 				if self.params['materials'][item][1] == 'peratomtypepair':
-					self.params['materials'][item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
+					self.materials[item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
 
-		# Compute mean material properties
-		self.materials = {}
+				# we should set this based on species type
+				if self.params['materials'][item][1] == 'scalar':
+					self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),)
 
-		if 'materials' in self.params:
-			for item in self.params['materials']:
-				if self.params['materials'][item][1] == 'peratomtype':
-					self.materials[self.params['materials'][item][0]] = np.array([np.float(it) for \
-						it in self.params['materials'][item][3:]]).mean()
-				else:	
-					self.materials[params['materials'][item][0]] = np.array([np.float(it) for \
-						it in params['materials'][item][2:]]).mean()
+			self.params['materials'] = self.materials
+
+		else: 
+			# then we're doing analysis
+			if 'mass' in params:
+				self.materials['mass'] = params['mass']
+
+			if 'radius' in params:
+				self.materials['radius'] = params['radius']
+
+			if 'youngsModulus' in params:
+				self.materials['youngsModulus'] = params['youngsModulus']
+
+			if 'poissonsRatio' in params:
+				self.materials['poissonsRatio'] = params['poissonsRatio'] 
+
+			if 'characteristicVelocity' in params:
+				self.materials['characteristicVelocity'] = params['characteristicVelocity']
+
+			if 'coefficientRestitution' in params:
+				self.materials['coefficientRestitution'] = params['coefficientRestitution']
+
+			if 'yieldPress' in params:
+				self.materials['yieldPress'] = params['yieldPress']
 
 		if 'SS' in self.params:
 
@@ -125,13 +144,10 @@ class Model:
 	def contactTime(self):
 		raise NotImplementedError('Not yet implemented')
 
-	def overlap(self, mass = None, radius = None, yMod = None, poiss = None, v0 = None, dt = None, t1 = None):
+	def displacement(self, v0 = None, dt = None):
 
 		if v0 is None:
-			if 'characteristicVelocity' in self.materials:
-				v0 = self.materials['characteristicVelocity']
-			else:
-				v0 = .0
+			v0 = self.materials['characteristicVelocity']
 
 		if dt is None:
 			dt = 1e-6
@@ -140,16 +156,15 @@ class Model:
 		t0 = .0
 
 		inte = ode(self.normalForce)
-		inte.set_f_params(*(mass, radius, yMod, poiss))
+		inte.set_f_params(*(v0,))
 		inte.set_integrator('dopri5')
 		inte.set_initial_value(y0, t0)
 
-		if t1 is None:
-			t1 = dt * 1000.0
-
 		time, soln = [], []
+		Tc = self.contactTime()
 
-		while inte.successful() and inte.t < t1:
+		print Tc
+		while inte.successful() and inte.t <= Tc:
 			inte.integrate(inte.t + dt)
 			time.append(inte.t + dt)
 			soln.append(inte.y)
@@ -175,9 +190,6 @@ class SpringDashpot(Model):
 
 	def __init__(self, **params):
 
-		if 'materials' in params:
-			params['materials']['cVel'] = ('characteristicVelocity', 'scalar', '0.2', '0.2')
-
 		Model.__init__(self, **params)
 
 		if 'model-args' not in self.params:
@@ -186,88 +198,84 @@ class SpringDashpot(Model):
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-	def springStiff(self, radius = None, yMod = None, poiss = None, mass = None, v0 = None):
+	def springStiff(self, v0 = None):
 		""" Computes the spring constant kn for F = - kn * \delta
 		"""
-		if poiss is None:
-			poiss = self.materials['poissonsRatio']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
 
-		if yMod is None:
-			yMod = self.materials['youngsModulus']
-		
 		yMod /= 2.0 * (1.0  - poiss )
-
-		if v0 is None:
-			if 'characteristicVelocity' in self.materials:
-				v0 = self.materials['characteristicVelocity']
-			else:
-				v0 = 0.1 # default value of 0.1 m/s
-
-		if mass is None:
-			mass = self.mass
-
-		if radius is None:
-			radius = self.radius
-
-		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
-			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
-
-	def dissCoef(self, radius = None, yMod = None, poiss = None, mass = None, v0 = None, rest = None):
-
-		if rest is None:
-			rest = self.materials['coefficientRestitution']
-
-		if mass is None:
-			mass = self.mass
-
-		kn = self.springStiff(radius, yMod, poiss, mass, v0)
-		loge = np.log(rest)
-
-		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
-
-	def contactTime(self, mass = None, rest = None, kn = None):
-
-		if kn is None:
-			 kn = self.springStiff()
-
-		if mass is None:
-			mass = self.mass
-
-		if rest is None:
-			rest = self.materials['coefficientRestitution']
-
-		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn) 
-
-	def overlap2(self, mass = None, radius = None, yMod = None, poiss = None, v0 = None, dt = None, rest = 0):
-		""" Computes the overlap distance """
-		kn = self.springStiff(radius, yMod, poiss, mass, v0)
-
-		if rest:
-			cn = self.dissCoef(radius, yMod, poiss, mass, v0, rest)
-		else:
-			cn = 0
-
-		if dt is None:
-			dt = self.contactTime(mass, rest, kn)
-
-		time = np.arange(0, dt*100, dt)
 
 		if v0 is None:
 			v0 = self.materials['characteristicVelocity']
 
-		if mass is None:
-			mass = self.mass
+		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
+			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-		if radius is None:
-			radius = self.radius
+	def dissCoef(self, v0 = None):
+
+		rest = self.materials['coefficientRestitution']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+
+		yMod /= 2.0 * (1.0  - poiss )
+
+		if v0 is None:
+			v0 = self.materials['characteristicVelocity']
+
+		kn = self.springStiff(v0)
+		loge = np.log(rest)
+
+		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
+
+	def contactTime(self):
+		""" Computes the characteristic collision time """
+
+		rest = self.materials['coefficientRestitution']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+
+		kn = self.springStiff()
+
+		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn) 
+
+	def displacementExact(self, v0 = None, dt = None):
+		""" Computes the displacement based on an analytical solution """
+
+		rest = self.materials['coefficientRestitution']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+
+		kn = self.springStiff(v0)
+		cn = self.dissCoef(v0)
+		
+		if dt is None:
+			dt = self.contactTime()
+
+		if v0 is None:
+			v0 = self.materials['characteristicVelocity']
 
 		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
+
 		return time, np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
 
-	def normalForce(self, time, delta, mass = None, radius = None, yMod = None, poiss = None, v0 = None):
+	def normalForce(self, time, delta, v0 = None):
 		""" Returns the normal force based on Hooke's law: Fn = kn * delta """
 
-		kn = self.springStiff(radius, yMod, poiss, mass, v0)
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+
+		kn = self.springStiff(v0)
 
 		if len(delta) > 1:
 			return np.array([delta[1], - kn * delta[0] / mass])
@@ -288,42 +296,42 @@ class HertzMindlin(Model):
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-	def springStiff(self, radius = None, yMod = None, mass = None, v0 = None):
+	def springStiff(self, delta):
 		""" Computes the spring constant kn for 
 			F = - kn * \delta
 		"""
-		if poiss is None:
-			poiss = self.materials['poissonsRatio']
-
-		if yMod is None:
-			yEff = self.materials['youngsModulus']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
 		
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		if mass is None:
-			mass = self.mass
+		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta) 
 
-		if radius is None:
-			radius = self.radius
+	def contactTime(self):
+		""" Estimate contact time based on a spring model """
 
-		pass
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus'] / (2.0 * (1 - poiss))
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+		v0 = self.materials['characteristicVelocity']
 
-	def contactTime(self, mass = None, cR = None, kn = None):
-		return 2.5e-5 * np.ones(2)
+		kn = 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
+			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-	def normalForce(self, time, delta, mass = None, radius = None, yMod = None, poiss = None, v0 = None):
+		return np.sqrt(mass * (np.pi**2.0 / kn)) 
+
+	def normalForce(self, time, delta, v0 = None):
 		""" Computes the Hertzian normal force"""
 
-		if poiss is None:
-			poiss = self.materials['poissonsRatio']
-
-		if yMod is None:
-			yMod = self.materials['youngsModulus']
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
 		
 		yEff = yMod * 0.5 / (1.0  - poiss )
-
-		if radius is None:
-			radius = self.radius
 
 		if len(delta) > 1:
 			return np.array([delta[1], - 4.0/3.0 * yEff / mass * np.sqrt(radius * delta[0]) * delta[0]])
@@ -347,3 +355,51 @@ class Hysteresis(Model):
 			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), 'radiusGrowth', 'off')
 		else:
 			self.params['model-args'] = self.params['model-args']
+
+		if 'mass' in params: # very hackish way to detect if we're doing analysis or running simulation
+			py = self.materials['yieldPress']
+			poiss = self.materials['poissonsRatio']
+
+			yMod = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
+			radius = self.materials['radius']
+
+			self.deltay = (np.pi * py / (2.0 * yMod))**2.0 * radius
+			self.deltam = .0
+
+	def springSitff(self, delta):
+
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+		
+		yEff = yMod * 0.5 / (1.0  - poiss )
+
+		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta)
+
+	def normalForce(self, time, delta, v0 = None):
+		""" Computes the piece-wise defined normal force based on Thornton's model """
+
+		deltan, deltav = delta
+
+		poiss = self.materials['poissonsRatio']
+		yEff = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
+		radius = self.materials['radius']
+		mass = self.materials['mass']
+		py = self.materials['yieldPress']
+
+		if deltam < deltay:
+			if len(delta) > 1:
+				return np.array([deltav, -self.springSitff(deltan) * deltan / mass]) 
+			else:
+				return -self.springSitff(deltan) * deltan
+		else:
+			Fy = - self.springSitff(deltay) * deltay 
+
+			if deltav > 0:
+				if deltan >= deltam:
+					self.Fmax = Fy + np.pi * py * radius * (deltan - deltay)
+					return self.Fmax
+
+				else:
+					Rp = 
