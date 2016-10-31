@@ -31,6 +31,7 @@ Created on July 1, 2016
 
 import numpy as np
 from scipy.integrate import ode
+from scipy.optimize import fsolve
 
 class Model:
 	def __init__(self, **params):
@@ -116,6 +117,9 @@ class Model:
 			if 'yieldPress' in params:
 				self.materials['yieldPress'] = params['yieldPress']
 
+			if 'cohesionEnergyDensity' in params:
+				self.materials['cohesionEnergyDensity'] = params['cohesionEnergyDensity']
+
 		if 'SS' in self.params:
 
 			self.radius = []
@@ -129,7 +133,7 @@ class Model:
 			self.mass = np.array(self.mass)
 
 		else:
-			print 'Warning: no components found in your supplied dictionary!'
+			print 'Warning: no components found in your supplied dictionary! Proceeding with analysis ...'
 
 		if 'dt' not in self.params:
 			# Estimate the allowed sim timestep
@@ -169,6 +173,35 @@ class Model:
 			soln.append(inte.y)
 
 		return np.array(time), np.array(soln)
+
+	def contactRadius(self, delta):
+		""" Returns the contact radius based on purely Hertzian or the JKR models"""
+
+		radius = self.materials['radius']
+		ontRadius = np.sqrt(delta * radius)
+
+		if 'cohesionEnergyDensity' in self.materials:
+			Gamma = self.materials['cohesionEnergyDensity']
+
+			poiss = self.materials['poissonsRatio']
+			yMod = self.materials['youngsModulus']
+			yMod /= 2.0 * (1.0  - poiss )
+
+			def jkr_disp(a, *args):
+				delta, Gamma, yMod, radius = args
+				return delta - a**2.0/radius + np.sqrt(2.0 * np.pi * Gamma * a / yMod)
+
+			def jkr_jacob(a, *args):
+				_, Gamma, yMod, radius = args
+				return - 2.0 * a /radius + np.sqrt(np.pi * Gamma / (a * 2.0 * yMod))
+
+			output = fsolve(jkr_disp, x0 = np.sqrt(delta * radius), args = (delta, Gamma, yMod, radius), full_output=True, fprime = jkr_jacob)
+			contRadius = output[0]
+			info = output[1]
+
+			print info
+
+		return contRadius
 
 	def dissCoef(self):
 		raise NotImplementedError('Not yet implemented')
@@ -332,10 +365,21 @@ class HertzMindlin(Model):
 		
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
+		if delta[0]:
+			contRadius = self.contactRadius(delta[0])[0]
+		else:
+			contRadius = .0
+
 		if len(delta) > 1:
-			return np.array([delta[1], - 4.0/3.0 * yEff / mass * np.sqrt(radius * delta[0]) * delta[0]])
-		else: 
-			return - 4.0/3.0 * yEff * np.sqrt(radius * delta) * delta
+			Fn = np.array([delta[1], - 4.0/3.0 * yEff / mass * contRadius**3.0 / radius])
+		else:
+			Fn = - 4.0/3.0 * yEff * contRadius**3.0 / radius
+
+		if 'cohesionEnergyDensity' in self.materials:
+			Gamma = self.materials['cohesionEnergyDensity']
+			Fn -= np.sqrt(8.0 * np.pi * yEff * Gamma * contRadius**3.0)
+
+		return Fn
 
 class Hysteresis(Model):
 	"""
