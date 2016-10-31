@@ -79,6 +79,6 @@ class TestFrame(wx.Frame):
  
          
 app = wx.App(redirect=False)
-frame = TestFrame(None,"Lights, Cameras, Action")
+frame = TestFrame(None,"PyDEM Visualizer")
 frame.Show()
 app.MainLoop()

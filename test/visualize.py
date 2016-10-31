@@ -14,6 +14,6 @@ g = Analyzer.Granular('traj.dump')
 g.next()
 
 app = wx.App(redirect=False)
-frame = Visualizer.Visualizer(None, g.Particles, "Lights, Cameras, Action")
+frame = Visualizer.Visualizer(None, g.Particles, "PyDEM")
 frame.Show()
 app.MainLoop()

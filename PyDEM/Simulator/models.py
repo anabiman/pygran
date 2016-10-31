@@ -163,7 +163,6 @@ class Model:
 		time, soln = [], []
 		Tc = self.contactTime()
 
-		print Tc
 		while inte.successful() and inte.t <= Tc:
 			inte.integrate(inte.t + dt)
 			time.append(inte.t + dt)
@@ -352,7 +351,7 @@ class Hysteresis(Model):
 			name = params['name']
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), 'radiusGrowth', 'off')
+			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name))
 		else:
 			self.params['model-args'] = self.params['model-args']
 
@@ -402,4 +401,4 @@ class Hysteresis(Model):
 					return self.Fmax
 
 				else:
-					Rp = 
+					pass

@@ -70,7 +70,7 @@ class Panel(wx.Panel):
         self._ren = vtk.vtkRenderer() 
         self._camera = self._ren.GetActiveCamera()
 
-        self._camera.SetFocalPoint(0, 0, 0)
+        self._camera.SetFocalPoint(0, 0, 0.05)
         self._camera.SetPosition(0,0,0)
         self._ren.SetActiveCamera(self._camera)
 
@@ -285,7 +285,7 @@ class Visualizer(wx.Frame):
     def __init__(self,parent, particles, title):
 
         self._Particles = particles
-        wx.Frame.__init__(self,parent,title=title,size=(650,600), style=wx.MINIMIZE_BOX|wx.SYSTEM_MENU|
+        wx.Frame.__init__(self,parent,title=title,size=(800,600), style=wx.MINIMIZE_BOX|wx.SYSTEM_MENU|
                   wx.CAPTION|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
         self.sp = wx.SplitterWindow(self)
         self.p1 = Panel(self.sp)
@@ -296,17 +296,30 @@ class Visualizer(wx.Frame):
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetStatusText("Click on the Plot Button")
          
-        self.plotbut = wx.Button(self.p2,-1,"plot", size=(40,20),pos=(10,10))
+        self.plotbut = wx.Button(self.p2,-1,"plot", size=(80,40),pos=(10,10))
         self.plotbut.Bind(wx.EVT_BUTTON, self.plot)
+
+        self.clearbut = wx.Button(self.p2,-1,"clear", size=(80,40),pos=(140,10))
+        self.clearbut.Bind(wx.EVT_BUTTON, self.plot)
+
+        self.loadbut = wx.Button(self.p2,-1,"load", size=(80,40),pos=(270,10))
+        self.loadbut.Bind(wx.EVT_BUTTON, self.plot)
          
+        self.slidebut = wx.Slider(self.p2, value=200, minValue=150, maxValue=500, pos=(400, 10), 
+            size=(250, -1), style=wx.SL_HORIZONTAL)
+
+        self.slidetxt = wx.StaticText(self.p2, label='resolution', pos=(475, 20)) 
+
  
     def plot(self,event):
+
         if not self.p1.isploted:
 
             self.p1.load_parts(self._Particles)
             #self.p1.attach_pos()
             #self.p1.attach_vel()
-            #self.p1.attach_stl('hopper-2cm-6cm.stl', scale=(5e-4, 5e-4, 5e-4))
+            self.p1.attach_stl('hopper-2cm-6cm.stl', scale=(1, 1, 1))
+            self.p1.attach_stl('example.stl', scale=(1, 1, 1))
 
             self.statusbar.SetStatusText("Use your mouse to interact with the model")
             self.p1.render()
