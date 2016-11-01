@@ -54,7 +54,7 @@ class liggghts:
 
   # create instance of LIGGGHTS
  
-  def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=None, ptr=None, comm=None):
+  def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
 
@@ -78,7 +78,7 @@ class liggghts:
     # if ptr, then are embedding Python in LIGGGHTS input script
     #   ptr is the desired instance of LIGGGHTS
     #   just convert it to ctypes ptr and store in self.lmp
-    
+
     if not ptr:
       # with mpi4py v2, can pass MPI communicator to LIGGGHTS
       # need to adjust for type of MPI communicator object
@@ -111,6 +111,7 @@ class liggghts:
 
       else:
         self.opened = 1
+
         if cmdargs:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)

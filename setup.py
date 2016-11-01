@@ -44,7 +44,7 @@ setup(
         "Topic :: Utilities",
         "License :: GNU License",
     ],
-    zip_safe=True,
+    zip_safe=False,
     ext_modules=cythonize("PyDEM/Analyzer/*.pyx"),
 	include_dirs=[numpy.get_include()]
 )

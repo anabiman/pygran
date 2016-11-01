@@ -318,8 +318,7 @@ class Visualizer(wx.Frame):
             self.p1.load_parts(self._Particles)
             #self.p1.attach_pos()
             #self.p1.attach_vel()
-            self.p1.attach_stl('hopper-2cm-6cm.stl', scale=(1, 1, 1))
-            self.p1.attach_stl('example.stl', scale=(1, 1, 1))
+            self.p1.attach_stl('hopper-20-6.stl', scale=(1, 1, 1))
 
             self.statusbar.SetStatusText("Use your mouse to interact with the model")
             self.p1.render()
