@@ -311,7 +311,7 @@ class DEMPy:
 
       logging.info('Instantiating LIGGGHTS object')
 
-    self.lmp = liggghts(comm=split, library=library, cmdargs=['-log', 'liggghts.log'])
+    self.lmp = liggghts(comm=split, library=library.strip(), cmdargs=['-log', 'liggghts.log'])
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
