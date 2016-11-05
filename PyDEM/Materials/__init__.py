@@ -24,15 +24,16 @@ Created on July 18, 2016
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 # -------------------------------------------------------------------------
 
 glass = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e10'),
-		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.22'),
-		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
-		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-4'),
-		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '5.0'),
+		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e7'),
+		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.46'),
+		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.7'),
+		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-2'),
+		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.5'),
 		'coefficientRestitution': (('coefficientRestitution', 'peratomtypepair', '0.9')),
-		'yieldPress': ('yieldPress', 'peratomtype', '7.0e10'),
+		'yieldPress': ('yieldPress', 'peratomtype', '9.0e6'),
 		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1')
 		}

@@ -323,7 +323,7 @@ class HertzMindlin(Model):
 		Model.__init__(self, **params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'cohesion', 'jkr', 'rolling_friction', \
+			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'rolling_friction', \
 						'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
@@ -395,7 +395,7 @@ class Hysteresis(Model):
 			name = params['name']
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name))
+			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), 'tangential', 'history', 'rolling_friction', 'cdt')
 		else:
 			self.params['model-args'] = self.params['model-args']
 
