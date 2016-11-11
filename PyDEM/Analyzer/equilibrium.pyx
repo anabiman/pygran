@@ -142,35 +142,17 @@ def computeRDF(x, y, z, dr = None, center = True, rMax=None):
 	# Number of particles in shell/total number of particles/volume of shell/number density
 	# shell volume = 4/3*pi(r_outer**3-r_inner**3)
 
-def computeAngleRepose(data, *args):
+def computeAngleRepose(Particles):
 	"""
 	Computes the angle of repos theta = arctan(h_max/L)
 	in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]
 	"""
-	Lx, Ly = args
-	x, y, z = data['x'], data['y'], data['z']
-	r = data['radius'].mean()
+	x, y, z = Particles.x, Particles.y, Particles.z
+	dL = 0.25 * (x.max() - x.min()) + 0.25 * (y.max() - y.min())
+	z_max = z.max() - z.min() - Particles.radius.mean()
 
-	h_max = z.max()
-
-	# Select all particles close to the walls (within r distance)
-	z = z[x**2.0 + y**2.0 >= (0.5 * (Lx + Ly) - r)**2.0]
-
-	if len(z):
-		zm = z.max()
-
-		dzMin = zm * 0.9
-		dzMax = zm 
-
-		z = z[z >= dzMin]
-		z = z[z <= dzMax]
-		h_max -= z.mean()
-
-		print np.arctan(h_max / Lx) * 180.0 / np.pi
-		return np.arctan(h_max / Lx)
-	else:
-		return 0
-
+	return np.arctan(z_max / dL) * 180.0 / np.pi
+		
 def computeDensity(data, density, shape = 'box', sel = None):
 	"""
 	Computes the bulk density for a selection of particles from their true *density*. 
