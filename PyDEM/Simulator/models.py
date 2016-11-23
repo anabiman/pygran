@@ -395,7 +395,7 @@ class Hysteresis(Model):
 			name = params['name']
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), 'tangential', 'history', 'rolling_friction', 'cdt')
+			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/{}'.format(name))
 		else:
 			self.params['model-args'] = self.params['model-args']
 

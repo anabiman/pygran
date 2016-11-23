@@ -28,12 +28,12 @@ Created on July 18, 2016
 # -------------------------------------------------------------------------
 
 glass = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e7'),
+		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e8'),
 		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.46'),
 		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.7'),
-		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-2'),
-		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.5'),
+		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-1'),
+		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '5.0'),
 		'coefficientRestitution': (('coefficientRestitution', 'peratomtypepair', '0.9')),
-		'yieldPress': ('yieldPress', 'peratomtype', '9.0e6'),
+		'yieldPress': ('yieldPress', 'peratomtype', '7.1e6'),
 		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1')
 		}

@@ -37,6 +37,7 @@ setup(
     url = "https://github.com/Andrew-AbiMansour/PyDEM",
     packages=find_packages(),
     package_dir={'PyDEM': 'PyDEM'},
+    package_data={'': ['.config']},
     install_requires=['numpy', 'pyvtk', 'pytools>=2011.2'],
     long_description=read('README.md'),
     classifiers=[
