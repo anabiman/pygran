@@ -358,7 +358,7 @@ class DEMPy:
         pddName = 'pdd' + '{}'.format(np.random.randint(0,10**6))
 
         self.lmp.command('group group{id} type {id}'.format(**ss))
-        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 1 atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 1 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
         self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 63243 1'.format(**ss) + ' {} 1.0'.format(randName))
 
         #Do NOT unfix randName! Will cause a memory corruption error
