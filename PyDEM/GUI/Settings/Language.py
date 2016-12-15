@@ -6,11 +6,11 @@ Created on Sep 11, 2013
 @author: Andrew Abi-Mansour
 '''
 
-__SofName__ = 'CRAMER'
+__SofName__ = 'SiDEM'
 
 class French:
     def __init__(self):
-        __SofName__ = 'CRAMER'
+        __SofName__ = __SofName__
         self.File = '&Dossier'
         self.Open = '&Ouvrir'
         self.Close = '&Terminer'
@@ -45,7 +45,6 @@ class Arabic:
         
 class English:
     def __init__(self):
-        __SofName__ = 'CRAMER'
         self.File = '&File'
         self.Open = '&Open'
         self.Close = '&Close'

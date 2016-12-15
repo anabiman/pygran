@@ -15,7 +15,7 @@ if __name__ == '__main__':
 	pDict = {
 
 			'model': Simulator.models.Hysteresis,
-            		'engine': Simulator.engines.liggghts,
+            'engine': Simulator.engines.liggghts,
 
 			# Define the system
 			'boundary': ('f','f','f'), # fixed BCs

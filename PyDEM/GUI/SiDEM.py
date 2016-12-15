@@ -7,11 +7,11 @@ import subprocess
 import urllib2
 import wx.lib.agw.multidirdialog as MDD
 import Liggghts
-import Settings.Language as Lang
 #import Plot
 import sys
 from mpi4py import MPI
 import visualize
+import Settings.Language as Lang
 
 class MainWindow(wx.Frame):
 
@@ -27,7 +27,11 @@ class MainWindow(wx.Frame):
     	This is the "constructor". It initializes the main frame and (so far) the two panels: upper panel and display pannel. 
     	"""
         self.BGColor = wx.Colour(95,95,95)
-        
+
+        # Declare the children frames
+        self.settings_frame = None
+        self.component_frame = None
+
         # Initialize some GUI stuff
         super(MainWindow,self).__init__(parent=parent, name=name, title=title,  pos=wx.DefaultPosition, size=(self._WIDTH, self._LENGTH))
 
@@ -130,7 +134,7 @@ class MainWindow(wx.Frame):
         self.ConfMenu = wx.Menu(style=wx.DEFAULT_STATUSBAR_STYLE)
         
         self.ConfBtn = self.ConfMenu.Append(id=wx.ID_SETUP, text="&Configure Sim\tCtrl-C", help="Settings")
-        self.Bind(event=wx.EVT_MENU, handler=self.onSettParams, source=self.ConfBtn)
+        self.Bind(event=wx.EVT_MENU, handler=self.onSimSetup, source=self.ConfBtn)
         
         self.setProcsBtn = self.ConfMenu.Append(id=wx.ID_ANY, text='Set &Procs\tCtrl-P', help='Set number of cores')
         self.Bind(event=wx.EVT_MENU, handler=self.onSetProcs, source=self.setProcsBtn)
@@ -142,7 +146,7 @@ class MainWindow(wx.Frame):
         self.CGAnBtn = self.AnaMenu.Append(id=wx.ID_ANY, text="&Coarse-Grained\tAlt-Ctrl-C", help="Begin macromolecular analysis")
         
         self.Bind(event=wx.EVT_MENU, handler=self.OnAtomAnBtn, source=self.AtomAnBtn)
-        self.Bind(event=wx.EVT_MENU, handler=self.onSettParams, source=self.CGAnBtn)
+        self.Bind(event=wx.EVT_MENU, handler=self.onSimSetup, source=self.CGAnBtn)
         
         
         # Setup language
@@ -160,18 +164,18 @@ class MainWindow(wx.Frame):
         """
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
         
-        self.OpenBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Open', wx.Bitmap('Load2.png'))
-        self.SaveBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Save', wx.Bitmap('Save.png'))
+        self.OpenBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Open', wx.Bitmap('Icons/Load.png'))
+        self.SaveBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Save', wx.Bitmap('Icons/Save.png'))
         
         self.ToolBar.AddSeparator()
         
-        self.StartBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap('Generate.png'))
-        self.AnalysBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap('Plot.png'))
+        self.StartBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap('Icons/Generate.png'))
+        self.AnalysBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap('Icons/Plot.png'))
         
         self.ToolBar.AddSeparator()
         
-        self.ClrBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Clear', wx.Bitmap('Clear.png'))
-        self.QuitBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Quit', wx.Bitmap('Quit.png'))
+        self.ClrBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Clear', wx.Bitmap('Icons/Clear.png'))
+        self.QuitBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Quit', wx.Bitmap('Icons/Quit.png'))
         
         self.ToolBar.Realize()
         self.Bind(wx.EVT_TOOL, self.OnGen, self.StartBtn)
@@ -313,7 +317,13 @@ class MainWindow(wx.Frame):
                     self.Liggghts.command('{}'.format(var))
                 except:
                     self.UpdateDisplayPanel('Unexpected error: {}'.format(sys.exc_info()[0]))
-            else:
+            elif method == 'unix':
+                try:
+                    output = os.popen(var).read()
+                    self.UpdateDisplayPanel(output)
+                except:
+                    self.UpdateDisplayPanel('Unexpected error: {}'.format(sys.exc_info()[0]))
+            else:   
                 self.UpdateDisplayPanel('Unknown command')
 
         self.InputTxt.Clear()
@@ -339,7 +349,7 @@ if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 Suite 330, Boston, MA  02111-1307  USA"""
 
         info = wx.AboutDialogInfo()
-        info.SetIcon(wx.Icon('CAAM.png', wx.BITMAP_TYPE_PNG))
+        info.SetIcon(wx.Icon('Icons/CAAM.png', wx.BITMAP_TYPE_PNG))
         info.SetName('SiDEM')
         info.SetVersion('1.0')
         info.SetDescription(description)
@@ -468,139 +478,6 @@ Suite 330, Boston, MA  02111-1307  USA"""
                 self.UpdateDisplayPanel('Generated successfully the full capsid')
             except:
                 raise
-
-    def onSettParams(self, event):
-        """
-        """
-
-        def settToolBar(frame):
-            """
-            """
-            ToolBar = frame.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
-            
-            loadBtn = ToolBar.AddLabelTool(wx.ID_ANY, '&Trajectory', wx.Bitmap('Settings.png'))
-
-            ToolBar.AddSeparator()
-
-            addBtn = ToolBar.AddLabelTool(wx.ID_ANY, '&Add Subsystem', wx.Bitmap('Add.png'))
-
-            ToolBar.AddSeparator()
-            
-            ToolBar.Realize()
-            frame.Bind(wx.EVT_TOOL, self.OnOpen, loadBtn)
-            frame.Bind(wx.EVT_TOOL, self.OnOpen, addBtn)
-
-        frame = wx.Frame(parent=self, id=-1, name='Simulation Setup', size=(self._WIDTH, self._LENGTH * 0.8))
-        addEmptySpace = lambda sizer:  "h_sizer{}.Add(wx.StaticText(frame, label='', style=wx.TE_READONLY), proportion=1)".format(sizer)
-
-        settToolBar(frame)
-
-        v_sizer = wx.BoxSizer(wx.VERTICAL) 
-        h_sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-        h_sizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        h_sizer3 = wx.BoxSizer(wx.HORIZONTAL)
-        h_sizer4 = wx.BoxSizer(wx.HORIZONTAL)
-
-        saveBtn = wx.Button(parent=frame, id=wx.ID_ANY, label='Save', size=(80,40))
-        resetBtn = wx.Button(parent=frame, id=wx.ID_ANY, label='Reset', size=(80,40))
-
-        contactModels = ['Spring Dashpot', 'Hertz Mindlin', 'Hysteresis Thorn']
-        eval(addEmptySpace(1))
-        h_sizer1.Add(wx.StaticText(frame, label="Model: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(1))
-        model = wx.ComboBox(parent=frame, choices = contactModels)
-        h_sizer1.Add(model, proportion=4)
-
-        eval(addEmptySpace(1))
-        h_sizer1.Add(wx.StaticText(frame, label="Shape: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(1))
-        shape = wx.TextCtrl(frame)
-        h_sizer1.Add(shape, proportion=4)
-
-        eval(addEmptySpace(1))
-        h_sizer1.Add(wx.StaticText(frame, label="Box Size: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(1))
-        simBox = wx.TextCtrl(frame)
-        h_sizer1.Add(simBox, proportion=4)
-        eval(addEmptySpace(1))
-
-        eval(addEmptySpace(2))
-        h_sizer2.Add(wx.StaticText(frame, label="Ext. Force: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(2))
-        force = wx.TextCtrl(frame)
-        h_sizer2.Add(force, proportion=4)
-
-        eval(addEmptySpace(2))
-        h_sizer2.Add(wx.StaticText(frame, label="Timestep: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(2))
-        timeStep = wx.TextCtrl(frame)
-        h_sizer2.Add(timeStep, proportion=4)
-
-        eval(addEmptySpace(2))
-        unitSys = ['SI', 'Metal', 'LJ']
-        h_sizer2.Add(wx.StaticText(frame, label="Units: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(2))
-        model = wx.ComboBox(parent=frame, choices = unitSys)
-        h_sizer2.Add(model, proportion=4)
-        eval(addEmptySpace(2))
-
-        eval(addEmptySpace(3))
-        h_sizer3.Add(wx.StaticText(frame, label="Newton 3rd Law: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(3))
-        newton = wx.CheckBox(parent=frame, id=-1)
-        wx.EVT_CHECKBOX(frame, newton.GetId(), self.CheckForHETATM)
-        h_sizer3.Add(newton, proportion=1)
-
-        eval(addEmptySpace(3))
-        h_sizer3.Add(wx.StaticText(frame, label="Cohesion: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(3))
-        cohesion = wx.CheckBox(parent=frame, id=-1)
-        wx.EVT_CHECKBOX(frame, cohesion.GetId(), self.CheckForHETATM)
-        h_sizer3.Add(cohesion, proportion=1)
-
-        eval(addEmptySpace(3))
-        h_sizer3.Add(wx.StaticText(frame, label="Rolling: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(3))
-        rolling = wx.CheckBox(parent=frame, id=-1)
-        wx.EVT_CHECKBOX(frame, rolling.GetId(), self.CheckForHETATM)
-        h_sizer3.Add(rolling, proportion=1)
-
-        eval(addEmptySpace(3))
-        h_sizer3.Add(wx.StaticText(frame, label="Tangential: ", style=wx.TE_READONLY), proportion=2)
-        eval(addEmptySpace(3))
-        tangential = wx.CheckBox(parent=frame, id=-1)
-        wx.EVT_CHECKBOX(frame, tangential.GetId(), self.CheckForHETATM)
-        h_sizer3.Add(tangential, proportion=1)
-        eval(addEmptySpace(3))
-
-        eval(addEmptySpace(4))
-        h_sizer4.Add(item=saveBtn, proportion=1)
-        eval(addEmptySpace(4))
-        h_sizer4.Add(item=resetBtn, proportion=1)
-        
-        eval(addEmptySpace(4))
-        boundaryType = ['Periodic', 'Fixed', 'Shrink-wrapped']
-        h_sizer4.Add(wx.StaticText(frame, label="Boundaries: ", style=wx.TE_READONLY), proportion=2)
-        #eval(addEmptySpace(4))
-        boundaryX = wx.ComboBox(parent=frame, choices = boundaryType)
-        h_sizer4.Add(boundaryX, proportion=2)
-        boundaryY = wx.ComboBox(parent=frame, choices = boundaryType)
-        h_sizer4.Add(boundaryY, proportion=2)
-        boundaryZ = wx.ComboBox(parent=frame, choices = boundaryType)
-        h_sizer4.Add(boundaryZ, proportion=2)
-        eval(addEmptySpace(4))
-
-        # Add some empty space to separate h_sizer1 from the upper border
-        v_sizer.Add(wx.StaticText(frame, label="", style=wx.TE_READONLY), proportion=1)
-        v_sizer.Add(item=h_sizer1, proportion=1)
-        v_sizer.Add(item=h_sizer2, proportion=1)
-        v_sizer.Add(item=h_sizer3, proportion=1)
-        v_sizer.Add(item=h_sizer4, proportion=1)
-
-        frame.SetSizer(v_sizer)
-
-        frame.Centre()
-        frame.Show()
 
     def OnGetIndices(self, event):
         dlg = wx.Dialog(parent=self,title="I am modal, close me first to get to main frame")
@@ -847,14 +724,3 @@ Suite 330, Boston, MA  02111-1307  USA"""
             self.read_pdb_options['Check_for_HETATM'] = False
             self.UpdateDisplayPanel('Hetero atoms will NOT be taken into account when reading pdb file(s).')
 
-def SelLanguage(event):
-    pass
-
-if __name__ == '__main__':
-
-        app = wx.App(redirect=False)
-
-        win = MainWindow(parent=None,name=Lang.__SofName__, title=Lang.__SofName__)
-        win.Show()
-
-        app.MainLoop()
