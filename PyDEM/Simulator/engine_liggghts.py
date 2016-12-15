@@ -388,10 +388,15 @@ class DEMPy:
         if natoms > 0:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
           self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
-          self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-            ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-            + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
 
+          if 'by_rate' in ss:
+            self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
+              ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+          elif 'by_pack' in ss:
+            self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
+              ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(ss['natoms'], name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
