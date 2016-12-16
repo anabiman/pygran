@@ -15,38 +15,36 @@ if __name__ == '__main__':
 	pDict = {
 
 			'model': Simulator.models.Hysteresis,
-            'engine': Simulator.engines.liggghts,
+            		'engine': Simulator.engines.liggghts,
 
 			# Define the system
 			'boundary': ('f','f','f'), # fixed BCs
-			'box':  (-0.016, 0.016, -0.016, 0.016, -0.01, 0.061), # simulation box size
-
-			# 'model-args': ('gran', 'model', 'hooke', 'limitForce', 'on', 'ktToKnUser', 'on'),
+			'box':  (-0.0011, 0.0011, -0.0011, 0.0011, -0.0001, 0.004), # simulation box size
+			'nns_skin': 0.0001,
 
 			# Define component(s)
-			'SS': ({'id':1, 'natoms': 10000, 'density': 2500.0, 'insert': True, 'rate': 1e6, \
-				'freq': 100, 'radius': ('gaussian number', 4e-4, 4e-5)}, 
+			'SS': ({'by_pack':'', 'id':1, 'natoms': 40000, 'density': 2500.0, 'vol_lim': 1e-16, 'insert': True, 'rate': 1e6, \
+				'freq': 'once', 'radius': ('gaussian number', 10.e-6, 1.e-6)}, 
 			      ), 
-				# number of particles inserted = rate * dt * freq every freq steps
 
-			'traj': {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
+			'traj': {'sel': 'all', 'freq': 1, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
                        'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
                        'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
 
-			'dt': 1e-05,
+			'dt': 1e-7,
 
 			# Material properties
 			'materials': glass,
 
 			# Apply gravitional force in the negative direction along the z-axis
-			'gravity': (9.81, 0, 0, -1),
+			# 'gravity': (9.81, 0, 0, -1),
 
 			# Stage runs
-			'stages': {'insertion': 2e4, 'run': 0e6},
+			'stages': {'insertion': 1, 'run': 0},
 
 			# Meshes
 			'mesh': {
-				'hopper': {'file': 'hopper-2cm-6cm.stl', 'scale': 5e-4},
+				'hopper': {'file': 'cylinder.stl', 'scale': 1e-3},
 			      },
 		  }
 
@@ -56,9 +54,12 @@ if __name__ == '__main__':
 	# Create an instance of the DEM class
 	sim = Simulator.DEM(**pDict['model'].params)
 
-	# Setup a stopper wall along the xoz plane (y = 0.0)
-	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
+	# Setup a stopper wall along the xoy plane
+	# sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
 
-	sim.insert('void', 1, *('cylinder', 'z', 0, 0, 0.01, 0.01, 0.04001))
-
+	sim.insert('void', 1, *('cylinder', 'z', 0, 0, 0.0009, 0.0, 0.002))
 	sim.run(pDict['stages']['insertion'], pDict['dt'])
+
+	#sim.remove('stopper')
+	sim.run(pDict['stages']['run'], pDict['dt'])
+
