@@ -6,7 +6,9 @@ import os
 import subprocess
 import urllib2
 import wx.lib.agw.multidirdialog as MDD
-import Liggghts
+from PyDEM import Simulator
+from importlib import import_module
+
 #import Plot
 import sys
 from mpi4py import MPI
@@ -15,17 +17,21 @@ import Settings.Language as Lang
 
 class MainWindow(wx.Frame):
 
-    _LENGTH = 650
-    _WIDTH = 800
-
-    __slots__ = ["display_panel", "display_box", "LoadedPanel", "LoadedBox", "panel_box", "contents_box", \
-		"upper_box1", "upper_box2", "upper_box3", "ScriptFileTxt", "GenBtn", "ClearBtn", "SettBtn"\
-		"Loaded_PDB", "Generated_PDB", "tmp_pdb_file", "command_txt", "read_pdb_options"]
+ 
 
     def __init__(self, parent, title, name):
         """
     	This is the "constructor". It initializes the main frame and (so far) the two panels: upper panel and display pannel. 
     	"""
+        self._LENGTH = 650
+        self._WIDTH = 800
+
+        __slots__ = ["display_panel", "display_box", "LoadedPanel", "LoadedBox", "panel_box", "contents_box", \
+            "upper_box1", "upper_box2", "upper_box3", "ScriptFileTxt", "GenBtn", "ClearBtn", "SettBtn"\
+            "Loaded_PDB", "Generated_PDB", "tmp_pdb_file", "command_txt", "read_pdb_options"]
+
+        self.__engines__ = vars(Simulator.engines).keys()
+
         self.BGColor = wx.Colour(95,95,95)
 
         # Declare the children frames
@@ -133,12 +139,18 @@ class MainWindow(wx.Frame):
         # Configure menu goes here
         self.ConfMenu = wx.Menu(style=wx.DEFAULT_STATUSBAR_STYLE)
         
-        self.ConfBtn = self.ConfMenu.Append(id=wx.ID_SETUP, text="&Configure Sim\tCtrl-C", help="Settings")
+        self.ConfBtn = self.ConfMenu.Append(id=wx.ID_SETUP, text="&Simulation\tCtrl-S", help="Setup Simulation")
         self.Bind(event=wx.EVT_MENU, handler=self.onSimSetup, source=self.ConfBtn)
         
-        self.setProcsBtn = self.ConfMenu.Append(id=wx.ID_ANY, text='Set &Procs\tCtrl-P', help='Set number of cores')
+        self.setComputBtn = self.ConfMenu.Append(id=wx.ID_ANY, text='&Computation\tCtrl-C', help='')
+        self.Bind(event=wx.EVT_MENU, handler=self.onSetProcs, source=self.setComputBtn)
+
+        self.setProcsBtn = self.ConfMenu.Append(id=wx.ID_ANY, text='&Hardware\tCtrl-H', help='Set number of cores')
         self.Bind(event=wx.EVT_MENU, handler=self.onSetProcs, source=self.setProcsBtn)
         
+        self.setEngBtn = self.ConfMenu.Append(id=wx.ID_ANY, text='&Engine\tCtrl-E', help='Set number of cores')
+        self.Bind(event=wx.EVT_MENU, handler=self.onSetEng, source=self.setEngBtn)
+
         # Analysis menu goes here
         self.AnaMenu = wx.Menu(style=wx.DEFAULT_STATUSBAR_STYLE)
         
@@ -312,11 +324,14 @@ class MainWindow(wx.Frame):
                         pass
 
             elif method == 'run':
-                # try to call a Liggghts method based on user cmd
-                try:
-                    self.Liggghts.command('{}'.format(var))
-                except:
-                    self.UpdateDisplayPanel('Unexpected error: {}'.format(sys.exc_info()[0]))
+                if self.__selEngine__:
+                    # try to call a DEM-engine method based on user-supplied cmds
+                    try:
+                        self._module.command('{}'.format(var))
+                    except:
+                        self.UpdateDisplayPanel('Unexpected error: {}'.format(sys.exc_info()[0]))
+                else:
+                    self.UpdateDisplayPanel('No engine selected. Make sure an available DEM engine is installed.')
             elif method == 'unix':
                 try:
                     output = os.popen(var).read()
@@ -540,12 +555,22 @@ Suite 330, Boston, MA  02111-1307  USA"""
 
         dlg.Destroy()
 
+    def onSetEng(self, event):
+
+        dlg = wx.SingleChoiceDialog(self, 'Available Engines', 'Select DEM engine', self.__engines__, wx.CHOICEDLG_STYLE)
+        
+        if dlg.ShowModal() == wx.ID_OK:
+            self.__selEngine__ = dlg.GetStringSelection()
+            self.UpdateDisplayPanel('Importing PyDEM.Simulator.engine.' + self.__selEngine__)
+            self._module = import_module('PyDEM.Simulator.engine_' + self.__selEngine__)
+
+        dlg.Destroy()
+
     def OnRCSB(self, event):
         dlg = wx.TextEntryDialog(self, 'Enter PDB ID:','Download PDB file from RCSB')
         
         if dlg.ShowModal() == wx.ID_OK:
             self.PDB_ID = dlg.GetValue()
-            
             self.url='http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=pdb&compression=NO&structureId={}'.format(self.PDB_ID)
             self.UpdateDisplayPanel('Fetching file from http://www.RCSB.org ... ')
             
