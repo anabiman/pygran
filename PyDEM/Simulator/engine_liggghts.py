@@ -339,7 +339,11 @@ class DEMPy:
     if not self.rank:
       logging.info('Creating domain')
 
-    self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
+    if 'box' in self.pargs:
+      self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
+    elif 'cylinder' in self.pargs:
+      self.lmp.command('region domain cylinder {} {} {} {} {} {} units box'.format(*self.pargs['cylinder']))
+
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
   def setupParticles(self):
@@ -378,7 +382,10 @@ class DEMPy:
         if not self.rank:
           logging.info('Inserting particles for species {}'.format(i))
     
-        natoms = ss['natoms'] - self.lmp.get_natoms()
+        if 'natoms_local' in ss:
+          natoms = ss['natoms_local']
+        else:
+          natoms = ss['natoms'] - self.lmp.get_natoms()
 
         if natoms < 0:
           if not self.rank: 
@@ -396,28 +403,35 @@ class DEMPy:
           elif 'by_pack' in ss:
             self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
               ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(ss['natoms'], name) )
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(natoms, name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
           raise
 
+        return randName
+      else:
+        return None
+
     if species != 'all':
       i, ss = species - 1, self.pargs['SS'][species - 1]
-      insert_loc(self, ss, i, name, *region)
+      randName = insert_loc(self, ss, i, name, *region)
     else:
+      randName = []
       for i, ss in enumerate(self.pargs['SS']):
-        insert_loc(self, ss, i, name, *region)
+        randName.append(insert_loc(self, ss, i, name, *region))
 
     # Check if the user has supplied any initial velocities
     if 'velocity' in self.pargs:
       for comp in self.pargs['velocity']:
         self.velocity(*comp)
 
+    return randName
+
   def run(self, nsteps, dt=None):
     """ runs a simulation for number of steps specified by the user """
-    
-    self.setupIntegrate(name='intMicro')
+      
+    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6))
 
     if not dt:
       if 'dt' in self.pargs:
@@ -428,6 +442,9 @@ class DEMPy:
         sys.exit()
 
     self.integrate(nsteps, dt)
+
+  def moveMesh(self, name, *args):
+    self.lmp.command('fix moveMesh all move/mesh {}' + ('{} ' * len(args)).format(*args))
 
   def importMesh(self, name, file, scale = None):
     """
@@ -539,6 +556,7 @@ class DEMPy:
 
     self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
     self.pddName = []
+    self.integrator = None
 
     if self.pargs['restart'][-1] == False:
 
@@ -565,7 +583,12 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up integration scheme parameters')
 
+    if self.integrator:
+      self.remove(self.integrator)
+
     self.lmp.command('fix {} all nve/sphere'.format(name))
+
+    return name
 
   def integrate(self, steps, dt = None):
     """
@@ -668,6 +691,12 @@ class DEMPy:
       except:
 	print "Unexpected error:", sys.exc_info()[0]
         raise
+
+  def command(self, cmd):
+    """
+    Passes a specific command to LIGGGHTS 
+    """
+    self.lmp.command(cmd)
 
   def resume(self):
     """

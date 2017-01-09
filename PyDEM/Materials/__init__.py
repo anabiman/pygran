@@ -28,7 +28,7 @@ Created on July 18, 2016
 # -------------------------------------------------------------------------
 
 glass = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e8'),
+	'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e8'),
 		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
 		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
 		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-1'),

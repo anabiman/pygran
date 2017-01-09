@@ -164,8 +164,7 @@ class DEM:
   def insert(self, name, species, *args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.insert(name, species, *args)
-        break
+        return self.dem.insert(name, species, *args)
 
   def run(self, nsteps=None, dt=None):
     for i in range(self.nSim):
@@ -279,12 +278,28 @@ class DEM:
         self.dem.plot(fname, xlabel, ylabel, output, xscale)
         break
 
+  def moveMesh(self, name, *args)
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.moveMesh(name, *args)
+        break
+
   def saveas(self, name, fname):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         self.dem.saveas(name, fname)
+        break
+
+  def command(self, cmd):
+    """
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.command(cmd)
         break
 
   def __del__(self):
