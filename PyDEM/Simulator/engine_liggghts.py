@@ -444,9 +444,9 @@ class DEMPy:
     self.integrate(nsteps, dt)
 
   def moveMesh(self, name, *args):
-    self.lmp.command('fix moveMesh all move/mesh {}' + ('{} ' * len(args)).format(*args))
+    self.lmp.command('fix moveMesh all move/mesh mesh {} '.format(name) + ('{} ' * len(args)).format(*args))
 
-  def importMesh(self, name, file, scale = None):
+  def importMesh(self, name, file, scale = None, stress = None):
     """
     TODO: fix type for mesh
     """
@@ -456,9 +456,15 @@ class DEMPy:
       logging.info('Importing mesh from {}'.format(fname))
 
     if scale == None:
-      self.lmp.command('fix {} all mesh/surface file {} type 2'.format(name, fname))
+      if stress:
+        self.lmp.command('fix {} all mesh/surface/stress file {} type 2'.format(name, fname))
+      else:
+        self.lmp.command('fix {} all mesh/surface file {} type 2'.format(name, fname))
     else:
-    	self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, scale))
+      if stress:
+    	  self.lmp.command('fix {} all mesh/surface/stress file {} type 2 scale {}'.format(name, fname, scale))
+      else:
+        self.lmp.command('fix {} all mesh/surface file {} type 2 scale {}'.format(name, fname, scale))
 
   def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
     """

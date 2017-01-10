@@ -192,7 +192,7 @@ class DEM:
           self.dem.createProperty(name, *args)
         break
 
-  def importMesh(self, name, file, scale = None):
+  def importMesh(self, name, file, scale = None, stress = None):
     """
     Imports a mesh file (STL or VTK)
     """
@@ -278,7 +278,7 @@ class DEM:
         self.dem.plot(fname, xlabel, ylabel, output, xscale)
         break
 
-  def moveMesh(self, name, *args)
+  def moveMesh(self, name, *args):
     """
     """
     for i in range(self.nSim):
