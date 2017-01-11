@@ -198,7 +198,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.importMesh(name, file, scale)
+        self.dem.importMesh(name, file, scale, stress)
         break
 
   def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
