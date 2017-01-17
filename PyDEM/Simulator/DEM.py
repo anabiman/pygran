@@ -50,7 +50,6 @@ class DEM:
     self.pargs = pargs
     self.library = None
     self._dir, _ = __file__.split('DEM.py')
-    self.pargs['output'] = None
     
     # Check if .config files eixsts else create it
     # Only one process needs to do this
@@ -76,7 +75,7 @@ class DEM:
     else:
       self.library = self.comm.recv(source=0)
 
-    if 'out' not in self.pargs:
+    if 'output' not in self.pargs:
       # The idea is to create a unique output name that depends on the current time. Since the processes are not in sunc, it's safer
       # to create the output name on the master processor and then send it to the slaves.
       if not self.rank:

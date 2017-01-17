@@ -487,7 +487,7 @@ class DEMPy:
       elif item != 'gran':
         modelExtra.append(item)
 
-    model = tuple(model) 
+    model = tuple(model)
 
     if wtype == 'mesh':
       self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes 1 meshes {} '.format(wtype, meshName) \
