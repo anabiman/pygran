@@ -407,6 +407,11 @@ class DEMPy:
             self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
               ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(natoms, name) )
+          else:
+            logging.info('Insertion mechanism not specified by user. Assuming insertion by rate ...')
+            self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
+              ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
