@@ -408,7 +408,7 @@ class DEMPy:
               ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(natoms, name) )
           else:
-            logging.info('Insertion mechanism not specified by user. Assuming insertion by rate ...')
+            print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
               ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
