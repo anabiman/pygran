@@ -69,7 +69,7 @@ class Model:
 			self.params['nns_type'] = 'bin'
 
 		if 'restart' not in self.params:
-			self.params['restart'] = (5000, 'restart', 'restart.binary', False)
+			self.params['restart'] = (5000, 'restart', 'restart.binary', False, None)
 
 		if 'dump_modify' not in self.params:
 			self.params['dump_modify'] = ('append', 'yes')
@@ -395,7 +395,7 @@ class Hysteresis(Model):
 			name = params['name']
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis/{}'.format(name), \
+			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/{}'.format(name), \
 					'tangential', 'history', 'rolling_friction', 'cdt')
 		else:
 			self.params['model-args'] = self.params['model-args']

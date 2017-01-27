@@ -716,7 +716,11 @@ class DEMPy:
     """
     """
     rdir = '{}/*'.format(self.pargs['restart'][1])
-    rfile = max(glob.iglob(rdir), key=os.path.getctime)
+
+    if self.pargs['restart'][-1]:
+      rfile = self.pargs['restart'][-1]
+    else:
+      rfile = max(glob.iglob(rdir), key=os.path.getctime)
 
     self.lmp.command('read_restart {}'.format(rfile))
 
