@@ -135,7 +135,8 @@ class DEM:
     # Import and setup all meshes as rigid walls
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
-        self.importMesh(name=mesh, **self.pargs['mesh'][mesh])
+
+        self.importMesh(name=mesh, **self.pargs['mesh'][mesh])  
         self.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
 
     self.printSetup()

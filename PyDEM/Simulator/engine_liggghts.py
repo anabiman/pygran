@@ -528,7 +528,7 @@ class DEMPy:
       logging.info('Setting up nearest neighbor searching parameters')
 
     self.lmp.command('neighbor {nns_skin} {nns_type}'.format(**params))
-    self.lmp.command('neigh_modify delay 0')
+    self.lmp.command('neigh_modify delay 0 every 100')
 
   def createProperty(self, name, *args):
     """
@@ -568,11 +568,11 @@ class DEMPy:
     """
     """
 
-    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart']))
+    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart'][:-1]))
     self.pddName = []
     self.integrator = None
 
-    if self.pargs['restart'][-1] == False:
+    if self.pargs['restart'][3] == False:
 
       self.createDomain()
       #self.createGroup()
@@ -718,7 +718,7 @@ class DEMPy:
     rdir = '{}/*'.format(self.pargs['restart'][1])
 
     if self.pargs['restart'][-1]:
-      rfile = self.pargs['restart'][-1]
+      rfile = self.pargs['restart'][1] + '/' + self.pargs['restart'][-1]
     else:
       rfile = max(glob.iglob(rdir), key=os.path.getctime)
 
