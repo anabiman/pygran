@@ -18,3 +18,20 @@
 import Simulator
 import Analyzer
 import Visualizer 
+import Tools
+import os
+
+def run(program):
+	""" Launches an executable program available in the PATH """
+	paths = os.environ['PATH']
+
+	for path in paths.split(':'):
+		found = Tools.find(program, path)
+
+		if found:
+			print 'Launching {}'.format(found)
+			os.system(found + ' &')
+			return 0
+
+	print 'Could not find {} in {}'.format(program, paths)
+	return 1

@@ -38,7 +38,7 @@ setup(
     packages=find_packages(),
     package_dir={'PyDEM': 'PyDEM'},
     package_data={'': ['.config']},
-    install_requires=['numpy', 'pyvtk', 'pytools>=2011.2'],
+    install_requires=['numpy', 'pyvtk', 'pytools>=2011.2', 'pygmsh'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 1 - Alpha",

@@ -30,11 +30,7 @@ from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
 import os
-
-def find(name, path):
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
+from PyDEM.Tools import find
 
 class DEM:
   """A *generic* class that handles communication for a DEM object independent of the engine used"""
