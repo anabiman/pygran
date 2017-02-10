@@ -153,36 +153,39 @@ def computeAngleRepose(Particles):
 
 	return np.arctan(z_max / dL) * 180.0 / np.pi
 		
-def computeDensity(data, density, shape = 'box', sel = None):
+def computeDensity(Particles, density, shape = 'box'):
 	"""
 	Computes the bulk density for a selection of particles from their true *density*. 
 	The volume is determined approximately by constructing a box/cylinder/cone 
 	embedding the particles. Particles are assumed to be spherical in shape.
 	"""
-	x, y, z = data['x'][sel], data['y'][sel], data['z'][sel]
+	if(Particles.natoms > 0):
+		x, y, z = Particles.x, Particles.y, Particles.z
+		radius = Particles.radius
+		xmin, xmax = min(x), max(x)
+		ymin, ymax = min(y), max(y)
+		zmin, zmax = min(z), max(z)
 
-	xmin, xmax = min(x), max(x)
-	ymin, ymax = min(y), max(y)
-	zmin, zmax = min(z), max(z)
+		if shape == 'box':
+			volume = (xmax - xmin) * (ymax - ymin) * (zmax - zmin)
 
-	if shape == 'box':
-		volume = (xmax - xmin) * (ymax - ymin) * (zmax - zmin)
+		elif shape == 'cylinder-z':
+			height = zmax - zmin
+			radius = (ymax - ymin) * 0.25 + (xmax - xmin) * 0.25
+			volume = np.pi * radius**2.0 * height
 
-	elif shape == 'cylinder-z':
-		height = zmax - zmin
-		radius = (ymax - ymin) * 0.25 + (xmax - xmin) * 0.25
-		volume = np.pi * radius**2.0 * height
+		elif shape == 'cylinder-y':
+			height = ymax - ymin
+			radius = (zmax - zmin) * 0.25 + (xmax - xmin) * 0.25
+			volume = np.pi * radius**2.0 * height
 
-	elif shape == 'cylinder-y':
-		height = ymax - ymin
-		radius = (zmax - zmin) * 0.25 + (xmax - xmin) * 0.25
-		volume = np.pi * radius**2.0 * height
+		elif shape == 'cylinder-x':
+			height = xmax - xmin
+			radius = (ymax - ymin) * 0.25 + (zmax - zmin) * 0.25
+			volume = np.pi * radius**2.0 * height
 
-	elif shape == 'cylinder-x':
-		height = xmax - xmin
-		radius = (ymax - ymin) * 0.25 + (zmax - zmin) * 0.25
-		volume = np.pi * radius**2.0 * height
+		mass = np.sum(density * 4.0 / 3.0 * np.pi * (radius**3.0))
 
-	mass = np.sum(density * 4.0 / 3.0 * np.pi * (data['radius'][sel])**3.0)
+		return mass / volume
 
-	return mass / volume
+	return 0
