@@ -41,7 +41,7 @@ NotShowIn=KDE""".format(dir)
 		fp.write(txt)
 
 	os.system('chmod +x PyDEM.desktop')
-	os.system('mv PyDEM.desktop ..')
+	os.system('mv PyDEM.desktop ~/.local/share/applications')
 
 setup(
     name = "PyDEM",
