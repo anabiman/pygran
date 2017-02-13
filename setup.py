@@ -69,7 +69,9 @@ setup(
 
 if sys.argv[1] == 'install':
 
-	sys.path.pop(0) # remove current path to make sure PyDEM is imported from elsewhere
+	sys.path.remove(os.getcwd()) # remove current path to make sure PyDEM is imported from elsewhere
+	sys.path.append('/home/abimanso/.local/lib/python2.7/site-packages')
+	print sys.path
 	print 'Verifying installation ....................................................'
 	print '...........................................................................'
 	print '...........................................................................'
@@ -80,3 +82,4 @@ if sys.argv[1] == 'install':
 		print 'PyDEM successfully installed'
 	except:
 		print 'PyDEM installation failed ...'
+		raise
