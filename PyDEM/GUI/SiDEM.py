@@ -297,6 +297,12 @@ class MainWindow(wx.Frame):
             elif command == 'whos':
                 for item in self.loadedVars:
                     self.UpdateDisplayPanel(item, type(self.loadedVars[item]))
+            elif command == 'visualize':
+                self.UpdateDisplayPanel('Launching ovito')
+                try:
+                    os.popen('ovito').read()
+                except:
+                    self.UpdateDisplayPanel('No visualization software found. Make sure ovito is properly installed on your system.')
             else:
                 self.UpdateDisplayPanel('Unknown command')
 
@@ -412,30 +418,22 @@ Suite 330, Boston, MA  02111-1307  USA"""
         This function Launches an instance of a new file dialog that allows the user
 		to select a specific input file.
         """
-        wildcard = "Protein Data Bank (*.pdb)|*.pdb|"     \
-           "Gromos87 (*.gro)|*.gro|" \
+        wildcard = "Python (*.py)|*.py|"     \
+           "LIGGGHTS (*.in)|*.in|" \
            "All files (*.*)|*.*"
            
         dlg = wx.FileDialog(self, message="Open a file...", defaultDir=self.CWD, defaultFile="", \
                             style=wx.FD_FILE_MUST_EXIST | wx.FD_OPEN | wx.FD_PREVIEW, wildcard=wildcard)
         
         if dlg.ShowModal() == wx.ID_OK:
-            self.Loaded_PDB = dlg.GetPath()
+            self.loadedScript = dlg.GetPath()
             
-            if(self.Loaded_PDB.split('.')[1] == 'pdb'):
+            if(self.loadedScript.split('.')[1] == 'py'):
                 
-                self.loaded_file_txt.ChangeValue(self.Loaded_PDB)
-                
-                fp = open(self.Loaded_PDB,'r')
-                self.Loaded_PDB_file = fp.read()
-                fp.close()
-                
-                self.Natoms, self.Operator = Transform.ReadPDB(self.Loaded_PDB_file)
-                self.UpdateDisplayPanel('Loaded pdb file {} ...'.format(self.Loaded_PDB))
-                self.UpdateDisplayPanel('Read {} atoms.'.format(self.Natoms))
+                self.UpdateDisplayPanel('Loaded input script file: {}'.format(self.loadedScript))
                 
             else:
-                self.UpdateDisplayPanel('Input must be a valid pdb file.')
+                self.UpdateDisplayPanel('Input must be a valid python/LIGGGHTS file.')
         dlg.Destroy()
         
     def OnSave(self, event):
@@ -488,12 +486,13 @@ Suite 330, Boston, MA  02111-1307  USA"""
         this should perhaps be done in C++.
         """
         
-        if self.Loaded_PDB is None:
-            self.UpdateDisplayPanel('Load pdb file first.')
+        if self.loadedScript is None:
+            self.UpdateDisplayPanel('Load script file first.')
         else:
             try:
-                self.Generated_PDB = Transform.TransformPDB(self, self.Loaded_PDB_file, self.Operator, self.Natoms, **self.read_pdb_options)
-                self.UpdateDisplayPanel('Generated successfully the full capsid')
+                self.UpdateDisplayPanel('Running simulation')
+                output = os.Popen('mpirun -n {} python {}'.format(self.nProcs, self.loadedScript))
+                self.UpdateDisplayPanel(output)
             except:
                 raise
 
@@ -555,6 +554,8 @@ Suite 330, Boston, MA  02111-1307  USA"""
             if type(self.nProcs) is not int:
                 self.UpdateDisplayPanel('Error. Number of processors must be an integer.')
                 self.nProcs = 1
+            else:
+                self.UpdateDisplayPanel('Number of procs set to {}'.format(self.nProcs))
 
         dlg.Destroy()
 
