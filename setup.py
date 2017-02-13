@@ -18,13 +18,30 @@ Created on July 9, 2016
 
 # -------------------------------------------------------------------------
 
-import os
-import numpy
+import os, sys, numpy, site
 from setuptools import setup, find_packages
 from Cython.Build import cythonize
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+def link(dir):
+	txt="""[Desktop Entry]
+Version=1.0
+Type=Application
+Name=PyDEM
+Comment=graphical User Interface for PyDEM	     
+Exec=python -m PyDEM
+Icon={}/PyDEM.png
+Terminal=false
+MimeType=image/x-foo
+NotShowIn=KDE""".format(dir)
+
+	with open('PyDEM.desktop', 'w') as fp:
+		fp.write(txt)
+
+	os.system('chmod +x PyDEM.desktop')
+	os.system('mv PyDEM.desktop ..')
 
 setup(
     name = "PyDEM",
@@ -49,3 +66,17 @@ setup(
     ext_modules=cythonize("PyDEM/Analyzer/*.pyx"),
 	include_dirs=[numpy.get_include()]
 )
+
+if sys.argv[1] == 'install':
+
+	sys.path.pop(0) # remove current path to make sure PyDEM is imported from elsewhere
+	print 'Verifying installation ....................................................'
+	print '...........................................................................'
+	print '...........................................................................'
+
+	try:
+		import PyDEM
+		link(PyDEM.__path__[0] + '/GUI/Icons')
+		print 'PyDEM successfully installed'
+	except:
+		print 'PyDEM installation failed ...'

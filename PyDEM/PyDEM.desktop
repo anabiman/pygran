@@ -1,0 +1,1 @@
+[Desktop Entry] 	     Version=1.0 	     Type=Application 	     Name=PyDEM 	     Comment=graphical User Interface for PyDEM 	     Exec=python -m PyDEM 	     Icon=$HOME/.local/share/icons/PyDEM.png 	     Terminal=false 	     MimeType=image/x-foo; 	     NotShowIn=KDE
