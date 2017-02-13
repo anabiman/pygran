@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*- 
 
-import wx
-import os
+import wx, os, glob
 import subprocess
 import urllib2
 import wx.lib.agw.multidirdialog as MDD
@@ -37,6 +36,10 @@ class MainWindow(wx.Frame):
         # Declare the children frames
         self.settings_frame = None
         self.component_frame = None
+
+        # Loaded script files
+        self.loadedScript = None
+        self.loadedScriptPy = None
 
         # Initialize some GUI stuff
         super(MainWindow,self).__init__(parent=parent, name=name, title=title,  pos=wx.DefaultPosition, size=(self._WIDTH, self._LENGTH))
@@ -174,7 +177,7 @@ class MainWindow(wx.Frame):
     def ToolBar(self):
         """
         """
-	iconsDir = os.path.dirname(os.path.realpath(__file__)) + '/Icons/'
+        iconsDir = os.path.dirname(os.path.realpath(__file__)) + '/Icons/'
 
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
         
@@ -183,8 +186,8 @@ class MainWindow(wx.Frame):
         
         self.ToolBar.AddSeparator()
         
-        self.StartBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap(iconsDir+'Generate.png'))
-        self.AnalysBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap(iconsDir+'Plot.png'))
+        self.runBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap(iconsDir+'Generate.png'))
+        self.visBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap(iconsDir+'Plot.png'))
         
         self.ToolBar.AddSeparator()
         
@@ -192,11 +195,11 @@ class MainWindow(wx.Frame):
         self.QuitBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Quit', wx.Bitmap(iconsDir+'Quit.png'))
         
         self.ToolBar.Realize()
-        self.Bind(wx.EVT_TOOL, self.OnGen, self.StartBtn)
+        self.Bind(wx.EVT_TOOL, self.OnGen, self.runBtn)
         self.Bind(wx.EVT_TOOL, self.clearDisplayPanel, self.ClrBtn)
         self.Bind(wx.EVT_TOOL, self.OnOpen, self.OpenBtn)
         self.Bind(wx.EVT_TOOL, self.OnSave, self.SaveBtn)
-        self.Bind(wx.EVT_TOOL, self.OnAnalysis, self.AnalysBtn)
+        self.Bind(wx.EVT_TOOL, self.onVisualize, self.visBtn)
         self.Bind(wx.EVT_TOOL, self.OnQuit, self.QuitBtn)
         
     def UpdateDisplayPanel(self, txt, dtype=None):
@@ -204,9 +207,9 @@ class MainWindow(wx.Frame):
         This function updates the content text box in the display panel.
         """
         if dtype is None:
-            self.contents_txt.AppendText('      {}\n'.format(txt))
+            self.contents_txt.AppendText('{}\n'.format(txt))
         else:
-            self.contents_txt.AppendText('      {} {}\n'.format(txt, dtype))
+            self.contents_txt.AppendText('{} {}\n'.format(txt, dtype))
 
         self.Show()
         
@@ -298,11 +301,8 @@ class MainWindow(wx.Frame):
                 for item in self.loadedVars:
                     self.UpdateDisplayPanel(item, type(self.loadedVars[item]))
             elif command == 'visualize':
-                self.UpdateDisplayPanel('Launching ovito')
-                try:
-                    os.popen('ovito').read()
-                except:
-                    self.UpdateDisplayPanel('No visualization software found. Make sure ovito is properly installed on your system.')
+                self.onVisualize()
+
             else:
                 self.UpdateDisplayPanel('Unknown command')
 
@@ -460,18 +460,21 @@ Suite 330, Boston, MA  02111-1307  USA"""
                 raise ValueError('Could not save output file {} to {}'.format(pdb_file_name,cdir))
         dlg.Destroy()
 
-    def OnAnalysis(self, event):
-        Analysis = ['Atomic Analysis', 'CG Analysis']
-        
-        dlg = wx.Dialog(self, size=(400,100))
-        wx.ComboBox(dlg, -1, size=(40,40), choices=Analysis, style=wx.CB_READONLY)
-        self.Bind(wx.EVT_COMBOBOX, self.OnAA)
-        
-        wx.Button(dlg, 1, 'Close', (80, 80))
-        
-        dlg.ShowModal()
-        dlg.Destroy()
-        
+    def onVisualize(self, event):
+
+        self.UpdateDisplayPanel('Launching ovito')
+        cmd = 'ovito'
+
+        if self.loadedScriptPy:
+            pDict = self.loadedScriptPy.pDict
+            traj = pDict['traj']['output'] + '/' + pDict['traj']['dir'] + '/' + pDict['traj']['file']
+            cmd = cmd + ' ' + traj
+            self.UpdateDisplayPanel('Loading trajectory file {}'.format(traj))
+        try:
+            os.popen(cmd).read()
+        except:
+            self.UpdateDisplayPanel('No visualization software found. Make sure ovito is properly installed on your system.')
+
     def OnAA(self, event):
         Analysis = event.GetSelection()
         diag = wx.Dialog(self, size=(800,600), title=Analysis, style=wx.DIALOG_NO_PARENT)
@@ -481,20 +484,46 @@ Suite 330, Boston, MA  02111-1307  USA"""
         
     def OnGen(self, event):
         """
-        This is the main computational engine. It transforms (by rotation, translation, etc.) a monomer
-        into a series of repeating sequence that forms the full virus capsid. For computational speed,
-        this should perhaps be done in C++.
+        This is the main computational engine that runs a DEM simulation.
+        Only works in python 2.x
+        For python 3.x must use: for line in popen.stdout: print(line.decode(), end='')
         """
         
-        if self.loadedScript is None:
-            self.UpdateDisplayPanel('Load script file first.')
-        else:
+        if self.loadedScript:
             try:
-                self.UpdateDisplayPanel('Running simulation')
-                output = os.Popen('mpirun -n {} python {}'.format(self.nProcs, self.loadedScript))
+                split = self.loadedScript.split('/')
+                wdir, script = '/'.join(split[:-1]), split[-1]
+
+                cmd = 'python {}'.format(script)
+                self.UpdateDisplayPanel('Changing current working dir to ' + wdir)
+                os.chdir(wdir)
+                self.CWD = wdir
+                self.UpdateDisplayPanel('Running simulation: ' + cmd)
+
+                output = os.popen(cmd).read()
+                #for output in self.execute(cmd):
                 self.UpdateDisplayPanel(output)
+                self.UpdateDisplayPanel('Simulation done. Importing DEM params ...')
+
+                self.loadedScriptPy = __import__(script.split('.py')[0])
+                # ver hackish!!!
+                self.loadedScriptPy.pDict['traj']['output'] = wdir + '/' + sorted(glob.glob('out-*'), key=os.path.getmtime)[-1]
+
             except:
                 raise
+        else:
+            self.UpdateDisplayPanel('Load input script file first.')
+
+    def execute(self, cmd):
+        """ A function that executed commands using 'yield' to output any line from the command-line
+        to the screen """
+        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+        for stdout_line in iter(popen.stdout.readline, ""):
+            yield stdout_line 
+        popen.stdout.close()
+        return_code = popen.wait()
+        if return_code:
+            raise subprocess.CalledProcessError(return_code, cmd)
 
     def OnGetIndices(self, event):
         dlg = wx.Dialog(parent=self,title="I am modal, close me first to get to main frame")
