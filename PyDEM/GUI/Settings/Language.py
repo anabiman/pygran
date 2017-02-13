@@ -6,7 +6,7 @@ Created on Sep 11, 2013
 @author: Andrew Abi-Mansour
 '''
 
-__SofName__ = 'SiDEM'
+__SofName__ = 'PyDEM GUI'
 
 class French:
     def __init__(self):

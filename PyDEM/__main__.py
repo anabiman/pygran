@@ -1,6 +1,6 @@
-import windows
+import GUI.windows as windows
 import wx
-import Settings.Language as Lang
+import GUI.Settings.Language as Lang
 
 if __name__ == '__main__':
 
@@ -10,3 +10,4 @@ if __name__ == '__main__':
         win.Show()
 
         app.MainLoop()
+

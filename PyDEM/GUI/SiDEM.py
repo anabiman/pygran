@@ -174,20 +174,22 @@ class MainWindow(wx.Frame):
     def ToolBar(self):
         """
         """
+	iconsDir = os.path.dirname(os.path.realpath(__file__)) + '/Icons/'
+
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
         
-        self.OpenBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Open', wx.Bitmap('Icons/Load.png'))
-        self.SaveBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Save', wx.Bitmap('Icons/Save.png'))
+        self.OpenBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Open', wx.Bitmap(iconsDir+'Load.png'))
+        self.SaveBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Save', wx.Bitmap(iconsDir+'Save.png'))
         
         self.ToolBar.AddSeparator()
         
-        self.StartBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap('Icons/Generate.png'))
-        self.AnalysBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap('Icons/Plot.png'))
+        self.StartBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Start', wx.Bitmap(iconsDir+'Generate.png'))
+        self.AnalysBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Plot', wx.Bitmap(iconsDir+'Plot.png'))
         
         self.ToolBar.AddSeparator()
         
-        self.ClrBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Clear', wx.Bitmap('Icons/Clear.png'))
-        self.QuitBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Quit', wx.Bitmap('Icons/Quit.png'))
+        self.ClrBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Clear', wx.Bitmap(iconsDir+'Clear.png'))
+        self.QuitBtn = self.ToolBar.AddLabelTool(wx.ID_ANY, '&Quit', wx.Bitmap(iconsDir+'Quit.png'))
         
         self.ToolBar.Realize()
         self.Bind(wx.EVT_TOOL, self.OnGen, self.StartBtn)
@@ -270,7 +272,8 @@ class MainWindow(wx.Frame):
                                            style =  wx.TE_READONLY | wx.TRANSPARENT_WINDOW | wx.ALIGN_CENTER_HORIZONTAL)
 
         self.InputTxt = wx.TextCtrl(self.InputPanel, value = "", style = wx.ALIGN_CENTER_HORIZONTAL | wx.TE_PROCESS_ENTER)
-        self.InputTxt.SetBackgroundColour(wx.BLACK)
+
+        self.InputTxt.SetBackgroundColour((15,15,15))
         self.InputTxt.SetForegroundColour(wx.WHITE)
        
         # Expansion set for the buttons here, i.e., they will expand both vertically and horizontally
