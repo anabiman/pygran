@@ -21,6 +21,7 @@ Created on July 9, 2016
 import os, sys, numpy, site
 from setuptools import setup, find_packages
 from Cython.Build import cythonize
+from distutils.command.install import install
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -43,6 +44,17 @@ NotShowIn=KDE""".format(dir)
 	os.system('chmod +x PyDEM.desktop')
 	os.system('mv PyDEM.desktop ~/.local/share/applications')
 
+class LIGGGHTS(install):
+    def do_pre_install_stuff(self):
+        os.chdir('engines/liggghts/src')
+        os.system('make makeshlib')
+        os.sytem('make -f Makefile.shlib openmpi')
+
+    def run(self):
+        self.do_pre_install_stuff()
+        install.run(self)
+        self.do_post_install_stuff()
+
 setup(
     name = "PyDEM",
     version = "0.0.1",
@@ -62,6 +74,7 @@ setup(
         "Topic :: Utilities",
         "License :: GNU License",
     ],
+    cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
     ext_modules=cythonize("PyDEM/Analyzer/*.pyx"),
 	include_dirs=[numpy.get_include()]
