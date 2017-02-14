@@ -358,7 +358,7 @@ class DEMPy:
       if ss['insert'] == True:
         radius = ss['radius']
 
-        randName = np.random.randint(0,10**6)
+        randName = np.random.randint(10**5,10**8)
         pddName = 'pdd' + '{}'.format(np.random.randint(0,10**6))
 
         if 'vol_lim' not in ss:
