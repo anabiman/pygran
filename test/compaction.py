@@ -24,7 +24,7 @@ realGlass = {
 pDict = {
 
 		'model': Simulator.models.Hysteresis,
-        	'engine': Simulator.engines.liggghts,
+        'engine': Simulator.engines.liggghts,
 
 		# Define the system
 		'boundary': ('p','p','f'), # fixed BCs
