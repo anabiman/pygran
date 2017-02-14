@@ -359,17 +359,16 @@ class DEMPy:
         radius = ss['radius']
 
         randName = np.random.randint(10**5,10**8)
-        pddName = 'pdd' + '{}'.format(np.random.randint(0,10**6))
+        pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
 
         if 'vol_lim' not in ss:
           ss['vol_lim'] = 1e-12
 
         self.lmp.command('group group{id} type {id}'.format(**ss))
-        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 1 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
-        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 63243 1'.format(**ss) + ' {} 1.0'.format(randName))
+        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
 
         #Do NOT unfix randName! Will cause a memory corruption error
-
         self.pddName.append(pddName)
 
   def insert(self, name, species, *region):
