@@ -29,7 +29,7 @@ Created on April 25, 2016
 from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
-import os
+import os, sys
 from PyDEM.Tools import find
 
 class DEM:
@@ -63,8 +63,14 @@ class DEM:
       else:
         with open(self._dir + '../.config', 'w') as fp:
           self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
-          print 'WARNING: No config file found. Creating one for {}'.format(self.library)
-          fp.write('library=' + self.library)
+
+          if self.library:
+            print 'WARNING: No config file found. Creating one for {}'.format(self.library)
+            fp.write('library=' + self.library)
+          else:
+            print 'No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(self.pargs['engine'].split('engine_')[1])
+            print 'PyDEM looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.'
+            sys.exit()
 
       for slave in range(1,self.tProcs):
           self.comm.send(self.library, dest=slave)
