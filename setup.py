@@ -70,11 +70,7 @@ class LIGGGHTS(install):
         """
         str_format = "{0:." + str(decimals) + "f}"
         percents = str_format.format(100 * (iteration / float(total)))
-        sys.stdout.write('\r %s%s %s' % (percents, '%', suffix)),
-
-        if iteration == total:
-            sys.stdout.write('\n')
-
+        sys.stdout.write('\r %s%s %s' % (percents, '%', suffix))
         sys.stdout.flush()
 
 
@@ -89,15 +85,16 @@ class LIGGGHTS(install):
         files = files.split()
 
         count = 0
+        print 'Compiling LIGGGHTS as a shared library'
         for path in self.execute(cmd='make -f Makefile.shlib openmpi', cwd='/home/levnon/Desktop/liggghts-dem/src'):
             count +=1
-            self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files))
+            self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files) * 2)
+
+        sys.stdout.write('\n')
 
     def run(self):
         self.do_pre_install_stuff()
-        install.run(self)
-        self.do_post_install_stuff()
-
+        
 setup(
     name = "PyDEM",
     version = "0.0.1",
