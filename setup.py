@@ -88,9 +88,9 @@ class LIGGGHTS(install):
         print 'Compiling LIGGGHTS as a shared library'
         for path in self.execute(cmd='make -f Makefile.shlib openmpi', cwd='/home/levnon/Desktop/liggghts-dem/src'):
             count +=1
-            self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files) * 2)
+            self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files) * 2.025)
 
-        sys.stdout.write('\n')
+        sys.stdout.write('\nInstallation complete\n')
 
     def run(self):
         self.do_pre_install_stuff()

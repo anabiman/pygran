@@ -83,13 +83,13 @@ class DerivedWindow(MainWindow):
                 """
                 ToolBar = frame.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
                 
-                loadBtn = ToolBar.AddLabelTool(wx.ID_ANY, '&Trajectory', wx.Bitmap('Icons/Settings.png'))
+                loadBtn = ToolBar.AddLabelTool(wx.ID_ANY, '&Trajectory', wx.Bitmap(self.iconsDir + 'Settings.png'))
                 ToolBar.AddSeparator()
 
-                addSSBtn = ToolBar.AddLabelTool(wx.ID_ANY, 'Add &Subsystem', wx.Bitmap('Icons/AddSS.png'))
+                addSSBtn = ToolBar.AddLabelTool(wx.ID_ANY, 'Add &Subsystem', wx.Bitmap(self.iconsDir + 'AddSS.png'))
                 ToolBar.AddSeparator()
 
-                addWall = ToolBar.AddLabelTool(wx.ID_ANY, 'Add &Wall', wx.Bitmap('Icons/AddWall.png'))
+                addWall = ToolBar.AddLabelTool(wx.ID_ANY, 'Add &Wall', wx.Bitmap(self.iconsDir + 'AddWall.png'))
 
                 ToolBar.AddSeparator()
                 

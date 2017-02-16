@@ -24,6 +24,7 @@ class MainWindow(wx.Frame):
     	"""
         self._LENGTH = 650
         self._WIDTH = 800
+        self.iconsDir = os.path.dirname(os.path.realpath(__file__)) + '/Icons/'
 
         __slots__ = ["display_panel", "display_box", "LoadedPanel", "LoadedBox", "panel_box", "contents_box", \
             "upper_box1", "upper_box2", "upper_box3", "ScriptFileTxt", "GenBtn", "ClearBtn", "SettBtn"\
@@ -177,7 +178,7 @@ class MainWindow(wx.Frame):
     def ToolBar(self):
         """
         """
-        iconsDir = os.path.dirname(os.path.realpath(__file__)) + '/Icons/'
+        iconsDir = self.iconsDir
 
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
         
@@ -373,7 +374,7 @@ if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 Suite 330, Boston, MA  02111-1307  USA"""
 
         info = wx.AboutDialogInfo()
-        info.SetIcon(wx.Icon('Icons/CAAM.png', wx.BITMAP_TYPE_PNG))
+        info.SetIcon(wx.Icon(self.iconsDir + 'CAAM.png', wx.BITMAP_TYPE_PNG))
         info.SetName('SiDEM')
         info.SetVersion('1.0')
         info.SetDescription(description)
