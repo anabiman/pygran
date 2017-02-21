@@ -73,7 +73,6 @@ class LIGGGHTS(install):
         sys.stdout.write('\r %s%s %s' % (percents, '%', suffix))
         sys.stdout.flush()
 
-
     def do_pre_install_stuff(self):
         os.chdir('../liggghts-dem/src')
         os.system('make clean-all')
@@ -85,7 +84,7 @@ class LIGGGHTS(install):
         files = files.split()
 
         count = 0
-        print 'Compiling LIGGGHTS as a shared library'
+        print('Compiling LIGGGHTS as a shared library')
         for path in self.execute(cmd='make -f Makefile.shlib openmpi', cwd='/home/levnon/Desktop/liggghts-dem/src'):
             count +=1
             self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files) * 2.025)
@@ -122,17 +121,16 @@ setup(
 
 if sys.argv[1] == 'install':
 
-	sys.path.remove(os.getcwd()) # remove current path to make sure PyDEM is imported from elsewhere
-	sys.path.append('/home/abimanso/.local/lib/python2.7/site-packages')
-	print sys.path
-	print 'Verifying installation ....................................................'
-	print '...........................................................................'
-	print '...........................................................................'
-
-	try:
-		import PyDEM
-		link(PyDEM.__path__[0] + '/GUI/Icons')
-		print 'PyDEM successfully installed'
-	except:
-		print 'PyDEM installation failed ...'
-		raise
+    sys.path.remove(os.getcwd()) # remove current path to make sure PyDEM is imported from elsewhere
+    print('Verifying installation ...')
+    print('...........................................................................')
+    print('...........................................................................')
+    print('...........................................................................')
+    
+    try:
+        import PyDEM
+        link(PyDEM.__path__[0] + '/GUI/Icons')
+        print('PyDEM successfully installed')
+    except:
+        print('PyDEM installation failed ...')
+        raise

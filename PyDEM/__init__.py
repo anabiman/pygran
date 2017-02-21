@@ -15,11 +15,13 @@
 
 # -------------------------------------------------------------------------
 
-import Simulator
-import Analyzer
-import Visualizer 
-import Tools
+from PyDEM import Simulator, Analyzer, Tools
 import os
+
+try:
+	from PyDEM import Visualizer
+except:
+	print("WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.")
 
 def run(program):
 	""" Launches an executable program available in the PATH """
@@ -29,9 +31,9 @@ def run(program):
 		found = Tools.find(program, path)
 
 		if found:
-			print 'Launching {}'.format(found)
+			print('Launching {}'.format(found))
 			os.system(found + ' &')
 			return 0
 
-	print 'Could not find {} in {}'.format(program, paths)
+	print('Could not find {} in {}'.format(program, paths))
 	return 1

@@ -59,17 +59,17 @@ class DEM:
             self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
             fp.seek(0,0)
             fp.write('library=' + self.library)
-            print 'WARNING: Could not find user-specified library. Will use {} instead ...'.format(self.library)
+            print('WARNING: Could not find user-specified library. Will use {} instead ...'.format(self.library))
       else:
         with open(self._dir + '../.config', 'w') as fp:
           self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
 
           if self.library:
-            print 'WARNING: No config file found. Creating one for {}'.format(self.library)
+            print('WARNING: No config file found. Creating one for {}'.format(self.library))
             fp.write('library=' + self.library)
           else:
-            print 'No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(self.pargs['engine'].split('engine_')[1])
-            print 'PyDEM looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.'
+            print('No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(self.pargs['engine'].split('engine_')[1]))
+            print('PyDEM looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.')
             sys.exit()
 
       for slave in range(1,self.tProcs):
@@ -91,7 +91,7 @@ class DEM:
         self.pargs['output'] = self.comm.recv(source=0)
 
     if self.nSim > self.tProcs:
-      print "Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs)
+      print("Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs))
       sys.exit(0)
 
     self.nPart = self.tProcs // self.nSim
@@ -106,7 +106,7 @@ class DEM:
 
         if not self.split.Get_rank():
           if os.path.exists(self.output):
-            print 'WARNING: output dir {} already exists. Proceeding ...'.format(self.output)
+            print('WARNING: output dir {} already exists. Proceeding ...'.format(self.output))
           else:
             os.mkdir(self.output)
 

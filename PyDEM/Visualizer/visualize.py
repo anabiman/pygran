@@ -28,12 +28,14 @@ Created on July 10, 2016
 # -------------------------------------------------------------------------
 
 import vtk
+from vtk.util import numpy_support
+from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
+
 import numpy as np
 import sys
-from vtk.util import numpy_support
+
 from numpy.linalg import norm
 import wx
-from vtk.wx.wxVTKRenderWindowInteractor import wxVTKRenderWindowInteractor
 
 class Panel(wx.Panel):
     """ A general purpose class for visualizing data using vtk """
@@ -207,7 +209,7 @@ class Panel(wx.Panel):
             self._marker2.SetEnabled(1)
 
         else:
-            print "No particles found. Make sure the particles loaded have positions and radii."
+            print("No particles found. Make sure the particles loaded have positions and radii.")
 
     def attach_vel(self):
 
@@ -259,7 +261,7 @@ class Panel(wx.Panel):
 
             self._ren.AddActor(arrowActor)
         else:
-            print "No particles found. Make sure the particles loaded have velocities and radii."
+            print("No particles found. Make sure the particles loaded have velocities and radii.")
 
     def _addScalarBar(self, val):
 

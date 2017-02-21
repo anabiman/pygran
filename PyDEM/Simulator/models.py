@@ -133,7 +133,7 @@ class Model:
 			self.mass = np.array(self.mass)
 
 		else:
-			print 'Warning: no components found in your supplied dictionary! Proceeding with analysis ...'
+			print('Warning: no components found in your supplied dictionary! Proceeding with analysis ...')
 
 		if 'dt' not in self.params:
 			# Estimate the allowed sim timestep
@@ -143,7 +143,7 @@ class Model:
 				self.params['dt'] = 1e-6
 
 				if 'model' in self.params:
-					print 'Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt'])
+					print('Model {} does not yet support estimation of contact period. Using a default value of {}'.format(self.params['model'], self.params['dt']))
 
 	def contactTime(self):
 		raise NotImplementedError('Not yet implemented')
@@ -199,7 +199,7 @@ class Model:
 			contRadius = output[0]
 			info = output[1]
 
-			print info
+			print(info)
 
 		return contRadius
 

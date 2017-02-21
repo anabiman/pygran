@@ -7,7 +7,7 @@ Created on July 11, 2016
 # -*- coding: utf8 -*- 
 #
 #   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
+#   it under the terms of the GNU General Public License as published byO
 #   the Free Software Foundation, either version 3 of the License, or
 #   (at your option) any later version.
 
@@ -21,4 +21,4 @@ Created on July 11, 2016
 
 # -------------------------------------------------------------------------
 
-from visualize import *
+from PyDEM.Visualizer.visualize import *

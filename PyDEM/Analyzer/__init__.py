@@ -21,5 +21,5 @@ Created on April 25, 2016
 
 # -------------------------------------------------------------------------
 
-from core import *
-from equilibrium import *
+from PyDEM.Analyzer.core import *
+from PyDEM.Analyzer.equilibrium import *

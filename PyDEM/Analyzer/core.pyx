@@ -101,15 +101,37 @@ class Granular(object):
 	handles the time frame and controls i/o operations. It contains a subclass 
 	'Paticles' which stores all the particle attributes read from the trajectory file 
 	(variables uch as momenta, angular velocities, forces, radii, etc.).
-	etc. """
+	etc. 
 
-	def __init__(self, fname, constN = False):
+	dname (optional) is the name of the python script file used to run a PyDEM simu,
+
+	"""
+
+	def __init__(self, fname, dname = None, constN = False):
 
 		self._fname = fname
 		self._fp = open(fname, 'r')
 		self._length = None # number of lines between two consecutive timesteps
 		# this is useful for reading constant N trajectories (i.e. constN = True)
 		self._const = constN
+		self._params = None
+
+		if dname:
+			try:
+				pDict = __import__(dname)
+				items = dir(pDict)
+
+				for item in items:
+					if isinstance(item, dict):
+						if 'box' in item:
+							self._params = item
+			except:
+				print 'dname must be a file that contains a PyDEM parameter dictionary'
+				raise
+			else:
+				if not self._params:
+					print 'dname must be a file that contains a PyDEM parameter dictionary'
+					raise
 
 		self.frame = 0
 		self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),

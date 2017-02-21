@@ -22,9 +22,9 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from DEM import *
+from PyDEM.Simulator.DEM import *
 from glob import glob as _glob
-from models import *
+from PyDEM.Simulator.models import *
 
 class _findEngines:
 	def __init__(self):
