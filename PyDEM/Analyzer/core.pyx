@@ -41,9 +41,10 @@ these properties """
 		self.data = data
 		self.keys = self.data.keys()
 
-		#for key in self.keys:
-		#	if type(self.data[key]) == 'numpy.ndarray':
-		#		self.data[key] = self.data[key][sel]
+		for key in self.keys:
+			if type(self.data[key]) == np.ndarray:
+				self.data[key] = self.data[key][sel]
+				self.data['natoms'] = len(self.data[key])
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -92,7 +93,6 @@ these properties """
 
 	def __getitem__(self, sel):
 		return Particles(sel, **self.data)
-
 
 class Granular(object):
 	"""The Granular class contains all the information describing a ganular system.
