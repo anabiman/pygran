@@ -112,8 +112,7 @@ class Granular(object):
 		self._fname = fname
 		self._fp = open(fname, 'r')
 		self._length = None # number of lines between two consecutive timesteps
-		# this is useful for reading constant N trajectories (i.e. constN = True)
-		self._const = constN
+		self._const = constN # this is useful for reading constant N trajectories
 		self._params = None
 
 		if dname:
