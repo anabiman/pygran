@@ -1,7 +1,7 @@
 =====
-PyDEM
+PyGran
 =====
-Python modules for running & analyzing DEM simulations
+A toolbox for rapid quantitative understanding of granular/powder systems
 
 AUTHOR
 ======
