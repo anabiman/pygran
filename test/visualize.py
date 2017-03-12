@@ -3,7 +3,7 @@ Created on July 9, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from PyDEM import Visualizer, Analyzer
+from PyGran import Visualizer, Analyzer
 from numpy import array
 from numpy.random import rand
 import wx
@@ -14,6 +14,6 @@ g = Analyzer.Granular('traj.dump')
 g.next()
 
 app = wx.App(redirect=False)
-frame = Visualizer.Visualizer(None, g.Particles, "PyDEM")
+frame = Visualizer.Visualizer(None, g.Particles, "PyGran")
 frame.Show()
 app.MainLoop()

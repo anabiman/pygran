@@ -1,7 +1,7 @@
 =====
 PyGran
 =====
-A toolbox for rapid quantitative understanding of granular/powder systems
+A toolbox for rapid quantitative analysis of granular/powder systems
 
 AUTHOR
 ======

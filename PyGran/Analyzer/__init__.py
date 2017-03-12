@@ -1,4 +1,10 @@
-# --------------------------------------------------------------------------
+'''
+Created on April 25, 2016
+@author: Andrew Abi-Mansour
+'''
+
+# !/usr/bin/python
+# -*- coding: utf8 -*- 
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -15,25 +21,6 @@
 
 # -------------------------------------------------------------------------
 
-from PyDEM import Simulator, Analyzer, Tools
-import os
-
-try:
-	from PyDEM import Visualizer
-except:
-	print("WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.")
-
-def run(program):
-	""" Launches an executable program available in the PATH """
-	paths = os.environ['PATH']
-
-	for path in paths.split(':'):
-		found = Tools.find(program, path)
-
-		if found:
-			print('Launching {}'.format(found))
-			os.system(found + ' &')
-			return 0
-
-	print('Could not find {} in {}'.format(program, paths))
-	return 1
+from PyGran.Analyzer.core import *
+from PyGran.Analyzer.contacts import *
+from PyGran.Analyzer.equilibrium import *

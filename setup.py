@@ -31,19 +31,19 @@ def link(dir):
 	txt="""[Desktop Entry]
 Version=1.0
 Type=Application
-Name=PyDEM
-Comment=graphical User Interface for PyDEM	     
-Exec=python -m PyDEM
-Icon={}/PyDEM.png
+Name=PyGran
+Comment=graphical User Interface for PyGran
+Exec=python -m PyGran
+Icon={}/Gran.png
 Terminal=false
 MimeType=image/x-foo
 NotShowIn=KDE""".format(dir)
 
-	with open('PyDEM.desktop', 'w') as fp:
+	with open('PyGran.desktop', 'w') as fp:
 		fp.write(txt)
 
-	os.system('chmod +x PyDEM.desktop')
-	os.system('mv PyDEM.desktop ~/.local/share/applications')
+	os.system('chmod +x PyGran.desktop')
+	os.system('mv PyGran.desktop ~/.local/share/applications')
 
 class LIGGGHTS(install):
 
@@ -95,16 +95,16 @@ class LIGGGHTS(install):
         self.do_pre_install_stuff()
         
 setup(
-    name = "PyDEM",
+    name = "PyGran",
     version = "0.0.1",
     author = "Andrew Abi-Mansour",
     author_email = "andrew.gaam@gmail.com",
-    description = ("A set of tools for running, analyzing, and visualizing DEM simulations"),
+    description = ("A toolbox for rapid quantitative analysis of granular systems"),
     license = "GNU v3",
     keywords = "Discrete Element Method, Granular Materials",
-    url = "https://github.com/Andrew-AbiMansour/PyDEM",
+    url = "https://github.com/Andrew-AbiMansour/PyGran",
     packages=find_packages(),
-    package_dir={'PyDEM': 'PyDEM'},
+    package_dir={'PyGran': 'PyGran'},
     package_data={'': ['.config', 'GUI/Icons/*.png']},
     install_requires=['numpy', 'pyvtk', 'pytools>=2011.2', 'pygmsh'],
     long_description=read('README.md'),
@@ -115,22 +115,22 @@ setup(
     ],
     cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
-    ext_modules=cythonize("PyDEM/Analyzer/*.pyx"),
+    ext_modules=cythonize("PyGran/Analyzer/*.pyx"),
 	include_dirs=[numpy.get_include()]
 )
 
 if sys.argv[1] == 'install':
 
-    sys.path.remove(os.getcwd()) # remove current path to make sure PyDEM is imported from elsewhere
+    sys.path.remove(os.getcwd()) # remove current path to make sure PyGran is imported from elsewhere
     print('Verifying installation ...')
     print('...........................................................................')
     print('...........................................................................')
     print('...........................................................................')
     
     try:
-        import PyDEM
-        link(PyDEM.__path__[0] + '/GUI/Icons')
-        print('PyDEM successfully installed')
+        import PyGran
+        link(PyGran.__path__[0] + '/GUI/Icons')
+        print('PyGran successfully installed')
     except:
-        print('PyDEM installation failed ...')
+        print('PyGran installation failed ...')
         raise

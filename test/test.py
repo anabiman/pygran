@@ -79,6 +79,6 @@ class TestFrame(wx.Frame):
  
          
 app = wx.App(redirect=False)
-frame = TestFrame(None,"PyDEM Visualizer")
+frame = TestFrame(None,"PyGran Visualizer")
 frame.Show()
 app.MainLoop()

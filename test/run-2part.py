@@ -6,8 +6,8 @@ Created on July 9, 2016
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyDEM import Simulator, Analyzer, Visualizer
-from PyDEM.Materials import glass
+from PyGran import Simulator, Analyzer, Visualizer
+from PyGran.Materials import glass
 
 if __name__ == '__main__':
 

@@ -22,15 +22,15 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from PyDEM.Simulator.DEM import *
+from PyGran.Simulator.DEM import *
 from glob import glob as _glob
-from PyDEM.Simulator.models import *
+from PyGran.Simulator.models import *
 
 class _findEngines:
 	def __init__(self):
 		# Any engine module *must* follow the naming convention: engine_foo.py
 		# If the engine is found, it will be linked via setattr to be imported
-		# in DEM.py as PyDEM.Simulator.engine_foo. The engine is set by the user
+		# in DEM.py as PyGran.Simulator.engine_foo. The engine is set by the user
 		# as DEM.Simulator.engines.foo
 
 		_dir, _ = __file__.split('__init__.py')

@@ -5,7 +5,7 @@ import wx, os, glob
 import subprocess
 import urllib2
 import wx.lib.agw.multidirdialog as MDD
-from PyDEM import Simulator
+from PyGran import Simulator
 from importlib import import_module
 
 #import Plot
@@ -595,8 +595,8 @@ Suite 330, Boston, MA  02111-1307  USA"""
         
         if dlg.ShowModal() == wx.ID_OK:
             self.__selEngine__ = dlg.GetStringSelection()
-            self.UpdateDisplayPanel('Importing PyDEM.Simulator.engine.' + self.__selEngine__)
-            self._module = import_module('PyDEM.Simulator.engine_' + self.__selEngine__)
+            self.UpdateDisplayPanel('Importing PyGran.Simulator.engine.' + self.__selEngine__)
+            self._module = import_module('PyGran.Simulator.engine_' + self.__selEngine__)
 
         dlg.Destroy()
 

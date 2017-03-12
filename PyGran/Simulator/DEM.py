@@ -30,7 +30,7 @@ from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
 import os, sys
-from PyDEM.Tools import find
+from PyGran.Tools import find
 
 class DEM:
   """A *generic* class that handles communication for a DEM object independent of the engine used"""
@@ -69,7 +69,7 @@ class DEM:
             fp.write('library=' + self.library)
           else:
             print('No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(self.pargs['engine'].split('engine_')[1]))
-            print('PyDEM looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.')
+            print('PyGran looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.')
             sys.exit()
 
       for slave in range(1,self.tProcs):
@@ -101,7 +101,7 @@ class DEM:
         self.color = i
         self.split = self.comm.Split(self.color, key=0)
 
-        module = import_module('PyDEM.Simulator.' + self.pargs['engine'])
+        module = import_module('PyGran.Simulator.' + self.pargs['engine'])
         self.output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
         if not self.split.Get_rank():

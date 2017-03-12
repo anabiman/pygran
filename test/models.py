@@ -1,4 +1,4 @@
-import PyDEM.Simulator as Si
+import PyGran.Simulator as Si
 from numpy import sqrt, array, arange, pi
 
 radius = 1e-5

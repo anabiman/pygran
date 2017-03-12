@@ -103,7 +103,7 @@ class Granular(object):
 	(variables uch as momenta, angular velocities, forces, radii, etc.).
 	etc. 
 
-	dname (optional) is the name of the python script file used to run a PyDEM simu,
+	dname (optional) is the name of the python script file used to run a PyGran simu,
 
 	"""
 
@@ -125,11 +125,11 @@ class Granular(object):
 						if 'box' in item:
 							self._params = item
 			except:
-				print 'dname must be a file that contains a PyDEM parameter dictionary'
+				print 'dname must be a file that contains a PyGran parameter dictionary'
 				raise
 			else:
 				if not self._params:
-					print 'dname must be a file that contains a PyDEM parameter dictionary'
+					print 'dname must be a file that contains a PyGran parameter dictionary'
 					raise
 
 		self.frame = 0

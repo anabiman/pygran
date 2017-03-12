@@ -6,7 +6,7 @@ Created on Sep 11, 2013
 @author: Andrew Abi-Mansour
 '''
 
-__SofName__ = 'PyDEM GUI'
+__SofName__ = 'PyGran GUI'
 
 class French:
     def __init__(self):

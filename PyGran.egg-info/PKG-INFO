@@ -1,0 +1,26 @@
+Metadata-Version: 1.1
+Name: PyGran
+Version: 0.0.1
+Summary: A toolbox for rapid quantitative analysis of granular systems
+Home-page: https://github.com/Andrew-AbiMansour/PyGran
+Author: Andrew Abi-Mansour
+Author-email: andrew.gaam@gmail.com
+License: GNU v3
+Description: =====
+        PyGran
+        =====
+        A toolbox for rapid quantitative analysis of granular/powder systems
+        
+        AUTHOR
+        ======
+        Andrew Abi-Mansour
+        
+        EMAIL
+        =====
+        andrew.gaam@gmail.com
+        
+Keywords: Discrete Element Method,Granular Materials
+Platform: UNKNOWN
+Classifier: Development Status :: 1 - Alpha
+Classifier: Topic :: Utilities
+Classifier: License :: GNU License
