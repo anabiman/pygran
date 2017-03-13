@@ -43,4 +43,3 @@ PyGran/Simulator/models.py
 PyGran/Tools/__init__.py
 PyGran/Visualizer/__init__.py
 PyGran/Visualizer/visualize.py
-test/test.py

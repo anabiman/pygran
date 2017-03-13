@@ -43,7 +43,9 @@ these properties """
 
 		for key in self.keys:
 			if type(self.data[key]) == np.ndarray:
-				self.data[key] = self.data[key][sel]
+				if sel: # if sel is None, the column array becomes a row, 
+				# thus dont do any selection in this case
+					self.data[key] = self.data[key][sel]
 				self.data['natoms'] = len(self.data[key])
 
 		# Checks if the trajectory file supports reduction in key getters
@@ -57,7 +59,6 @@ these properties """
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
 		and return as numpy arrays for numerical computations / manipulations"""
-		
 		return self.data[key]
 
 	def _constructAttributes(self, key):
@@ -66,7 +67,6 @@ these properties """
 		# We cannot know the information for any property function until that property is created, 
 		# so we define the metaget function and particularize it only later with a lambda function			
 		method = lambda self: Particles._metaget(self, key)
-
 		setattr(Particles, key, property(fget=method, doc='Extracts {} variable'.format(key)))
 
 	def select(self, sel):

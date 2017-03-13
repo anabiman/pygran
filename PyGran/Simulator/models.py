@@ -383,7 +383,7 @@ class HertzMindlin(Model):
 
 class Hysteresis(Model):
 	"""
-	A basic class that implements the Thornton/hysteresis model
+	A basic class that implements the Thornton elasto-plastic model
 	"""
 
 	def __init__(self, **params):
