@@ -83,14 +83,16 @@ class Model:
 		# Expand material properties based on number of components
 		if 'materials' in self.params:
 			for item in self.params['materials']:
-				if self.params['materials'][item][1] == 'peratomtype':
-					self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
-				if self.params['materials'][item][1] == 'peratomtypepair':
-					self.materials[item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
 
-				# we should set this based on species type
-				if self.params['materials'][item][1] == 'scalar':
-					self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),)
+				if type(self.params['materials'][item]) is not float:
+					if self.params['materials'][item][1] == 'peratomtype':
+						self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
+					if self.params['materials'][item][1] == 'peratomtypepair':
+						self.materials[item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
+
+					# we should set this based on species type
+					if self.params['materials'][item][1] == 'scalar':
+						self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),)
 
 			self.params['materials'] = self.materials
 
