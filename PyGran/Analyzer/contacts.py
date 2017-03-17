@@ -36,7 +36,7 @@ class Neighbors(object):
 	def __init__(self, Particles, cutoff = None):
 
 		coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
-		tree = spatial.cKDTree(coords, leafsize=100)
+		tree = spatial.cKDTree(coords)
 		
 		if not cutoff:
 			cutoff = 2.0 * Particles.radius.max()
@@ -54,7 +54,7 @@ class Neighbors(object):
 									(Particles.z[i] - Particles.z[j])**2.0)
 
 			if self._distances[count] <= Particles.radius[i] + Particles.radius[j]:
-				self._overlaps[count] = (self._distances[count], i, j)
+				self._overlaps[count] = Particles.radius[i] + Particles.radius[j] - (self._distances[count], i, j)
 
 			count += 1 
 
