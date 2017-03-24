@@ -195,16 +195,16 @@ class DEM:
       for mesh in self.pargs['mesh'].keys():
 
           if self.pargs['mesh'][mesh]['import']:
-            self.importMesh(name=mesh, file=self.pargs['mesh'][mesh]['file'], mtype=self.pargs['mesh'][mesh]['mtype'], **self.pargs['mesh'][mesh]['args'])  
+            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], *self.pargs['mesh'][mesh]['args'])  
             self.setupWall(name=mesh + 'Wall', wtype='mesh', meshName=mesh)
             
-  def importMesh(self, name, file, mtype, **args):
+  def importMesh(self, name, file, mtype, *args):
     """
     Imports a mesh file (STL or VTK)
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.importMesh(name, file, mtype, **args)
+        self.dem.importMesh(name, file, mtype, *args)
         break
 
   def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):

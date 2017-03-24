@@ -35,7 +35,6 @@ from numpy.linalg import norm
 from scipy import spatial
 from mpi4py import MPI
 import os
-import matplotlib.pylab as plt
 import glob
 import sys
 from importlib import import_module
@@ -453,17 +452,16 @@ class DEMPy:
   def moveMesh(self, name, *args):
     self.lmp.command('fix moveMesh all move/mesh mesh {} '.format(name) + ('{} ' * len(args)).format(*args))
 
-  def importMesh(self, name, file, mtype, **args):
+  def importMesh(self, name, file, mtype, *args):
     """
     TODO: fix type for mesh
     """
     fname = self.path + '/' + file
-    args = ''.join(' {} {} '.format(key, val) for key, val in args.items())
 
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
       
-    self.lmp.command('fix {} all {} file {} type 2'.format(name, mtype, fname) + args)
+    self.lmp.command('fix {} all {} file {} type 2 '.format(name, mtype, fname) + ('{} ' * len(args)).format(*args))
     
   def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
     """
