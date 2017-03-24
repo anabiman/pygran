@@ -35,13 +35,14 @@ class Neighbors(object):
 	"""
 	def __init__(self, Particles, cutoff = None):
 
-		coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
-		tree = spatial.cKDTree(coords)
+		self._Particles = Particles
+		self._coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
+		self._tree = spatial.cKDTree(self._coords)
 		
 		if not cutoff:
 			cutoff = 2.0 * Particles.radius.max()
 
-		self._pairs = tree.query_pairs(cutoff)
+		self._pairs = self._tree.query_pairs(cutoff)
 		self._distances = numpy.zeros(len(self._pairs))
 		self._overlaps = numpy.zeros((len(self._pairs),3))
 
@@ -74,6 +75,20 @@ class Neighbors(object):
 
 	def forceChain(self):
 		pass
+
+	def findWithin(self, coords , r):
+		""" Find all points within distance r of point(s) coords. 
+		TOD: Support walls aligned arbitrarily in space """
+
+		indices =  numpy.arange(self._Particles.natoms) #self._tree.query_ball_point(coords, r)
+		#indices = [item for i in indices for item in i]
+		indices = list(numpy.unique(indices))
+		
+		if len(indices):
+			# calculate distance along the z-axis (must take other axes into account)
+			lengths = numpy.fabs(self._coords[indices,-1] - coords[:,-1][0])
+
+			parts = self._Particles[indices]
+			return parts[numpy.where(lengths <= parts.radius)]
 	
-	   
-	
+		return None
