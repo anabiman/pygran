@@ -1,4 +1,3 @@
-=====
 PyGran
 =====
 A toolbox for rapid quantitative analysis of granular/powder systems
