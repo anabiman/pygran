@@ -561,7 +561,7 @@ class DEMPy:
     self.pddName = []
     self.integrator = None
 
-    if self.pargs['restart'][3] == False:
+    if self.pargs['restart'][3] == False and self.pargs['read_data'] == False:
 
       self.createDomain()
       #self.createGroup()
@@ -569,6 +569,15 @@ class DEMPy:
       self.setupNeighbor(**self.pargs)
       self.setupParticles()
       self.setupGravity()
+
+    elif self.pargs['read_data']:
+      self.createDomain()
+      self.readData()
+      self.setupPhysics()
+      self.setupNeighbor(**self.pargs)
+      self.setupParticles()
+      self.setupGravity()
+
     else:
       self.resume()
       self.setupPhysics()
@@ -712,6 +721,13 @@ class DEMPy:
       rfile = max(glob.iglob(rdir), key=os.path.getctime)
 
     self.lmp.command('read_restart {}'.format(rfile))
+
+  def readData(self):
+    """
+    """
+    args = self.pargs['read_data']
+
+    self.lmp.command('read_dump '  + (' {}' * len(args)).format(*args))
 
   def __del__(self):
     """ Destructor

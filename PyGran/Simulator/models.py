@@ -77,6 +77,9 @@ class Model:
 		if 'nSim' not in self.params:
 			self.params['nSim'] =  1
 
+		if 'read_data' not in self.params:
+			self.params['read_data'] = False
+
 		# Compute mean material properties
 		self.materials = {}
 
