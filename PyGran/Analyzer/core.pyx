@@ -31,6 +31,8 @@ cimport numpy as np
 import types
 from random import choice
 from string import ascii_uppercase
+import glob
+import re
 
 class Particles(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
@@ -110,39 +112,54 @@ class Granular(object):
 	def __init__(self, fname, dname = None, constN = False):
 
 		self._fname = fname
-		self._fp = open(fname, 'r')
-		self._length = None # number of lines between two consecutive timesteps
-		self._const = constN # this is useful for reading constant N trajectories
-		self._params = None
+		self._ftype = fname.split('.')[-1]
 
-		if dname:
-			try:
-				pDict = __import__(dname)
-				items = dir(pDict)
+		if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
 
-				for item in items:
-					if isinstance(item, dict):
-						if 'box' in item:
-							self._params = item
-			except:
-				print 'dname must be a file that contains a PyGran parameter dictionary'
-				raise
+			if self._fname.split('.')[:-1][0].endswith('*'):
+				self._singleFile = False
+				self._files = sorted(glob.glob(self._fname), key=numericalSort)
+				self._fname = self._fp = open(self._files[0], 'r')
 			else:
-				if not self._params:
+				self._singleFile = True
+				self._fp = open(fname, 'r')
+
+			self._length = None # number of lines between two consecutive timesteps
+			self._const = constN # this is useful for reading constant N trajectories
+			self._params = None
+
+			if dname:
+				try:
+					pDict = __import__(dname)
+					items = dir(pDict)
+
+					for item in items:
+						if isinstance(item, dict):
+							if 'box' in item:
+								self._params = item
+				except:
 					print 'dname must be a file that contains a PyGran parameter dictionary'
 					raise
+				else:
+					if not self._params:
+						print 'dname must be a file that contains a PyGran parameter dictionary'
+						raise
 
-		self.frame = 0
-		self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
-		# scalars (natoms, ) or tuples (box size). ONLY arrays can be slices based on user selection.
+			self.frame = 0
+			self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
+			# scalars (natoms, ) or tuples (box size). ONLY arrays can be slices based on user selection.
 
-		# Do some checking here on the traj extension to make sure
-		# it's supported
-		self._format = fname.split('.')[-1]
+			# Do some checking here on the traj extension to make sure
+			# it's supported
+			self._format = fname.split('.')[-1]
 
-		# Read frame 0 to initialize function getters
-		self.__next__()
-		self._updateSystem()
+			# Read frame 0 to initialize function getters
+			# Not quite sure why we need these, so I commented that
+			#self.__next__()
+			#self._updateSystem()
+
+		else:
+			print 'Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)'
 
 	def __iter__(self):
 		return self
@@ -179,75 +196,48 @@ class Granular(object):
 		"""
 
 		# find the right frame number
-		while self.frame < frame or frame == -1:
-
-			line = self._fp.readline()
-
-			if not line and frame >= 0:
-				raise StopIteration('End of file reached.')
-			elif not line and frame == -1:
-				break
-
-			if line.find('TIMESTEP') >= 0:
-				self.frame += 1
-
-		# assert self.frame == frame else something's wrong
-		# or the user wants to go to the last frame
-		if self.frame == frame:
-
-			timestep = int(self._fp.readline())
-			self.data['timestep'] = timestep
-
-			while True:
+		if self._singleFile:
+			while self.frame < frame or frame == -1:
 
 				line = self._fp.readline()
 
 				if not line and frame >= 0:
 					raise StopIteration('End of file reached.')
-
-				if line.find('NUMBER OF ATOMS') >= 0:
-					natoms = int(self._fp.readline())
-					self.data['natoms'] = natoms
-
-				if line.find('BOX') >= 0:
-					boxX = self._fp.readline().split()
-					boxY = self._fp.readline().split()
-					boxZ = self._fp.readline().split()
-
-					boxX = [float(i) for i in boxX]
-					boxY = [float(i) for i in boxY]
-					boxZ = [float(i) for i in boxZ]
-
-					self.data['box'] = (boxX, boxY, boxZ)
+				elif not line and frame == -1:
 					break
 
-			line = self._fp.readline()
+				if line.find('TIMESTEP') >= 0:
+					self.frame += 1
 
-			if not line and frame >=0:
-					raise StopIteration('End of file reached')
+			# assert self.frame == frame else something's wrong
+			# or the user wants to go to the last frame
+			if self.frame == frame:
 
-			keys = line.split()[2:] # remove ITEM: and ATOMS keywords
+				timestep = int(self._fp.readline())
+				self.data['timestep'] = timestep
 
-			for key in keys:
-				self.data[key] = np.zeros(natoms)
+				self._readDumpFile()
 
-			for i in range(natoms):
-				var = self._fp.readline().split()
-
-				for j, key in enumerate(keys):
-					self.data[key][i] = float(var[j])
-
-			# for convenience, concatenate the x,y,z components
-			self._updateSystem()
-
-		else:
-			if frame == -1:
-				# this is very low and inefficient -- can't we move the file pointer backwards?
-				tmp = self.frame
-				self.rewind()
-				self.goto(tmp)
 			else:
-				raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+				if frame == -1:
+					# this is very low and inefficient -- can't we move the file pointer backwards?
+					tmp = self.frame
+					self.rewind()
+					self.goto(tmp)
+				else:
+					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+
+		else: # no need to find the input frame, just select the right file if available
+			if frame >= len(self._files):
+				print 'Input frame exceeds max number of frames'
+			else:
+				if frame == self.frame:
+					pass
+				else:
+					self._fp.close()
+					self._fp = open(self._files[frame], 'r')
+					self.frame = frame
+					self._readDumpFile()
 
 		return self.frame
 
@@ -259,9 +249,13 @@ class Granular(object):
 	def rewind(self):
 		"""Read trajectory from the beginning"""
 		self._fp.close()
-		self._fp = open(self._fname)
+
+		if self._singleFile:
+			self._fp = open(self._fname)
+		else:
+			self._fp = open(self._files[0])
+			
 		self.frame = 0
-		self.__next__()
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
@@ -269,7 +263,28 @@ class Granular(object):
 
 	def next(self):
 		""" This method updates the system attributes! """
+		timestep = None
+
+		if self._singleFile:
+			if self._ftype == 'dump':
+				timestep = self._readDumpFile()
+		else:
+			if self._ftype == 'dump':
+
+				if self.frame >= len(self._files) - 1:
+					raise StopIteration
+					
+				self._fp.close()
+				self._fname = self._files[self.frame+1]
+				self._fp = open(self._fname, 'r')
+				timestep = self._readDumpFile()
+		
+		return timestep
+
+	def _readDumpFile(self):
+		""" Reads a single dump file"""
 		count = 0
+		timestep = None
 
 		while True:
 			line = self._fp.readline()
@@ -318,7 +333,6 @@ class Granular(object):
 				self.data[key][i] = float(var[j])
 
 		count += self.data['natoms'] + 1
-
 		self._updateSystem()
 
 		if self._const:
@@ -338,6 +352,14 @@ class Granular(object):
 
 	def __del__(self):
 		self._fp.close()
+
+def numericalSort(value):
+	""" A sorting function by numerical numbers for glob.glob """
+
+	numbers = re.compile(r'(\d+)')
+	parts = numbers.split(value)
+	parts[1::2] = map(int, parts[1::2])
+	return parts
 
 def select(data, *region):	
 	"""
