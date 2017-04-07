@@ -12,7 +12,7 @@ PyGran/Analyzer/contacts.py
 PyGran/Analyzer/core.c
 PyGran/Analyzer/dynamics.py
 PyGran/Analyzer/equilibrium.c
-PyGran/Analyzer/tools.py
+PyGran/Analyzer/xrct.py
 PyGran/GUI/Plot.py
 PyGran/GUI/SiDEM.py
 PyGran/GUI/__init__.py
