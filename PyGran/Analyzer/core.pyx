@@ -45,9 +45,8 @@ these properties """
 
 		for key in self.keys:
 			if type(self.data[key]) == np.ndarray:
-				if sel: # if sel is None, the column array becomes a row, 
-				# thus dont do any selection in this case
-					self.data[key] = self.data[key][sel]
+				
+				self.data[key] = self.data[key][sel].flatten()
 				self.data['natoms'] = len(self.data[key])
 
 		# Checks if the trajectory file supports reduction in key getters
@@ -156,7 +155,7 @@ class Granular(object):
 			# Read frame 0 to initialize function getters
 			# Not quite sure why we need these, so I commented that
 			#self.__next__()
-			#self._updateSystem()
+			self._updateSystem()
 
 		else:
 			print 'Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)'
