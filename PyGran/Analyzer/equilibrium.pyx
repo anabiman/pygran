@@ -159,9 +159,53 @@ def computeDensity(Particles, density, shape = 'box'):
 	The volume is determined approximately by constructing a box/cylinder/cone 
 	embedding the particles. Particles are assumed to be spherical in shape.
 	"""
+
 	if(Particles.natoms > 0):
-		x, y, z = Particles.x, Particles.y, Particles.z
+
 		radius = Particles.radius
+		volume = computeVolume(Particles, shape)
+		mass = np.sum(density * 4.0 / 3.0 * np.pi * (radius**3.0))
+
+		return mass / volume
+
+	return 0
+
+def computeDensityLocal(Particles, iDensity, dr, axis):
+	"""" Computes a localized density at a series of discretized regions of thickness 'dr'
+	along an axis specified by the user """
+	
+	if axis == 0:
+		r = Particles.x
+	elif axis == 1:
+		r = Particles.y
+	elif axis == 2:
+		r = Particles.z
+	else:
+		raise ValueError("Axis can be only 0 (x), 1(y), or 2(z).")
+
+	thick = np.arange(r.min(), r.max(), dr)
+	density = []
+
+	for i in range(len(thick) - 1):
+		parts = Particles[r <= thick[i+1]]
+
+		if axis == 0:
+			denLoc = computeDensity(parts[parts.x >= thick[i]], iDensity)
+		elif axis == 1:
+			denLoc = computeDensity(parts[parts.y >= thick[i]], iDensity)
+		elif axis == 2:
+			denLoc = computeDensity(parts[parts.z >= thick[i]], iDensity)
+
+		density.append( denLoc )
+
+	return density
+
+def computeVolume(Particles, shape = 'box'):
+	""" Computes the volume of a granular system based on a simple geometry """
+
+	if(Particles.natoms > 0):
+
+		x, y, z = Particles.x, Particles.y, Particles.z
 		xmin, xmax = min(x), max(x)
 		ymin, ymax = min(y), max(y)
 		zmin, zmax = min(z), max(z)
@@ -184,8 +228,7 @@ def computeDensity(Particles, density, shape = 'box'):
 			radius = (ymax - ymin) * 0.25 + (zmax - zmin) * 0.25
 			volume = np.pi * radius**2.0 * height
 
-		mass = np.sum(density * 4.0 / 3.0 * np.pi * (radius**3.0))
-
-		return mass / volume
+		return volume
 
 	return 0
+
