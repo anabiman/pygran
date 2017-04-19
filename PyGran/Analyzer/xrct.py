@@ -31,14 +31,21 @@ def readExcel(fname):
 
 	return data
 
-def genImg(Particles, zmin, zmax, scale, output=None):
+def genImg(Particles, zmin, zmax, dz, scale, output=None, imgShow = None):
 	"""
-	Generates a 2D image from a slice (limited by 'zmin/zmax') of a 3D config 
-	in the Particles class. The scale is the number of pixels per meter.
+	Generates a 2D image from a slice (limited by 'zmin/zmax' and of thickness 'dz') 
+	of a 3D config in the Particles class. The scale is the number of microns per pixel.
 	"""
+	maxRad = Particles.radius.max()
+	length, width = max(array(Particles.y * scale,'int')), max(array(Particles.x *scale, 'int'))
+
+	Particles = Particles[Particles.z > zmin - maxRad]
+	Particles = Particles[Particles.z < zmax + maxRad]
+
+	Particles = Particles[fabs(Particles.z - zmax) <= Particles.radius]
+	Particles = Particles[fabs(Particles.z - zmin) <= Particles.radius]
+	
 	N = Particles.natoms
-	Particles = Particles[Particles.z > zmin]
-	Particles = Particles[Particles.z < zmax]
 
 	# map particle positions to pixels
 	x = Particles.x
@@ -55,8 +62,7 @@ def genImg(Particles, zmin, zmax, scale, output=None):
 	r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
 	r = array(r * scale, 'int')
 
-	length, width = max(y), max(x)
-	img = Image.new('RGBA', (length, width), "black") # create a new black image
+	img = Image.new('RGB', (length, width), "black") # create a new black image
 	pixels = img.load() # create the pixel map
 
 	for n in range(N):
@@ -68,11 +74,12 @@ def genImg(Particles, zmin, zmax, scale, output=None):
 			for ic in range(-radius, radius+1):
 				for jc in range(-radius, radius+1):
 					if (ic)**2 + (jc)**2 <= radius**2:
-			        		pixels[i+ic,j+jc] = (235, 235, 235, trans[n]) # set the colour accordingly
+			        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
 		else:
 			pass
 
-	img.show()
+	if imgShow:
+		img.show()
 
 	if output:
 		img.save(output)
