@@ -42,8 +42,11 @@ class Model:
 		if 'SS' in self.params:
 			self.params['nSS'] += len(self.params['SS'])
 
+		# Treat any mesh as an additional component
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
+			for mesh in self.params['mesh']:
+				self.params['SS']  += ({'material': self.params['mesh'][mesh]['material']},)
 
 		if 'style' not in self.params: 
 			self.params['style'] = 'granular'
@@ -84,61 +87,46 @@ class Model:
 		self.materials = {}
 
 		# Expand material properties based on number of components
-		if 'materials' in self.params:
-			for item in self.params['materials']:
+		if 'SS' in self.params:
+			ss = self.params['SS'][0]
 
-				if type(self.params['materials'][item]) is not float:
-					if self.params['materials'][item][1] == 'peratomtype':
-						self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),) * self.params['nSS']
-					if self.params['materials'][item][1] == 'peratomtypepair':
-						self.materials[item] = self.params['materials'][item][:2] + ('{}'.format(self.params['nSS']),) + (('{}').format(self.params['materials'][item][2]),) * self.params['nSS']**2
+			if 'material' in ss:
+				for item in ss['material']:
+					if type(ss['material'][item]) is not float:
+						# register each material proprety then populate per number of components
+						if ss['material'][item][1] == 'peratomtype':
+							self.materials[item] = ss['material'][item][:2]
+						elif ss['material'][item][1] == 'peratomtypepair':
+							self.materials[item] = ss['material'][item][:2] + ('{}'.format(self.params['nSS']),)
+						elif ss['material'][item][1] == 'scalar':
+							self.materials[item] = ss['material'][item][:2]
+					else:
+						ss[item] = ss['material'][item]
 
-					# we should set this based on species type
-					if self.params['materials'][item][1] == 'scalar':
-						self.materials[item] = self.params['materials'][item][:2] +(('{}').format(self.params['materials'][item][2]),)
+			for item in self.materials:
+				if type(ss['material'][item]) is not float:
+					for ss in self.params['SS']:
+						if ss['material'][item][1] == 'peratomtype': 
+							self.materials[item] =  self.materials[item] + (('{}').format(ss['material'][item][2]),)
+
+						elif ss['material'][item][1] == 'peratomtypepair':
+							# assume the arithmetic mean suffices for estimating binary properties
+							for nss in range(self.params['nSS']):
+								prop = 0.5 * (float(ss['material'][item][2]) + float(self.params['SS'][nss]['material'][item][2]))
+								self.materials[item] =  self.materials[item] + (('{}').format(prop),)
+
+						# we should set this based on species type
+						elif ss['material'][item][1] == 'scalar':
+							self.materials[item] = self.materials[item] + (('{}').format(ss['material'][item][2]),)
+
+						else:
+							print('Error: Material database flawed.')
+							sys.exit()
 
 			self.params['materials'] = self.materials
 
-		else: 
-			# then we're doing analysis
-			if 'mass' in params:
-				self.materials['mass'] = params['mass']
-
-			if 'radius' in params:
-				self.materials['radius'] = params['radius']
-
-			if 'youngsModulus' in params:
-				self.materials['youngsModulus'] = params['youngsModulus']
-
-			if 'poissonsRatio' in params:
-				self.materials['poissonsRatio'] = params['poissonsRatio'] 
-
-			if 'characteristicVelocity' in params:
-				self.materials['characteristicVelocity'] = params['characteristicVelocity']
-
-			if 'coefficientRestitution' in params:
-				self.materials['coefficientRestitution'] = params['coefficientRestitution']
-
-			if 'yieldPress' in params:
-				self.materials['yieldPress'] = params['yieldPress']
-
-			if 'cohesionEnergyDensity' in params:
-				self.materials['cohesionEnergyDensity'] = params['cohesionEnergyDensity']
-
-		if 'SS' in self.params:
-
-			self.radius = []
-			self.mass = []
-
-			for ss in self.params['SS']:
-				self.radius.append(ss['radius'][1])
-				self.mass.append(4.0/3.0 * np.pi * self.radius[-1]**3.0 * ss['density'])
-
-			self.radius = np.array(self.radius)
-			self.mass = np.array(self.mass)
-
 		else:
-			print('Warning: no components found in your supplied dictionary! Proceeding with analysis ...')
+			print('Warning: No components found in your supplied dictionary! Proceeding ...')
 
 		if 'dt' not in self.params:
 			# Estimate the allowed sim timestep

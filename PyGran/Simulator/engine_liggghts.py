@@ -351,24 +351,26 @@ class DEMPy:
 
     for ss in self.pargs['SS']:
 
-      if not self.rank:
-        logging.info('Setting up particles for group{id}'.format(**ss))
+      # Make sure we are setting up particles, not walls (so we check for id existence)
+      if 'id' in ss:
+        if not self.rank:
+          logging.info('Setting up particles for group{id}'.format(**ss))
 
-      if ss['insert'] == True:
-        radius = ss['radius']
+        if 'insert' in ss:
+          radius = ss['radius']
 
-        randName = np.random.randint(10**5,10**8)
-        pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
+          randName = np.random.randint(10**5,10**8)
+          pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
 
-        if 'vol_lim' not in ss:
-          ss['vol_lim'] = 1e-12
+          if 'vol_lim' not in ss:
+            ss['vol_lim'] = 1e-12
 
-        self.lmp.command('group group{id} type {id}'.format(**ss))
-        self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
-        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
+          self.lmp.command('group group{id} type {id}'.format(**ss))
+          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+          self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
 
-        #Do NOT unfix randName! Will cause a memory corruption error
-        self.pddName.append(pddName)
+          #Do NOT unfix randName! Will cause a memory corruption error
+          self.pddName.append(pddName)
 
   def insert(self, name, species, *region):
     """
@@ -379,7 +381,7 @@ class DEMPy:
       sys.exit()
 
     def insert_loc(self, ss, i, name, *region):
-      if ss['insert'] == True:
+      if 'insert' in ss:
         if not self.rank:
           logging.info('Inserting particles for species {}'.format(i))
     
@@ -397,11 +399,11 @@ class DEMPy:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
           self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
 
-          if 'by_rate' in ss:
+          if ss['insert'] == 'by_rate':
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
               ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
-          elif 'by_pack' in ss:
+          elif ss['insert'] == 'by_pack':
             self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
               ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(natoms, name) )

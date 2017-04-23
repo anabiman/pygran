@@ -242,35 +242,35 @@ these properties """
 
 		return 0
 
-	def computeDensityLocal(self, iDensity, dr, axis):
+	def computeDensityLocal(self, density, dr, axis):
 		"""" Computes a localized density at a series of discretized regions of thickness 'dr'
 		along an axis specified by the user """
 		
-		if axis == 0:
+		if axis == 'x':
 			r = self.x
-		elif axis == 1:
+		elif axis == 'y':
 			r = self.y
-		elif axis == 2:
+		elif axis == 'z':
 			r = self.z
 		else:
-			raise ValueError("Axis can be only 0 (x), 1(y), or 2(z).")
+			raise ValueError("Axis can be only x, y, or z.")
 
 		thick = np.arange(r.min(), r.max(), dr)
-		density = []
+		odensity = []
 
 		for i in range(len(thick) - 1):
 			parts = self[r <= thick[i+1]]
 
-			if axis == 0:
-				denLoc = parts[parts.x >= thick[i]].computeDensity(iDensity)
-			elif axis == 1:
-				denLoc = parts[parts.y >= thick[i]].computeDensity(iDensity)
-			elif axis == 2:
-				denLoc = parts[parts.z >= thick[i]].computeDensity(iDensity)
+			if axis == 'x':
+				denLoc = parts[parts.x >= thick[i]].computeDensity(density)
+			elif axis == 'y':
+				denLoc = parts[parts.y >= thick[i]].computeDensity(density)
+			elif axis == 'z':
+				denLoc = parts[parts.z >= thick[i]].computeDensity(density)
 
-			density.append( denLoc )
+			odensity.append( denLoc )
 
-		return density
+		return thick, odensity
 
 	def computeVolume(self, shape = 'box'):
 		""" Computes the volume of a granular system based on a simple geometry """
