@@ -48,6 +48,9 @@ class Model:
 			for mesh in self.params['mesh']:
 				self.params['SS']  += ({'material': self.params['mesh'][mesh]['material']},)
 
+				if 'args' not in self.params['mesh'][mesh]:
+					self.params['mesh'][mesh]['args'] = ()
+
 		if 'style' not in self.params: 
 			self.params['style'] = 'granular'
 
@@ -83,7 +86,18 @@ class Model:
 		if 'read_data' not in self.params:
 			self.params['read_data'] = False
 
-		# Compute mean material properties
+		# Default traj I/O args
+		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
+                   'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
+                   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+        
+		if 'traj' in self.params:
+			for key in self.params['traj']:
+				traj[key] = self.params['traj'][key]
+
+		self.params['traj'] = traj
+
+        # Compute mean material properties
 		self.materials = {}
 
 		# Expand material properties based on number of components

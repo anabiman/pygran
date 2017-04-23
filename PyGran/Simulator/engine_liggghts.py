@@ -270,12 +270,6 @@ class DEMPy:
     @ dim: dimensions of the problem (2 or 3)
     # style: granular, atom, or ...
     """
-    # Setup I/O parameters if not supplied by the user
-
-    if 'traj' not in pargs:
-      pargs['traj'] = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
-                       'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
-                       'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
       
     if 'print' not in pargs:
       pargs['print'] = (10**4, 'time', 'atoms')
@@ -464,6 +458,7 @@ class DEMPy:
       logging.info('Importing mesh from {}'.format(fname))
       
     self.lmp.command('fix {} all {} file {} type 2 '.format(name, mtype, fname) + ('{} ' * len(args)).format(*args))
+    self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id'.format(**self.pargs['traj']))
     
   def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
     """
@@ -638,7 +633,7 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up trajectory i/o')
 
-    self.lmp.command('dump dump {sel} {style} {freq} {dir}/{file}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+    self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
 
     self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
