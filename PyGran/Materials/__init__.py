@@ -39,12 +39,14 @@ glass = {
 		'density': 2500.0
 		}
 
-stericAcid = {
+stearicAcid = {
 		'youngsModulus': ('youngsModulus', 'peratomtype', '41.5e6'),
 		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
 		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
 		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '0.5'),
 		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.1'),
+		'coefficientRestitution': (('coefficientRestitution', 'peratomtypepair', '0.9')),
 		'yieldPress': ('yieldPress', 'peratomtype', '2.2e6'),
+		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1'),
 		'density': 997.164
 		}
