@@ -458,16 +458,16 @@ class DEMPy:
       logging.info('Importing mesh from {}'.format(fname))
       
     self.lmp.command('fix {} all {} file {} type 2 '.format(name, mtype, fname) + ('{} ' * len(args)).format(*args))
-    self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id'.format(**self.pargs['traj']))
     
-  def setupWall(self, name, wtype, meshName = None, plane = None, peq = None):
+  def setupWalls(self, name, wtype, meshName = None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
     @ wtype: type of the wall (primitive or mesh)
     @ plane: x, y, or z plane for primitive walls
     @ peq: plane equation for primitive walls
-!
+
+    This function can be called only ONCE for setting up all walls (restriction from LIGGGHTS)
     """
 
     gran = 'gran' # VERY HACKISH
@@ -484,8 +484,10 @@ class DEMPy:
     model = tuple(model)
 
     if wtype == 'mesh':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes 1 meshes {} '.format(wtype, meshName) \
-        + ('{} ' * len(modelExtra)).format(*modelExtra))
+      nMeshes = len(self.pargs['mesh'])
+      meshName = tuple(self.pargs['mesh'].keys())
+      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes {} meshes'.format(wtype, nMeshes) \
+        + (' {} ' * len(meshName)).format(*meshName)  + ('{} ' * len(modelExtra)).format(*modelExtra))
     elif wtype == 'primitive':
       self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type 1 {} {}'.format(wtype, plane, peq))
     else:
@@ -636,6 +638,9 @@ class DEMPy:
     self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
 
     self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
+
+    if 'mfile' in self.pargs['traj']:
+      self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id'.format(**self.pargs['traj']))
 
   def extractCoords(self, coords):
     """
