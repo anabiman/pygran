@@ -39,7 +39,7 @@ glass = {
 		'density': 2500.0
 		}
 
-stearicAcid = {
+stericAcid = {
 		'youngsModulus': ('youngsModulus', 'peratomtype', '41.5e6'),
 		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
 		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
