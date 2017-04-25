@@ -34,7 +34,7 @@ from string import ascii_uppercase
 import glob
 import re
 
-class Particles(object):
+class Base(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
 these properties """
 
@@ -47,7 +47,10 @@ these properties """
 			if type(self.data[key]) == np.ndarray:
 				
 				self.data[key] = self.data[key][sel].flatten()
-				self.data['natoms'] = len(self.data[key])
+
+				# Update natoms (for Particles) if it exists
+				if 'natoms' in self.data:
+					self.data['natoms'] = len(self.data[key])
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -70,30 +73,12 @@ these properties """
 		method = lambda self: Particles._metaget(self, key)
 		setattr(Particles, key, property(fget=method, doc='Extracts {} variable'.format(key)))
 
-	def select(self, sel):
-		""" Creates a particle group based on sel string.
-		Possible string selections are:
-
-		- bynum 0:N : select particles 0 till N - 1
-		- bydist x y z cutoff : select all particles around point (x,y,z) within a distance 'cutoff'
-		- byrad radius : select all particles larger
-
-		"""
-		sType, sArgs = sel.split()
-
-		if sType == 'bynum':
-			s1, s2 = (sArgs.split()[1]).split(':')
-			s1, s2 = np.int(s1), np.int(s2)
-			sel = np.array(s1,s2)
-
-		if sType == 'byrad':
-			radius = np.float(sArgs.split()[1])
-			sel = np.find(self.radius >= radius)
-
-		return Particles(sel, **self.data)
-
 	def __getitem__(self, sel):
 		return Particles(sel, **self.data)
+
+class Particles(Base):
+	""" The Particle class stores all particle properties and the methods that operate on \
+	these properties """
 
 	def computeROG(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
@@ -363,10 +348,8 @@ class Granular(object):
 			self._format = fname.split('.')[-1]
 
 			# Read frame 0 to initialize function getters
-			# Not quite sure why we need these, so I commented that
-			#self.__next__()
-			self._updateSystem()
-
+			self.__next__()
+			
 		else:
 			print 'Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)'
 
