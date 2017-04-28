@@ -33,6 +33,7 @@ from random import choice
 from string import ascii_uppercase
 import glob
 import re
+import collections
 
 class Base(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
@@ -340,8 +341,9 @@ class Granular(object):
 						raise
 
 			self.frame = 0
-			self.data = {} # a dict that contains either arrays (for storing pos, vels, forces, etc.),
-			# scalars (natoms, ) or tuples (box size). ONLY arrays can be slices based on user selection.
+			self.data = collections.OrderedDict() # am ordered dict that contains either arrays 
+			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
+			# ONLY arrays can be slices based on user selection.
 
 			# Do some checking here on the traj extension to make sure
 			# it's supported
@@ -531,6 +533,47 @@ class Granular(object):
 			self._length = count
 
 		return timestep
+
+	def writeFile(self, filename):
+		""" Write a single output file """
+		ftype = filename.split('.')[-1]
+		if ftype == 'dump':
+			self._writeDumpFile(filename)
+		else:
+			raise NotImplementedError
+
+	def _writeDumpFile(self, filename):
+		""" Writes a single dump file"""
+		fp = open(filename ,'a')
+
+		fp.write('ITEM: TIMESTEP\n{}\n'.format(self.data['timestep']))
+		fp.write('ITEM: NUMBER OF ATOMS\n{}\n'.format(self.data['natoms']))
+		fp.write('ITEM: BOX BOUNDS\n')
+		for box in self.data['box']:
+			fp.write('{} {}\n'.format(box[0], box[1]))
+
+		var = 'ITEM: ATOMS '
+		for key in self.data.keys():
+			if key != 'timestep' and key != 'natoms' and key != 'box':
+				var = var + '{} '.format(key)
+
+		fp.write(var)
+		fp.write('\n')
+
+		for i in range(self.data['natoms']):
+			var = ()
+			for key in self.data.keys():
+				if key != 'timestep' and key != 'natoms' and key != 'box':
+					if key == 'id':
+						var += (int(self.data[key][i]),)
+					else:	
+						var += (self.data[key][i],)
+
+			nVars = len(var)
+			fp.write(('{} ' * nVars).format(*var))
+			fp.write('\n')
+
+		fp.close()
 
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attributes caused by
