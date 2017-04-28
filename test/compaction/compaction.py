@@ -21,8 +21,8 @@ realGlass = {
 # Create a dictionary of physical parameters
 pDict = {
 
-		'model': Simulator.models.Hysteresis,
-        'engine': Simulator.engines.liggghts,
+		'model': Simulator.models.SpringDashpot,
+        	'engine': Simulator.engines.liggghts,
 
 		# Define the system
 		'boundary': ('p','p','f'), # fixed BCs
@@ -30,7 +30,7 @@ pDict = {
 		'nns_skin': 1e-3,
 
 		# Define component(s)
-		'SS': ({'by_pack':'', 'id':1, 'natoms_local': 800, 'density': 2500.0, 'vol_lim': 1e-16, 'insert': True, 'rate': 1e6, \
+		'SS': ({'insert':'by_pack', 'id':1, 'natoms': 800, 'material':glass, 'vol_lim': 1e-16, \
 			'freq': 'once', 'radius': ('gaussian number', 70e-6, 10e-6)}, 
 		      ), 
 
@@ -41,7 +41,7 @@ pDict = {
 		'dt': 2e-6,
 
 		# Material properties
-		'materials': realGlass,
+		'materials': glass,
 
 		# Apply gravitional force in the negative direction along the z-axis
 		'gravity': (9.81, 0, 0, -1),
@@ -51,12 +51,12 @@ pDict = {
 
 		# Meshes
 		 'mesh': {
-			'hopper': {'file': 'square.stl', 'mtype': 'mesh/surface/stress/servo', 'import': True, \
-			'args': {'scale': 1e-3, 'com': '0 0 0', 'ctrlPV': 'force',  'axis': '0 0 -1', 'target_val': 1.76, 'vel_max': 20.0}},
+			'hopper': {'file': 'square.stl', 'mtype': 'mesh/surface/stress/servo', 'import': True, 'material': glass, \
+			'args': ('scale 1e-3', 'com 0 0 0', 'ctrlPV force',  'axis 0 0 -1', 'target_val 1.76', 'vel_max 20.0')},
 		      },
 	  }
 
-if __name__ == '__main__':
+if __name__ == '__init__':
 
 	# Instantiate a class based on the selected model
 	pDict['model'] = pDict['model'](**pDict)
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 	sim = Simulator.DEM(**pDict['model'].params)
 
 	# Setup a stopper wall along the xoy plane
-	sim.setupWall(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
+	sim.setupWalls(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
 
 	high = 0.5e-3
 	scale = 10.0
