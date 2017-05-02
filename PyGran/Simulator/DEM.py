@@ -191,13 +191,17 @@ class DEM:
         break
 
   def importMeshes(self):
+    wall = False
+
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
 
           if self.pargs['mesh'][mesh]['import']:
             self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], *self.pargs['mesh'][mesh]['args'])  
+            wall = True
             
-      self.setupWalls(None, 'mesh')
+      if wall:
+        self.setupWalls(None, 'mesh')
             
   def importMesh(self, name, file, mtype, *args):
     """

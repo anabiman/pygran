@@ -330,8 +330,8 @@ class HertzMindlin(Model):
 		Model.__init__(self, **params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'rolling_friction', \
-						'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
+			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'cohesion', 'sjkr', \
+			'rolling_friction', 'cdt', 'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
 

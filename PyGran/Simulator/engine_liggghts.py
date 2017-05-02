@@ -640,7 +640,7 @@ class DEMPy:
     self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
     if 'mfile' in self.pargs['traj']:
-      self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id'.format(**self.pargs['traj']))
+      self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel '.format(**self.pargs['traj']))
 
   def extractCoords(self, coords):
     """
