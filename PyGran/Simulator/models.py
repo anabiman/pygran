@@ -88,7 +88,7 @@ class Model:
 
 		# Default traj I/O args
 		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
-                   'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
+                   'args': ('id', 'x', 'y', 'z', 'radius', \
                    'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
         
 		if 'traj' in self.params:
