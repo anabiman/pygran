@@ -34,6 +34,8 @@ from string import ascii_uppercase
 import glob
 import re
 import collections
+import vtk
+from vtk.util.numpy_support import vtk_to_numpy
 
 class Base(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
@@ -70,12 +72,43 @@ these properties """
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
 
 		# We cannot know the information for any property function until that property is created, 
-		# so we define the metaget function and particularize it only later with a lambda function			
-		method = lambda self: Particles._metaget(self, key)
-		setattr(Particles, key, property(fget=method, doc='Extracts {} variable'.format(key)))
+		# so we define the metaget function and particularize it only later with a lambda function.
+		
+		# Each derived class must override this function. To circumvent that, we update the class
+		# we're creating (not necessarily Base if it's a child class).
+		cName = eval(type(self).__name__)
+
+		method = lambda self: cName._metaget(self, key)
+		setattr(cName, key, property(fget=method, doc='Extracts {} variable'.format(key)))
 
 	def __getitem__(self, sel):
-		return Particles(sel, **self.data)
+		return Base(sel, **self.data)
+
+	def __del__(self):
+		pass
+
+class Mesh(Base):
+	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
+	"""
+	def __init__(self, fname):
+
+		self.data = {}
+
+		reader = vtk.vtkUnstructuredGridReader()
+		reader.SetFileName(fname)
+		reader.Update() # Needed if we need to call GetScalarRange
+		output = reader.GetOutput()
+
+		coords = vtk_to_numpy(output.GetPoints().GetData())
+		vel = vtk_to_numpy(output.GetCellData().GetArray("v"))
+
+		self.data['x'], self.data['y'], self.data['z'] = coords[:,0], coords[:,1], coords[:,2]
+		self.data['vx'], self.data['vy'], self.data['vz'] = vel[:,0], vel[:,1], vel[:,2] 
+
+		Base.__init__(self, None, **self.data)
+
+	def __del__(self):
+		Base.__del__(self)
 
 class Particles(Base):
 	""" The Particle class stores all particle properties and the methods that operate on \
@@ -213,7 +246,7 @@ class Particles(Base):
 		
 	def computeDensity(self, density, shape = 'box'):
 		"""
-		Computes the bulk density for a selection of particles from their true *density*. 
+		Computes the bulk density for a selection of particles from their *true* density. 
 		The volume is determined approximately by constructing a box/cylinder/cone 
 		embedding the particles. Particles are assumed to be spherical in shape.
 		"""
@@ -291,7 +324,7 @@ class Particles(Base):
 		return 0
 
 
-class Granular(object):
+class System(object):
 	"""The Granular class contains all the information describing a ganular system.
 	A system always requires a trajectory file to read. A trajectory is a (time) 
 	series corresponding to the coordinates of all particles in the system. Granular
@@ -304,9 +337,10 @@ class Granular(object):
 
 	"""
 
-	def __init__(self, fname, dname = None, constN = False):
+	def __init__(self, fname, mfname = None, dname = None, constN = False):
 
 		self._fname = fname
+		self._mfname = mfname
 		self._ftype = fname.split('.')[-1]
 
 		if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
@@ -348,12 +382,18 @@ class Granular(object):
 			# Do some checking here on the traj extension to make sure
 			# it's supported
 			self._format = fname.split('.')[-1]
-
-			# Read frame 0 to initialize function getters
-			self.__next__()
 			
 		else:
-			print 'Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)'
+			raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+
+		# Assert mesh input filname is VTK
+		if self._mfname:
+			if self._mfname.split('.')[-1] != 'vtk':
+				raise IOError('Input mesh must be of VTK type.')
+
+		# Done with all checking ~ Phew!
+		# Now read frame 0 to initialize function getters
+		self.__next__()
 
 	def __iter__(self):
 		return self
@@ -580,7 +620,10 @@ class Granular(object):
 		a frame change. """
 
 		self.Particles = Particles(**self.data)
-		
+
+		if self._mfname:
+			self.Mesh = Mesh(self._mfname)
+
 	@property
 	def granular(self):
 		return self
