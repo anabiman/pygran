@@ -361,6 +361,7 @@ class System(object):
 
 		self._fname = fname
 		self._mfname = mfname
+		self._mesh = None
 		
 		if self._fname:
 
@@ -407,11 +408,12 @@ class System(object):
 		if self._mfname:
 			if self._mfname.split('.')[-1] != 'vtk':
 				raise IOError('Input mesh must be of VTK type.')
+
+			self._mfname = sorted(glob.glob(self._mfname), key=numericalSort)
+			self._mesh = self._mfname[0]
+
 		elif not self._fname:
 			raise IOError('You must supply at least one input trajectory or mesh file.')
-
-		self._mfname = sorted(glob.glob(self._mfname), key=numericalSort)
-		self._mesh = self._mfname[0]
 
 		self.frame = 0
 
