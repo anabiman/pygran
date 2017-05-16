@@ -443,6 +443,10 @@ class DEMPy:
           print 'Could not find dt in user-supplied dictionary. Aborting ...'
         sys.exit()
 
+    # check timestep
+    self.lmp.command('fix ts_check all check/timestep/gran 1000 0.25 0.25')
+
+
     self.integrate(nsteps, dt)
 
   def moveMesh(self, name, *args):

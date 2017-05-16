@@ -28,15 +28,15 @@ Created on July 18, 2016
 # -------------------------------------------------------------------------
 
 glass = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '7.1e8'),
+		'youngsModulus': ('youngsModulus', 'peratomtype', '71e9'),
 		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
 		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
 		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-1'),
 		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.05'),
 		'coefficientRestitution': ('coefficientRestitution', 'peratomtypepair', '0.9'),
-		'yieldPress': ('yieldPress', 'peratomtype', '7.0e8'),
+		'yieldPress': ('yieldPress', 'peratomtype', '70e9'),
 		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1'),
-		'density': 2500.0
+		'density': 2486.0
 		}
 
 stearicAcid = {
