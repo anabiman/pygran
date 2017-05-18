@@ -37,7 +37,7 @@ import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 
-class Base(object):
+class SubSystem(object):
 	""" The Particle class stores all particle properties and the methods that operate on \
 these properties """
 
@@ -74,15 +74,15 @@ these properties """
 
 		# We cannot know the information for any property function until that property is created, 
 		# so we define either define metaget function and particularize it only later with a 
-		# lambda function, thus, permanently updating the Base class, or update the attributes
-		# of this particular instance of Base, which is the approach adopted here.
+		# lambda function, thus, permanently updating the SubSystem class, or update the attributes
+		# of this particular instance of SubSystem, which is the approach adopted here.
 		
 		setattr(self, key, self._metaget(key))
 
 	def __getitem__(self, sel):
-		""" Base can be sliced with this function """
+		""" SubSystem can be sliced with this function """
 
-		# Get the type of the class (not necessarily Base for derived classes)
+		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
 		return cName(sel, **self.data)
@@ -90,7 +90,7 @@ these properties """
 	def __del__(self):
 		pass
 
-class Mesh(Base):
+class Mesh(SubSystem):
 	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
 	"""
 	def __init__(self, fname):
@@ -105,7 +105,7 @@ class Mesh(Base):
 		points = self._output.GetPoints().GetData()
 
 		if points:
-			self.data[points.GetName()] = vtk_to_numpy(points) #np.reshape(, (self.getNumberPoints(), 3))
+			self.data[points.GetName()] = vtk_to_numpy(points)
 
 		index = 0
 		while True:
@@ -116,23 +116,23 @@ class Mesh(Base):
 			else:
 				break
 
-		Base.__init__(self, None, **self.data)
+		SubSystem.__init__(self, None, **self.data)
 
-	def getNumberCells(self):
+	def nCells(self):
 		return self._output.GetNumberOfCells()
 
-	def getNumberPoints(self):
+	def nPoints(self):
 		return self._output.GetNumberOfPoints()
 
 	def __del__(self):
 
-		Base.__del__(self)
+		SubSystem.__del__(self)
 
-class Particles(Base):
+class Particles(SubSystem):
 	""" The Particle class stores all particle properties and the methods that operate on \
 	these properties """
 
-	def computeROG(self):
+	def rog(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
 		ROG = <\sqrt(\sum_i (r_i - rm)^2)> where rm is the mean position of all
 		particles, and <...> is the ensemble average. Alternatively, one can
@@ -164,7 +164,7 @@ class Particles(Base):
 
 		return np.sqrt(r[-N:]).mean()
 
-	def computeRDF(self, dr = None, center = True, rMax=None):
+	def rdf(self, dr = None, center = True, rMax=None):
 		""" Computes the three-dimensional radial distribution function for a set of
 	    spherical particles contained in a cube with side length S.  This simple
 	    function finds reference particles such that a sphere of radius rMax drawn
@@ -251,7 +251,7 @@ class Particles(Base):
 		# Number of particles in shell/total number of particles/volume of shell/number density
 		# shell volume = 4/3*pi(r_outer**3-r_inner**3)
 
-	def computeAngleRepose(self):
+	def angleRepose(self):
 		"""
 		Computes the angle of repos theta = arctan(h_max/L)
 		in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]
@@ -262,7 +262,7 @@ class Particles(Base):
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
 		
-	def computeDensity(self, density, shape = 'box'):
+	def density(self, bdensity, shape = 'box'):
 		"""
 		Computes the bulk density for a selection of particles from their *true* density. 
 		The volume is determined approximately by constructing a box/cylinder/cone 
@@ -272,14 +272,14 @@ class Particles(Base):
 		if(self.natoms > 0):
 
 			radius = self.radius
-			volume = self.computeVolume(shape)
-			mass = np.sum(density * 4.0 / 3.0 * np.pi * (radius**3.0))
+			volume = self.volume(shape)
+			mass = np.sum(bdensity * 4.0 / 3.0 * np.pi * (radius**3.0))
 
 			return mass / volume
 
 		return 0
 
-	def computeDensityLocal(self, density, dr, axis):
+	def densityLocal(self, bdensity, dr, axis):
 		"""" Computes a localized density at a series of discretized regions of thickness 'dr'
 		along an axis specified by the user """
 		
@@ -299,17 +299,17 @@ class Particles(Base):
 			parts = self[r <= thick[i+1]]
 
 			if axis == 'x':
-				denLoc = parts[parts.x >= thick[i]].computeDensity(density)
+				denLoc = parts[parts.x >= thick[i]].density(bdensity)
 			elif axis == 'y':
-				denLoc = parts[parts.y >= thick[i]].computeDensity(density)
+				denLoc = parts[parts.y >= thick[i]].density(bdensity)
 			elif axis == 'z':
-				denLoc = parts[parts.z >= thick[i]].computeDensity(density)
+				denLoc = parts[parts.z >= thick[i]].density(bdensity)
 
 			odensity.append( denLoc )
 
 		return thick, odensity
 
-	def computeVolume(self, shape = 'box'):
+	def volume(self, shape = 'box'):
 		""" Computes the volume of a granular system based on a simple geometry """
 
 		if(self.natoms > 0):
@@ -596,7 +596,7 @@ class System(object):
 
 		return timestep
 
-	def writeFile(self, filename):
+	def write(self, filename):
 		""" Write a single output file """
 		ftype = filename.split('.')[-1]
 		if ftype == 'dump':
