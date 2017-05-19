@@ -520,7 +520,7 @@ class DEMPy:
       logging.info('Setting up nearest neighbor searching parameters')
 
     self.lmp.command('neighbor {nns_skin} {nns_type}'.format(**params))
-    self.lmp.command('neigh_modify delay 0 every 100')
+    #self.lmp.command('neigh_modify delay 0 every 100')
 
   def createProperty(self, name, *args):
     """
