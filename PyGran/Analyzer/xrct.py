@@ -47,36 +47,41 @@ def genImg(Particles, zmin, zmax, dz, scale, output=None, imgShow = None):
 	
 	N = Particles.natoms
 
-	# map particle positions to pixels
-	x = Particles.x
-	x = array(x * scale, 'int')
-
-	y = Particles.y
-	y = array(y * scale, 'int')
-
-	z = Particles.z
-	trans = array(z * 255 / z.max(), 'int')
-
-	zmean = (zmax + zmin) * 0.5
-
-	r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
-	r = array(r * scale, 'int')
-
 	img = Image.new('RGB', (length, width), "black") # create a new black image
 	pixels = img.load() # create the pixel map
 
-	for n in range(N):
 
-		i, j = x[n], y[n]
-		radius = r[n]
+	if N > 0:
+		# map particle positions to pixels
+		x = Particles.x
+		x = array(x * scale, 'int')
 
-		if (i + radius < length and i - radius > 0) and (j + radius < width and j - radius > 0):
-			for ic in range(-radius, radius+1):
-				for jc in range(-radius, radius+1):
-					if (ic)**2 + (jc)**2 <= radius**2:
-			        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
-		else:
-			pass
+		y = Particles.y
+		y = array(y * scale, 'int')
+
+		z = Particles.z
+
+		# uncommnet the line below for alpha channel estimation
+		# trans = array(z * 255 / z.max(), 'int')
+
+		zmean = (zmax + zmin) * 0.5
+
+		r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
+		r = array(r * scale, 'int')
+
+		
+		for n in range(N):
+
+			i, j = x[n], y[n]
+			radius = r[n]
+
+			if (i + radius < length and i - radius > 0) and (j + radius < width and j - radius > 0):
+				for ic in range(-radius, radius+1):
+					for jc in range(-radius, radius+1):
+						if (ic)**2 + (jc)**2 <= radius**2:
+				        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
+			else:
+				pass
 
 	if imgShow:
 		img.show()

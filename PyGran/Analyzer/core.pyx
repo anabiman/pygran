@@ -48,10 +48,10 @@ these properties """
 
 		for key in self.keys:
 			if type(self.data[key]) == np.ndarray:
-			
-				if sel:	
-					self.data[key] = self.data[key][sel]
 
+				if sel is not None:
+					self.data[key] = self.data[key][sel]
+			
 				# Update natoms (for Particles) if it exists
 				if 'natoms' in self.data:
 					self.data['natoms'] = len(self.data[key])
