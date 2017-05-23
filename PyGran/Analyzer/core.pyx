@@ -341,6 +341,19 @@ class Particles(SubSystem):
 
 		return 0
 
+class SystemFactory(object):
+	""" Creates a list of SystemFactory objects as defined by the user. """
+	def __init__(self, fname = None, mfname = None, dname = None):
+
+		if type(fname) is list:
+			systems = []
+			for file in fname:
+				systems.append(System(file, mfname, dname))
+
+		else:
+			systems = System(fname, mfname, dname)
+
+		self.System = systems
 
 class System(object):
 	"""The system class contains all the information describing a DEM system.
@@ -442,6 +455,8 @@ class System(object):
 			self.rewind()
 
 		self._goto_slow(frame)
+
+		self._updateSystem()
 
 	def _goto_slow(self, frame):
 		""" This function assumes we're reading a non-const N trajectory. 
@@ -588,7 +603,6 @@ class System(object):
 
 		for i in range(self.data['natoms']):
 			var = self._fp.readline().split()
-
 			for j, key in enumerate(keys):
 				self.data[key][i] = float(var[j])
 
