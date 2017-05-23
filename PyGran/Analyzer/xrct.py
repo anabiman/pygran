@@ -31,16 +31,19 @@ def readExcel(fname):
 
 	return data
 
-def genImg(Particles, zmin, zmax, dz, scale, output=None, imgShow = None):
+def genImg(Particles, zmin, zmax, dz, output=None, imgShow = None):
 	"""
 	Generates a 2D image from a slice (limited by 'zmin/zmax' and of thickness 'dz') 
 	of a 3D config in the Particles class. The scale is the number of microns per pixel.
 	"""
+	scale = 1.0/dz
+
 	maxRad = Particles.radius.max()
+
 	length, width = max(array(Particles.y * scale,'int')), max(array(Particles.x *scale, 'int'))
 
-	Particles = Particles[Particles.z > zmin - maxRad]
-	Particles = Particles[Particles.z < zmax + maxRad]
+	Particles = Particles[Particles.z >= zmin - maxRad]
+	Particles = Particles[Particles.z <= zmax + maxRad]
 
 	Particles = Particles[fabs(Particles.z - zmax) <= Particles.radius]
 	Particles = Particles[fabs(Particles.z - zmin) <= Particles.radius]
@@ -68,7 +71,6 @@ def genImg(Particles, zmin, zmax, dz, scale, output=None, imgShow = None):
 
 		r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
 		r = array(r * scale, 'int')
-
 		
 		for n in range(N):
 
