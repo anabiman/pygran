@@ -395,17 +395,17 @@ class DEMPy:
 
           if ss['insert'] == 'by_rate':
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
           elif ss['insert'] == 'by_pack':
             self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
-              ' insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 1000'.format(natoms, name) )
+              ' insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
           else:
             print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 1000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
@@ -520,7 +520,7 @@ class DEMPy:
       logging.info('Setting up nearest neighbor searching parameters')
 
     self.lmp.command('neighbor {nns_skin} {nns_type}'.format(**params))
-    #self.lmp.command('neigh_modify delay 0 every 100')
+    self.lmp.command('neigh_modify delay 0 every 100')
 
   def createProperty(self, name, *args):
     """
