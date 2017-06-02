@@ -4,7 +4,7 @@ Created on July 1, 2016
 '''
 
 # !/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 # -------------------------------------------------------------------------
 #
 #   Python module for analyzing contact models for DEM simulations
@@ -51,10 +51,10 @@ class Model:
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
 
-		if 'style' not in self.params: 
+		if 'style' not in self.params:
 			self.params['style'] = 'granular'
 
-		if 'units' not in self.params:	
+		if 'units' not in self.params:
 			self.params['units'] = 'si'
 
 		if 'dim' not in self.params:
@@ -90,7 +90,7 @@ class Model:
 		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
                    'args': ('id', 'x', 'y', 'z', 'radius', \
                    'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
-        
+
 		if 'traj' in self.params:
 			for key in self.params['traj']:
 				traj[key] = self.params['traj'][key]
@@ -120,13 +120,13 @@ class Model:
 			for item in self.materials:
 				if type(ss['material'][item]) is not float:
 					for ss in self.params['SS']:
-						if ss['material'][item][1] == 'peratomtype': 
+						if ss['material'][item][1] == 'peratomtype':
 							self.materials[item] =  self.materials[item] + (('{}').format(ss['material'][item][2]),)
 
 						elif ss['material'][item][1] == 'peratomtypepair':
-							# assume the arithmetic mean suffices for estimating binary properties
+							# assume the geometric mean suffices for estimating binary properties
 							for nss in range(self.params['nSS']):
-								prop = 0.5 * (float(ss['material'][item][2]) + float(self.params['SS'][nss]['material'][item][2]))
+								prop = np.sqrt(float(ss['material'][item][2]) * float(self.params['SS'][nss]['material'][item][2]))
 								self.materials[item] =  self.materials[item] + (('{}').format(prop),)
 
 						# we should set this based on species type
@@ -282,7 +282,7 @@ class SpringDashpot(Model):
 
 		kn = self.springStiff()
 
-		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn) 
+		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
 
 	def displacementExact(self, v0 = None, dt = None):
 		""" Computes the displacement based on an analytical solution """
@@ -295,7 +295,7 @@ class SpringDashpot(Model):
 
 		kn = self.springStiff(v0)
 		cn = self.dissCoef(v0)
-		
+
 		if dt is None:
 			dt = self.contactTime()
 
@@ -336,17 +336,17 @@ class HertzMindlin(Model):
 			self.params['model-args'] = self.params['model-args']
 
 	def springStiff(self, delta):
-		""" Computes the spring constant kn for 
+		""" Computes the spring constant kn for
 			F = - kn * \delta
 		"""
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 		radius = self.materials['radius']
 		mass = self.materials['mass']
-		
+
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta) 
+		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta)
 
 	def contactTime(self):
 		""" Estimate contact time based on a spring model """
@@ -360,7 +360,7 @@ class HertzMindlin(Model):
 		kn = 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-		return np.sqrt(mass * (np.pi**2.0 / kn)) 
+		return np.sqrt(mass * (np.pi**2.0 / kn))
 
 	def normalForce(self, time, delta, v0 = None):
 		""" Computes the Hertzian normal force"""
@@ -369,7 +369,7 @@ class HertzMindlin(Model):
 		yMod = self.materials['youngsModulus']
 		radius = self.materials['radius']
 		mass = self.materials['mass']
-		
+
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
 		if delta[0]:
@@ -423,7 +423,7 @@ class Hysteresis(Model):
 		yMod = self.materials['youngsModulus']
 		radius = self.materials['radius']
 		mass = self.materials['mass']
-		
+
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
 		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta)
@@ -441,11 +441,11 @@ class Hysteresis(Model):
 
 		if deltam < deltay:
 			if len(delta) > 1:
-				return np.array([deltav, -self.springSitff(deltan) * deltan / mass]) 
+				return np.array([deltav, -self.springSitff(deltan) * deltan / mass])
 			else:
 				return -self.springSitff(deltan) * deltan
 		else:
-			Fy = - self.springSitff(deltay) * deltay 
+			Fy = - self.springSitff(deltay) * deltay
 
 			if deltav > 0:
 				if deltan >= deltam:
