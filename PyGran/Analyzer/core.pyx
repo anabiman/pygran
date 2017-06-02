@@ -228,16 +228,15 @@ class Particles(SubSystem):
 		num_increments = len(edges) - 1
 		g = np.zeros([num_interior_particles, num_increments])
 		radii = np.zeros(num_increments)
-		numberDensity = len(x) / S**3
+		numberDensity = num_interior_particles / S**3
 
 		# Compute pairwise correlation for each interior particle
 		for p in range(num_interior_particles):
 			index = interior_indices[p]
 			d = np.sqrt((x[index] - x)**2 + (y[index] - y)**2 + (z[index] - z)**2)
-			d[index] = 2 * rMax
-
+			d[index] = 2.0 * rMax
 			(result, bins) = np.histogram(d, bins=edges, normed=False)
-			g[p,:] = result / numberDensity
+			g[p,:] = result
 
 		# Average g(r) for all interior particles and compute radii
 		g_average = np.zeros(num_increments)
@@ -247,7 +246,8 @@ class Particles(SubSystem):
 			rInner = edges[i]
 			g_average[i] = np.mean(g[:, i]) / (4.0 / 3.0 * np.pi * (rOuter**3 - rInner**3))
 
-		return (g_average, radii, interior_indices)
+		print numberDensity
+		return (g_average / numberDensity, radii, interior_indices)
 		# Number of particles in shell/total number of particles/volume of shell/number density
 		# shell volume = 4/3*pi(r_outer**3-r_inner**3)
 
