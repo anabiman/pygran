@@ -1,5 +1,5 @@
 # !/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 #
 # ----------------------------------------------------------------------
 #
@@ -14,7 +14,7 @@
 #
 #   Copyright (2003) Sandia Corporation.  Under the terms of Contract
 #   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-#   certain rights in this software.  This software is distributed under 
+#   certain rights in this software.  This software is distributed under
 #   the GNU General Public License.
 #
 #   See the README file in the top-level LAMMPS directory.
@@ -41,7 +41,7 @@ from importlib import import_module
 
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
-  
+
   has_mpi4py_v2 = False
   try:
     from mpi4py import MPI
@@ -52,7 +52,7 @@ class liggghts:
     pass
 
   # create instance of LIGGGHTS
- 
+
   def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
@@ -82,7 +82,7 @@ class liggghts:
       # with mpi4py v2, can pass MPI communicator to LIGGGHTS
       # need to adjust for type of MPI communicator object
       # allow for int (like MPICH) or void* (like OpenMPI)
-      
+
       if liggghts.has_mpi4py_v2 and comm != None:
         if liggghts.MPI._sizeof(liggghts.MPI.Comm) == sizeof(c_int):
           MPI_Comm = c_int
@@ -122,7 +122,7 @@ class liggghts:
           self.lib.lammps_open_no_mpi(0,None,byref(self.lmp))
           # could use just this if LIGGGHTS lib interface supported it
           # self.lmp = self.lib.lammps_open_no_mpi(0,None)
-          
+
     else:
       self.opened = 0
       # magic to convert ptr to ctypes ptr
@@ -186,7 +186,7 @@ class liggghts:
 
   # in case of global datum, free memory for 1 double via lammps_free()
   # double was allocated by library interface function
-  
+
   def extract_fix(self,id,style,type,i=0,j=0):
     if style == 0:
       self.lib.lammps_extract_fix.restype = POINTER(c_double)
@@ -209,7 +209,7 @@ class liggghts:
   # free memory for 1 double or 1 vector of doubles via lammps_free()
   # for vector, must copy nlocal returned values to local c_double vector
   # memory was allocated by library interface function
-  
+
   def extract_variable(self,name,group,type):
     if type == 0:
       self.lib.lammps_extract_variable.restype = POINTER(c_double)
@@ -232,11 +232,11 @@ class liggghts:
   # set variable value
   # value is converted to string
   # returns 0 for success, -1 if failed
-  
+
   def set_variable(self,name,value):
     return self.lib.lammps_set_variable(self.lmp,name,str(value))
   # return total number of atoms in system
-  
+
   def get_natoms(self):
     return self.lib.lammps_get_natoms(self.lmp)
 
@@ -265,12 +265,12 @@ class DEMPy:
   # handle all I/O, garbage collection, etc. and then moved to DEM.py
 
   def __init__(self, sid, split, library, units, dim, style, **pargs):
-    """ Initialize some settings and specifications 
+    """ Initialize some settings and specifications
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
     # style: granular, atom, or ...
     """
-      
+
     if 'print' not in pargs:
       pargs['print'] = (10**4, 'time', 'atoms')
 
@@ -327,7 +327,7 @@ class DEMPy:
   def createDomain(self):
     """ Define the domain of the simulation
     @ nsys: number of subsystems
-    @ pos: 6 x 1 tuple that defines the boundaries of the box 
+    @ pos: 6 x 1 tuple that defines the boundaries of the box
     """
     if not self.rank:
       logging.info('Creating domain')
@@ -368,7 +368,7 @@ class DEMPy:
 
   def insert(self, name, species, *region):
     """
-    This function inserts particles, and assigns particle velocities if requested by the user. 
+    This function inserts particles, and assigns particle velocities if requested by the user.
     """
     if not self.pddName:
       print 'Probability distribution not set for particle insertion. Exiting ...'
@@ -378,14 +378,14 @@ class DEMPy:
       if 'insert' in ss:
         if not self.rank:
           logging.info('Inserting particles for species {}'.format(i))
-    
+
         if 'natoms_local' in ss:
           natoms = ss['natoms_local']
         else:
           natoms = ss['natoms'] - self.lmp.get_natoms()
 
         if natoms < 0:
-          if not self.rank: 
+          if not self.rank:
             print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
           raise
 
@@ -432,7 +432,7 @@ class DEMPy:
 
   def run(self, nsteps, dt=None):
     """ runs a simulation for number of steps specified by the user """
-      
+
     self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6))
 
     if not dt:
@@ -454,15 +454,16 @@ class DEMPy:
 
   def importMesh(self, name, file, mtype, *args):
     """
-    TODO: fix type for mesh
+    TODO: fix material type for mesh
     """
     fname = self.path + '/' + file
-
+    material = 2
+    
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
-      
-    self.lmp.command('fix {} all {} file {} type 2 '.format(name, mtype, fname) + ('{} ' * len(args)).format(*args))
-    
+
+    self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, fname, material) + ('{} ' * len(args)).format(*args))
+
   def setupWalls(self, name, wtype, meshName = None, plane = None, peq = None):
     """
     Creates a wall
@@ -496,7 +497,7 @@ class DEMPy:
       self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type 1 {} {}'.format(wtype, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
- 
+
   def remove(self, name):
     """
     Deletes a specified variable
@@ -504,7 +505,7 @@ class DEMPy:
     self.lmp.command('unfix {}'.format(name))
 
   def createGroup(self, group = None):
-    """ Create groups of atoms 
+    """ Create groups of atoms
     """
     if not self.rank:
       logging.info('Creating atom group {}'.format(group))
@@ -586,10 +587,10 @@ class DEMPy:
       self.setupPhysics()
       self.setupNeighbor(**self.pargs)
       self.setupGravity()
-      
+
   def setupIntegrate(self, name):
     """
-    Specify how Newton's eqs are integrated in time. 
+    Specify how Newton's eqs are integrated in time.
     @ name: name of the fixed simulation ensemble applied to all atoms
     @ dt: timestep
     @ ensemble: ensemble type (nvt, nve, or npt)
@@ -697,7 +698,7 @@ class DEMPy:
           plt.savefig(output)
       except:
 	print "Unexpected error:", sys.exc_info()[0]
-	raise	
+	raise
 
   def saveas(self, name, fname):
     """
@@ -712,7 +713,7 @@ class DEMPy:
 
   def command(self, cmd):
     """
-    Passes a specific command to LIGGGHTS 
+    Passes a specific command to LIGGGHTS
     """
     self.lmp.command(cmd)
 

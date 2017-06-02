@@ -23,5 +23,4 @@ Created on April 25, 2016
 
 from PyGran.Analyzer.core import *
 from PyGran.Analyzer.contacts import *
-from PyGran.Analyzer.equilibrium import *
 from PyGran.Analyzer import xrct

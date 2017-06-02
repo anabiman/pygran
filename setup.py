@@ -118,19 +118,3 @@ setup(
     ext_modules=cythonize("PyGran/Analyzer/*.pyx"),
 	include_dirs=[numpy.get_include()]
 )
-
-if sys.argv[1] == 'install':
-
-    sys.path.remove(os.getcwd()) # remove current path to make sure PyGran is imported from elsewhere
-    print('Verifying installation ...')
-    print('...........................................................................')
-    print('...........................................................................')
-    print('...........................................................................')
-    
-    try:
-        import PyGran
-        link(PyGran.__path__[0] + '/GUI/Icons')
-        print('PyGran successfully installed')
-    except:
-        print('PyGran installation failed ...')
-        raise

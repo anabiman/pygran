@@ -4,7 +4,7 @@ Created on July 18, 2016
 '''
 
 # !/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 # -------------------------------------------------------------------------
 #
 #   Python module for storing material properties
@@ -34,6 +34,7 @@ glass = {
 		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-1'),
 		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.05'),
 		'coefficientRestitution': ('coefficientRestitution', 'peratomtypepair', '0.9'),
+		'coefficientRollingViscousDamping': ('coefficientRollingViscousDamping', 'peratomtypepair', '0.1'),
 		'yieldPress': ('yieldPress', 'peratomtype', '70e9'),
 		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1'),
 		'density': 2486.0
