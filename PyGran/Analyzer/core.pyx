@@ -375,6 +375,8 @@ class System(object):
 		self._fname = fname
 		self._mfname = mfname
 		self._mesh = None
+		self._singleFile = None
+		self._ftype = None
 		
 		if self._fname:
 
@@ -426,7 +428,7 @@ class System(object):
 			self._mesh = self._mfname[0]
 
 		elif not self._fname:
-			raise IOError('You must supply at least one input trajectory or mesh file.')
+			print('No input file supplied. System ready for writing.')
 
 		self.frame = 0
 
