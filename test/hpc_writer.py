@@ -4,8 +4,8 @@ from PyGran import Analyzer
 import collections
 
 data = collections.OrderedDict()
-natoms = 10
-radius = 25.0
+natoms = 30
+radius = 25.0e-6
 
 data['natoms'] = natoms * natoms * natoms
 data['id'] = arange(data['natoms'])
@@ -24,8 +24,8 @@ for i in range(natoms):
 
 data['radius'] = ones(data['natoms']) * radius
 data['timestep'] = 0
-data['box'] = ([-0.001, 0.001], [-0.001, 0.001], [0.0, 0.004])
+data['box'] = ([data['x'].min(), data['x'].max()], [data['y'].min(), data['y'].max()], [data['z'].min(), data['z'].max()])
 
 system = Analyzer.System()
 system.data = data
-system.write('traj.dump')
+system.write('hpc.dump')
