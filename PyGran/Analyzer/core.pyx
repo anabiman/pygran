@@ -103,6 +103,7 @@ class Mesh(SubSystem):
 		self._output = self._reader.GetOutput()
 
 		points = self._output.GetPoints().GetData()
+		cells = self._output.GetCells().GetData()
 
 		if points:
 			self.data[points.GetName()] = vtk_to_numpy(points)
@@ -377,9 +378,9 @@ class System(object):
 		self._mesh = None
 		self._singleFile = None
 		self._ftype = None
+		self._fp = None
 		
 		if self._fname:
-
 			self._ftype = fname.split('.')[-1]
 
 			if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
@@ -387,7 +388,7 @@ class System(object):
 				if self._fname.split('.')[:-1][0].endswith('*'):
 					self._singleFile = False
 					self._files = sorted(glob.glob(self._fname), key=numericalSort)
-					self._fname = self._fp = open(self._files[0], 'r')
+					self._fp = open(self._files[0], 'r')
 				else:
 					self._singleFile = True
 					self._fp = open(fname, 'r')
@@ -466,6 +467,7 @@ class System(object):
 
 		# find the right frame number
 		if self._singleFile:
+			# We must be reading a single particle trajectory file (i.e. not a mesh)
 			while self.frame < frame or frame == -1:
 
 				line = self._fp.readline()
@@ -496,16 +498,34 @@ class System(object):
 					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
 
 		else: # no need to find the input frame, just select the right file if available
-			if frame >= len(self._files):
-				print 'Input frame exceeds max number of frames'
-			else:
-				if frame == self.frame:
-					pass
+			
+			if self._fp:
+				if frame >= len(self._files):
+					print 'Input frame exceeds max number of frames'
 				else:
-					self._fp.close()
-					self._fp = open(self._files[frame], 'r')
-					self.frame = frame
-					self._readDumpFile()
+					if frame == self.frame:
+						pass
+					else:
+						if frame == -1:
+							frame = len(self._files) - 1
+
+						self._fp.close()
+						self._fp = open(self._files[frame], 'r')
+						self.frame = frame
+						self._readDumpFile()
+
+			if self._mfname:
+				if frame >= len(self._mfname):
+					print 'Input frame exceeds max number of frames'
+				else:
+					if frame == self.frame:
+						pass
+					else:
+						if frame == -1:
+							frame = len(self._mfname) - 1
+
+						self._mesh = self._mfname[frame]
+						self.frame = frame
 
 		return self.frame
 
@@ -516,14 +536,18 @@ class System(object):
 
 	def rewind(self):
 		"""Read trajectory from the beginning"""
-		self._fp.close()
-
-		if self._singleFile:
-			self._fp = open(self._fname)
-		else:
-			self._fp = open(self._files[0])
-			
 		self.frame = 0
+
+		if self._fp:
+			self._fp.close()
+
+			if self._singleFile:
+				self._fp = open(self._fname)
+			else:
+				self._fp = open(self._files[0])
+
+		if self._mfname:
+			self._mesh = self._mfname[self.frame]
 
 	def _readFile(self):
 		""" Read a particle trajectory file """
