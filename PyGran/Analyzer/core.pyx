@@ -108,6 +108,20 @@ class Mesh(SubSystem):
 		if points:
 			self.data[points.GetName()] = vtk_to_numpy(points)
 
+		if cells:
+			self.data['Cells'] = vtk_to_numpy(cells)
+
+		if points:
+			if cells:
+
+				np_pts = np.zeros((self.nCells(), self._output.GetCell(0).GetPoints().GetNumberOfPoints(), self.data[points.GetName()].shape[1]))
+
+				for i in range(self.nCells()):
+					pts = self._output.GetCell(i).GetPoints()
+					np_pts[i] = np.array([pts.GetPoint(j) for j in range(pts.GetNumberOfPoints())])
+
+				self.data['CellsPos'] = np_pts
+
 		index = 0
 		while True:
 			key = self._output.GetCellData().GetArrayName(index)
@@ -572,14 +586,25 @@ class System(object):
 	def next(self):
 		""" This method updates the system attributes! """
 		timestep = None
+
 		self.frame += 1
 
 		if self._fname:
-			self._readFile()
+			try:
+				self._readFile()
+			except:
+				self.frame -=1
+				print('End of trajectory file reached.')
+				raise StopIteration
 
 		if self._mfname:
-			self._mesh = self._mfname[self.frame]
-			
+			try:
+				self._mesh = self._mfname[self.frame]
+			except:
+				self.frame -=1
+				print('End of trajectory file reached.')
+				raise StopIteration
+
 		self._updateSystem()
 
 		return timestep
@@ -646,36 +671,34 @@ class System(object):
 
 	def _writeDumpFile(self, filename):
 		""" Writes a single dump file"""
-		fp = open(filename ,'a')
+		with  open(filename ,'a') as fp:
 
-		fp.write('ITEM: TIMESTEP\n{}\n'.format(self.data['timestep']))
-		fp.write('ITEM: NUMBER OF ATOMS\n{}\n'.format(self.data['natoms']))
-		fp.write('ITEM: BOX BOUNDS\n')
-		for box in self.data['box']:
-			fp.write('{} {}\n'.format(box[0], box[1]))
+			fp.write('ITEM: TIMESTEP\n{}\n'.format(self.data['timestep']))
+			fp.write('ITEM: NUMBER OF ATOMS\n{}\n'.format(self.data['natoms']))
+			fp.write('ITEM: BOX BOUNDS\n')
+			for box in self.data['box']:
+				fp.write('{} {}\n'.format(box[0], box[1]))
 
-		var = 'ITEM: ATOMS '
-		for key in self.data.keys():
-			if key != 'timestep' and key != 'natoms' and key != 'box':
-				var = var + '{} '.format(key)
-
-		fp.write(var)
-		fp.write('\n')
-
-		for i in range(self.data['natoms']):
-			var = ()
+			var = 'ITEM: ATOMS '
 			for key in self.data.keys():
 				if key != 'timestep' and key != 'natoms' and key != 'box':
-					if key == 'id':
-						var += (int(self.data[key][i]),)
-					else:	
-						var += (self.data[key][i],)
+					var = var + '{} '.format(key)
 
-			nVars = len(var)
-			fp.write(('{} ' * nVars).format(*var))
+			fp.write(var)
 			fp.write('\n')
 
-		fp.close()
+			for i in range(self.data['natoms']):
+				var = ()
+				for key in self.data.keys():
+					if key != 'timestep' and key != 'natoms' and key != 'box':
+						if key == 'id':
+							var += (int(self.data[key][i]),)
+						else:	
+							var += (self.data[key][i],)
+
+				nVars = len(var)
+				fp.write(('{} ' * nVars).format(*var))
+				fp.write('\n')
 
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attributes caused by
