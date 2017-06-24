@@ -55,7 +55,7 @@ class Neighbors(object):
 									(Particles.z[i] - Particles.z[j])**2.0)
 
 			if self._distances[count] <= Particles.radius[i] + Particles.radius[j]:
-				self._overlaps[count] = Particles.radius[i] + Particles.radius[j] - (self._distances[count], i, j)
+				self._overlaps[count] = (Particles.radius[i] + Particles.radius[j] - self._distances[count], i, j)
 
 			count += 1 
 
