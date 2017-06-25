@@ -115,7 +115,7 @@ class Model:
 						elif ss['material'][item][1] == 'scalar':
 							self.materials[item] = ss['material'][item][:2]
 					else:
-						ss[item] = ss['material'][item]
+						self.materials[item] = ss['material'][item]
 
 			for item in self.materials:
 				if type(ss['material'][item]) is not float:
@@ -237,13 +237,16 @@ class SpringDashpot(Model):
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-	def springStiff(self, v0 = None):
+	def springStiff(self, radius = None, v0 = None):
 		""" Computes the spring constant kn for F = - kn * \delta
 		"""
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
-		mass = self.materials['mass']
+
+		if radius is None:
+			radius = self.materials['radius']
+
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		yMod /= 2.0 * (1.0  - poiss )
 
@@ -253,20 +256,23 @@ class SpringDashpot(Model):
 		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-	def dissCoef(self, v0 = None):
+	def dissCoef(self, radius = None, v0 = None):
 
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
-		mass = self.materials['mass']
+
+		if radius is None:
+			radius = self.materials['radius']
+
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		yMod /= 2.0 * (1.0  - poiss )
 
 		if v0 is None:
 			v0 = self.materials['characteristicVelocity']
 
-		kn = self.springStiff(v0)
+		kn = self.springStiff(radius, v0)
 		loge = np.log(rest)
 
 		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
@@ -278,9 +284,10 @@ class SpringDashpot(Model):
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 		radius = self.materials['radius']
-		mass = self.materials['mass']
+		
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
-		kn = self.springStiff()
+		kn = self.springStiff(radius)
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
 
@@ -291,10 +298,8 @@ class SpringDashpot(Model):
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 		radius = self.materials['radius']
-		mass = self.materials['mass']
-
-		kn = self.springStiff(v0)
-		cn = self.dissCoef(v0)
+		
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		if dt is None:
 			dt = self.contactTime()
@@ -302,24 +307,34 @@ class SpringDashpot(Model):
 		if v0 is None:
 			v0 = self.materials['characteristicVelocity']
 
+		kn = self.springStiff(radius, v0)
+		cn = self.dissCoef(radius, v0)
+
 		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
 
 		return time, np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
 
-	def normalForce(self, time, delta, v0 = None):
+	def normalForce(self, delta, radius = None, v0 = None):
 		""" Returns the normal force based on Hooke's law: Fn = kn * delta """
+
+		# This is hackish ~ cast all material parameters as floats
+		for param in self.materials:
+			if type(self.materials[param]) is not float:
+				self.materials[param] = float(self.materials[param][-1])
 
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
-		mass = self.materials['mass']
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
-		kn = self.springStiff(v0)
+		kn = self.springStiff(radius, v0)
 
-		if len(delta) > 1:
+		if radius is None:
+			radius = self.materials['radius']
+
+		if len(delta)  == 2:
 			return np.array([delta[1], - kn * delta[0] / mass])
 		else:
-			return - kn * delta
+			return kn * delta
 
 class HertzMindlin(Model):
 	"""
