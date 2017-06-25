@@ -1,6 +1,10 @@
 from PyGran import Analyzer
-G = Analyzer.Granular('traj.dump')
-G.goto(2)
-#print G.data['x'].shape, G.Particles.x.shape
+from PyGran.Materials import glass
 
-N = Analyzer.Neighbors(G.Particles)
+System = Analyzer.System('traj.dump')
+
+# Go to last frame
+System.goto(-1)
+
+Neigh = Analyzer.Neighbors(System.Particles, material=glass)
+

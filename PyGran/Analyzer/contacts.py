@@ -28,12 +28,13 @@ Created on March 10, 2017
 
 import numpy
 from scipy import spatial
+from PyGran.Simulator.models import SpringDashpot
 
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)
 	neighbors from which contacts, overlaps, force chains, etc. can be determined.
 	"""
-	def __init__(self, Particles, cutoff = None):
+	def __init__(self, Particles, material = None, cutoff = None):
 
 		self._Particles = Particles
 		self._coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
@@ -61,6 +62,11 @@ class Neighbors(object):
 
 		self._overlaps = self._overlaps[self._overlaps[:,0] > 0,:]
 
+		if material:
+			self._material = {}
+			self._material['SS'] = ({'material':material},)
+			self._model = SpringDashpot(**self._material)
+
 	@property
 	def distances(self):
 	    return self._distances
@@ -73,8 +79,39 @@ class Neighbors(object):
 	def overlaps(self):
 	    return self._overlaps
 
-	def forceChain(self):
-		pass
+	def forceChain(self, axis = (0,2)):
+		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005): Characterization of force chains in granular material
+		"""
+		stress = numpy.zeros((self._Particles.natoms, 3, 3))
+		stress_prin = numpy.zeros((self._Particles.natoms, 4)) # 3 stress components + angle = 4 dims
+
+		for contact in self._overlaps:
+
+			i, j = int(contact[1]), int(contact[2])
+			overlap = self._Particles.radius[i] + self._Particles.radius[j] - numpy.array([self._Particles.x[i] - self._Particles.x[j], \
+				self._Particles.y[i] - self._Particles.y[j], self._Particles.z[i] - self._Particles.z[j]])
+			
+			vi = 4.0/3.0 * numpy.pi * self._Particles.radius[i]**3.0
+			vj = 4.0/3.0 * numpy.pi * self._Particles.radius[j]**3.0
+
+			stress_i = numpy.outer(self._model.normalForce(overlap, self._Particles.radius[i]), overlap)
+			stress_j = numpy.outer(self._model.normalForce(overlap, self._Particles.radius[j]), overlap)
+
+			stress[i] += stress_i
+			stress[j] += stress_j
+
+		# Faster to loop over all particles
+		for i in range(self._Particles.natoms):
+
+			# Compute principal stress
+			stress_i = stress[i]
+			stress_p = 0.5 * (stress_i[axis[0], axis[0]] + stress_i[axis[1], axis[1]]) - numpy.sqrt( (0.5 * (stress_i[axis[0], axis[0]] - \
+				stress_i[axis[1], axis[1]]))**2.0 + stress_i[axis[0],axis[1]] )
+
+			stress_prin[i,:-1] = stress_p
+			stress_prin[i,-1] = 0.5 * numpy.arctan( 2.0 * stress_i[axis[0],axis[1]] / (stress_i[axis[0], axis[0]] - stress_i[axis[1], axis[1]]) )
+
+		return stress_prin
 
 	def findWithin(self, coords , r):
 		""" Find all points within distance r of point(s) coords. 
