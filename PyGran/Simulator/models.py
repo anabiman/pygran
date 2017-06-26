@@ -115,7 +115,11 @@ class Model:
 						elif ss['material'][item][1] == 'scalar':
 							self.materials[item] = ss['material'][item][:2]
 					else:
+						# This is for analysis
 						self.materials[item] = ss['material'][item]
+
+						# This is for running DEM sim
+						ss[item] = ss['material'][item]
 
 			for item in self.materials:
 				if type(ss['material'][item]) is not float:
@@ -418,7 +422,7 @@ class Hysteresis(Model):
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/{}'.format(name), \
-					'tangential', 'history', 'rolling_friction', 'epsd')
+					'tangential', 'history')
 		else:
 			self.params['model-args'] = self.params['model-args']
 

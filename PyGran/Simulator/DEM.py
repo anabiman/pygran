@@ -132,7 +132,8 @@ class DEM:
     if 'materials' in self.pargs:
       for item in self.pargs['materials'].keys():
         # Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-        self.createProperty(item, *self.pargs['materials'][item])
+	if type(self.pargs['materials'][item]) is tuple: # Make sure we're not reading user-defined scalars (e.g. density)
+        	self.createProperty(item, *self.pargs['materials'][item])
 
     # Import and setup all meshes as rigid walls
     self.importMeshes()
