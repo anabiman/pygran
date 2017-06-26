@@ -28,7 +28,9 @@ Created on March 10, 2017
 
 import numpy
 from scipy import spatial
+from scipy.linalg import norm
 from PyGran.Simulator.models import SpringDashpot
+import matplotlib.pylab as plt
 
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)
@@ -46,6 +48,7 @@ class Neighbors(object):
 		self._pairs = self._tree.query_pairs(cutoff)
 		self._distances = numpy.zeros(len(self._pairs))
 		self._overlaps = numpy.zeros((len(self._pairs),3))
+		self._cutoff = cutoff
 
 		count = 0
 
@@ -79,9 +82,15 @@ class Neighbors(object):
 	def overlaps(self):
 	    return self._overlaps
 
-	def forceChain(self, axis = (0,2)):
-		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005): Characterization of force chains in granular material
+	def forceChain(self, axis = (0,2), alpha = 45):
+		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005): 
+		'Characterization of force chains in granular material'.
+
+		@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -> (x,y)
+		@ alpha: the angle (in degrees) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain. 
+		Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of the paper cited above.
 		"""
+
 		stress = numpy.zeros((self._Particles.natoms, 3, 3))
 		stress_prin = numpy.zeros((self._Particles.natoms, 4)) # 3 stress components + angle = 4 dims
 
@@ -109,13 +118,87 @@ class Neighbors(object):
 				stress_i[axis[1], axis[1]]))**2.0 + stress_i[axis[0],axis[1]] )
 
 			stress_prin[i,:-1] = stress_p
-			stress_prin[i,-1] = 0.5 * numpy.arctan( 2.0 * stress_i[axis[0],axis[1]] / (stress_i[axis[0], axis[0]] - stress_i[axis[1], axis[1]]) )
 
-		return stress_prin
+			if stress_i[axis[0], axis[0]] - stress_i[axis[1], axis[1]]: # otherwise this is prolly a boundary particle
+				stress_prin[i,-1] = 0.5 * numpy.arctan( 2.0 * stress_i[axis[0],axis[1]] / (stress_i[axis[0], axis[0]] \
+								  - stress_i[axis[1], axis[1]]) ) * 360.0
+
+		stress_mean = norm(stress_prin[:,:-1], axis=1).mean(axis=0)
+
+		# Section V. THE ALGORITHM (page 4)
+		# Step 1: filter out particles with less than the mean principal stress
+		indices  = numpy.where(norm(stress_prin[:,:-1], axis=1) <= stress_mean)[0]
+		#stress_prin = stress_prin[indices,:]
+
+		# Step 2: filter out particles which are in contact with 1 or less 'highly stressed' particles
+		# Construct an nns list
+		coords = self._coords[indices]
+		nns = self._tree.query_ball_point(coords, self._Particles[indices].radius.max() * 2.0)
+		self._indices = indices
+		self._nns = [[] for i in range(len(nns))]
+
+		# Update the nns indices so that only overlapping neighbors remain
+		count = 0
+		for ns in nns:
+			pind = indices[count]
+			for index in ns:
+				if index != pind:
+
+					dist = numpy.sqrt(((self._coords[index,:] - self._coords[pind,:])**2.0).sum())
+
+					if dist <= (self._Particles.radius[index] + self._Particles.radius[pind]):
+						self._nns[count].append(index)
+
+			count += 1
+
+		count = 0
+		cosAlpha = numpy.cos(alpha)
+		chain = [[] for i in range(len(self._nns))]
+
+		# Step 3: compute the force chain per particle
+		for nns in self._nns:
+			if len(nns) > 1: # select only particles surrounded by 2 or more highly stressed particles
+				# Begin loop over each neighboring particle
+				for ni in nns:
+					# check for angle compliance
+					angle_i = stress_prin[indices[count],-1]
+					angle_j =  stress_prin[ni,-1]
+
+					dist = self._coords[indices[count],:] - self._coords[ni,:]
+
+					term1 = norm(dist * stress_prin[indices[count],:-1])
+					term2 = norm(dist) * norm(stress_prin[indices[count],:-1])
+
+					term3 = norm(- dist * stress_prin[ni,:-1])
+					term4 = norm(dist) * norm(stress_prin[ni,:-1])
+
+					# Search in the forward direction
+					if (term1 <= term2) and (cosAlpha * term2) < term1:
+						if (term3 <= term4) and (cosAlpha * term4) < term3:
+							chain[count].append(ni)
+
+					# Search in the reverse direction
+					if (term1 <= term2) and (-cosAlpha * term2) > term1: # TODO: double check the math on this one
+						if (term3 <= term4) and (-cosAlpha * term4) > term3: # TODO: double check the math on this one
+							chain[count].append(ni)
+					
+			count += 1
+
+		parts = self._Particles[indices]
+		plt.scatter(parts.x *  1e6, parts.y * 1e6, s=parts.radius * 1e6, facecolors='none')
+
+		count = 0
+		for ind in chain:
+			for i in ind:
+				plt.plot([stress_prin[count,0] * cos(theta), stress_prin[count,0] * sin(theta)] ,'r')
+				
+		plt.show()
+
+		return chain
 
 	def findWithin(self, coords , r):
 		""" Find all points within distance r of point(s) coords. 
-		TOD: Support walls aligned arbitrarily in space """
+		TODO: Support walls aligned arbitrarily in space """
 
 		indices =  numpy.arange(self._Particles.natoms) #self._tree.query_ball_point(coords, r)
 		#indices = [item for i in indices for item in i]
