@@ -74,6 +74,9 @@ class Model:
 		if 'nns_type' not in self.params:
 			self.params['nns_type'] = 'bin'
 
+		if 'nns_freq' not in self.params:
+                        self.params['nns_freq'] = 100
+
 		if 'restart' not in self.params:
 			self.params['restart'] = (5000, 'restart', 'restart.binary', False, None)
 
