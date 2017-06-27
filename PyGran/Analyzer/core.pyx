@@ -93,32 +93,73 @@ these properties """
 class Mesh(SubSystem):
 	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
 	"""
-	def __init__(self, fname):
+	def __init__(self, fname, vtk_type=None):
 
 		self.data = {}
 
-		self._reader = vtk.vtkUnstructuredGridReader()
+		if vtk_type == 'poly':
+			self._reader = vtk.vtkPolyDataReader()
+		else:
+			self._reader = vtk.vtkUnstructuredGridReader()
+
+
 		self._reader.SetFileName(fname)
 		self._reader.Update() # Needed if we need to call GetScalarRange
 		self._output = self._reader.GetOutput()
 
-		points = self._output.GetPoints().GetData()
-		cells = self._output.GetCells().GetData()
+		try:
+			points = self._output.GetPoints().GetData()
+		except:
+			points = None
+
+		try:
+			cells = self._output.GetCells().GetData()
+		except:
+			try:
+				cells = self._output.GetCellData()
+			except:
+				cells = None
 
 		if points:
 			self.data[points.GetName()] = vtk_to_numpy(points)
 
 		if cells:
-			self.data['Cells'] = vtk_to_numpy(cells)
+			try:
+				self.data['Cells'] = vtk_to_numpy(cells)
+			except:
+				pass
 
 		if points:
 			if cells:
 
 				np_pts = np.zeros((self.nCells(), self._output.GetCell(0).GetPoints().GetNumberOfPoints(), self.data[points.GetName()].shape[1]))
 
+				# Area/volume computation for elements is deprecated in VTK (only support for tetrahedra), so we do the computation ourselves here for rectangular elements.
+				if self._output.GetCell(0).GetNumberOfFaces() == 6: # we're dealing with a rectangular element
+					self.data['CellVol'] = np.zeros(self.nCells())
+				elif self._output.GetCell(0).GetNumberOfFaces() == 0: # 2D mesh
+					self.data['CellArea'] = np.zeros(self.nCells())
+
 				for i in range(self.nCells()):
 					pts = self._output.GetCell(i).GetPoints()
-					np_pts[i] = np.array([pts.GetPoint(j) for j in range(pts.GetNumberOfPoints())])
+					np_pts[i] = vtk_to_numpy(pts.GetData())
+
+				# Find the axis of alignment for all cells using 1 (arbitrary) node
+				if np.diff(np_pts[:,0,0]).any() == .0:
+					indices = 1,2
+				elif np.diff(np_pts[:,0,1]).any() == .0:
+					indices = 0,2
+				else:
+					indices = 0,1
+
+				for i in range(self.nCells()):
+					if 'CellVol' in self.data:
+						# Need to update this to compoute correct the cell volume (assumed here to be a box)
+						self.data['CellVol'][i] = (np_pts[i][:,0].max() - np_pts[i][:,0].min()) * (np_pts[i][:,1].max() - np_pts[i][:,1].min()) * (np_pts[i][:,2].max() - np_pts[i][:,2].min())
+
+					if 'CellArea' in self.data:
+						# Shoelace  algorithm for computing areas of polygons
+						self.data['CellArea'][i] = 0.5 * np.abs( np.dot(np_pts[i][:,indices[0]] ,np.roll(np_pts[i][:,indices[1]],1)) - np.dot(np_pts[i][:,indices[1]],np.roll( np_pts[i][:,indices[0]],1)) )
 
 				self.data['CellsPos'] = np_pts
 
@@ -385,7 +426,7 @@ class System(object):
 
 	"""
 
-	def __init__(self, fname = None, mfname = None, dname = None, constN = False):
+	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None):
 
 		self._fname = fname
 		self._mfname = mfname
@@ -393,6 +434,7 @@ class System(object):
 		self._singleFile = None
 		self._ftype = None
 		self._fp = None
+		self._vtk = vtk_type
 		
 		if self._fname:
 			self._ftype = fname.split('.')[-1]
@@ -708,7 +750,7 @@ class System(object):
 			self.Particles = Particles(**self.data)
 
 		if self._mesh:
-			self.Mesh = Mesh(self._mesh)
+			self.Mesh = Mesh(self._mesh, self._vtk)
 
 	@property
 	def system(self):
