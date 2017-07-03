@@ -430,10 +430,12 @@ class DEMPy:
 
     return randName
 
-  def run(self, nsteps, dt=None):
-    """ runs a simulation for number of steps specified by the user """
+  def run(self, nsteps, dt=None, itype='sphere'):
+    """ Runs a simulation for number of steps specified by the user
+     @itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)
+     @dt = timestep"""
 
-    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6))
+    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6), itype=itype)
 
     if not dt:
       if 'dt' in self.pargs:
@@ -588,7 +590,7 @@ class DEMPy:
       self.setupNeighbor(**self.pargs)
       self.setupGravity()
 
-  def setupIntegrate(self, name):
+  def setupIntegrate(self, name, itype):
     """
     Specify how Newton's eqs are integrated in time.
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -602,7 +604,7 @@ class DEMPy:
     if self.integrator:
       self.remove(self.integrator)
 
-    self.lmp.command('fix {} all nve/sphere'.format(name))
+    self.lmp.command('fix {} all nve/{}'.format(name, itype))
 
     return name
 

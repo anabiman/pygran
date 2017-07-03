@@ -243,7 +243,7 @@ class DEM:
         self.dem.dumpSetup()
         break
 
-  def setupIntegrate(self, name):
+  def setupIntegrate(self, name, itype):
     """
     Specify how Newton's eqs are integrated in time. 
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -253,7 +253,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupIntegrate(name)
+        self.dem.setupIntegrate(name, itype)
         break
 
   def integrate(self, steps, dt):
