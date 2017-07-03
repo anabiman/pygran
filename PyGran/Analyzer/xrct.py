@@ -1,6 +1,8 @@
 from numbers import Number
 from PIL import Image
 from numpy import random, array, linspace, sqrt, fabs
+import numpy as np
+import cv2
 
 def readExcel(fname):
 	"""
@@ -31,7 +33,7 @@ def readExcel(fname):
 
 	return data
 
-def genImg(Particles, zmin, zmax, dz, output=None, imgShow = None):
+def slice(Particles, zmin, zmax, dz, output=None, imgShow=False):
 	"""
 	Generates a 2D image from a slice (limited by 'zmin/zmax' and of thickness 'dz') 
 	of a 3D config in the Particles class. The scale is the number of microns per pixel.
@@ -47,7 +49,7 @@ def genImg(Particles, zmin, zmax, dz, output=None, imgShow = None):
 
 	Particles = Particles[fabs(Particles.z - zmax) <= Particles.radius]
 	Particles = Particles[fabs(Particles.z - zmin) <= Particles.radius]
-	
+
 	N = Particles.natoms
 
 	img = Image.new('RGB', (length, width), "black") # create a new black image
@@ -71,7 +73,7 @@ def genImg(Particles, zmin, zmax, dz, output=None, imgShow = None):
 
 		r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
 		r = array(r * scale, 'int')
-		
+
 		for n in range(N):
 
 			i, j = x[n], y[n]
@@ -90,3 +92,54 @@ def genImg(Particles, zmin, zmax, dz, output=None, imgShow = None):
 
 	if output:
 		img.save(output)
+
+def reconstruct(fimg, imgShow=False):
+
+	img = cv2.imread(fimg)
+	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+	ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+
+	# noise removal
+	kernel = np.ones((3,3),np.uint8)
+	opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = 2)
+
+	# sure background area
+	sure_bg = cv2.dilate(opening,kernel,iterations=3)
+
+	# Finding sure foreground area
+	if int(cv2.__version__.split('.')[0]) < 3:
+    		dist_transform = cv2.distanceTransform(opening, cv2.cv.CV_DIST_L2, 5)
+	else:
+		dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
+
+   	ret, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
+
+   	# Finding unknown region
+   	sure_fg = np.uint8(sure_fg)
+   	unknown = cv2.subtract(sure_bg,sure_fg)
+
+	if int(cv2.__version__.split('.')[0]) == 3:
+		# Marker labelling
+		ret, markers = cv2.connectedComponents(sure_fg)
+
+    		# Add one to all labels to make sure background is not 0, but 1
+    		markers = markers+1
+
+    		# Now, mark the region of unknown with zero
+		markers[unknown==255] = 0
+
+		# Now our marker is ready. It is time for final step, apply watershed. 
+		# Then marker image will be modified. The boundary region will be marked with -1.
+		markers = cv2.watershed(img,markers)
+		img[markers == -1] = [255,0,0]
+	else:
+
+		img = cv2.add(sure_bg,sure_fg)
+
+	if imgShow:
+		cv2.imshow('image', img)
+		#cv2.imwrite('image.png',img)
+		cv2.waitKey(0)
+                cv2.destroyAllWindows()
+
+	return img
