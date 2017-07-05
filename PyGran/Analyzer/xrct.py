@@ -2,7 +2,11 @@ from numbers import Number
 from PIL import Image
 from numpy import random, array, linspace, sqrt, fabs
 import numpy as np
-import cv2
+
+try:
+	import cv2
+except:
+	pass
 
 def readExcel(fname):
 	"""
