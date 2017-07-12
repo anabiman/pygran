@@ -165,10 +165,10 @@ class DEM:
       if self.rank < self.nPart * (i + 1):
         return self.dem.insert(name, species, *args)
 
-  def run(self, nsteps=None, dt=None):
+  def run(self, nsteps=None, dt=None, iType='sphere'):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.run(nsteps, dt)
+        self.dem.run(nsteps, dt, iType)
         break
         
   def setupParticles(self):

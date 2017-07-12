@@ -26,7 +26,7 @@ Created on March 30, 2016
 '''
 
 import sys,traceback,types
-from ctypes import *
+import ctypes
 from os.path import dirname, abspath, join
 from inspect import getsourcefile
 import numpy as np
@@ -67,7 +67,7 @@ class liggghts:
         print 'Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library)
       sys.exit()
 
-    self.lib = CDLL(library, RTLD_GLOBAL)
+    self.lib = ctypes.CDLL(library, ctypes.RTLD_GLOBAL)
 
     # if no ptr provided, create an instance of LIGGGHTS
     #   don't know how to pass an MPI communicator from PyPar
@@ -84,29 +84,29 @@ class liggghts:
       # allow for int (like MPICH) or void* (like OpenMPI)
 
       if liggghts.has_mpi4py_v2 and comm != None:
-        if liggghts.MPI._sizeof(liggghts.MPI.Comm) == sizeof(c_int):
-          MPI_Comm = c_int
+        if liggghts.MPI._sizeof(liggghts.MPI.Comm) == ctypes.sizeof(ctypes.c_int):
+          MPI_Comm = ctypes.c_int
         else:
-          MPI_Comm = c_void_p
+          MPI_Comm = ctypes.c_void_p
 
         narg = 0
         cargs = 0
         if cmdargs:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
-          cargs = (c_char_p*narg)(*cmdargs)
-          self.lib.lammps_open.argtypes = [c_int, c_char_p*narg, \
-                                           MPI_Comm, c_void_p()]
+          cargs = (ctypes.c_char_p*narg)(*cmdargs)
+          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_char_p*narg, \
+                                           MPI_Comm, ctypes.c_void_p()]
         else:
-          self.lib.lammps_open.argtypes = [c_int, c_int, \
-                                           MPI_Comm, c_void_p()]
+          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_int, \
+                                           MPI_Comm, ctypes.c_void_p()]
 
         self.lib.lammps_open.restype = None
         self.opened = 1
-        self.lmp = c_void_p()
+        self.lmp = ctypes.c_void_p()
         comm_ptr = liggghts.MPI._addressof(comm)
         comm_val = MPI_Comm.from_address(comm_ptr)
-        self.lib.lammps_open(narg,cargs,comm_val,byref(self.lmp))
+        self.lib.lammps_open(narg,cargs,comm_val, ctypes.byref(self.lmp))
 
       else:
         self.opened = 1
@@ -114,21 +114,21 @@ class liggghts:
         if cmdargs:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
-          cargs = (c_char_p*narg)(*cmdargs)
-          self.lmp = c_void_p()
-          self.lib.lammps_open_no_mpi(narg,cargs,byref(self.lmp))
+          cargs = (ctypes.c_char_p*narg)(*cmdargs)
+          self.lmp = ctypes.c_void_p()
+          self.lib.lammps_open_no_mpi(narg,cargs, ctypes.byref(self.lmp))
         else:
-          self.lmp = c_void_p()
-          self.lib.lammps_open_no_mpi(0,None,byref(self.lmp))
+          self.lmp = ctypes.c_void_p()
+          self.lib.lammps_open_no_mpi(0,None, ctypes.fbyref(self.lmp))
           # could use just this if LIGGGHTS lib interface supported it
           # self.lmp = self.lib.lammps_open_no_mpi(0,None)
 
     else:
       self.opened = 0
       # magic to convert ptr to ctypes ptr
-      pythonapi.PyCObject_AsVoidPtr.restype = c_void_p
+      pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
       pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
-      self.lmp = c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
+      self.lmp = ctypes.c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
 
   def __del__(self):
     if self.lmp and self.opened: self.lib.lammps_close(self.lmp)
@@ -148,7 +148,7 @@ class liggghts:
 
   def extract_global(self,name,type):
     if type == 0:
-      self.lib.lammps_extract_global.restype = POINTER(c_int)
+      self.lib.lammps_extract_global.restype = POINTER(ctypes.c_int)
     elif type == 1:
       self.lib.lammps_extract_global.restype = POINTER(c_double)
     else: return None
@@ -157,9 +157,9 @@ class liggghts:
 
   def extract_atom(self,name,type):
     if type == 0:
-      self.lib.lammps_extract_atom.restype = POINTER(c_int)
+      self.lib.lammps_extract_atom.restype = POINTER(ctypes.c_int)
     elif type == 1:
-      self.lib.lammps_extract_atom.restype = POINTER(POINTER(c_int))
+      self.lib.lammps_extract_atom.restype = POINTER(POINTER(ctypes.c_int))
     elif type == 2:
       self.lib.lammps_extract_atom.restype = POINTER(c_double)
     elif type == 3:
@@ -218,7 +218,7 @@ class liggghts:
       self.lib.lammps_free(ptr)
       return result
     if type == 1:
-      self.lib.lammps_extract_global.restype = POINTER(c_int)
+      self.lib.lammps_extract_global.restype = POINTER(ctypes.c_int)
       nlocalptr = self.lib.lammps_extract_global(self.lmp,"nlocal")
       nlocal = nlocalptr[0]
       result = (c_double*nlocal)()
@@ -245,7 +245,7 @@ class liggghts:
   def gather_atoms(self,name,type,count):
     natoms = self.lib.lammps_get_natoms(self.lmp)
     if type == 0:
-      data = ((count*natoms)*c_int)()
+      data = ((count*natoms)*ctypes.c_int)()
       self.lib.lammps_gather_atoms(self.lmp, name, type, count, data)
     elif type == 1:
       data = ((count*natoms)*c_double)()
@@ -272,7 +272,7 @@ class DEMPy:
     """
 
     if 'print' not in pargs:
-      pargs['print'] = (10**4, 'time', 'atoms')
+      pargs['print'] = (10**4, 'time', 'dt', 'atoms')
 
     self.rank = split.Get_rank()
     self.split = split
