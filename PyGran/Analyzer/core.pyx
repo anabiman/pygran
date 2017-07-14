@@ -85,6 +85,9 @@ these properties """
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
+		if type(sel) is tuple:
+			sel = np.logical_and.reduce(sel)
+
 		return cName(sel, **self.data)
 
 	def __del__(self):
@@ -747,10 +750,18 @@ class System(object):
 		a frame change. """
 
 		if self._fname:
-			self.Particles = Particles(**self.data)
+			# check to see if we updating (looping over traj) or instantiating a new class
+			# If it's the former, we wanna keep the id (ref) of the class constant (soft copy)
+			if hasattr(self, 'Particles'):
+				self.Particles.__init__(**self.data)
+			else:
+				self.Particles = Particles(**self.data)
 
 		if self._mesh:
-			self.Mesh = Mesh(self._mesh, self._vtk)
+			if hasattr(self, 'Mesh'):
+				self.Mesh = Mesh.__init__(self._mesh, self._vtk)
+			else:
+				self.Mesh = Mesh(self._mesh, self._vtk)
 
 	@property
 	def system(self):
