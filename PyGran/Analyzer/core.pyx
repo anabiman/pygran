@@ -36,15 +36,18 @@ import re
 import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
+from PyGran.Tools import siToMicro, microToSi
 
 class SubSystem(object):
-	""" The Particle class stores all particle properties and the methods that operate on \
+	""" The SubSystem class stores all particle properties and the methods that operate on \
 these properties """
 
-	def __init__(self, sel = None, **data):
+	def __init__(self, sel = None, units = 'si', **data):
 
 		self.data = data
 		self.keys = self.data.keys()
+		self._index = -1 # used for for loops only
+		self._units = units
 
 		for key in self.keys:
 			if type(self.data[key]) == np.ndarray:
@@ -52,9 +55,12 @@ these properties """
 				if sel is not None:
 					self.data[key] = self.data[key][sel]
 			
-				# Update natoms (for Particles) if it exists
+				# Update natoms (for Particles) if it exists // TODO: move this to Particles
 				if 'natoms' in self.data:
-					self.data['natoms'] = len(self.data[key])
+					if type(self.data[key]) == np.ndarray:
+						self.data['natoms'] = len(self.data[key])
+					else:
+						self.data['natoms'] = 1 # single particle
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -88,7 +94,165 @@ these properties """
 		if type(sel) is tuple:
 			sel = np.logical_and.reduce(sel)
 
-		return cName(sel, **self.data)
+		return cName(sel, self._units, **self.data.copy())
+
+	def copy(self):
+		""" Returns a hard copy of the SubSystem """
+		data = self.data.copy()
+
+		for key in self.keys:
+			if type(data[key]) == np.ndarray:
+				data[key] = data[key].copy()
+			else:
+				data[key] = data[key]
+
+		return eval(type(self).__name__)(None, self._units, **data)
+
+	def conversion(self, factors):
+		""" whatever """
+
+		for key in self.keys:
+
+			if key == 'x' or key == 'y' or key == 'z' or key == 'radius':
+				self.data[key] *= factors['distance']
+			elif key == 'vx' or key == 'vy' or key == 'vz':
+				self.data[key] *= factors['distance'] / factors['time']
+			elif key == 'omegax' or key == 'omegay' or key == 'omegaz':
+				self.data[key] /= factors['time']
+			elif key == 'fx' or key == 'fy' or key == 'fz':
+				self.data[key] *= factors['mass'] * factors['distance'] / factors['time']**2.0
+			else:
+				pass
+
+	def units(self, units):
+		""" Sets the unit system """
+		if self._units == 'si':
+			if units == 'micro':
+				self.conversion(siToMicro)
+		elif self._units == 'micro':
+			if units == 'si':
+				self.conversion(microToSi)
+
+		self._units = units
+
+	def __add__(self, obj):
+		""" Adds two classes together, or operates scalars/vectors on particle radii/positions
+		TODO: get this working with meshes """
+
+		if type(obj) is type(self):
+
+			if len(obj) == len(self):
+
+				if len(self.data.keys())  < len(obj.data.keys()):
+					data = self.data.copy()
+					datac = obj.data
+				else:
+					data = obj.data.copy()
+					datac = self.data
+
+				for key in datac.keys():
+					if key in data:
+						if type(datac[key]) is np.array:
+							data[key] = data[key].copy()
+							
+						data[key] += datac[key]
+					else:
+						if type(datac[key]) is np.array:
+							data[key] = datac[key].copy()
+						else:
+							data[key] = datac[key]
+
+				return eval(type(self).__name__)(None, self._units, **data)
+			else:
+				print('Two subsystems with different numbers of elements cannot be added.')
+				return None
+
+	def __sub__(self, obj):
+		""" Subtracts scalars/vectors from particle radii/positions
+		TODO: get this working with meshes """
+
+		if type(obj) is tuple:
+			obj, att = obj
+			if type(obj) is type(self):
+				if att is 'all':
+					pass
+				elif len(obj) == len(self): # gotta make sure both classes being subtracted have the same number of elements
+					self.data[att] -= obj.data[att]
+				else:
+					print 'Two subsystems with different number of elements cannot be subtracted.'
+
+		return self
+
+	def __mul__(self, obj):
+		""" Subtracts scalars/vectors from particle radii/positions
+		TODO: get this working with meshes """
+
+		if type(obj) is tuple:
+			obj, att = obj
+			if type(obj) is type(self):
+				if att is 'all':
+					pass
+				elif len(obj) == len(self): # gotta make sure both classes being multiplied have the same number of elements
+					self.data[att] *= obj.data[att]
+				else:
+					print 'Two subsystems with different number of elements cannot be multiplied.'
+
+		return self
+
+	def __div__(self, obj):
+		""" Subtracts scalars/vectors from particle radii/positions
+		TODO: get this working with meshes """
+
+		if type(obj) is tuple:
+			obj, att = obj
+			if type(obj) is type(self):
+				if att is 'all':
+					pass
+				elif len(obj) == len(self): # gotta make sure both classes being divided have the same number of elements
+					self.data[att] /= obj.data[att]
+				else:
+					print 'Two subsystems with different number of elements cannot be divided.'
+
+		return self
+
+	def __or__(self, att):
+		""" Returns a (temporary) new subsystem with only a single attribute. the user can of course make this not *temporary* but 
+		that is not what should be used for. In principle, the modulus is a reductionist operator that serves as a temporary metastate
+		for binary operations. """
+
+		# Make a hard copy of the class to make sure we preserve its state
+		obj = self.copy()
+		data = obj.data
+
+		for key in self.keys:
+			if key != att and key != 'natoms':
+				del data[key]
+
+		return eval(type(self).__name__)(None, obj._units, **data)
+
+	def __iter__(self):
+		return self
+
+	def __next__(self):
+		"""Forward one step to next frame when using the next builtin function."""
+		return self.next()
+
+	def next(self):
+		""" This method is invoked by __iter__ in a for loop """
+
+		if self._index < len(self) - 1:
+			self._index += 1
+			return self[self._index]
+		else:
+			raise StopIteration
+
+	def __len__(self):
+		""" Returns the number of elements (e.g. particles or nodes) in a SubSystem """
+		for key in self.keys:
+			if type(self.data[key]) == np.ndarray:
+				return len(self.data[key])
+
+		return -1
 
 	def __del__(self):
 		pass
@@ -429,7 +593,7 @@ class System(object):
 
 	"""
 
-	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None):
+	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None, units='si'):
 
 		self._fname = fname
 		self._mfname = mfname
@@ -438,6 +602,7 @@ class System(object):
 		self._ftype = None
 		self._fp = None
 		self._vtk = vtk_type
+		self._units = units
 		
 		if self._fname:
 			self._ftype = fname.split('.')[-1]
@@ -503,6 +668,20 @@ class System(object):
 
 	def __iter__(self):
 		return self
+
+	def units(self, units):
+		""" Change unit system to:  si (S.I.), or micro (microns) """
+		if units == 'si' or 'micro':
+			if hasattr(self, 'Particles'):
+				self.Particles.units(units)
+
+			if hasattr(self, 'Mesh'):
+				self.Mesh.units(units)
+
+			self._units = units
+		else:
+			print 'Only S.I. and micro units currently supported'
+
 
 	def goto(self, frame):
 		""" Go to a specific frame in the trajectory. If frame is -1
@@ -753,15 +932,15 @@ class System(object):
 			# check to see if we updating (looping over traj) or instantiating a new class
 			# If it's the former, we wanna keep the id (ref) of the class constant (soft copy)
 			if hasattr(self, 'Particles'):
-				self.Particles.__init__(**self.data)
+				self.Particles.__init__(None, self._units, **self.data)
 			else:
-				self.Particles = Particles(**self.data)
+				self.Particles = Particles(None, self._units, **self.data)
 
 		if self._mesh:
 			if hasattr(self, 'Mesh'):
-				self.Mesh = Mesh.__init__(self._mesh, self._vtk)
+				self.Mesh = Mesh.__init__(None, self._units, self._mesh, self._vtk)
 			else:
-				self.Mesh = Mesh(self._mesh, self._vtk)
+				self.Mesh = Mesh(None, self._mesh, self._vtk)
 
 	@property
 	def system(self):
