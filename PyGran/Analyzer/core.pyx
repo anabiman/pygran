@@ -260,9 +260,10 @@ these properties """
 class Mesh(SubSystem):
 	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
 	"""
-	def __init__(self, fname, vtk_type=None):
+	def __init__(self, fname, units='si', vtk_type=None):
 
 		self.data = {}
+		self._units = units
 
 		if vtk_type == 'poly':
 			self._reader = vtk.vtkPolyDataReader()
@@ -339,7 +340,7 @@ class Mesh(SubSystem):
 			else:
 				break
 
-		SubSystem.__init__(self, None, **self.data)
+		SubSystem.__init__(self, None, self._units, **self.data)
 
 	def nCells(self):
 		return self._output.GetNumberOfCells()
@@ -938,9 +939,9 @@ class System(object):
 
 		if self._mesh:
 			if hasattr(self, 'Mesh'):
-				self.Mesh = Mesh.__init__(None, self._units, self._mesh, self._vtk)
+				self.Mesh.__init__(self._mesh, self._units, self._vtk)
 			else:
-				self.Mesh = Mesh(None, self._mesh, self._vtk)
+				self.Mesh = Mesh(self._mesh, self._units, self._vtk)
 
 	@property
 	def system(self):
