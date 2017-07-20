@@ -87,14 +87,19 @@ these properties """
 
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
+		
+		if type(sel) is tuple:
+			sel = np.logical_and.reduce(sel)
+
 
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
-		if type(sel) is tuple:
-			sel = np.logical_and.reduce(sel)
-
 		return cName(sel, self._units, **self.data.copy())
+
+	def __and__(self, ):
+		""" Boolean logical operator on particles """ 
+				
 
 	def copy(self):
 		""" Returns a hard copy of the SubSystem """
@@ -231,6 +236,7 @@ these properties """
 		return eval(type(self).__name__)(None, obj._units, **data)
 
 	def __iter__(self):
+		self._index = -1
 		return self
 
 	def __next__(self):
@@ -340,7 +346,7 @@ class Mesh(SubSystem):
 			else:
 				break
 
-		SubSystem.__init__(self, None, self._units, **self.data)
+		super(Mesh, self, None, self._units, **self.data).__init__()
 
 	def nCells(self):
 		return self._output.GetNumberOfCells()
@@ -668,6 +674,7 @@ class System(object):
 		self._updateSystem() # create Particles and read a mesh file
 
 	def __iter__(self):
+		self.frame = -1
 		return self
 
 	def units(self, units):
@@ -796,7 +803,7 @@ class System(object):
 		else:
 			if self._ftype == 'dump':
 
-				if self.frame >= len(self._files) - 1:
+				if self.frame > len(self._files) - 1:
 					raise StopIteration
 					
 				self._fp.close()
