@@ -338,7 +338,7 @@ class SpringDashpot(Model):
 		if radius is None:
 			radius = self.materials['radius']
 
-		if len(delta)  == 2:
+		if False: # this is where we need a param to distinguish analysis from std comp.
 			return np.array([delta[1], - kn * delta[0] / mass])
 		else:
 			return kn * delta

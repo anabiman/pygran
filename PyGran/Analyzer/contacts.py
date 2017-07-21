@@ -92,7 +92,7 @@ class Neighbors(object):
 		"""
 
 		stress = numpy.zeros((self._Particles.natoms, 2, 2))
-		stress_prin = numpy.zeros((self._Particles.natoms, 2)) # 2 stress components + angle = 4 dims
+		stress_prin = numpy.zeros((self._Particles.natoms, 3)) # 2 stress components + angle = 4 dims
 
 		coords = numpy.array([self._Particles.x, self._Particles.y, self._Particles.z])
 		x,y = coords[axis[0]], coords[axis[1]]
@@ -101,7 +101,7 @@ class Neighbors(object):
 		for contact in self._overlaps:
 
 			i, j = int(contact[1]), int(contact[2])
-			overlap = self._Particles.radius[i] + self._Particles.radius[j] - numpy.array([x[i] - x[j], y[i] - y[j])
+			overlap = self._Particles.radius[i] + self._Particles.radius[j] - numpy.array([x[i] - x[j], y[i] - y[j]])
 
 			vi = 4.0/3.0 * numpy.pi * self._Particles.radius[i]**3.0
 			vj = 4.0/3.0 * numpy.pi * self._Particles.radius[j]**3.0
@@ -117,40 +117,45 @@ class Neighbors(object):
 
 			# Compute principal stress
 			stress_i = stress[i]
-			stress_p = 0.5 * (stress_i[axis[0], axis[0]] + stress_i[axis[1], axis[1]]) - numpy.sqrt( (0.5 * (stress_i[axis[0], axis[0]] - \
-				stress_i[axis[1], axis[1]]))**2.0 + stress_i[axis[0],axis[1]] )
 
-			if stress_i[axis[0], axis[0]] - stress_i[axis[1], axis[1]]: # otherwise this is prolly a boundary particle
+			stress_p = 0.5 * (stress_i[0, 0] + stress_i[1, 1]) - numpy.sqrt( (0.5 * (stress_i[0, 0] - \
+				stress_i[1, 1]))**2.0 + stress_i[0, 1] )
+
+			if stress_i[0,0] - stress_i[1,1]: # otherwise this is prolly a boundary particle
 
 				# Compute angle
-				stress_prin[i,2] = 0.5 * numpy.arctan( 2.0 * stress_i[axis[0],axis[1]] / (stress_i[axis[0], axis[0]] \
-								  - stress_i[axis[1], axis[1]]) ) * 360.0
+				stress_prin[i,2] = 0.5 * numpy.arctan( 2.0 * stress_i[0,1] / (stress_i[0,0] \
+								  - stress_i[1,1]) ) * 360.0
 				# compute principal stress
-				stress_prin[i,0] = stress_p[0] * np.cos(stress_prin[i,2])
-				stress_prin[i,1] = stress_p[1] * np.sin(stress_prin[i,2])
+				stress_prin[i,0] = stress_p * numpy.cos(stress_prin[i,2])
+				stress_prin[i,1] = stress_p * numpy.sin(stress_prin[i,2])
 
-		stress_mean = norm(stress_prin[:,:-1], axis=1).mean(axis=0)
+		stress_norm = norm(stress_prin[:,:-1], axis=1)
 
 		# Section V. THE ALGORITHM (page 4)
 		# Step 1: filter out particles with less than the mean principal stress
-		indices  = numpy.where(norm(stress_prin[:,:-1], axis=1) <= stress_mean)[0]
+		indices  = numpy.where(stress_norm >= stress_norm.mean(axis=0))[0]
 		#stress_prin = stress_prin[indices,:]
 
 		# Step 2: filter out particles which are in contact with 1 or less 'highly stressed' particles
 		# Construct an nns list
-		coords = self._coords[indices,axis]
-		nns = self._tree.query_ball_point(coords, self._Particles[indices].radius.max() * 2.0)
+		coords = self._coords[indices,:][:,axis] 
+		tree = spatial.cKDTree(coords)
+
+		nns = tree.query_ball_point(coords, self._Particles[indices].radius.max() * 2.0)
 		self._indices = indices
 		self._nns = [[] for i in range(len(nns))]
 
 		# Update the nns indices so that only overlapping neighbors remain
 		count = 0
+		saxis = numpy.array(axis)
+
 		for ns in nns:
 			pind = indices[count]
 			for index in ns:
 				if index != pind:
 
-					dist = numpy.sqrt(((self._coords[index,axis] - self._coords[pind,axis])**2.0).sum())
+					dist = numpy.sqrt(((self._coords[index,saxis] - self._coords[pind,saxis])**2.0).sum())
 
 					if dist <= (self._Particles.radius[index] + self._Particles.radius[pind]):
 						self._nns[count].append(index)
@@ -170,7 +175,7 @@ class Neighbors(object):
 					angle_i = stress_prin[indices[count],-1]
 					angle_j =  stress_prin[ni,-1]
 
-					dist = self._coords[indices[count],axis] - self._coords[ni,axis]
+					dist = self._coords[indices[count], saxis] - self._coords[ni,saxis]
 
 					term1 = norm(dist * stress_prin[indices[count],:-1])
 					term2 = norm(dist) * norm(stress_prin[indices[count],:-1])
@@ -200,19 +205,19 @@ class Neighbors(object):
 
 		plt.show()
 
-		import networkx as nx
-		import numpy as np
-		import matplotlib.pyplot as plt
+		#import networkx as nx
+		#import numpy as np
+		#import matplotlib.pyplot as plt
 
-		G = nx.Graph()
-		G.add_edges_from([(1,2), (1,3)])
+		#G = nx.Graph()
+		#G.add_edges_from([(1,2), (1,3)])
 
-		pos = {1: (40, 20), 2: (20, 30), 3: (40, 30)}
+		#pos = {1: (40, 20), 2: (20, 30), 3: (40, 30)}
 
-		nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'))
-		nx.draw_networkx_edges(G, pos, edgelist=((1,2),(1,3)), width=(1.0,5.0), edge_color='black', arrows=True)
+		#nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'))
+		#nx.draw_networkx_edges(G, pos, edgelist=((1,2),(1,3)), width=(1.0,5.0), edge_color='black', arrows=True)
 
-		plt.show()
+		#plt.show()
 
 
 		return chain
