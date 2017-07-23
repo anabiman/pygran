@@ -37,65 +37,109 @@ def readExcel(fname):
 
 	return data
 
-def slice(Particles, zmin, zmax, dz, output=None, imgShow=False):
+def _mapPositions(Particles, axis, resol=None):
+	""" Maps particle positions to pixels """
+	if axis == 'x':
+		h = Particles.x
+
+		if resol:
+			x = array(Particles.y * resol, 'int')
+			y = array(Particles.z * resol, 'int')
+		else:
+			x = Particles.y
+			y = Particles.z
+
+	elif axis == 'y':
+		h = Particles.y
+
+		if resol:
+			x = array(Particles.x * resol, 'int')
+			y = array(Particles.z * resol, 'int')
+		else:
+			x = Particles.x
+			y = Particles.z
+
+	elif axis == 'z':
+		h = Particles.z
+
+		if resol:
+			x = array(Particles.x * resol, 'int')
+			y = array(Particles.y * resol, 'int')
+		else:
+			x = Particles.x
+			y = Particles.y
+	else:
+		raise ValueError('axis can be x, y, or z only.')
+
+	return x,y,h
+
+def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 	"""
-	Generates a 2D image from a slice (limited by 'zmin/zmax' and of thickness 'dz') 
-	of a 3D config in the Particles class. The scale is the number of microns per pixel.
+	Generates a 2D image from a slice (limited by 'zmin/zmax' and of reslution '1/dz') 
+	of a 3D config in the Particles class. The resol is in distance per pixel.
 	"""
-	scale = 1.0/dz
 
 	maxRad = Particles.radius.max()
 
-	length, width = max(array(Particles.y * scale,'int')), max(array(Particles.x *scale, 'int'))
+	# Make sure we are working with +ve positions
+	Particles.x -= Particles.x.min()
+	Particles.y -= Particles.y.min()
+	Particles.z -= Particles.z.min()
 
-	Particles = Particles[Particles.z >= zmin - maxRad]
-	Particles = Particles[Particles.z <= zmax + maxRad]
+	x,y,h = _mapPositions(Particles, axis, resol)
+	Particles = Particles[h >= zmin - maxRad]
 
-	Particles = Particles[fabs(Particles.z - zmax) <= Particles.radius]
-	Particles = Particles[fabs(Particles.z - zmin) <= Particles.radius]
+	x,y,h = _mapPositions(Particles, axis, resol)
+	Particles = Particles[h <= zmax + maxRad]
+
+	h = eval('Particles.{}'.format(axis))
+	Particles = Particles[fabs(h - zmax) <= Particles.radius]
+
+	h = eval('Particles.{}'.format(axis))
+	Particles = Particles[fabs(h - zmin) <= Particles.radius]
+
+	x,y,h = _mapPositions(Particles, axis, resol)
 
 	N = Particles.natoms
 
-	img = Image.new('RGB', (length, width), "black") # create a new black image
-	pixels = img.load() # create the pixel map
-
+	if resol:
+		length, width = max(y), max(x)
+		img = Image.new('RGB', (length, width), "black") # create a new black image
+		pixels = img.load() # create the pixel map
 
 	if N > 0:
-		# map particle positions to pixels
-		x = Particles.x
-		x = array(x * scale, 'int')
-
-		y = Particles.y
-		y = array(y * scale, 'int')
-
-		z = Particles.z
 
 		# uncommnet the line below for alpha channel estimation
 		# trans = array(z * 255 / z.max(), 'int')
 
-		zmean = (zmax + zmin) * 0.5
+		zmean = (zmax + zmin) / 2
 
-		r = sqrt(Particles.radius**2.0 - (z - zmean)**2.0)
-		r = array(r * scale, 'int')
+		r = sqrt(Particles.radius**2.0 - (h - zmean)**2.0)
 
-		for n in range(N):
+		if not resol:
+			return Particles
 
-			i, j = x[n], y[n]
-			radius = r[n]
+		else:
+			r = array(r * resol, 'int')
 
-			if (i + radius < length and i - radius > 0) and (j + radius < width and j - radius > 0):
-				for ic in range(-radius, radius+1):
-					for jc in range(-radius, radius+1):
-						if (ic)**2 + (jc)**2 <= radius**2:
-				        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
-			else:
-				pass
+			for n in range(N):
 
-	if imgShow:
-		img.show()
+				i, j = x[n], y[n]
+				radius = r[n]
 
-	if output:
-		img.save(output)
+				if (i + radius < length and i - radius > 0) and (j + radius < width and j - radius > 0):
+					for ic in range(-radius, radius+1):
+						for jc in range(-radius, radius+1):
+							if (ic)**2 + (jc)**2 <= radius**2:
+					        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
+				else:
+					pass
+
+			if imgShow:
+				img.show()
+
+			if output:
+				img.save(output)
 
 def reconstruct(fimg, imgShow=False):
 
