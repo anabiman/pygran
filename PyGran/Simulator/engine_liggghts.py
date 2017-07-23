@@ -264,7 +264,7 @@ class DEMPy:
   # TODO: This class should be generic (not specific to liggghts), must
   # handle all I/O, garbage collection, etc. and then moved to DEM.py
 
-  def __init__(self, sid, split, library, units, dim, style, **pargs):
+  def __init__(self, sid, split, library, style, **pargs):
     """ Initialize some settings and specifications
     @ units: unit system (si, cgs, etc.)
     @ dim: dimensions of the problem (2 or 3)
@@ -309,11 +309,11 @@ class DEMPy:
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
 
-    self.lmp.command('units {}'.format(units))
-    self.lmp.command('dimension {}'.format(dim))
+    self.lmp.command('units {}'.format(self.pargs['units']))
+    self.lmp.command('dimension {}'.format(self.pargs['dim']))
     self.lmp.command('atom_style {}'.format(style))
     self.lmp.command('atom_modify map array') # array is faster than hash in looking up atomic IDs, but the former takes more memory
-    self.lmp.command('boundary {} {} {}'.format(*pargs['boundary']))
+    self.lmp.command('boundary ' + ('{} ' * len(pargs['boundary'])).format(*pargs['boundary']))
     self.lmp.command('newton off') # turn off newton's 3rd law ~ should lead to better scalability
     self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
     self.lmp.command('processors * * *') # let LIGGGHTS handle DD
@@ -333,9 +333,9 @@ class DEMPy:
       logging.info('Creating domain')
 
     if 'box' in self.pargs:
-      self.lmp.command('region domain block {} {} {} {} {} {} units box'.format(*self.pargs['box']))
+      self.lmp.command('region domain block ' + ('{} ' * len(self.pargs['box'])).format(*self.pargs['box']) + ' units box')
     elif 'cylinder' in self.pargs:
-      self.lmp.command('region domain cylinder {} {} {} {} {} {} units box'.format(*self.pargs['cylinder']))
+      self.lmp.command('region domain cylinder ' + ('{} ' * len(self.pargs['cylinder'])).format(*self.pargs['cylinder']) + ' units box') 
 
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
@@ -588,6 +588,7 @@ class DEMPy:
       self.resume()
       self.setupPhysics()
       self.setupNeighbor(**self.pargs)
+      self.setupParticles()
       self.setupGravity()
 
   def setupIntegrate(self, name, itype):

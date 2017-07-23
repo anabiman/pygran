@@ -54,13 +54,6 @@ these properties """
 
 				if sel is not None:
 					self.data[key] = self.data[key][sel]
-			
-				# Update natoms (for Particles) if it exists // TODO: move this to Particles
-				if 'natoms' in self.data:
-					if type(self.data[key]) == np.ndarray:
-						self.data['natoms'] = len(self.data[key])
-					else:
-						self.data['natoms'] = 1 # single particle
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -88,10 +81,6 @@ these properties """
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
 		
-		if type(sel) is tuple:
-			sel = np.logical_and.reduce(sel)
-
-
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
@@ -114,7 +103,7 @@ these properties """
 		return eval(type(self).__name__)(None, self._units, **data)
 
 	def conversion(self, factors):
-		""" whatever """
+		""" Convesion factors from S.I. to micro and vice versa """
 
 		for key in self.keys:
 
@@ -346,7 +335,7 @@ class Mesh(SubSystem):
 			else:
 				break
 
-		super(Mesh, self, None, self._units, **self.data).__init__()
+		super(Mesh, self).__init__(None, self._units, **self.data)
 
 	def nCells(self):
 		return self._output.GetNumberOfCells()
@@ -361,6 +350,20 @@ class Mesh(SubSystem):
 class Particles(SubSystem):
 	""" The Particle class stores all particle properties and the methods that operate on \
 	these properties """
+	def __init__(self, sel = None, units = 'si', **data):
+
+		# Python 3.X: just do super()
+		super(Particles, self).__init__(sel, units, **data)
+		# Update natoms
+
+		if 'natoms' not in self.data:
+			self.data['natoms'] = len(self)
+			self.keys = self.data.keys()
+			self._constructAttributes('natoms')
+
+		else:
+			self.data['natoms'] = len(self)
+			self._constructAttributes('natoms')
 
 	def rog(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
