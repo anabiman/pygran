@@ -81,12 +81,21 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 
 	maxRad = Particles.radius.max()
 
+	if resol:
+		resol = 1.0 / resol
+
 	# Make sure we are working with +ve positions
 	Particles.x -= Particles.x.min()
 	Particles.y -= Particles.y.min()
 	Particles.z -= Particles.z.min()
 
 	x,y,h = _mapPositions(Particles, axis, resol)
+
+	if resol:
+		length, width = max(y), max(x)
+		img = Image.new('RGB', (length, width), "black") # create a new black image
+		pixels = img.load() # create the pixel map
+
 	Particles = Particles[h >= zmin - maxRad]
 
 	x,y,h = _mapPositions(Particles, axis, resol)
@@ -99,13 +108,7 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 	Particles = Particles[fabs(h - zmin) <= Particles.radius]
 
 	x,y,h = _mapPositions(Particles, axis, resol)
-
 	N = Particles.natoms
-
-	if resol:
-		length, width = max(y), max(x)
-		img = Image.new('RGB', (length, width), "black") # create a new black image
-		pixels = img.load() # create the pixel map
 
 	if N > 0:
 
