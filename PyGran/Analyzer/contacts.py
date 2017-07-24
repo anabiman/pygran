@@ -31,7 +31,6 @@ from scipy import spatial
 from scipy.linalg import norm
 from PyGran.Simulator.models import SpringDashpot
 import matplotlib.pylab as plt
-import networkx as nx
 
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)

@@ -603,8 +603,15 @@ class System(object):
 
 	"""
 
-	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None, units='si'):
+	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None, units='si', **args):
 
+		if 'Particles' in args:
+			self.Particles = args['Particles']
+			self._units = self.Particles._units
+			self.data = self.Particles.data # do a hard copy here?
+		else:
+			self._units = units
+			
 		self._fname = fname
 		self._mfname = mfname
 		self._mesh = None
@@ -612,8 +619,7 @@ class System(object):
 		self._ftype = None
 		self._fp = None
 		self._vtk = vtk_type
-		self._units = units
-		
+
 		if self._fname:
 			self._ftype = fname.split('.')[-1]
 
@@ -667,7 +673,10 @@ class System(object):
 
 		self.frame = 0
 
-		self.data = collections.OrderedDict() # am ordered dict that contains either arrays 
+		# If data is already coped from Particles, do nothing
+		if not hasattr(self, 'data'):
+			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
+			 
 		#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
 		# ONLY arrays can be slices based on user selection.
 
