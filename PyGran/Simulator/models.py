@@ -476,3 +476,20 @@ class Hysteresis(Model):
 
 				else:
 					pass
+
+	def yieldVel(self):
+		""" Returns the minimum velocity required for a colliding particle to undergo plastic deformation """
+
+		# Very, very hackish
+		for param in self.materials:
+			if type(self.materials[param]) is not float:
+				self.materials[param] = float(self.materials[param][-1])
+
+
+		poiss = self.materials['poissonsRatio']
+		yEff = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
+		density = self.materials['density']
+		py = self.materials['yieldPress']
+
+		return 1.56 * np.sqrt(py**5 / (yEff**4 * density))
+
