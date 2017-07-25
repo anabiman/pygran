@@ -28,27 +28,43 @@ Created on July 18, 2016
 # -------------------------------------------------------------------------
 
 glass = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '63e9'),
-		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
-		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
-		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '0.0'),
-		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.05'),
-		'coefficientRestitution': ('coefficientRestitution', 'peratomtypepair', '0.9'),
-		'coefficientRollingViscousDamping': ('coefficientRollingViscousDamping', 'peratomtypepair', '0.1'),
-		'yieldPress': ('yieldPress', 'peratomtype', '62e9'),
-		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1'),
+		'youngsModulus': 63e9,
+		'poissonsRatio': 0.24,
+		'coefficientFriction': 0.5,
+		'coefficientRollingFriction': .0,
+		'cohesionEnergyDensity': 0.05,
+		'coefficientRestitution': 0.9,
+		'coefficientRollingViscousDamping': 0.1,
+		'yieldPress': 62e9,
+		'characteristicVelocity': 0.1,
 		'density': 2500.0
 		}
 
 stearicAcid = {
-		'youngsModulus': ('youngsModulus', 'peratomtype', '4.15e7'),
-		'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.25'),
-		'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
-		'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '0.0'),
-		'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.033'),
-		'coefficientRestitution': ('coefficientRestitution', 'peratomtypepair', '0.9'),
-		'coefficientRollingViscousDamping': ('coefficientRollingViscousDamping', 'peratomtypepair', '0.5'),
-		'yieldPress': ('yieldPress', 'peratomtype', '2.2e6'),
-		'characteristicVelocity': ('characteristicVelocity', 'scalar', '0.1'),
+		'youngsModulus': 4.15e7,
+		'poissonsRatio': 0.25,
+		'coefficientFriction': 0.5,
+		'coefficientRollingFriction': 0.0,
+		'cohesionEnergyDensity': 0.033,
+		'coefficientRestitution': 0.9,
+		'coefficientRollingViscousDamping': 0.5,
+		'yieldPress': 2.2e6,
+		'characteristicVelocity': 0.1,
 		'density': 997.164
 		}
+
+def LIGGGHTS(**material):
+	""" Transform a PyGran material database into a LIGGGHTS material dictionary """
+
+	for key in material:
+		if key is 'youngsModulus' or key is 'poissonsRatio' or key is 'yieldPress':
+			material[key] = (key, 'peratomtype', str(material[key]))
+		elif key is 'coefficientFriction' or key is 'coefficientRollingFriction' or key is 'cohesionEnergyDensity' \
+			or key is 'coefficientRestitution' or key is 'coefficientRollingViscousDamping':
+			material[key] = (key, 'peratomtypepair', str(material[key]))
+		elif key is 'characteristicVelocity':
+			material[key] = (key, 'scalar', str(material[key]))
+
+	return material
+
+
