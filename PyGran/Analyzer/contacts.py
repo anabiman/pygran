@@ -47,7 +47,7 @@ class Neighbors(object):
 
 		self._pairs = self._tree.query_pairs(cutoff)
 		self._distances = numpy.zeros(len(self._pairs))
-		self._overlaps = numpy.zeros((len(self._pairs),3))
+		self._overlaps = numpy.zeros((len(self._pairs),3), dtype=object)  # Can we use mixed dtypes for improved mem allocation?
 		self._cutoff = cutoff
 
 		count = 0
@@ -59,10 +59,11 @@ class Neighbors(object):
 									(Particles.z[i] - Particles.z[j])**2.0)
 
 			if self._distances[count] <= Particles.radius[i] + Particles.radius[j]:
-				self._overlaps[count] = (Particles.radius[i] + Particles.radius[j] - self._distances[count], i, j)
+				self._overlaps[count] = numpy.array([Particles.radius[i] + Particles.radius[j] - self._distances[count], i, j], dtype=object)
 
 			count += 1
 
+		self._overlaps = numpy.array(self._overlaps, dtype=object) # Can we use mixed dtypes for improved mem allocation?
 		self._overlaps = self._overlaps[self._overlaps[:,0] > 0,:]
 
 		if material:
@@ -101,7 +102,7 @@ class Neighbors(object):
 		for contact in self._overlaps:
 
 			i, j = int(contact[1]), int(contact[2])
-			overlap = self._Particles.radius[i] + self._Particles.radius[j] - numpy.array([x[i] - x[j], y[i] - y[j]])
+			overlap = self._Particles.radius[i] + self._Particles.radius[j] + numpy.array([x[i] - x[j], y[i] - y[j]])
 
 			vi = 4.0/3.0 * numpy.pi * self._Particles.radius[i]**3.0
 			vj = 4.0/3.0 * numpy.pi * self._Particles.radius[j]**3.0
@@ -170,7 +171,7 @@ class Neighbors(object):
 
 
 
-		else: # us Peters' algorithm for computing force chain propagation
+		else: # use Peters' algorithm for computing force chain propagation
 			# Section V. THE ALGORITHM (page 4)
 			# Step 1: filter out particles with less than the mean principal stress
 			indices  = numpy.where(stress_norm >= threshold * stress_norm.mean(axis=0))[0]
@@ -215,7 +216,9 @@ class Neighbors(object):
 			for ind in remInd:
 				self._nns.remove(ind)
 
-			# Step 4: compute the force chain per particle
+			# Step 4: compute the force chain per particle and make plots if requested by the user
+			plt.axes()
+
 			for nns in self._nns:
 				
 				index = nns[0]
@@ -239,35 +242,28 @@ class Neighbors(object):
 						if (term3 <= term4) and (cosAlpha * term4) < term3:
 							chain.append((index,ni))
 					
+							x = [coords[index,0], coords[ni,0]]
+							y = [coords[index,1], coords[ni,1]]
+
+							if plot_stress:
+								plt.plot(x, y, linewidth=max(1.2 * stress_norm[i] / stress_norm.max(), 0.01), color='black')
+
+							if plot_parts:
+								circle = plt.Circle((coords[index,0], coords[index,1]), radius=radii[index], fill=False, color='blue', linewidth=0.5, linestyle ='dotted')
+								plt.gca().add_patch(circle)
+
+								circle = plt.Circle((coords[ni,0], coords[ni,1]), radius=radii[ni], fill=False, color='blue', linewidth=0.5, linestyle ='dotted')
+								plt.gca().add_patch(circle)
+
 					# Search in the reverse direction
 					# I dont understand what Im doing here
 					#if (term1 <= term2) and (-cosAlpha * term2) > term1: # TODO: double check the math on this one
 						#if (term3 <= term4) and (-cosAlpha * term4) > term3: # TODO: double check the math on this one
 							#chain.append((index,ni))
 							#print (index,ni)
-							
-			stress_norm /= stress_norm.max() * 0.8
-
-			plt.axes()
-
-			chain = numpy.unique(chain)
+			
 			print 'Natoms highly stressed = {} out of {} particles'.format(len(chain), self._Particles.natoms)
-
-			for i in chain:
-				theta = stress_prin[i,-1]
-				x = [coords[i,0] - radii[i] * numpy.cos(theta), coords[i,0] + radii[i] * numpy.cos(theta)]
-				y = [coords[i,1] - radii[i] * numpy.sin(theta), coords[i,1] + radii[i] * numpy.sin(theta)]
-
-				if plot_stress:
-					plt.plot(x, y, linewidth=stress_norm[i], color='black')
-
-				if plot_parts:
-					circle = plt.Circle((coords[i,0], coords[i,1]), radius=radii[i], fill=False, color='blue', linewidth=0.5, linestyle ='dotted')
-					plt.gca().add_patch(circle)
-
-					circle = plt.Circle((coords[i,0], coords[i,1]), radius=radii[i], fill=False, color='blue', linewidth=0.5, linestyle ='dotted')
-					plt.gca().add_patch(circle)
-
+				
 			plt.axis('scaled')
 			plt.show()
 
