@@ -2,6 +2,8 @@ from PyGran import Analyzer
 from PyGran.Materials import stearicAcid
 from numpy import pi, sqrt
 
+stearicAcid['yieldPress'] = 2e6
+
 def checkYield(reff, **material):
 	""" Solves the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
 	based on Thornton's elasto-plastic cohesive model:
@@ -26,15 +28,19 @@ def checkYield(reff, **material):
 	c = reff * sqrt(gamma * pi / (2 * YoungEff))
 
 	# Solve the algebraic equation symbolically
-	frac = 0.333333333333333
-	common = (9*c + sqrt(3*(27*c**3 - 4*b**2)))**frac
+	frac = 0.333333333333333333333333333333333333333333333333333
+	common = (9*c + sqrt(3*(27*c**2 - 4*b**3)))**frac
+
+	print 3*(27*c**2 - 4*b**3), 9*c
+
+	#print 27*c**2 - 4*b**3
 	x = b * (2.0/3.0)**frac /  common + common / (18**frac)
 
 	# Compute contact yield radius
-	ay = sqrt(x)
+	ay = x**2
 
 	# Return yield overlap
-	return x / reff - sqrt(2 * pi * gamma * ay / YoungEff)
+	return ay**2 / reff - sqrt(2 * pi * gamma * ay / YoungEff)
 
 
 System = Analyzer.System('../../compaction/out-SpringDashpot/traj/traj.dump')
@@ -52,7 +58,7 @@ for contact, index in enumerate(indices):
 	i,j = index
 
 	# Compute reff
-	reff = 1.0 / radii[i] + 1.0 / radii[j]
+	reff = 1.0 / (1.0 / radii[i] + 1.0 / radii[j])
 
 	# Compute yielding overlap
 	delta_y = checkYield(reff, **stearicAcid)
