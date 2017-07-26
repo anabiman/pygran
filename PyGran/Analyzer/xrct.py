@@ -79,20 +79,16 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 	of a 3D config in the Particles class. The resol is in distance per pixel.
 	"""
 
+	Particles = Particles.copy()
 	maxRad = Particles.radius.max()
 
 	if resol:
 		resol = 1.0 / resol
 
-	# Make sure we are working with +ve positions
-	Particles.x -= Particles.x.min()
-	Particles.y -= Particles.y.min()
-	Particles.z -= Particles.z.min()
-
 	x,y,h = _mapPositions(Particles, axis, resol)
 
 	if resol:
-		length, width = max(y), max(x)
+		length, width = max(x), max(y)
 		img = Image.new('RGB', (length, width), "black") # create a new black image
 		pixels = img.load() # create the pixel map
 
@@ -109,6 +105,7 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 
 	x,y,h = _mapPositions(Particles, axis, resol)
 	N = Particles.natoms
+	print 'natoms per slice = ', N
 
 	if N > 0:
 
@@ -129,15 +126,14 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 
 				i, j = x[n], y[n]
 				radius = r[n]
-
-				if (i + radius < length and i - radius > 0) and (j + radius < width and j - radius > 0):
-					for ic in range(-radius, radius+1):
-						for jc in range(-radius, radius+1):
-							if (ic)**2 + (jc)**2 <= radius**2:
-					        		pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
-				else:
-					pass
-
+				
+				for ic in range(-radius, radius+1):
+					for jc in range(-radius, radius+1):
+						if (ic)**2 + (jc)**2 <= radius**2:
+							if ( (i + ic < length) and (i + ic >= 0) and (j + jc < width) and (j + jc >= 0) ):
+								pixels[i+ic,j+jc] = (255, 255, 255) #  add trans[n] for transparency (e.g. png files) and then set the colour accordingly
+							else:
+								pass
 			if imgShow:
 				img.show()
 
