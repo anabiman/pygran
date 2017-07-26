@@ -829,7 +829,7 @@ class System(object):
 
 	def next(self):
 		""" This method updates the system attributes! """
-		timestep = None
+		timestep = self.frame
 
 		self.frame += 1
 
