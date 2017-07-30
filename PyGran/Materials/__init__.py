@@ -66,5 +66,3 @@ def LIGGGHTS(**material):
 			material[key] = (key, 'scalar', str(material[key]))
 
 	return material
-
-

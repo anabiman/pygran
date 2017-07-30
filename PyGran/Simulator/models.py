@@ -32,6 +32,7 @@ Created on July 1, 2016
 import numpy as np
 from scipy.integrate import ode
 from scipy.optimize import fsolve
+from PyGran import Materials
 
 class Model:
 	def __init__(self, **params):
@@ -42,11 +43,13 @@ class Model:
 		if 'SS' in self.params:
 			self.params['nSS'] += len(self.params['SS'])
 
+
+
 		# Treat any mesh as an additional component
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
-				self.params['SS']  += ({'material': self.params['mesh'][mesh]['material']},)
+				self.params['SS']  += ({'material': Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
 
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
@@ -108,6 +111,8 @@ class Model:
 			ss = self.params['SS'][0]
 
 			if 'material' in ss:
+				ss['material'] = Materials.LIGGGHTS(**ss['material'])
+
 				for item in ss['material']:
 					if type(ss['material'][item]) is not float:
 						# register each material proprety then populate per number of components
