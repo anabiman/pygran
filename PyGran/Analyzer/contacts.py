@@ -83,6 +83,31 @@ class Neighbors(object):
 	def overlaps(self):
 	    return self._overlaps
 
+	def filter(self, percent=None):
+		""" Returns a non-overlapping Particles class from the given configuration 
+		
+		@[percent]: filter all particles overlapping by a certain percentage
+		@
+		"""
+
+		if percent:
+			indices = numpy.array(self._overlaps[:,1:], 'int')
+			ri, rj = self._Particles.radius[indices[:,0]], self._Particles.radius[indices[:,1]]
+			radii = ri * rj / (ri + rj)
+
+			indices = numpy.unique(numpy.array(indices[self._overlaps[:,0] <= percent * radii, 1:]))
+			return self._Particles[indices]
+		
+		count = numpy.zeros(len(self._Particles))
+
+		for ind in indices:
+			i,j = ind
+			count[i] += 1
+			
+		indices = numpy.where(count <= 1)[0]
+
+		return self._Particles[indices]
+
 	def forceChain(self, axis = (0,2), alpha = numpy.pi/4, plot_stress=True, plot_parts=False, peters=True, threshold=1):
 		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
 		'Characterization of force chains in granular material'.
