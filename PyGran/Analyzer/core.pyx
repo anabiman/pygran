@@ -917,6 +917,16 @@ class System(object):
 		""" Writes a single dump file"""
 		with  open(filename ,'a') as fp:
 
+			if 'timestep' not in self.data:
+				self.data['timestep'] = -1
+
+			if 'box' not in self.data:
+				maxR = self.data['radius'].max()
+				self.data['box'] = ([self.data['x'].min() - maxR, self.data['x'].max() + maxR], \
+									[self.data['y'].min() - maxR, self.data['y'].max() + maxR], \
+									[self.data['z'].min() - maxR, self.data['z'].max() + maxR], \
+									)
+
 			fp.write('ITEM: TIMESTEP\n{}\n'.format(self.data['timestep']))
 			fp.write('ITEM: NUMBER OF ATOMS\n{}\n'.format(self.data['natoms']))
 			fp.write('ITEM: BOX BOUNDS\n')
