@@ -103,6 +103,7 @@ class Neighbors(object):
 		for ind in indices:
 			i,j = ind
 			count[i] += 1
+			count[j] += 1
 			
 		indices = numpy.where(count <= 1)[0]
 
