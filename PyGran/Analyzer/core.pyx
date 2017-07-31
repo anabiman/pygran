@@ -54,7 +54,7 @@ these properties """
 
 				if sel is not None:
 					self.data[key] = self.data[key][sel]
-
+					
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
 		# so that each dynamically created (property) function would have its own unique
@@ -84,7 +84,7 @@ these properties """
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
-		return cName(sel, self._units, **self.data.copy())
+		return cName(sel, self._units, **self.data)
 
 	def __and__(self, ):
 		""" Boolean logical operator on particles """ 
@@ -128,6 +128,19 @@ these properties """
 				self.conversion(microToSi)
 
 		self._units = units
+
+	def __iadd__(self, obj):
+		""" Adds attributes of obj to current SubSystem """
+
+		if type(obj) is type(self):
+			for key in self.data.keys():
+				if key in obj.data:
+					if type(self.data[key]) is np.ndarray:
+						self.data[key] = np.concatenate((self.data[key], obj.data[key]))
+
+		self.__init__(None, self.units, **self.data)
+
+		return self
 
 	def __add__(self, obj):
 		""" Adds two classes together, or operates scalars/vectors on particle radii/positions
@@ -350,6 +363,7 @@ class Mesh(SubSystem):
 class Particles(SubSystem):
 	""" The Particle class stores all particle properties and the methods that operate on \
 	these properties """
+
 	def __init__(self, sel = None, units = 'si', **data):
 
 		# Python 3.X: just do super()
@@ -574,6 +588,36 @@ class Particles(SubSystem):
 
 		return 0
 
+	def scale(self, value, attr=('x','y','z')):
+		""" Scales all particles by a float or int 'value'
+
+		@[attr]: attribute to scale (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+				self.data[at] *= value
+				self._constructAttributes(at)
+
+	def translate(self, value, attr=('x','y','z')):
+		""" Translates all particles by a float or int 'value'
+
+		@[attr]: attribute to translate (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+				self.data[at] += value
+				self._constructAttributes(at)
+
+	def perturb(self, percent, attr=('x','y','z')):
+		""" Adds white noise to all particles by a certain 'percent'
+
+		@[attr]: attribute to perturb (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+				self.data[at] += percent * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
+				self._constructAttributes(at)
+
 class SystemFactory(object):
 	""" Creates a list of SystemFactory objects as defined by the user. """
 	def __init__(self, fname = None, mfname = None, dname = None):
@@ -676,9 +720,8 @@ class System(object):
 		# If data is already coped from Particles, do nothing
 		if not hasattr(self, 'data'):
 			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
-			 
-		#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
-		# ONLY arrays can be slices based on user selection.
+			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
+			# ONLY arrays can be slices based on user selection.
 
 		# Done with all checking ~ Phew!
 		# Now read frame 0 to initialize function getters
@@ -829,9 +872,8 @@ class System(object):
 
 	def next(self):
 		""" This method updates the system attributes! """
-		timestep = self.frame
-
 		self.frame += 1
+		timestep = self.frame
 
 		if self._fname:
 			try:
