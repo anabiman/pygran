@@ -49,7 +49,7 @@ stearicAcid = {
 		'coefficientRestitution': 0.9,
 		'coefficientRollingViscousDamping': 0.5,
 		'yieldPress': 2.2e6,
-		'characteristicVelocity': 0.1,
+		'characteristicVelocity': 0.9,
 		'density': 997.164
 		}
 
