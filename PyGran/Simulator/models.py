@@ -34,7 +34,7 @@ from scipy.integrate import ode
 from scipy.optimize import fsolve
 from PyGran import Materials
 
-class Model:
+class Model(object):
 	def __init__(self, **params):
 
 		self.params = params
@@ -106,6 +106,10 @@ class Model:
         # Compute mean material properties
 		self.materials = {}
 
+		# For analysis
+		if 'material' in params:
+			self.materials = params['material']
+
 		# Expand material properties based on number of components
 		if 'SS' in self.params:
 			ss = self.params['SS'][0]
@@ -167,24 +171,21 @@ class Model:
 	def contactTime(self):
 		raise NotImplementedError('Not yet implemented')
 
-	def displacement(self, v0 = None, dt = None):
+	def displacement(self, radius=None):
 
-		if v0 is None:
-			v0 = self.materials['characteristicVelocity']
-
-		if dt is None:
-			dt = 1e-6
+		v0 = self.materials['characteristicVelocity']
 
 		y0 = np.array([0, v0])
 		t0 = .0
 
-		inte = ode(self.normalForce)
-		inte.set_f_params(*(v0,))
+		inte = ode(self.forceNumerical)
+		inte.set_f_params(*(radius,))
 		inte.set_integrator('dopri5')
 		inte.set_initial_value(y0, t0)
 
 		time, soln = [], []
-		Tc = self.contactTime()
+		Tc = self.contactTime(radius)
+		dt = Tc / 100.
 
 		while inte.successful() and inte.t <= Tc:
 			inte.integrate(inte.t + dt)
@@ -241,7 +242,7 @@ class SpringDashpot(Model):
 
 	def __init__(self, **params):
 
-		Model.__init__(self, **params)
+		super(SpringDashpot, self).__init__(**params)
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
@@ -249,53 +250,62 @@ class SpringDashpot(Model):
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-	def springStiff(self, radius = None, v0 = None):
+	def springStiff(self, radius = None):
 		""" Computes the spring constant kn for F = - kn * \delta
 		"""
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 
 		if radius is None:
-			radius = self.materials['radius']
+			if 'radius' in self.mterials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
 
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		yMod /= 2.0 * (1.0  - poiss )
 
-		if v0 is None:
-			v0 = self.materials['characteristicVelocity']
+		v0 = self.materials['characteristicVelocity']
 
 		return 16.0/15.0 * np.sqrt(radius) * yMod * (15.0 * mass \
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
-	def dissCoef(self, radius = None, v0 = None):
+	def dissCoef(self, radius = None):
 
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 
 		if radius is None:
-			radius = self.materials['radius']
+			if 'radius' in self.mterials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
 
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		yMod /= 2.0 * (1.0  - poiss )
 
-		if v0 is None:
-			v0 = self.materials['characteristicVelocity']
+		v0 = self.materials['characteristicVelocity']
 
 		kn = self.springStiff(radius, v0)
 		loge = np.log(rest)
 
 		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
 
-	def contactTime(self):
+	def contactTime(self, radius = None):
 		""" Computes the characteristic collision time """
 
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
+		
+		if radius is None:
+			if 'radius' in self.materials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
 		
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
@@ -303,50 +313,58 @@ class SpringDashpot(Model):
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
 
-	def displacementExact(self, v0 = None, dt = None):
+	def displacementAnalytical(self, radius = None, dt = None):
 		""" Computes the displacement based on an analytical solution """
 
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
+		
+		if radius is None:
+			if 'radius' in self.materials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
 		
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		if dt is None:
 			dt = self.contactTime()
 
-		if v0 is None:
-			v0 = self.materials['characteristicVelocity']
-
-		kn = self.springStiff(radius, v0)
-		cn = self.dissCoef(radius, v0)
+		v0 = self.materials['characteristicVelocity']
+		kn = self.springStiff(radius)
+		cn = self.dissCoef(radius)
 
 		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
 
 		return time, np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
 
-	def normalForce(self, delta, radius = None, v0 = None):
+	def normalForce(self, delta, radius = None):
 		""" Returns the normal force based on Hooke's law: Fn = kn * delta """
 
-		# This is hackish ~ cast all material parameters as floats
-		for param in self.materials:
-			if type(self.materials[param]) is not float:
-				self.materials[param] = float(self.materials[param][-1])
+		print 'delta, radius, numerical = ', delta, radius, numerical
 
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
-		kn = self.springStiff(radius, v0)
-
 		if radius is None:
-			radius = self.materials['radius']
+			if 'radius' in self.materials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
 
-		if False: # this is where we need a param to distinguish analysis from std comp.
-			return np.array([delta[1], - kn * delta[0] / mass])
-		else:
-			return kn * delta
+		kn = self.springStiff(radius)
+
+		return kn * delta
+
+	def forceNumerical(self, time, delta, radius):
+		""" Returns the force used for numerical solvers """
+		
+		kn = self.springStiff(radius)
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
+
+		return np.array([delta[1], - kn * delta[0] / mass])
 
 class HertzMindlin(Model):
 	"""
