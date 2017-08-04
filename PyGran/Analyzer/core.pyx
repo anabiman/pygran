@@ -32,7 +32,7 @@ import types
 from random import choice
 from string import ascii_uppercase
 import glob
-import re
+import re, sys
 import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
@@ -42,14 +42,33 @@ class SubSystem(object):
 	""" The SubSystem class stores all particle properties and the methods that operate on \
 these properties """
 
-	def __init__(self, sel = None, units = 'si', **data):
+	def __init__(self, sel = None, units = 'si', **args):
 
-		self.data = data
-		self.keys = self.data.keys()
+
+		self._fname = args['fname']
+		self._singleFile = None
+		self._ftype = None
+		self._fp = None
+
+		# If data is already coped from Particles, do nothing
+		if not hasattr(self, 'data'):
+			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
+			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
+			# ONLY arrays can be slices based on user selection.
+
 		self._index = -1 # used for for loops only
 		self._units = units
 
-		for key in self.keys:
+		
+	def _metaget(self, key):
+		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
+		and return as numpy arrays for numerical computations / manipulations"""
+		return self.data[key]
+
+	def _constructAttributes(self, sel=None):
+		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
+
+		for key in self.data.keys():
 			if type(self.data[key]) == np.ndarray:
 
 				if sel is not None:
@@ -60,23 +79,13 @@ these properties """
 		# so that each dynamically created (property) function would have its own unique
 		# key. For instance, placing the for loop below in  _constructAttributes would make
 		# all property functions return the same (last) key variable.
-		for key in self.keys:
-			self._constructAttributes(key)
 
-	def _metaget(self, key):
-		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
-		and return as numpy arrays for numerical computations / manipulations"""
-		return self.data[key]
 
-	def _constructAttributes(self, key):
-		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
-
-		# We cannot know the information for any property function until that property is created, 
-		# so we define either define metaget function and particularize it only later with a 
-		# lambda function, thus, permanently updating the SubSystem class, or update the attributes
-		# of this particular instance of SubSystem, which is the approach adopted here.
-		
-		setattr(self, key, self._metaget(key))
+			# We cannot know the information for any property function until that property is created, 
+			# so we define either define metaget function and particularize it only later with a 
+			# lambda function, thus, permanently updating the SubSystem class, or update the attributes
+			# of this particular instance of SubSystem, which is the approach adopted here.
+			setattr(self, key, self._metaget(key))
 
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
@@ -94,7 +103,7 @@ these properties """
 		""" Returns a hard copy of the SubSystem """
 		data = self.data.copy()
 
-		for key in self.keys:
+		for key in self.data.keys():
 			if type(data[key]) == np.ndarray:
 				data[key] = data[key].copy()
 			else:
@@ -105,7 +114,7 @@ these properties """
 	def conversion(self, factors):
 		""" Convesion factors from S.I. to micro and vice versa """
 
-		for key in self.keys:
+		for key in self.data.keys():
 
 			if key == 'x' or key == 'y' or key == 'z' or key == 'radius':
 				self.data[key] *= factors['distance']
@@ -231,7 +240,7 @@ these properties """
 		obj = self.copy()
 		data = obj.data
 
-		for key in self.keys:
+		for key in self.data.keys():
 			if key != att and key != 'natoms':
 				del data[key]
 
@@ -256,7 +265,7 @@ these properties """
 
 	def __len__(self):
 		""" Returns the number of elements (e.g. particles or nodes) in a SubSystem """
-		for key in self.keys:
+		for key in self.data.keys():
 			if type(self.data[key]) == np.ndarray:
 				return len(self.data[key])
 
@@ -270,7 +279,7 @@ class Mesh(SubSystem):
 	"""
 	def __init__(self, fname, units='si', vtk_type=None):
 
-		self.data = {}
+		self._vtk = vtk_type
 		self._units = units
 
 		if vtk_type == 'poly':
@@ -278,10 +287,20 @@ class Mesh(SubSystem):
 		else:
 			self._reader = vtk.vtkUnstructuredGridReader()
 
+		super(Mesh, self).__init__(None, self._units, fname=fname)
 
 		self._reader.SetFileName(fname)
 		self._reader.Update() # Needed if we need to call GetScalarRange
 		self._output = self._reader.GetOutput()
+
+		# Assert mesh input filname is VTK
+		if self._mfname:
+			if self._mfname.split('.')[-1] != 'vtk':
+				raise IOError('Input mesh must be of VTK type.')
+
+			self._mfname = sorted(glob.glob(self._mfname), key=numericalSort)
+			self._mesh = self._mfname[0]
+
 
 		try:
 			points = self._output.GetPoints().GetData()
@@ -348,13 +367,33 @@ class Mesh(SubSystem):
 			else:
 				break
 
-		super(Mesh, self).__init__(None, self._units, **self.data)
+	def _updateSystem(self):
+		self.__init__(self._mesh, self._units, self._vtk)
 
 	def nCells(self):
 		return self._output.GetNumberOfCells()
 
 	def nPoints(self):
 		return self._output.GetNumberOfPoints()
+
+	def _goto(self, frame):
+
+		if self._fname:
+			if frame >= len(self._fname):
+				print 'Input frame exceeds max number of frames'
+			else:
+				if frame == self.frame:
+					pass
+				else:
+					if frame == -1:
+						frame = len(self._fname) - 1
+
+					self._mesh = self._fname[frame]
+					self.frame = frame
+
+	def rewind(self):
+		if self._fname:
+			self._mesh = self._fname[self.frame]
 
 	def __del__(self):
 
@@ -366,18 +405,52 @@ class Particles(SubSystem):
 
 	def __init__(self, sel = None, units = 'si', **data):
 
-		# Python 3.X: just do super()
-		super(Particles, self).__init__(sel, units, **data)
-		# Update natoms
 
-		if 'natoms' not in self.data:
-			self.data['natoms'] = len(self)
-			self.keys = self.data.keys()
-			self._constructAttributes('natoms')
+		if 'Particles' in data:
+			self = data['Particles'] # do a hard copy here?
 
+			if 'natoms' not in self.data: 
+				self.data['natoms'] = len(self)
 		else:
-			self.data['natoms'] = len(self)
-			self._constructAttributes('natoms')
+			self._units = units
+			fname = data['fname']
+
+			# Python 3.X: just do super()
+			super(Particles, self).__init__(sel, units, fname=fname)
+
+			if self._fname:
+				self._ftype = fname.split('.')[-1]
+
+				if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
+
+					if self._fname.split('.')[:-1][0].endswith('*'):
+						self._singleFile = False
+						self._files = sorted(glob.glob(self._fname), key=numericalSort)
+						self._fp = open(self._files[0], 'r')
+					else:
+						self._singleFile = True
+						self._fp = open(fname, 'r')
+
+					self._params = None
+
+					# Do some checking here on the traj extension to make sure
+					# it's supported
+					self._format = fname.split('.')[-1]
+
+					self._readFile()
+					
+				else:
+					raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+
+
+			self._constructAttributes(sel)
+
+	def _updateSystem(self):
+
+		# If we are updating (looping over traj) we wanna keep the id (ref) of the class constant 
+		# (soft copy)
+		self.__init__(None, self._units, **self.data)
+		self._constructAttributes()
 
 	def rog(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
@@ -596,7 +669,8 @@ class Particles(SubSystem):
 		for at in attr:
 			if at in self.data:
 				self.data[at] *= value
-				self._constructAttributes(at)
+			
+		self._constructAttributes()
 
 	def translate(self, value, attr=('x','y','z')):
 		""" Translates all particles by a float or int 'value'
@@ -606,7 +680,8 @@ class Particles(SubSystem):
 		for at in attr:
 			if at in self.data:
 				self.data[at] += value
-				self._constructAttributes(at)
+				
+		self._constructAttributes()
 
 	def perturb(self, percent, attr=('x','y','z')):
 		""" Adds white noise to all particles by a certain 'percent'
@@ -616,153 +691,21 @@ class Particles(SubSystem):
 		for at in attr:
 			if at in self.data:
 				self.data[at] += percent * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
-				self._constructAttributes(at)
-
-class SystemFactory(object):
-	""" Creates a list of SystemFactory objects as defined by the user. """
-	def __init__(self, fname = None, mfname = None, dname = None):
-
-		if type(fname) is list:
-			systems = []
-			for file in fname:
-				systems.append(System(file, mfname, dname))
-
-		else:
-			systems = System(fname, mfname, dname)
-
-		self.System = systems
-
-class System(object):
-	"""The system class contains all the information describing a DEM system.
-	A system always requires at least one trajectory file (for Particles or Mesh)
-	to read. A trajectory is a (time) series corresponding to the coordinates of 
-	all particles/meshes in the system. System handles the time frame and controls 
-	i/o operations. It contains one or more subclasses ('Paticles'/'Mesh') which store 
-	all the particle/mesh attributes read from the trajectory file (variables such as 
-	positions, momenta, angular velocities, forces, stresses, radii, etc.).
-
-	@fname: filename (or list of filenames) for the particle trajectory
-	@mfname: filename (or list of filenames) for the mesh trajectory
-	@dname (optional): the name of the python script file used to run a PyGran simu,
-
-	"""
-
-	def __init__(self, fname = None, mfname = None, dname = None, constN = False, vtk_type=None, units='si', **args):
-
-		if 'Particles' in args:
-			self.Particles = args['Particles']
-			self._units = self.Particles._units
-			self.data = self.Particles.data # do a hard copy here?
-		else:
-			self._units = units
-			
-		self._fname = fname
-		self._mfname = mfname
-		self._mesh = None
-		self._singleFile = None
-		self._ftype = None
-		self._fp = None
-		self._vtk = vtk_type
-
-		if self._fname:
-			self._ftype = fname.split('.')[-1]
-
-			if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
-
-				if self._fname.split('.')[:-1][0].endswith('*'):
-					self._singleFile = False
-					self._files = sorted(glob.glob(self._fname), key=numericalSort)
-					self._fp = open(self._files[0], 'r')
-				else:
-					self._singleFile = True
-					self._fp = open(fname, 'r')
-
-				self._const = constN # this is useful for reading constant N trajectories
-				self._params = None
-
-				if dname:
-					try:
-						pDict = __import__(dname)
-						items = dir(pDict)
-
-						for item in items:
-							if isinstance(item, dict):
-								if 'box' in item:
-									self._params = item
-					except:
-						print 'dname must be a file that contains a PyGran parameter dictionary'
-						raise
-					else:
-						if not self._params:
-							print 'dname must be a file that contains a PyGran parameter dictionary'
-							raise
-
-				# Do some checking here on the traj extension to make sure
-				# it's supported
-				self._format = fname.split('.')[-1]
 				
+		self._constructAttributes()
+
+	def rewind(self):
+		
+		if self._fp:
+			self._fp.close()
+
+			if self._singleFile:
+				self._fp = open(self._fname)
 			else:
-				raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+				self._fp = open(self._files[0])
+		
 
-		# Assert mesh input filname is VTK
-		if self._mfname:
-			if self._mfname.split('.')[-1] != 'vtk':
-				raise IOError('Input mesh must be of VTK type.')
-
-			self._mfname = sorted(glob.glob(self._mfname), key=numericalSort)
-			self._mesh = self._mfname[0]
-
-		elif not self._fname:
-			print('No input file supplied. System ready for writing.')
-
-		self.frame = 0
-
-		# If data is already coped from Particles, do nothing
-		if not hasattr(self, 'data'):
-			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
-			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
-			# ONLY arrays can be slices based on user selection.
-
-		# Done with all checking ~ Phew!
-		# Now read frame 0 to initialize function getters
-		self._readFile() # Read particle trajectory file if loaded
-		self._updateSystem() # create Particles and read a mesh file
-
-	def __iter__(self):
-		self.frame = -1
-		return self
-
-	def units(self, units):
-		""" Change unit system to:  si (S.I.), or micro (microns) """
-		if units == 'si' or 'micro':
-			if hasattr(self, 'Particles'):
-				self.Particles.units(units)
-
-			if hasattr(self, 'Mesh'):
-				self.Mesh.units(units)
-
-			self._units = units
-		else:
-			print 'Only S.I. and micro units currently supported'
-
-
-	def goto(self, frame):
-		""" Go to a specific frame in the trajectory. If frame is -1
-		then this function will read the last frame """
-
-		# nothing to do
-		if frame == self.frame:
-			return 0
-
-		# rewind if necessary (better than reading file backwads?)
-		if frame < self.frame and frame >= 0:
-			self.rewind()
-
-		self._goto_slow(frame)
-
-		self._updateSystem()
-
-	def _goto_slow(self, frame):
+	def _goto(self, frame):
 		""" This function assumes we're reading a non-const N trajectory. 
 		"""
 
@@ -815,85 +758,7 @@ class System(object):
 						self.frame = frame
 						self._readDumpFile()
 
-			if self._mfname:
-				if frame >= len(self._mfname):
-					print 'Input frame exceeds max number of frames'
-				else:
-					if frame == self.frame:
-						pass
-					else:
-						if frame == -1:
-							frame = len(self._mfname) - 1
-
-						self._mesh = self._mfname[frame]
-						self.frame = frame
-
 		return self.frame
-
-	@property
-	def keys(self):
-		""" returns the key objects found in the trajctory files """
-		return self.data.keys()
-
-	def rewind(self):
-		"""Read trajectory from the beginning"""
-		self.frame = 0
-
-		if self._fp:
-			self._fp.close()
-
-			if self._singleFile:
-				self._fp = open(self._fname)
-			else:
-				self._fp = open(self._files[0])
-
-		if self._mfname:
-			self._mesh = self._mfname[self.frame]
-
-	def _readFile(self):
-		""" Read a particle trajectory file """
-		if self._singleFile:
-			if self._ftype == 'dump':
-				timestep = self._readDumpFile()
-		else:
-			if self._ftype == 'dump':
-
-				if self.frame > len(self._files) - 1:
-					raise StopIteration
-					
-				self._fp.close()
-				self._fname = self._files[self.frame]
-				self._fp = open(self._fname, 'r')
-				timestep = self._readDumpFile()
-
-	def __next__(self):
-		"""Forward one step to next frame when using the next builtin function."""
-		return self.next()
-
-	def next(self):
-		""" This method updates the system attributes! """
-		self.frame += 1
-		timestep = self.frame
-
-		if self._fname:
-			try:
-				self._readFile()
-			except:
-				self.frame -=1
-				print('End of trajectory file reached.')
-				raise StopIteration
-
-		if self._mfname:
-			try:
-				self._mesh = self._mfname[self.frame]
-			except:
-				self.frame -=1
-				print('End of trajectory file reached.')
-				raise StopIteration
-
-		self._updateSystem()
-
-		return timestep
 
 	def _readDumpFile(self):
 		""" Reads a single dump file"""
@@ -996,32 +861,143 @@ class System(object):
 				fp.write(('{} ' * nVars).format(*var))
 				fp.write('\n')
 
+	def _readFile(self):
+		""" Read a particle trajectory file """
+		if self._singleFile:
+			if self._ftype == 'dump':
+				timestep = self._readDumpFile()
+		else:
+			if self._ftype == 'dump':
+
+				if self.frame > len(self._files) - 1:
+					raise StopIteration
+					
+				self._fp.close()
+				self._fname = self._files[self.frame]
+				self._fp = open(self._fname, 'r')
+				timestep = self._readDumpFile()
+
+
+class SystemFactory(object):
+	"""The system class contains all the information describing a DEM system.
+	A system always requires at least one trajectory file (for Particles or Mesh)
+	to read. A trajectory is a (time) series corresponding to the coordinates of 
+	all particles/meshes in the system. System handles the time frame and controls 
+	i/o operations. It contains one or more subclasses ('Paticles'/'Mesh') which store 
+	all the particle/mesh attributes read from the trajectory file (variables such as 
+	positions, momenta, angular velocities, forces, stresses, radii, etc.).
+
+	@fname: filename (or list of filenames) for the particle trajectory
+	@mfname: filename (or list of filenames) for the mesh trajectory
+	@dname (optional): the name of the python script file used to run a PyGran simu,
+
+	"""
+
+	def __init__(self, units='si', **args):
+
+		self.frame = 0
+
+		for ss in args:
+			if(self._str_to_class(ss)):
+				obj = self._str_to_class(ss)(fname=args[ss])	
+				setattr(self, ss, obj)
+
+	def __iter__(self):
+		self.frame = -1
+		return self
+
+	def units(self, units):
+		""" Change unit system to:  si (S.I.), or micro (microns) """
+		if units == 'si' or 'micro':
+			for ss in self.__dict__:
+				if hasattr(self.__dict__[ss], 'units'):
+					self.__dict__[ss].units(units)
+
+			self._units = units
+		else:
+			print 'Only S.I. and micro units currently supported'
+
+	def goto(self, frame):
+		""" Go to a specific frame in the trajectory. If frame is -1
+		then this function will read the last frame """
+
+		# nothing to do
+		if frame == self.frame:
+			return 0
+
+		# rewind if necessary (better than reading file backwads?)
+		if frame < self.frame and frame >= 0:
+			self.rewind()
+
+		for ss in self.__dict__:
+			if hasattr(self.__dict__[ss], '_goto'):
+				self.__dict__[ss]._goto(frame)
+
+		self._updateSystem()
+
+	@property
+	def keys(self):
+		""" returns the key objects found in the trajctory files """
+		return self.data.keys()
+
+	def rewind(self):
+		"""Read trajectory from the beginning"""
+
+		self.frame = 0
+
+		for ss in self.__dict__:
+			if hasattr(self.__dict__[ss], 'rewind'):
+				self.__dict__[ss].rewind()
+
+	def __next__(self):
+		"""Forward one step to next frame when using the next builtin function."""
+		return self.next()
+
+	def next(self):
+		""" This method updates the system attributes! """
+		self.frame += 1
+		timestep = self.frame
+
+		self.frame = 0
+
+		if self._fname:
+			try:
+				self._readFile()
+			except:
+				self.frame -=1
+				print('End of trajectory file reached.')
+				raise StopIteration
+
+		if self._mfname:
+			try:
+				self._mesh = self._mfname[self.frame]
+			except:
+				self.frame -=1
+				print('End of trajectory file reached.')
+				raise StopIteration
+
+		self._updateSystem()
+
+		return timestep
+
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attributes caused by
 		a frame change. """
 
-		if self._fname:
-			# check to see if we updating (looping over traj) or instantiating a new class
-			# If it's the former, we wanna keep the id (ref) of the class constant (soft copy)
-			if hasattr(self, 'Particles'):
-				self.Particles.__init__(None, self._units, **self.data)
-			else:
-				self.Particles = Particles(None, self._units, **self.data)
-
-		if self._mesh:
-			if hasattr(self, 'Mesh'):
-				self.Mesh.__init__(self._mesh, self._units, self._vtk)
-			else:
-				self.Mesh = Mesh(self._mesh, self._units, self._vtk)
+		# A generic way of invoking _updateSystem
+		for ss in self.__dict__:
+			if hasattr(self.__dict__[ss], '_updateSystem'):
+				self.__dict__[ss]._updateSystem()
 
 	@property
 	def system(self):
 		return self
 
-	def __del__(self):
-
-		if self._fname:
-			self._fp.close()
+	def _str_to_class(self, str):
+		try:
+			return getattr(sys.modules[__name__], str)
+		except:
+			return None
 
 def numericalSort(value):
 	""" A sorting function by numerical numbers for glob.glob """
