@@ -32,23 +32,47 @@ import types
 from random import choice
 from string import ascii_uppercase
 import glob
-import re, sys
+import re, sys, os
 import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 from PyGran.Tools import siToMicro, microToSi
 
 class SubSystem(object):
-	""" The SubSystem class stores all particle properties and the methods that operate on \
+	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
 these properties """
 
-	def __init__(self, sel = None, units = 'si', **args):
+	def __init__(self, **args):
 
-
-		self._fname = args['fname']
+		self._units = 'si'
 		self._singleFile = None
 		self._ftype = None
 		self._fp = None
+		self.frame = 0
+		self._fname = None
+
+		if type(self).__name__ in args:
+
+			# copy constructor
+			self.data = args[type(self).__name__].data
+			self._units = args[type(self).__name__].units
+
+			self._constructAttributes()
+
+		else:
+			if 'units' in args:
+				self._units = args['units']
+
+			if 'data' in args:
+				self.data = args['data']
+
+				if 'units' in args:
+					self._units = args['units']
+				else:
+					raise RuntimeError('units must be supplied when creating SubSystem from a data dictionary.')
+				
+			else:
+				self._fname = args['fname']
 
 		# If data is already coped from Particles, do nothing
 		if not hasattr(self, 'data'):
@@ -57,7 +81,6 @@ these properties """
 			# ONLY arrays can be slices based on user selection.
 
 		self._index = -1 # used for for loops only
-		self._units = units
 
 		
 	def _metaget(self, key):
@@ -87,13 +110,18 @@ these properties """
 			# of this particular instance of SubSystem, which is the approach adopted here.
 			setattr(self, key, self._metaget(key))
 
+		self.units(self._units)
+
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
 		
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
-		return cName(sel, self._units, **self.data)
+		obj = cName(sel=sel, units=self._units, data=self.data)
+		obj._constructAttributes()
+
+		return obj
 
 	def __and__(self, ):
 		""" Boolean logical operator on particles """ 
@@ -277,17 +305,19 @@ these properties """
 class Mesh(SubSystem):
 	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
 	"""
-	def __init__(self, fname, units='si', vtk_type=None):
+	def __init__(self, fname, **args):
 
-		self._vtk = vtk_type
-		self._units = units
+		if 'vtk_type' in args:
+			self._vtk = args['vtk_type']
+		else:
+			self._vtk = None
 
-		if vtk_type == 'poly':
+		if self._vtk == 'poly':
 			self._reader = vtk.vtkPolyDataReader()
 		else:
 			self._reader = vtk.vtkUnstructuredGridReader()
 
-		super(Mesh, self).__init__(None, self._units, fname=fname)
+		super(Mesh, self).__init__(fname=fname)
 
 		self._reader.SetFileName(fname)
 		self._reader.Update() # Needed if we need to call GetScalarRange
@@ -369,6 +399,7 @@ class Mesh(SubSystem):
 
 	def _updateSystem(self):
 		self.__init__(self._mesh, self._units, self._vtk)
+		self._constructAttributes()
 
 	def nCells(self):
 		return self._output.GetNumberOfCells()
@@ -391,6 +422,16 @@ class Mesh(SubSystem):
 					self._mesh = self._fname[frame]
 					self.frame = frame
 
+	def readFile(self):
+		try:
+			self._mesh = self._fname[self.frame]
+		except:
+			self.frame -=1
+			print('End of trajectory file reached.')
+			raise StopIteration
+		else:
+			self.frame += 1
+
 	def rewind(self):
 		if self._fname:
 			self._mesh = self._fname[self.frame]
@@ -400,26 +441,24 @@ class Mesh(SubSystem):
 		SubSystem.__del__(self)
 
 class Particles(SubSystem):
-	""" The Particle class stores all particle properties and the methods that operate on \
+	""" The Particle class stores all particle properties and the methods that operate on
 	these properties """
 
-	def __init__(self, sel = None, units = 'si', **data):
+	def __init__(self, **args):
 
-
-		if 'Particles' in data:
-			self = data['Particles'] # do a hard copy here?
-
-			if 'natoms' not in self.data: 
-				self.data['natoms'] = len(self)
+		if 'sel' in args:
+			sel = args['sel']
 		else:
-			self._units = units
-			fname = data['fname']
+			sel = None
 
+		if 'Particles' in args:
+			self = args['Particles'] # do a hard copy here?
+		else:
 			# Python 3.X: just do super()
-			super(Particles, self).__init__(sel, units, fname=fname)
+			super(Particles, self).__init__(**args)
 
 			if self._fname:
-				self._ftype = fname.split('.')[-1]
+				self._ftype = self._fname.split('.')[-1]
 
 				if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
 
@@ -429,27 +468,29 @@ class Particles(SubSystem):
 						self._fp = open(self._files[0], 'r')
 					else:
 						self._singleFile = True
-						self._fp = open(fname, 'r')
+						self._fp = open(self._fname, 'r')
 
 					self._params = None
 
 					# Do some checking here on the traj extension to make sure
 					# it's supported
-					self._format = fname.split('.')[-1]
+					self._format = self._fname.split('.')[-1]
 
 					self._readFile()
 					
 				else:
 					raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
-
 			self._constructAttributes(sel)
+
+			if 'natoms' in self.data:
+				self.data['natoms'] = len(self)
 
 	def _updateSystem(self):
 
 		# If we are updating (looping over traj) we wanna keep the id (ref) of the class constant 
 		# (soft copy)
-		self.__init__(None, self._units, **self.data)
+		self.__init__(sel=None, units=self._units, **self.data)
 		self._constructAttributes()
 
 	def rog(self):
@@ -863,44 +904,100 @@ class Particles(SubSystem):
 
 	def _readFile(self):
 		""" Read a particle trajectory file """
-		if self._singleFile:
-			if self._ftype == 'dump':
-				timestep = self._readDumpFile()
+
+		try: 
+			if self._singleFile:
+				if self._ftype == 'dump':
+					timestep = self._readDumpFile()
+			else:
+				if self._ftype == 'dump':
+
+					if self.frame > len(self._files) - 1:
+						raise StopIteration
+						
+					self._fp.close()
+					self._fname = self._files[self.frame]
+					self._fp = open(self._fname, 'r')
+					timestep = self._readDumpFile()
+
+		except:
+			self.frame -=1
+			print('End of trajectory file reached.')
+			raise StopIteration
 		else:
-			if self._ftype == 'dump':
+			self.frame += 1
 
-				if self.frame > len(self._files) - 1:
-					raise StopIteration
-					
-				self._fp.close()
-				self._fname = self._files[self.frame]
-				self._fp = open(self._fname, 'r')
-				timestep = self._readDumpFile()
+class Factory(object):
+	"""A factory for system class. It creates subclasses of SubSystems. Its only two methods
+	are static, thus no need to instantiate this object.
 
-
-class SystemFactory(object):
-	"""The system class contains all the information describing a DEM system.
-	A system always requires at least one trajectory file (for Particles or Mesh)
-	to read. A trajectory is a (time) series corresponding to the coordinates of 
-	all particles/meshes in the system. System handles the time frame and controls 
-	i/o operations. It contains one or more subclasses ('Paticles'/'Mesh') which store 
-	all the particle/mesh attributes read from the trajectory file (variables such as 
-	positions, momenta, angular velocities, forces, stresses, radii, etc.).
-
-	@fname: filename (or list of filenames) for the particle trajectory
-	@mfname: filename (or list of filenames) for the mesh trajectory
-	@dname (optional): the name of the python script file used to run a PyGran simu,
-
+	@Particles: filename (or list of filenames) for the particle trajectory
+	@Mesh: filename (or list of filenames) for the mesh trajectory
+	@[units](si): unit system can be either 'si' or 'micro'
 	"""
 
-	def __init__(self, units='si', **args):
-
-		self.frame = 0
+	def factory(**args):
+		""" Returns a list of Subsystems """
+		args_copy = args.copy()
+		obj = []
 
 		for ss in args:
-			if(self._str_to_class(ss)):
-				obj = self._str_to_class(ss)(fname=args[ss])	
-				setattr(self, ss, obj)
+			if(Factory._str_to_class(ss)):
+				
+				# Delete the file name so we can pass all other args to the SubSystem
+				fname= args[ss]
+				del args_copy[ss]
+
+				obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
+
+		return obj
+
+	def _str_to_class(str):
+
+		# See if the object exists within the current module
+		try:
+			return getattr(sys.modules[__name__], str)
+		except:
+			pass
+
+		# see if the object exists within the running script
+		try:
+			sys.path.append(os.getcwd()) # append running script path to sys
+			user_mod = __import__(sys.argv[0].split('.py')[0])
+			obj = getattr(user_mod, str)
+			setattr(sys.modules[__name__], obj.__name__, obj)
+			return obj
+		except:
+			return None
+
+	factory = staticmethod(factory)
+	_str_to_class = staticmethod(_str_to_class)
+
+
+class System(object):
+	"""A System contains all the information describing a DEM system.
+	A system always requires at least one trajectory file to read. A trajectory is a (time) 
+	series corresponding to the coordinates of all particles/meshes/objects in the system. 
+	System handles the time frame and controls i/o operations. It contains one or more SubSystem
+	derivatives (e.g. 'Paticles', 'Mesh') which store all the particle and mesh attributes 
+	read from the trajectory file (variables such as positions, momenta, angular velocities, 
+		forces, stresses, radii, etc.).
+
+	@Particles: filename (or list of filenames) for the particle trajectory
+	@Mesh: filename (or list of filenames) for the mesh trajectory
+	@[units](si): unit system can be either 'si' or 'micro'
+	"""
+
+	def __init__(self, **args):
+
+		self.frame = 0
+		objs = Factory.factory(**args)
+
+		for ss, obj in objs:
+			setattr(self, ss, obj)
+
+		if 'units' in args:
+			self.units(args['units'])
 
 	def __iter__(self):
 		self.frame = -1
@@ -958,23 +1055,9 @@ class SystemFactory(object):
 		self.frame += 1
 		timestep = self.frame
 
-		self.frame = 0
-
-		if self._fname:
-			try:
-				self._readFile()
-			except:
-				self.frame -=1
-				print('End of trajectory file reached.')
-				raise StopIteration
-
-		if self._mfname:
-			try:
-				self._mesh = self._mfname[self.frame]
-			except:
-				self.frame -=1
-				print('End of trajectory file reached.')
-				raise StopIteration
+		for ss in self.__dict__:
+			if hasattr(self.__dict__[ss], '_readFile'):
+				self.__dict__[ss]._readFile()
 
 		self._updateSystem()
 
@@ -992,12 +1075,6 @@ class SystemFactory(object):
 	@property
 	def system(self):
 		return self
-
-	def _str_to_class(self, str):
-		try:
-			return getattr(sys.modules[__name__], str)
-		except:
-			return None
 
 def numericalSort(value):
 	""" A sorting function by numerical numbers for glob.glob """

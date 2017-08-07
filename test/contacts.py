@@ -7,4 +7,6 @@ System.goto(-1)
 Neigh = Analyzer.Neighbors(System.Particles)
 overlaps, i, j = Neigh.overlaps
 
+print Neigh.filter()
+
 
