@@ -49,7 +49,7 @@ class Model(object):
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
-				self.params['SS']  += ({'material': Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
+				self.params['SS'] += ({'material':Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
 
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
@@ -115,6 +115,7 @@ class Model(object):
 			ss = self.params['SS'][0]
 
 			if 'material' in ss:
+				
 				ss['material'] = Materials.LIGGGHTS(**ss['material'])
 
 				for item in ss['material']:
@@ -142,6 +143,7 @@ class Model(object):
 						elif ss['material'][item][1] == 'peratomtypepair':
 							# assume the geometric mean suffices for estimating binary properties
 							for nss in range(self.params['nSS']):
+
 								prop = np.sqrt(float(ss['material'][item][2]) * float(self.params['SS'][nss]['material'][item][2]))
 								self.materials[item] =  self.materials[item] + (('{}').format(prop),)
 
