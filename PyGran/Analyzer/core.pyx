@@ -45,10 +45,6 @@ these properties """
 	def __init__(self, **args):
 
 		self._units = 'si'
-		self._singleFile = None
-		self._ftype = None
-		self._fp = None
-		self.frame = 0
 		self._fname = None
 
 		if type(self).__name__ in args:
@@ -71,7 +67,7 @@ these properties """
 				else:
 					raise RuntimeError('units must be supplied when creating SubSystem from a data dictionary.')
 				
-			else:
+			if 'fname' in args:
 				self._fname = args['fname']
 
 		# If data is already coped from Particles, do nothing
@@ -82,16 +78,23 @@ these properties """
 
 		self._index = -1 # used for for loops only
 
-		
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
 		and return as numpy arrays for numerical computations / manipulations"""
+
+		if type(self.data[key]) is np.ndarray:
+			self.data[key].flags.writeable = False
+		
 		return self.data[key]
 
 	def _constructAttributes(self, sel=None):
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
 
 		for key in self.data.keys():
+
+			if hasattr(self, key):
+				delattr(self, key)
+
 			if type(self.data[key]) == np.ndarray:
 
 				if sel is not None:
@@ -108,9 +111,20 @@ these properties """
 			# so we define either define metaget function and particularize it only later with a 
 			# lambda function, thus, permanently updating the SubSystem class, or update the attributes
 			# of this particular instance of SubSystem, which is the approach adopted here.
+
 			setattr(self, key, self._metaget(key))
+			#Factory.addprop(self, key, lambda x: self.data[key])
 
 		self.units(self._units)
+
+	def __setattr__(self, name, value):
+
+		if hasattr(self, name):
+			# Make sure variable is not internal
+			if not name.startswith('_'):
+				raise Exception("{} property is read-only".format(name))
+
+		self.__dict__[name] = value
 
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
@@ -291,6 +305,60 @@ these properties """
 		else:
 			raise StopIteration
 
+	def scale(self, value, attr=('x','y','z')):
+		""" Scales all ss elements by a float or int 'value'
+
+		@[attr]: attribute to scale (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+
+				if type(self.data[at]) is np.ndarray:
+					self.data[at].flags.writeable = True
+				
+				self.data[at] *= value
+
+				if type(self.data[at]) is np.ndarray:
+					self.data[at].flags.writeable = False
+			
+		self._constructAttributes()
+
+	def translate(self, value, attr=('x','y','z')):
+		""" Translates all ss elements by a float or int 'value'
+
+		@[attr]: attribute to translate (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+
+				if type(self.data[at]) is np.ndarray:
+					self.data[at].flags.writeable = True
+
+				self.data[at] += value
+
+				if type(self.data[at]) is np.ndarray:
+					self.data[at].flags.writeable = False
+				
+		self._constructAttributes()
+
+	def perturb(self, percent, attr=('x','y','z')):
+		""" Adds white noise to all ss elements by a certain 'percent'
+
+		@[attr]: attribute to perturb (positions by default)
+		"""
+		for at in attr:
+			if at in self.data:
+
+				if type(self.data[at]) is np.ndarray:
+					self.data[at].flags.writeable = True
+
+					self.data[at] += percent * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
+
+					self.data[at].flags.writeable = True
+
+				
+		self._constructAttributes()
+
 	def __len__(self):
 		""" Returns the number of elements (e.g. particles or nodes) in a SubSystem """
 		for key in self.data.keys():
@@ -398,7 +466,9 @@ class Mesh(SubSystem):
 				break
 
 	def _updateSystem(self):
-		self.__init__(self._mesh, self._units, self._vtk)
+		""" Class function for updating the state of a Mesh """
+		# Must make sure fname is passed in case we're looping over a trajectory
+		self.__init__(self._mesh, self._units, self._vtk, fname=self._fname)
 		self._constructAttributes()
 
 	def nCells(self):
@@ -407,34 +477,37 @@ class Mesh(SubSystem):
 	def nPoints(self):
 		return self._output.GetNumberOfPoints()
 
-	def _goto(self, frame):
+	def _goto(self, iframe, frame):
 
 		if self._fname:
 			if frame >= len(self._fname):
 				print 'Input frame exceeds max number of frames'
 			else:
-				if frame == self.frame:
+				if frame == iframe:
 					pass
 				else:
 					if frame == -1:
 						frame = len(self._fname) - 1
 
 					self._mesh = self._fname[frame]
-					self.frame = frame
 
-	def readFile(self):
+		return frame
+
+	def readFile(self, frame):
 		try:
-			self._mesh = self._fname[self.frame]
+			self._mesh = self._fname[frame]
 		except:
-			self.frame -=1
+			frame -=1
 			print('End of trajectory file reached.')
 			raise StopIteration
 		else:
-			self.frame += 1
+			frame += 1
 
-	def rewind(self):
+		return frame
+
+	def rewind(self, frame):
 		if self._fname:
-			self._mesh = self._fname[self.frame]
+			self._mesh = self._fname[frame]
 
 	def __del__(self):
 
@@ -457,29 +530,29 @@ class Particles(SubSystem):
 			# Python 3.X: just do super()
 			super(Particles, self).__init__(**args)
 
-			if self._fname:
-				self._ftype = self._fname.split('.')[-1]
+			if not hasattr(self, '_fp'): # Make sure a file is already not open
+				if self._fname:
+					self._ftype = self._fname.split('.')[-1]
 
-				if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
+					if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
 
-					if self._fname.split('.')[:-1][0].endswith('*'):
-						self._singleFile = False
-						self._files = sorted(glob.glob(self._fname), key=numericalSort)
-						self._fp = open(self._files[0], 'r')
+						if self._fname.split('.')[:-1][0].endswith('*'):
+							self._files = sorted(glob.glob(self._fname), key=numericalSort)
+							self._fp = open(self._files[0], 'r')
+						else:
+							self._fp = open(self._fname, 'r')
+
+						self._params = None
+
+						# Do some checking here on the traj extension to make sure
+						# it's supported
+						self._format = self._fname.split('.')[-1]
+
+						# Read 1st frame
+						self._readFile(0)
+						
 					else:
-						self._singleFile = True
-						self._fp = open(self._fname, 'r')
-
-					self._params = None
-
-					# Do some checking here on the traj extension to make sure
-					# it's supported
-					self._format = self._fname.split('.')[-1]
-
-					self._readFile()
-					
-				else:
-					raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+						raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
 			self._constructAttributes(sel)
 
@@ -487,10 +560,12 @@ class Particles(SubSystem):
 				self.data['natoms'] = len(self)
 
 	def _updateSystem(self):
+		""" Class function for updating the state of Particles """
+		# Must make sure fname is passed in case we're looping over a trajectory
 
 		# If we are updating (looping over traj) we wanna keep the id (ref) of the class constant 
 		# (soft copy)
-		self.__init__(sel=None, units=self._units, **self.data)
+		self.__init__(sel=None, units=self._units, fname=self._fname, **self.data)
 		self._constructAttributes()
 
 	def rog(self):
@@ -511,7 +586,7 @@ class Particles(SubSystem):
 
 		return np.sqrt(rog/N)
 
-	def computeRadius(self, N = 100):
+	def computeRadius(self, N=100):
 		""" Computes the maximum radius of an N-particle (spherical) system
 		by sorting the radial components and returning the average of the sqrt
 		of the radius of the first N max data points. 
@@ -607,7 +682,6 @@ class Particles(SubSystem):
 			rInner = edges[i]
 			g_average[i] = np.mean(g[:, i]) / (4.0 / 3.0 * np.pi * (rOuter**3 - rInner**3))
 
-		print numberDensity
 		return (g_average / numberDensity, radii, interior_indices)
 		# Number of particles in shell/total number of particles/volume of shell/number density
 		# shell volume = 4/3*pi(r_outer**3-r_inner**3)
@@ -702,39 +776,6 @@ class Particles(SubSystem):
 
 		return 0
 
-	def scale(self, value, attr=('x','y','z')):
-		""" Scales all particles by a float or int 'value'
-
-		@[attr]: attribute to scale (positions by default)
-		"""
-		for at in attr:
-			if at in self.data:
-				self.data[at] *= value
-			
-		self._constructAttributes()
-
-	def translate(self, value, attr=('x','y','z')):
-		""" Translates all particles by a float or int 'value'
-
-		@[attr]: attribute to translate (positions by default)
-		"""
-		for at in attr:
-			if at in self.data:
-				self.data[at] += value
-				
-		self._constructAttributes()
-
-	def perturb(self, percent, attr=('x','y','z')):
-		""" Adds white noise to all particles by a certain 'percent'
-
-		@[attr]: attribute to perturb (positions by default)
-		"""
-		for at in attr:
-			if at in self.data:
-				self.data[at] += percent * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
-				
-		self._constructAttributes()
-
 	def rewind(self):
 		
 		if self._fp:
@@ -746,14 +787,14 @@ class Particles(SubSystem):
 				self._fp = open(self._files[0])
 		
 
-	def _goto(self, frame):
+	def _goto(self, iframe, frame):
 		""" This function assumes we're reading a non-const N trajectory. 
 		"""
 
 		# find the right frame number
 		if self._singleFile:
 			# We must be reading a single particle trajectory file (i.e. not a mesh)
-			while self.frame < frame or frame == -1:
+			while frame < iframe or frame == -1:
 
 				line = self._fp.readline()
 
@@ -763,20 +804,21 @@ class Particles(SubSystem):
 					break
 
 				if line.find('TIMESTEP') >= 0:
-					self.frame += 1
+					frame += 1
 
 			# assert self.frame == frame else something's wrong
 			# or the user wants to go to the last frame
-			if self.frame == frame:
+			if iframe == frame:
 
-				timestep = int(self._fp.readline())
-				self.data['timestep'] = timestep
+				ts = int(self._fp.readline())
+				self.data['timestep'] = ts
+				self._constructAttributes()
+
 				self._readDumpFile()
-
 			else:
 				if frame == -1:
 					# this is very low and inefficient -- can't we move the file pointer backwards?
-					tmp = self.frame
+					tmp = frame
 					self.rewind()
 					self.goto(tmp)
 				else:
@@ -788,7 +830,7 @@ class Particles(SubSystem):
 				if frame >= len(self._files):
 					print 'Input frame exceeds max number of frames'
 				else:
-					if frame == self.frame:
+					if frame == iframe:
 						pass
 					else:
 						if frame == -1:
@@ -796,15 +838,15 @@ class Particles(SubSystem):
 
 						self._fp.close()
 						self._fp = open(self._files[frame], 'r')
-						self.frame = frame
+						frame = iframe
 						self._readDumpFile()
 
-		return self.frame
+		return frame
 
 	def _readDumpFile(self):
 		""" Reads a single dump file"""
 		count = 0
-		timestep = None
+		ts = None
 
 		while True:
 			line = self._fp.readline()
@@ -813,8 +855,8 @@ class Particles(SubSystem):
 				raise StopIteration
 			
 			if line.find('TIMESTEP') >= 0:
-				timestep = int(self._fp.readline())
-				self.data['timestep'] = timestep
+				ts = int(self._fp.readline())
+				self.data['timestep'] = ts
 
 			if line.find('NUMBER OF ATOMS') >= 0:
 				natoms = int(self._fp.readline())
@@ -851,7 +893,7 @@ class Particles(SubSystem):
 
 		count += self.data['natoms'] + 1
 
-		return timestep
+		return ts
 
 	def write(self, filename):
 		""" Write a single output file """
@@ -902,30 +944,48 @@ class Particles(SubSystem):
 				fp.write(('{} ' * nVars).format(*var))
 				fp.write('\n')
 
-	def _readFile(self):
+	def _readFile(self, frame):
 		""" Read a particle trajectory file """
 
+		# We are opening the traj file for the 1st time
+		if not hasattr(self, '_fp'):
+			self._fp = open(self._fname, 'r')
+
+		if not hasattr(self, '_singleFile'):
+			
+			if self._fname.split('.')[:-1][0].endswith('*'):
+				self._singleFile = False				
+			else:
+				self._singleFile = True
+							
 		try: 
 			if self._singleFile:
 				if self._ftype == 'dump':
-					timestep = self._readDumpFile()
+					ts = self._readDumpFile()
+					self.data['timestep'] = ts
+					self._constructAttributes()
+
 			else:
 				if self._ftype == 'dump':
 
-					if self.frame > len(self._files) - 1:
+					if frame > len(self._files) - 1:
 						raise StopIteration
 						
 					self._fp.close()
-					self._fname = self._files[self.frame]
+					frame += 1
+					self._fname = self._files[frame]
 					self._fp = open(self._fname, 'r')
-					timestep = self._readDumpFile()
+					ts = self._readDumpFile()
+					self._constructAttributes()
 
 		except:
-			self.frame -=1
+			frame -=1
 			print('End of trajectory file reached.')
 			raise StopIteration
 		else:
-			self.frame += 1
+			frame += 1
+
+		return frame
 
 class Factory(object):
 	"""A factory for system class. It creates subclasses of SubSystems. Its only two methods
@@ -970,7 +1030,21 @@ class Factory(object):
 		except:
 			return None
 
+
+	def addprop(inst, name, method):
+
+		cls = type(inst)
+
+		if not hasattr(cls, '__perinstance'):
+			cls = type(cls.__name__, (cls,), {})
+			cls.__perinstance = True
+			inst.__class__ = cls
+
+		setattr(cls, name, property(method))
+
 	factory = staticmethod(factory)
+	addprop = staticmethod(addprop)
+
 	_str_to_class = staticmethod(_str_to_class)
 
 
@@ -986,6 +1060,9 @@ class System(object):
 	@Particles: filename (or list of filenames) for the particle trajectory
 	@Mesh: filename (or list of filenames) for the mesh trajectory
 	@[units](si): unit system can be either 'si' or 'micro'
+
+	How time stepping works: when looping over System (traj file), the frame is controlled only by System 
+	through methods defined in a SubSystem sublass (read/write functions). 
 	"""
 
 	def __init__(self, **args):
@@ -1028,7 +1105,7 @@ class System(object):
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_goto'):
-				self.__dict__[ss]._goto(frame)
+				self.frame = self.__dict__[ss]._goto(frame, self.frame)
 
 		self._updateSystem()
 
@@ -1044,7 +1121,7 @@ class System(object):
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], 'rewind'):
-				self.__dict__[ss].rewind()
+				self.frame = self.__dict__[ss].rewind(self.frame)
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
@@ -1052,16 +1129,14 @@ class System(object):
 
 	def next(self):
 		""" This method updates the system attributes! """
-		self.frame += 1
-		timestep = self.frame
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_readFile'):
-				self.__dict__[ss]._readFile()
+				self.frame = self.__dict__[ss]._readFile(self.frame)
 
 		self._updateSystem()
 
-		return timestep
+		return self.frame
 
 	def _updateSystem(self):
 		""" Makes sure the system is aware of any update in its attributes caused by
