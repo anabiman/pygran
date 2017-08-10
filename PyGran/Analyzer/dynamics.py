@@ -19,6 +19,10 @@ Created on July 11, 2016
 # -------------------------------------------------------------------------
 
 
+class Temporal(object):
+	def __init__(self):
+		pass
+		
 def computeFlow(data, density, t0 = 0, N0 = 0, sel = None, dt = 1e-4):
 	"""
 	Computes flow rate: N/t for a selection *sel*

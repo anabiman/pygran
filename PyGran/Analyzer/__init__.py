@@ -22,5 +22,6 @@ Created on April 25, 2016
 # -------------------------------------------------------------------------
 
 from PyGran.Analyzer.core import *
-from PyGran.Analyzer.contacts import *
-from PyGran.Analyzer import xrct
+from PyGran.Analyzer import dynamics
+from PyGran.Analyzer import equilibrium
+from PyGran.Analyzer import imaging
