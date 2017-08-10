@@ -133,7 +133,6 @@ these properties """
 		cName = eval(type(self).__name__)
 
 		obj = cName(sel=sel, units=self._units, data=self.data)
-		obj._constructAttributes()
 
 		return obj
 
@@ -151,7 +150,7 @@ these properties """
 			else:
 				data[key] = data[key]
 
-		return eval(type(self).__name__)(None, self._units, **data)
+		return eval(type(self).__name__)(units=self._units, data=data)
 
 	def conversion(self, factors):
 		""" Convesion factors from S.I. to micro and vice versa """
@@ -555,9 +554,10 @@ class Particles(SubSystem):
 						raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
 			self._constructAttributes(sel)
-
-			if 'natoms' in self.data:
-				self.data['natoms'] = len(self)
+			self.data['natoms'] = len(self)
+			
+			# Make sure natoms is updated ~ DUH
+			self._constructAttributes()
 
 	def _updateSystem(self):
 		""" Class function for updating the state of Particles """
@@ -794,13 +794,13 @@ class Particles(SubSystem):
 		# find the right frame number
 		if self._singleFile:
 			# We must be reading a single particle trajectory file (i.e. not a mesh)
-			while frame < iframe or frame == -1:
+			while frame < iframe or iframe == -1:
 
 				line = self._fp.readline()
 
-				if not line and frame >= 0:
+				if not line and iframe >= 0:
 					raise StopIteration('End of file reached.')
-				elif not line and frame == -1:
+				elif not line and iframe == -1:
 					break
 
 				if line.find('TIMESTEP') >= 0:
@@ -816,28 +816,25 @@ class Particles(SubSystem):
 
 				self._readDumpFile()
 			else:
-				if frame == -1:
-					# this is very low and inefficient -- can't we move the file pointer backwards?
-					tmp = frame
-					self.rewind()
-					self.goto(tmp)
+				if iframe == -1:
+					return frame
 				else:
 					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
 
 		else: # no need to find the input frame, just select the right file if available
 			
 			if self._fp:
-				if frame >= len(self._files):
+				if iframe >= len(self._files):
 					print 'Input frame exceeds max number of frames'
 				else:
 					if frame == iframe:
 						pass
 					else:
-						if frame == -1:
-							frame = len(self._files) - 1
+						if iframe == -1:
+							iframe = len(self._files) - 1
 
 						self._fp.close()
-						self._fp = open(self._files[frame], 'r')
+						self._fp = open(self._files[iframe], 'r')
 						frame = iframe
 						self._readDumpFile()
 
