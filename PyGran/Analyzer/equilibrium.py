@@ -45,6 +45,8 @@ class Neighbors(object):
 		if not cutoff:
 			cutoff = 2.0 * Particles.radius.max()
 
+		self._neigh = self._tree.query_ball_point(self._coords, cutoff)
+
 		self._pairs = self._tree.query_pairs(cutoff)
 		self._distances = numpy.zeros(len(self._pairs))
 		self._overlaps = numpy.zeros((len(self._pairs),3), dtype=object)  # Can we use mixed dtypes for improved mem allocation?
@@ -78,6 +80,11 @@ class Neighbors(object):
 	@property
 	def pairs(self):
 	    return self._pairs
+
+	@property
+	def coon(self):
+		""" Returns the coordination number per particle """
+		return [len(cn) for cn in self._neigh]
 
 	@property
 	def overlaps(self):
@@ -303,7 +310,6 @@ class Neighbors(object):
 		""" Find all points within distance r of point(s) coords.
 		TODO: Support walls aligned arbitrarily in space """
 
-		indices =  numpy.arange(self._Particles.natoms) #self._tree.query_ball_point(coords, r)
 		#indices = [item for i in indices for item in i]
 		indices = list(numpy.unique(indices))
 

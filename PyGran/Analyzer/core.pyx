@@ -504,9 +504,9 @@ class Mesh(SubSystem):
 
 		return frame
 
-	def rewind(self, frame):
+	def rewind(self):
 		if self._fname:
-			self._mesh = self._fname[frame]
+			self._mesh = self._fname[0]
 
 	def __del__(self):
 
@@ -625,13 +625,18 @@ class Particles(SubSystem):
 	        reference_indices   indices of reference particles
 		"""
 	    
+		if not (self.natoms > 0):
+			raise RuntimeError('No Particles found.')
+
 		x, y, z = self.x, self.y, self.z
 		
 		# center positions around 0
 		if center:
-			x -= x.mean()
-			y -= y.mean()
-			z -= z.mean()
+			self.translate(-x.mean(), 'x')
+			self.translate(-y.mean(), 'y')
+			self.translate(-z.mean(), 'z')
+
+		print x.max(), y.max(), z.max()
 
 		S = min(x.max(), y.max(), z.max())
 
@@ -814,11 +819,17 @@ class Particles(SubSystem):
 				self.data['timestep'] = ts
 				self._constructAttributes()
 
-				self._readDumpFile()
+				self._readFile(frame)
+
+			elif iframe == -1:
+				tmp = frame
+				frame = 0
+
+				del self._fp
+				self._readFile(0)
+				return self._goto(tmp, 1)
+
 			else:
-				if iframe == -1:
-					return frame
-				else:
 					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
 
 		else: # no need to find the input frame, just select the right file if available
@@ -1096,7 +1107,7 @@ class System(object):
 		if frame == self.frame:
 			return 0
 
-		# rewind if necessary (better than reading file backwads?)
+		# rewind if necessary (better than reading file backwards?)
 		if frame < self.frame and frame >= 0:
 			self.rewind()
 
@@ -1118,7 +1129,7 @@ class System(object):
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], 'rewind'):
-				self.frame = self.__dict__[ss].rewind(self.frame)
+				self.frame = self.__dict__[ss].rewind()
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
