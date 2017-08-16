@@ -17,13 +17,20 @@ Created on July 11, 2016
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # -------------------------------------------------------------------------
-
+import numpy
 
 class Temporal(object):
-	def __init__(self, Particles):
-		self.Particles = Particles
+	def __init__(self, System):
+		self.System = System
+
+	def timeSeries(self, att):
+		out = []
+		for ts in self.System:
+			out.append(self.System.Particles.__getattribute__(att))
+
+		return numpy.array(out)
 		
-	def computeFlow(self, density, t0 = 0, N0 = 0, dt = 1e-4):
+	def computeFlow(self, density, dt):
 		"""
 		Computes flow rate: N/t for a selection *sel*
 		@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
@@ -31,8 +38,18 @@ class Temporal(object):
 		TODO: Get this working for a particle distribution
 		"""
 
-		if N0 == None or t0 == None:
-			return 0
-		else:
-			mass = density * 4.0 / 3.0 * np.pi * (len(sel) - N0) * np.mean(self.Particles.radius)**3.0
-			return - mass / ((self.Particles.timestep - t0) * dt)
+		natoms = self.timeSeries('natoms')
+		time = self.timeSeries('timestep') * dt
+
+		N0 = natoms[0]
+		t0 = time[0]
+		mass = [None for i in range(len(natoms))]
+
+		count = 0
+
+		for ts in self.System:
+			
+			mass[count] = density * 4.0 / 3.0 * np.pi * (natoms - N0) * (self.Particles.radius**3.0)
+			count += 1
+			
+		return - numpy.array(mass) / (time - t0)
