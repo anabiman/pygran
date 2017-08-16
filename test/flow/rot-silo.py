@@ -7,7 +7,7 @@ Created on April 22, 2017
 # -*- coding: utf8 -*-
 
 from PyGran import Simulator
-from PyGran.Materials import glass, stericAcid
+from PyGran.Materials import glass, stearicAcid
 
 pDict = {
 
@@ -20,7 +20,7 @@ pDict = {
 		'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
 		# Define component(s)
-		'SS': ({'insert': 'by_pack', 'material': stericAcid, 'id': 1, 'natoms': 1000, 'freq': 'once', 'radius': ('gaussian number', 5e-5, 5e-6), 'vol_lim': 1e-16}, 
+		'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'id': 1, 'natoms': 1000, 'freq': 'once', 'radius': ('gaussian number', 5e-5, 5e-6), 'vol_lim': 1e-16}, 
 		      ),
 
 		# Setup I/O params
@@ -59,4 +59,9 @@ insert = sim.insert('cubic', 1, *('block', -5e-4, 5e-4, -5e-4, 5e-4, 2e-3, 3e-3)
 sim.run(pDict['stages']['insertion'], pDict['dt'])
 sim.remove(insert)
 
+# Run equilibration run
+sim.run(pDict['stages']['run'], pDict['dt'])
+
+# Remove stopper and monitor flow
+sim.remove('stopper')
 sim.run(pDict['stages']['run'], pDict['dt'])
