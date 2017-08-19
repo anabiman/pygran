@@ -20,7 +20,7 @@ pDict = {
 		'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
 		# Define component(s)
-		'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'id': 1, 'natoms': 1000, 'freq': 'once', 'radius': ('gaussian number', 5e-5, 5e-6), 'vol_lim': 1e-16}, 
+		'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'natoms': 1000, 'freq': 'once', 'radius': ('gaussian number', 5e-5, 5e-6), 'vol_lim': 1e-16}, 
 		      ),
 
 		# Setup I/O params

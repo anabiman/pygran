@@ -9,15 +9,6 @@ Created on July 9, 2016
 from PyGran import Simulator, Analyzer, Visualizer
 from PyGran.Materials import glass
 
-realGlass = {
-	'youngsModulus': ('youngsModulus', 'peratomtype', '6.3e6'),
-	'poissonsRatio': ('poissonsRatio', 'peratomtype', '0.24'),
-	'coefficientFriction': ('coefficientFriction', 'peratomtypepair', '0.5'),
-	'coefficientRollingFriction': ('coefficientRollingFriction', 'peratomtypepair', '5e-1'),
-	'cohesionEnergyDensity': ('cohesionEnergyDensity', 'peratomtypepair', '0.1'),
-	'yieldPress': ('yieldPress', 'peratomtype', '6.2e4'),
-	}
-
 # Create a dictionary of physical parameters
 pDict = {
 
@@ -40,9 +31,6 @@ pDict = {
 
 		'dt': 2e-6,
 
-		# Material properties
-		'materials': glass,
-
 		# Apply gravitional force in the negative direction along the z-axis
 		'gravity': (9.81, 0, 0, -1),
 
@@ -51,12 +39,12 @@ pDict = {
 
 		# Meshes
 		 'mesh': {
-			'hopper': {'file': 'square.stl', 'mtype': 'mesh/surface/stress/servo', 'import': True, 'material': glass, \
-			'args': ('scale 1e-3', 'com 0 0 0', 'ctrlPV force',  'axis 0 0 -1', 'target_val 1.76', 'vel_max 20.0')},
+			'hopper': {'file': 'square.stl', 'mtype': 'mesh/surface/stress', 'import': True, 'material': glass, \
+			'args': ('scale', '1e-3')},
 		      },
 	  }
 
-if __name__ == '__init__':
+if __name__ == '__main__':
 
 	# Instantiate a class based on the selected model
 	pDict['model'] = pDict['model'](**pDict)
@@ -69,8 +57,6 @@ if __name__ == '__init__':
 
 	high = 0.5e-3
 	scale = 10.0
-
-	sim.command('dump meshDump all mesh/vtk 100 traj/mesh*.vtk id')
 
 	for i in range(2):
 

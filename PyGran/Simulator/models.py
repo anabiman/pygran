@@ -43,13 +43,19 @@ class Model(object):
 		if 'SS' in self.params:
 			self.params['nSS'] += len(self.params['SS'])
 
+		idc = 1
 
+		for ss in self.params['SS']:
+			ss['id'] = idc
+			idc += 1
 
 		# Treat any mesh as an additional component
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
 				self.params['SS'] += ({'material':Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
+				self.params['mesh'][mesh]['id'] = idc
+				idc += 1
 
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
@@ -134,9 +140,12 @@ class Model(object):
 						# This is for running DEM sim
 						ss[item] = ss['material'][item]
 
+
 			for item in self.materials:
 				if type(ss['material'][item]) is not float:
+
 					for ss in self.params['SS']:
+
 						if ss['material'][item][1] == 'peratomtype':
 							self.materials[item] =  self.materials[item] + (('{}').format(ss['material'][item][2]),)
 

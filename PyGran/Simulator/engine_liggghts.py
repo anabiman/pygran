@@ -454,12 +454,11 @@ class DEMPy:
   def moveMesh(self, name, *args):
     self.lmp.command('fix moveMesh all move/mesh mesh {} '.format(name) + ('{} ' * len(args)).format(*args))
 
-  def importMesh(self, name, file, mtype, *args):
+  def importMesh(self, name, file, mtype, material, *args):
     """
-    TODO: fix material type for mesh
+    Imports a specific surface mesh requested by the user
     """
     fname = self.path + '/' + file
-    material = 2
     
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
