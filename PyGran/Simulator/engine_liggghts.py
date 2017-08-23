@@ -465,7 +465,7 @@ class DEMPy:
 
     self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, fname, material) + ('{} ' * len(args)).format(*args))
 
-  def setupWalls(self, name, wtype, meshName = None, plane = None, peq = None):
+  def setupWalls(self, name, wtype, id, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -495,7 +495,7 @@ class DEMPy:
       self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes {} meshes'.format(wtype, nMeshes) \
         + (' {} ' * len(meshName)).format(*meshName)  + ('{} ' * len(modelExtra)).format(*modelExtra))
     elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type 1 {} {}'.format(wtype, plane, peq))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type {} {} {}'.format(wtype, id, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
 

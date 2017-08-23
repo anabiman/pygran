@@ -492,12 +492,12 @@ class Mesh(SubSystem):
 
 		return frame
 
-	def readFile(self, frame):
+	def _readFile(self, frame):
 		try:
 			self._mesh = self._fname[frame]
 		except:
 			frame -=1
-			print('End of trajectory file reached.')
+			self.rewind()
 			raise StopIteration
 		else:
 			frame += 1
@@ -988,7 +988,7 @@ class Particles(SubSystem):
 
 		except:
 			frame -=1
-			print('End of trajectory file reached.')
+			self.rewind()
 			raise StopIteration
 		else:
 			frame += 1

@@ -35,21 +35,23 @@ class Temporal(object):
 		Computes flow rate: N/t for a selection *sel*
 		@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
 
-		TODO: Get this working for a particle distribution
+		TODO: Make it more efficient
 		"""
 
-		natoms = self.timeSeries('natoms')
-		time = self.timeSeries('timestep') * dt
+		self.System.rewind()
 
-		N0 = natoms[0]
-		t0 = time[0]
-		mass = [None for i in range(len(natoms))]
+		N0 = self.System.Particles.natoms
+		t0 = self.System.Particles.timestep
+
+		mass = []
 
 		count = 0
 
 		for ts in self.System:
 			
-			mass[count] = density * 4.0 / 3.0 * np.pi * (natoms - N0) * (self.Particles.radius**3.0)
-			count += 1
-			
-		return - numpy.array(mass) / (time - t0)
+			if self.System.Particles.natoms:
+
+				time = (self.System.Particles.timestep - t0) * dt
+				mass.append( numpy.sum(- density * 4.0 / 3.0 * numpy.pi * (self.System.Particles.natoms - N0) * (self.System.Particles.radius**3.0) / time) )
+				
+		return mass

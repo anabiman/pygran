@@ -45,17 +45,22 @@ class Model(object):
 
 		idc = 1
 
-		for ss in self.params['SS']:
-			ss['id'] = idc
-			idc += 1
+		if 'SS' in self.params:
+			for ss in self.params['SS']:
+
+				if 'id' not in ss:
+					ss['id'] = idc
+					idc += 1
 
 		# Treat any mesh as an additional component
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
 				self.params['SS'] += ({'material':Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
-				self.params['mesh'][mesh]['id'] = idc
-				idc += 1
+
+				if 'id' not in self.params['mesh'][mesh]:
+					self.params['mesh'][mesh]['id'] = idc
+					idc += 1
 
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
@@ -118,11 +123,13 @@ class Model(object):
 
 		# Expand material properties based on number of components
 		if 'SS' in self.params:
+			for ss in self.params['SS']:
+				ss['material'] = Materials.LIGGGHTS(**ss['material'])
+
+			# Use 1st component to find all material params
 			ss = self.params['SS'][0]
 
 			if 'material' in ss:
-				
-				ss['material'] = Materials.LIGGGHTS(**ss['material'])
 
 				for item in ss['material']:
 					if type(ss['material'][item]) is not float:
