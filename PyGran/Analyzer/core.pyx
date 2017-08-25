@@ -50,6 +50,10 @@ these properties """
 		if type(self).__name__ in args:
 
 			# copy constructor
+			# delete data if it exists
+			for key in self.__dict__.keys():
+				delattr(self, key)
+
 			self.data = args[type(self).__name__].data
 			self._units = args[type(self).__name__].units
 
@@ -530,28 +534,29 @@ class Particles(SubSystem):
 			super(Particles, self).__init__(**args)
 
 			if not hasattr(self, '_fp'): # Make sure a file is already not open
-				if self._fname:
-					self._ftype = self._fname.split('.')[-1]
+				if hasattr(self, '_fname'):
+					if self._fname:
+						self._ftype = self._fname.split('.')[-1]
 
-					if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
+						if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
 
-						if self._fname.split('.')[:-1][0].endswith('*'):
-							self._files = sorted(glob.glob(self._fname), key=numericalSort)
-							self._fp = open(self._files[0], 'r')
+							if self._fname.split('.')[:-1][0].endswith('*'):
+								self._files = sorted(glob.glob(self._fname), key=numericalSort)
+								self._fp = open(self._files[0], 'r')
+							else:
+								self._fp = open(self._fname, 'r')
+
+							self._params = None
+
+							# Do some checking here on the traj extension to make sure
+							# it's supported
+							self._format = self._fname.split('.')[-1]
+
+							# Read 1st frame
+							self._readFile(0)
+							
 						else:
-							self._fp = open(self._fname, 'r')
-
-						self._params = None
-
-						# Do some checking here on the traj extension to make sure
-						# it's supported
-						self._format = self._fname.split('.')[-1]
-
-						# Read 1st frame
-						self._readFile(0)
-						
-					else:
-						raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+							raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
 			self._constructAttributes(sel)
 			self.data['natoms'] = len(self)
