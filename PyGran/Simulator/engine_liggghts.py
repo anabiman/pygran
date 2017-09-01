@@ -446,8 +446,7 @@ class DEMPy:
         sys.exit()
 
     # check timestep
-    self.lmp.command('fix ts_check all check/timestep/gran 1000 0.25 0.25')
-
+    self.lmp.command('fix ts_check all check/timestep/gran 1000 0.5 0.5')
 
     self.integrate(nsteps, dt)
 

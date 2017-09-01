@@ -4,8 +4,8 @@ from PyGran import Analyzer
 import collections
 
 data = collections.OrderedDict()
-natoms = 30
-radius = 25.0e-6
+natoms = 200
+radius = 1
 
 data['natoms'] = natoms * natoms * natoms
 data['id'] = arange(data['natoms'])
@@ -28,4 +28,6 @@ data['box'] = ([data['x'].min(), data['x'].max()], [data['y'].min(), data['y'].m
 
 system = Analyzer.System()
 system.data = data
-system.write('hpc.dump')
+system.Particles = Analyzer.Particles(data=data, units='micro')
+system.Particles.write('hpc.dump')
+print system.Particles.density(1)
