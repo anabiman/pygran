@@ -102,11 +102,10 @@ class Neighbors(object):
 		if percent:
 			indices = numpy.array(self._overlaps[:,1:], 'int')
 			ri, rj = self._Particles.radius[indices[:,0]], self._Particles.radius[indices[:,1]]
-			radii = ri * rj / (ri + rj)
+			radii = (ri + rj) * 0.5
 
 			indices = numpy.unique(numpy.array(indices[self._overlaps[:,0] <= percent * radii, 1:]))
 
-			print indices
 			return self._Particles[indices]
 		
 		count = numpy.zeros(len(self._Particles))

@@ -198,7 +198,7 @@ class DEM:
       for mesh in self.pargs['mesh'].keys():
 
           if self.pargs['mesh'][mesh]['import']:
-            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], *self.pargs['mesh'][mesh]['args'])  
+            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
             wall = True
             
       if wall:
@@ -213,7 +213,7 @@ class DEM:
         self.dem.importMesh(name, file, mtype, *args)
         break
 
-  def setupWalls(self, name, wtype, meshName = None, plane = None, peq = None):
+  def setupWalls(self, name, wtype, id=None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -223,7 +223,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupWalls(name, wtype, meshName, plane, peq)
+        self.dem.setupWalls(name, wtype, id, plane, peq)
         break
 
   def printSetup(self):
