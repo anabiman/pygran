@@ -4,7 +4,7 @@ Created on July 10, 2016
 '''
 
 # !/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 # -------------------------------------------------------------------------
 #
 #   Python module for creating the basic DEM (Granular) object for analysis
@@ -70,25 +70,25 @@ these properties """
 					self._units = args['units']
 				else:
 					raise RuntimeError('units must be supplied when creating SubSystem from a data dictionary.')
-				
+
 			if 'fname' in args:
 				self._fname = args['fname']
 
 		# If data is already coped from Particles, do nothing
 		if not hasattr(self, 'data'):
 			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
-			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size). 
+			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).
 			# ONLY arrays can be slices based on user selection.
 
 		self._index = -1 # used for for loops only
 
 	def _metaget(self, key):
-		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing) 
+		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing)
 		and return as numpy arrays for numerical computations / manipulations"""
 
 		if type(self.data[key]) is np.ndarray:
 			self.data[key].flags.writeable = False
-		
+
 		return self.data[key]
 
 	def _constructAttributes(self, sel=None):
@@ -103,7 +103,7 @@ these properties """
 
 				if sel is not None:
 					self.data[key] = self.data[key][sel]
-					
+
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
 		# so that each dynamically created (property) function would have its own unique
@@ -111,8 +111,8 @@ these properties """
 		# all property functions return the same (last) key variable.
 
 
-			# We cannot know the information for any property function until that property is created, 
-			# so we define either define metaget function and particularize it only later with a 
+			# We cannot know the information for any property function until that property is created,
+			# so we define either define metaget function and particularize it only later with a
 			# lambda function, thus, permanently updating the SubSystem class, or update the attributes
 			# of this particular instance of SubSystem, which is the approach adopted here.
 
@@ -132,7 +132,7 @@ these properties """
 
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
-		
+
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
@@ -141,8 +141,8 @@ these properties """
 		return obj
 
 	def __and__(self, ):
-		""" Boolean logical operator on particles """ 
-				
+		""" Boolean logical operator on particles """
+
 
 	def copy(self):
 		""" Returns a hard copy of the SubSystem """
@@ -215,7 +215,7 @@ these properties """
 					if key in data:
 						if type(datac[key]) is np.array:
 							data[key] = data[key].copy()
-							
+
 						data[key] += datac[key]
 					else:
 						if type(datac[key]) is np.array:
@@ -277,7 +277,7 @@ these properties """
 		return self
 
 	def __or__(self, att):
-		""" Returns a (temporary) new subsystem with only a single attribute. the user can of course make this not *temporary* but 
+		""" Returns a (temporary) new subsystem with only a single attribute. the user can of course make this not *temporary* but
 		that is not what should be used for. In principle, the modulus is a reductionist operator that serves as a temporary metastate
 		for binary operations. """
 
@@ -318,12 +318,12 @@ these properties """
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = True
-				
+
 				self.data[at] *= value
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = False
-			
+
 		self._constructAttributes()
 
 	def translate(self, value, attr=('x','y','z')):
@@ -341,7 +341,7 @@ these properties """
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = False
-				
+
 		self._constructAttributes()
 
 	def perturb(self, percent, attr=('x','y','z')):
@@ -359,7 +359,7 @@ these properties """
 
 					self.data[at].flags.writeable = True
 
-				
+
 		self._constructAttributes()
 
 	def __len__(self):
@@ -368,7 +368,8 @@ these properties """
 			if type(self.data[key]) == np.ndarray:
 				return len(self.data[key])
 
-		return -1
+		# Assume we're dealing with single particle object
+		return 1
 
 	def __del__(self):
 		pass
@@ -554,13 +555,13 @@ class Particles(SubSystem):
 
 							# Read 1st frame
 							self._readFile(0)
-							
+
 						else:
 							raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
 			self._constructAttributes(sel)
 			self.data['natoms'] = len(self)
-			
+
 			# Make sure natoms is updated ~ DUH
 			self._constructAttributes()
 
@@ -568,7 +569,7 @@ class Particles(SubSystem):
 		""" Class function for updating the state of Particles """
 		# Must make sure fname is passed in case we're looping over a trajectory
 
-		# If we are updating (looping over traj) we wanna keep the id (ref) of the class constant 
+		# If we are updating (looping over traj) we wanna keep the id (ref) of the class constant
 		# (soft copy)
 		self.__init__(sel=None, units=self._units, fname=self._fname, **self.data)
 		self._constructAttributes()
@@ -593,14 +594,14 @@ class Particles(SubSystem):
 
 	def com(self):
 		""" Returns center of mass """
-		vol = 4.0/3.0 * np.pi * self.radius**3 
+		vol = 4.0/3.0 * np.pi * self.radius**3
 
 		return np.array([np.dot(self.x, vol), np.dot(self.y, vol), np.dot(self.z, vol)]) / vol.sum()
 
 	def computeRadius(self, N=100):
 		""" Computes the maximum radius of an N-particle (spherical) system
 		by sorting the radial components and returning the average of the sqrt
-		of the radius of the first N max data points. 
+		of the radius of the first N max data points.
 		"""
 		positions = np.array([self.x, self.y, self.z]).T
 		x,y,z = self.x, self.y, self.z
@@ -635,12 +636,12 @@ class Particles(SubSystem):
 	                        spherical shells used to compute g(r)
 	        reference_indices   indices of reference particles
 		"""
-	    
+
 		if not (self.natoms > 0):
 			raise RuntimeError('No Particles found.')
 
 		x, y, z = self.x, self.y, self.z
-		
+
 		# center positions around 0
 		if center:
 			self.translate(-x.mean(), 'x')
@@ -670,7 +671,7 @@ class Particles(SubSystem):
 		bools5 = z > rMax - S
 		bools6 = z < (S - rMax)
 
-		interior_indices, = np.where(bools1 * bools2 * bools3 * bools4 * bools5 * bools6)    
+		interior_indices, = np.where(bools1 * bools2 * bools3 * bools4 * bools5 * bools6)
 		num_interior_particles = len(interior_indices)
 
 		if num_interior_particles < 1:
@@ -712,11 +713,11 @@ class Particles(SubSystem):
 		z_max = z.max() - z.min() - self.radius.mean()
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
-		
+
 	def density(self, bdensity, shape = 'box', bounds=None):
 		"""
-		Computes the bulk density for a selection of particles from their *true* density. 
-		The volume is determined approximately by constructing a box/cylinder/cone 
+		Computes the bulk density for a selection of particles from their *true* density.
+		The volume is determined approximately by constructing a box/cylinder/cone
 		embedding the particles. Particles are assumed to be spherical in shape.
 		"""
 
@@ -733,7 +734,7 @@ class Particles(SubSystem):
 	def densityLocal(self, bdensity, dr, axis):
 		"""" Computes a localized density at a series of discretized regions of thickness 'dr'
 		along an axis specified by the user """
-		
+
 		if axis == 'x':
 			r = self.x
 		elif axis == 'y':
@@ -793,7 +794,7 @@ class Particles(SubSystem):
 		return 0
 
 	def rewind(self):
-		
+
 		if self._fp:
 			self._fp.close()
 
@@ -801,10 +802,10 @@ class Particles(SubSystem):
 				self._fp = open(self._fname)
 			else:
 				self._fp = open(self._files[0])
-		
+
 
 	def _goto(self, iframe, frame):
-		""" This function assumes we're reading a non-const N trajectory. 
+		""" This function assumes we're reading a non-const N trajectory.
 		"""
 
 		# find the right frame number
@@ -844,7 +845,7 @@ class Particles(SubSystem):
 					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
 
 		else: # no need to find the input frame, just select the right file if available
-			
+
 			if self._fp:
 				if iframe >= len(self._files):
 					print 'Input frame exceeds max number of frames'
@@ -872,7 +873,7 @@ class Particles(SubSystem):
 
 			if not line:
 				raise StopIteration
-			
+
 			if line.find('TIMESTEP') >= 0:
 				ts = int(self._fp.readline())
 				self.data['timestep'] = ts
@@ -956,7 +957,7 @@ class Particles(SubSystem):
 					if key != 'timestep' and key != 'natoms' and key != 'box':
 						if key == 'id':
 							var += (int(self.data[key][i]),)
-						else:	
+						else:
 							var += (self.data[key][i],)
 
 				nVars = len(var)
@@ -971,13 +972,13 @@ class Particles(SubSystem):
 			self._fp = open(self._fname, 'r')
 
 		if not hasattr(self, '_singleFile'):
-			
+
 			if self._fname.split('.')[:-1][0].endswith('*'):
-				self._singleFile = False				
+				self._singleFile = False
 			else:
 				self._singleFile = True
-							
-		try: 
+
+		try:
 			if self._singleFile:
 				if self._ftype == 'dump':
 					ts = self._readDumpFile()
@@ -989,7 +990,7 @@ class Particles(SubSystem):
 
 					if frame > len(self._files) - 1:
 						raise StopIteration
-						
+
 					self._fp.close()
 					frame += 1
 					self._fname = self._files[frame]
@@ -1022,7 +1023,7 @@ class Factory(object):
 
 		for ss in args:
 			if(Factory._str_to_class(ss)):
-				
+
 				# Delete the file name so we can pass all other args to the SubSystem
 				fname= args[ss]
 				del args_copy[ss]
@@ -1069,19 +1070,19 @@ class Factory(object):
 
 class System(object):
 	"""A System contains all the information describing a DEM system.
-	A system always requires at least one trajectory file to read. A trajectory is a (time) 
-	series corresponding to the coordinates of all particles/meshes/objects in the system. 
+	A system always requires at least one trajectory file to read. A trajectory is a (time)
+	series corresponding to the coordinates of all particles/meshes/objects in the system.
 	System handles the time frame and controls i/o operations. It contains one or more SubSystem
-	derivatives (e.g. 'Paticles', 'Mesh') which store all the particle and mesh attributes 
-	read from the trajectory file (variables such as positions, momenta, angular velocities, 
+	derivatives (e.g. 'Paticles', 'Mesh') which store all the particle and mesh attributes
+	read from the trajectory file (variables such as positions, momenta, angular velocities,
 		forces, stresses, radii, etc.).
 
 	@Particles: filename (or list of filenames) for the particle trajectory
 	@Mesh: filename (or list of filenames) for the mesh trajectory
 	@[units](si): unit system can be either 'si' or 'micro'
 
-	How time stepping works: when looping over System (traj file), the frame is controlled only by System 
-	through methods defined in a SubSystem sublass (read/write functions). 
+	How time stepping works: when looping over System (traj file), the frame is controlled only by System
+	through methods defined in a SubSystem sublass (read/write functions).
 	"""
 
 	def __init__(self, **args):
@@ -1177,7 +1178,7 @@ def numericalSort(value):
 	parts[1::2] = map(int, parts[1::2])
 	return parts
 
-def select(data, *region):	
+def select(data, *region):
 	"""
 	Create a selection of particles based on a subsystem defined by region
 	@ region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax). If undefined, all particles are considered.
