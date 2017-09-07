@@ -136,7 +136,7 @@ these properties """
 		# Get the type of the class (not necessarily SubSystem for derived classes)
 		cName = eval(type(self).__name__)
 
-		obj = cName(sel=sel, units=self._units, data=self.data)
+		obj = cName(sel=sel, units=self._units, data=self.data.copy())
 
 		return obj
 
@@ -590,6 +590,12 @@ class Particles(SubSystem):
 			rog += np.dot(pos,pos)
 
 		return np.sqrt(rog/N)
+
+	def com(self):
+		""" Returns center of mass """
+		vol = 4.0/3.0 * np.pi * self.radius**3 
+
+		return np.array([np.dot(self.x, vol), np.dot(self.y, vol), np.dot(self.z, vol)]) / vol.sum()
 
 	def computeRadius(self, N=100):
 		""" Computes the maximum radius of an N-particle (spherical) system
@@ -1090,7 +1096,6 @@ class System(object):
 			self.units(args['units'])
 
 	def __iter__(self):
-		self.frame = -1
 		return self
 
 	def units(self, units):
