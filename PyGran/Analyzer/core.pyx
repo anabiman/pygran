@@ -713,18 +713,26 @@ class Particles(SubSystem):
 		z_max = z.max() - z.min() - self.radius.mean()
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
+<<<<<<< HEAD
+		
+	def density(self, bdensity, shape = 'box'):
+=======
 
 	def density(self, bdensity, shape = 'box', bounds=None):
+>>>>>>> 5daa6540bc7db9fa45c873d06793e74a1c7ae505
 		"""
 		Computes the bulk density for a selection of particles from their *true* density.
 		The volume is determined approximately by constructing a box/cylinder/cone
 		embedding the particles. Particles are assumed to be spherical in shape.
+
+		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z
+
 		"""
 
 		if(self.natoms > 0):
 
 			radius = self.radius
-			volume = self.volume(shape, bounds)
+			volume = self.volume(shape)
 			mass = np.sum(bdensity * 4.0 / 3.0 * np.pi * (radius**3.0))
 
 			return mass / volume
@@ -761,8 +769,9 @@ class Particles(SubSystem):
 
 		return thick, odensity
 
-	def volume(self, shape = 'box', bounds=None):
-		""" Computes the volume of a granular system based on a simple geometry """
+	def volume(self, shape = 'box'):
+		""" Computes the volume of a granular system based on a simple geometry 
+		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z"""
 
 		if(self.natoms > 0):
 

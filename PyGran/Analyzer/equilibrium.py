@@ -98,26 +98,25 @@ class Neighbors(object):
 		"""
 
 		percent /= 100.0
+		indices = []
+		count = 0
+
+		Particles = self._Particles
 
 		if percent:
-			indices = numpy.array(self._overlaps[:,1:], 'int')
-			ri, rj = self._Particles.radius[indices[:,0]], self._Particles.radius[indices[:,1]]
-			radii = (ri + rj) * 0.5
+			for pair in self._pairs:
+				i, j = pair
 
-			indices = numpy.unique(numpy.array(indices[self._overlaps[:,0] <= percent * radii, 1:]))
+				if ( (Particles.radius[i] + Particles.radius[j] - self._distances[count]) <= percent * 0.5 * (Particles.radius[i] + Particles.radius[j]) ):
+					indices.append(i)
+					indices.append(j)
+				
+				count = count + 1
 
-			return self._Particles[indices]
-		
-		count = numpy.zeros(len(self._Particles))
+		indices = numpy.unique(indices)
+		indices = numpy.array(indices, dtype='int64')
 
-		for ind in indices:
-			i,j = ind
-			count[i] += 1
-			count[j] += 1
-			
-		indices = numpy.where(count <= 1)[0]
-
-		return self._Particles[indices]
+		return Particles[indices]
 
 	def forceChain(self, axis = (0,2), alpha = numpy.pi/4, plot_stress=True, plot_parts=False, peters=True, threshold=1):
 		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
