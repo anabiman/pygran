@@ -56,7 +56,7 @@ class Model(object):
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
-				self.params['SS'] += ({'material':Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
+				self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
 
 				if 'id' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['id'] = idc
@@ -266,7 +266,7 @@ class Model(object):
 
 	def numericalForce(self, time, delta, radius):
 		""" Returns the force used for numerical solvers """
-		
+
 		Fn = self.normalForce(delta[0], radius)
 		Fd = self.dissForce(delta[0], delta[1], radius)
 
@@ -354,13 +354,13 @@ class SpringDashpot(Model):
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		
+
 		if radius is None:
 			if 'radius' in self.materials:
 				radius = self.materials['radius']
 			else:
 				raise ValueError('Input radius must be supplied.')
-		
+
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		kn = self.springStiff(radius)
@@ -373,13 +373,13 @@ class SpringDashpot(Model):
 		rest = self.materials['coefficientRestitution']
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		
+
 		if radius is None:
 			if 'radius' in self.materials:
 				radius = self.materials['radius']
 			else:
 				raise ValueError('Input radius must be supplied.')
-		
+
 		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 
 		if dt is None:
@@ -506,7 +506,7 @@ class HertzMindlin(Model):
 
 		return 2.0 * np.sqrt(5.0/6.0) * np.log(rest) / np.sqrt(np.log(rest)**2 + np.pi**2) * \
 					np.sqrt(mass * 2 * yEff * contRadius)
-		
+
 	def dissForce(self, delta, deltav, radius = None):
 		""" Returns the dissipative force """
 		return - self.dissCoef(delta, radius) * deltav
@@ -595,4 +595,3 @@ class Hysteresis(Model):
 		py = self.materials['yieldPress']
 
 		return 1.56 * np.sqrt(py**5 / (yEff**4 * density))
-
