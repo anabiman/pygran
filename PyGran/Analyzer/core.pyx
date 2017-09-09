@@ -713,13 +713,8 @@ class Particles(SubSystem):
 		z_max = z.max() - z.min() - self.radius.mean()
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
-<<<<<<< HEAD
 		
-	def density(self, bdensity, shape = 'box'):
-=======
-
 	def density(self, bdensity, shape = 'box', bounds=None):
->>>>>>> 5daa6540bc7db9fa45c873d06793e74a1c7ae505
 		"""
 		Computes the bulk density for a selection of particles from their *true* density.
 		The volume is determined approximately by constructing a box/cylinder/cone
