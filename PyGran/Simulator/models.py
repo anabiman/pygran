@@ -56,7 +56,7 @@ class Model(object):
 		if 'mesh' in self.params:
 			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
-				self.params['SS'] += ({'material':Materials.LIGGGHTS(**self.params['mesh'][mesh]['material'])},)
+				self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
 
 				if 'id' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['id'] = idc
