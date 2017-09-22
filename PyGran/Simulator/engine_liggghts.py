@@ -368,26 +368,26 @@ class DEMPy:
 
   def insert(self, name, species, *region):
     """
-    This function inserts particles, and assigns particle velocities if requested by the user.
+    This function inserts particles, and assigns particle velocities if requested by the user. If species is 'all',
+    all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
     """
     if not self.pddName:
       print 'Probability distribution not set for particle insertion. Exiting ...'
       sys.exit()
 
-    def insert_loc(self, ss, i, name, *region):
+    def insert_loc(self, ss, i, name, natomsTotal, *region):
       if 'insert' in ss:
         if not self.rank:
           logging.info('Inserting particles for species {}'.format(i))
 
-        if 'natoms_local' in ss:
-          natoms = ss['natoms_local']
-        else:
-          natoms = ss['natoms'] - self.lmp.get_natoms()
+        natoms = natomsTotal - self.lmp.get_natoms()
 
         if natoms < 0:
           if not self.rank:
             print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
           raise
+
+        seed = np.random.randint(1e8)
 
         if natoms > 0:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
@@ -398,7 +398,7 @@ class DEMPy:
               ' particlerate {rate} insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
           elif ss['insert'] == 'by_pack':
-            self.lmp.command('fix {} group{} insert/pack seed 123481 distributiontemplate {}'.format(randName, ss['id'], self.pddName[i]) + \
+            self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, ss['id'], seed, self.pddName[i]) + \
               ' insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
           else:
@@ -415,13 +415,23 @@ class DEMPy:
       else:
         return None
 
+    natomsTotal = 0
+      
+    if species != 'all':
+      for i in range(species):
+        if 'natoms' in self.pargs['SS'][i]: # exclude walls
+          natomsTotal += ss['natoms']
+
     if species != 'all':
       i, ss = species - 1, self.pargs['SS'][species - 1]
-      randName = insert_loc(self, ss, i, name, *region)
+
+      randName = insert_loc(self, ss, i, name, natomsTotal, *region)
     else:
       randName = []
       for i, ss in enumerate(self.pargs['SS']):
-        randName.append(insert_loc(self, ss, i, name, *region))
+        if 'natoms' in ss: # exclude walls
+          natomsTotal += ss['natoms']
+          randName.append(insert_loc(self, ss, i, name + '{}'.format(i), natomsTotal, *region))
 
     # Check if the user has supplied any initial velocities
     if 'velocity' in self.pargs:

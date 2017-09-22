@@ -126,7 +126,7 @@ class Model(object):
 			for ss in self.params['SS']:
 				ss['material'] = Materials.LIGGGHTS(**ss['material'])
 
-			# Use 1st component to find all material params
+			# Use 1st component to find all material params ~ hackish!!! 
 			ss = self.params['SS'][0]
 
 			if 'material' in ss:
@@ -140,10 +140,11 @@ class Model(object):
 							self.materials[item] = ss['material'][item][:2] + ('{}'.format(self.params['nSS']),)
 						elif ss['material'][item][1] == 'scalar':
 							self.materials[item] = ss['material'][item][:2]
-					else:
-						# This is for analysis
-						self.materials[item] = ss['material'][item]
-
+				
+			for ss in self.params['SS']:
+				for item in ss['material']:
+					if type(ss['material'][item]) is float:
+						
 						# This is for running DEM sim
 						ss[item] = ss['material'][item]
 
