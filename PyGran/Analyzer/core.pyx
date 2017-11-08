@@ -36,7 +36,7 @@ import re, sys, os
 import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
-from PyGran.Tools import siToMicro, microToSi
+from PyGran.Tools import convert
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
@@ -174,13 +174,8 @@ these properties """
 
 	def units(self, units):
 		""" Sets the unit system """
-		if self._units == 'si':
-			if units == 'micro':
-				self.conversion(siToMicro)
-		elif self._units == 'micro':
-			if units == 'si':
-				self.conversion(microToSi)
-
+		
+		self.conversion(convert(self._units, units))
 		self._units = units
 
 	def __iadd__(self, obj):
