@@ -714,6 +714,18 @@ class Particles(SubSystem):
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
 		
+	def mass(self, bdensity):
+		""" Computes the mass of all particles """
+
+		if(self.natoms > 0):
+
+			radius = self.radius
+			mass = np.sum(bdensity * 4.0 / 3.0 * np.pi * (radius**3.0))
+
+			return mass
+		else:
+			return None
+
 	def density(self, bdensity, shape = 'box', bounds=None):
 		"""
 		Computes the bulk density for a selection of particles from their *true* density.
@@ -723,16 +735,8 @@ class Particles(SubSystem):
 		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z
 
 		"""
-
-		if(self.natoms > 0):
-
-			radius = self.radius
-			volume = self.volume(shape)
-			mass = np.sum(bdensity * 4.0 / 3.0 * np.pi * (radius**3.0))
-
-			return mass / volume
-
-		return 0
+		
+		return self.mass(bdensity) / self.volume(shape)
 
 	def densityLocal(self, bdensity, dr, axis):
 		"""" Computes a localized density at a series of discretized regions of thickness 'dr'

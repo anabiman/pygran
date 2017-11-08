@@ -35,8 +35,14 @@ import matplotlib.pylab as plt
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)
 	neighbors from which contacts, overlaps, force chains, etc. can be determined.
+
+	@Particles = a derivative of SubSystem to be analyzed
+	@[material]: Python dictionary for material params
+	@[cutoff]: max radius by default
+	@[binary]: False by default. Set to True when analyzing 2-component systems.
+
 	"""
-	def __init__(self, Particles, material = None, cutoff = None):
+	def __init__(self, Particles, material = None, cutoff = None, binary=False):
 
 		self._Particles = Particles
 		self._coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
@@ -44,6 +50,11 @@ class Neighbors(object):
 
 		if not cutoff:
 			cutoff = 2.0 * Particles.radius.max()
+
+		self._binary = binary
+		if binary:
+			if not hasattr(self._Particles, 'type'):
+				raise RuntimeError('Binary Particles object must contain type attribute!')
 
 		self._neigh = self._tree.query_ball_point(self._coords, cutoff)
 
@@ -84,7 +95,16 @@ class Neighbors(object):
 	@property
 	def coon(self):
 		""" Returns the coordination number per particle """
-		return [len(cn) for cn in self._neigh]
+		if self._binary:
+			typeA, typeB = [], []
+
+			for cn in self._neigh:
+				typeA.append(sum(self._Particles[cn].type == 1))
+				typeB.append(sum(self._Particles[cn].type == 2))
+
+			return typeA, typeB
+		else:
+			return [len(cn) for cn in self._neigh]
 
 	@property
 	def overlaps(self):
