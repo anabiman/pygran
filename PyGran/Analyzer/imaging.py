@@ -1,5 +1,6 @@
 from numbers import Number
 from PIL import Image
+import glob, os
 from numpy import random, array, linspace, sqrt, fabs
 import numpy as np
 
@@ -10,8 +11,10 @@ except:
 
 def readExcel(fname):
 	"""
-	reads an excel sheet(s) and appends each data column to 
+	Reads an excel sheet(s) and appends each data column to 
 	a dictionary
+
+	@fname: filename to read
 	"""
 	from xlrd import open_workbook
 
@@ -189,3 +192,53 @@ def reconstruct(fimg, imgShow=False):
                 cv2.destroyAllWindows()
 
 	return img
+
+def readImg(file, order=False):
+	""" Loads image file(s) and returns an array 
+
+	@file: a list of image file names, or a string containing the image filename(s). In
+	the latter case, if the string ends in '*' (e.g. img*), then all image files starting
+	with 'img' are read (in a chronological order if order is set to True).
+
+	@[order]: read a list of image files chronologically """
+
+	if type(file) is list:
+		pass
+	elif type(file) is str:
+		if file.endswith('*'):
+			file = glob.glob("{}*".format(file))
+			file.sort(key=os.path.getmtime)
+		else:
+			 # Read single image file
+			 pic = Image.open(file)
+
+			 if len(np.array(pic.getdata()).shape) > 1:
+			 	data = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1])
+			 else:
+			 	data = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
+
+			 return data
+
+		for i, img in enumerate(file):
+			pic = Image.open(img)
+
+			if i == 0:
+				if len(np.array(pic.getdata()).shape) > 1:
+			 		data = np.zeros((pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1], len(file)))
+			 	else:
+			 		data = np.zeros((pic.size[0], pic.size[1], len(file)))
+
+			if len(np.array(pic.getdata()).shape) > 1:
+				data[:,:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], pic.getdata().shape[-1])
+			else:
+				data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
+
+	return data
+
+def intensitySegregation(images, order=False):
+	""" Computes the intensity of segregation from a set of image files
+	@images: image file(s) string or list
+	"""
+
+	data = readImg(images, order)
+	return data.sum()
