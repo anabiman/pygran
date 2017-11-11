@@ -513,82 +513,84 @@ class HertzMindlin(Model):
 		return - self.dissCoef(delta, radius) * deltav
 
 
-class Hysteresis(Model):
+class ThorntonNing(Model):
 	"""
 	A basic class that implements the Thornton elasto-plastic model
 	"""
 
 	def __init__(self, **params):
 
-		super(Hysteresis, self).__init__(**params)
-
-		if 'name' not in params:
-			name = 'thorn'
-		else:
-			name = params['name']
+		super(ThorntonNing, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/{}'.format(name), \
+			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/thorn', \
 					'tangential', 'history')
 		else:
 			self.params['model-args'] = self.params['model-args']
 
-		if 'mass' in params: # very hackish way to detect if we're doing analysis or running simulation
-			py = self.materials['yieldPress']
-			poiss = self.materials['poissonsRatio']
+		# We check for the radius 1st since it can change in this model
+		if 'radius' in params:
+			self.radius = self.materials['radius']
+			self.mass = self.materials['density'] * 4.0/3.0 * np.pi * self.radius**3.0
+			self.deltay = np.sqrt(self.computeYieldRadius(self.materials['radius']) * self.materials['radius'])
+		else:
+			pass #raise ValueError('Input radius must be supplied.')
 
-			yMod = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
-			radius = self.materials['radius']
-
-			self.deltay = (np.pi * py / (2.0 * yMod))**2.0 * radius
-			self.deltam = .0
-
-	def springSitff(self, delta):
+	def computeYieldRadius(self, radius):
+		""" Computes the contact radius at the yield point """
 
 		poiss = self.materials['poissonsRatio']
 		yMod = self.materials['youngsModulus']
-		radius = self.materials['radius']
-		mass = self.materials['mass']
+		yEff = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
+		py = self.materials['yieldPress']
 
+		return 0.5 * py * np.pi * radius / yEff
+
+	def springStiff(self, delta, radius):
+		""" Computes the spring constant kn for
+			F = - kn * delta
+		"""
+		poiss = self.materials['poissonsRatio']
+		yMod = self.materials['youngsModulus']
+
+		if radius is None:
+			if 'radius' in self.materials:
+				radius = self.materials['radius']
+			else:
+				raise ValueError('Input radius must be supplied.')
+
+		mass = self.materials['density'] * 4.0/3.0 * np.pi * radius**3.0
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
 		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta)
 
-	def normalForce(self, time, delta, v0 = None):
-		""" Computes the piece-wise defined normal force based on Thornton's model """
-
-		deltan, deltav = delta
+	def normalForce(self, delta, radius = None):
+		""" Returns the Hertzian normal force"""
 
 		poiss = self.materials['poissonsRatio']
-		yEff = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
-		radius = self.materials['radius']
-		mass = self.materials['mass']
+		yMod = self.materials['youngsModulus']
+
+		yEff = yMod * 0.5 / (1.0  - poiss )
+
+		contRadius = self.contactRadius(delta, radius)
+
+		if delta < self.deltay:
+			return self.springStiff(delta, self.radius) * self.delta
+		else:
+			return self.springStiff(delta, self.radius) * self.deltay
+
+	def dissForce(self, delta, deltav = None, radius = None):
+		""" Computes the piece-wise defined normal force based on Thornton's model """
+
 		py = self.materials['yieldPress']
 
-		if deltam < deltay:
-			if len(delta) > 1:
-				return np.array([deltav, -self.springSitff(deltan) * deltan / mass])
-			else:
-				return -self.springSitff(deltan) * deltan
+		if delta > self.deltay:
+			return np.pi * py * self.radius * (delta - self.deltay)
 		else:
-			Fy = - self.springSitff(deltay) * deltay
-
-			if deltav > 0:
-				if deltan >= deltam:
-					self.Fmax = Fy + np.pi * py * radius * (deltan - deltay)
-					return self.Fmax
-
-				else:
-					pass
-
+			return 0
+				
 	def yieldVel(self):
 		""" Returns the minimum velocity required for a colliding particle to undergo plastic deformation """
-
-		# Very, very hackish
-		for param in self.materials:
-			if type(self.materials[param]) is not float:
-				self.materials[param] = float(self.materials[param][-1])
-
 
 		poiss = self.materials['poissonsRatio']
 		yEff = self.materials['youngsModulus'] / (2.0 * (1. - poiss))
