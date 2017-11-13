@@ -40,7 +40,7 @@ from PyGran.Tools import convert
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
-these properties """
+these properties. This class is iterable but NOT an iterator. """
 
 	def __init__(self, **args):
 
@@ -79,8 +79,6 @@ these properties """
 			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
 			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).
 			# ONLY arrays can be slices based on user selection.
-
-		self._index = -1 # used for for loops only
 
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing)
@@ -162,13 +160,44 @@ these properties """
 		for key in self.data.keys():
 
 			if key == 'x' or key == 'y' or key == 'z' or key == 'radius':
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = True
+				
 				self.data[key] *= factors['distance']
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = False
+
 			elif key == 'vx' or key == 'vy' or key == 'vz':
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = True
+
 				self.data[key] *= factors['distance'] / factors['time']
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = False
+
 			elif key == 'omegax' or key == 'omegay' or key == 'omegaz':
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = True
+
 				self.data[key] /= factors['time']
+				
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = False
+
 			elif key == 'fx' or key == 'fy' or key == 'fz':
+
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = True
+				
 				self.data[key] *= factors['mass'] * factors['distance'] / factors['time']**2.0
+				
+				if(type(self.data[key]) == np.ndarray):
+					self.data[key].flags.writeable = False
 			else:
 				pass
 
@@ -287,21 +316,9 @@ these properties """
 		return eval(type(self).__name__)(None, obj._units, **data)
 
 	def __iter__(self):
-		self._index = -1
-		return self
 
-	def __next__(self):
-		"""Forward one step to next frame when using the next builtin function."""
-		return self.next()
-
-	def next(self):
-		""" This method is invoked by __iter__ in a for loop """
-
-		if self._index < len(self) - 1:
-			self._index += 1
-			return self[self._index]
-		else:
-			raise StopIteration
+		for i in range(len(self)):
+			yield self[i]
 
 	def scale(self, value, attr=('x','y','z')):
 		""" Scales all ss elements by a float or int 'value'
@@ -371,6 +388,7 @@ these properties """
 
 class Mesh(SubSystem):
 	"""  The Mesh class stores a list of meshes and their associated attributes / methods.
+	This class is iterable but NOT an iterator.
 	"""
 	def __init__(self, fname, **args):
 
@@ -514,7 +532,7 @@ class Mesh(SubSystem):
 
 class Particles(SubSystem):
 	""" The Particle class stores all particle properties and the methods that operate on
-	these properties """
+	these properties. This class is iterable but NOT an iterator. """
 
 	def __init__(self, **args):
 
@@ -1004,7 +1022,7 @@ class Particles(SubSystem):
 		except:
 			frame -=1
 			self.rewind()
-			raise StopIteration
+			raise
 		else:
 			frame += 1
 
@@ -1027,7 +1045,7 @@ class Factory(object):
 		for ss in args:
 			if(Factory._str_to_class(ss)):
 
-				# Delete the file name so we can pass all other args to the SubSystem
+				# Delete the filename so we can pass all other args to the SubSystem
 				fname= args[ss]
 				del args_copy[ss]
 
@@ -1086,6 +1104,8 @@ class System(object):
 
 	How time stepping works: when looping over System (traj file), the frame is controlled only by System
 	through methods defined in a SubSystem sublass (read/write functions).
+
+	This class is an iterator but NOT iterable.
 	"""
 
 	def __init__(self, **args):
