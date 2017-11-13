@@ -376,9 +376,12 @@ class DEMPy:
       sys.exit()
 
     def insert_loc(self, ss, i, name, natomsTotal, *region):
+      """ For multi-component system, this functions can cause REAL *trouble*. For now, make sure components
+      are inserted consecutively or all at once.
+      """
       if 'insert' in ss:
         if not self.rank:
-          logging.info('Inserting particles for species {}'.format(i))
+          logging.info('Inserting particles for species {}'.format(i + 1))
 
         natoms = natomsTotal - self.lmp.get_natoms()
 
@@ -416,16 +419,16 @@ class DEMPy:
         return None
 
     natomsTotal = 0
-      
+
     if species != 'all':
+
       for i in range(species):
-        if 'natoms' in self.pargs['SS'][i]: # exclude walls
+        ss = self.pargs['SS'][i]
+        if 'natoms' in ss: # exclude walls
           natomsTotal += ss['natoms']
 
-    if species != 'all':
-      i, ss = species - 1, self.pargs['SS'][species - 1]
-
-      randName = insert_loc(self, ss, i, name, natomsTotal, *region)
+      ss = self.pargs['SS'][species - 1]
+      randName = insert_loc(self, ss, species - 1, name, natomsTotal, *region)
     else:
       randName = []
       for i, ss in enumerate(self.pargs['SS']):

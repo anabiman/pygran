@@ -187,7 +187,8 @@ class Model(object):
 
 		self.setupProps()
 
-		self.mass = 4.0 * self.density * 4.0/3.0 * np.pi * self.radius**3.0
+		if hasattr(self,'density'):
+			self.mass = 4.0 * self.density * 4.0/3.0 * np.pi * self.radius**3.0
 
 	def setupProps(self):
 		""" Creates class attributes for all material properties """
@@ -473,8 +474,6 @@ class ThorntonNing(Model):
 			self.yieldForce = self.springStiff(self.deltay) * self.deltay
 			self.unloading = False
 			self.noCheck = False
-		else:
-			raise ValueError('Input radius must be supplied.')
 
 	def computeYieldDisp(self):
 		""" Computes the contact radius at the yield point """
