@@ -235,10 +235,66 @@ def readImg(file, order=False):
 
 	return data
 
-def intensitySegregation(images, order=False):
+def intensitySegregation(images, binsize, order=False):
 	""" Computes the intensity of segregation from a set of image files
-	@images: image file(s) string or list
+	@images: list of image file strings
+	@binsize: length of each discrete grid cell in pixels
+	@[order]: read images in a chronological order if set to True
+
 	"""
 
-	data = readImg(images, order)
-	return data.sum()
+	dataList = []
+
+	# Construct a 3D representation of the system
+	if type(images) is list:
+		for imgs in images:
+			dataList.append(readImg(imgs, order))
+	else:
+		raise IOError('Input images must be a list.')
+
+	# Discretize system into cells of size 'binsize'
+	data = dataList[0]
+
+	xmin, xmax = 0, data.shape[0]
+	ymin, ymax = 0, data.shape[1]
+	zmin, zmax = 0, data.shape[2]
+
+	x = np.array(xrange(xmin, xmax))
+	y = np.array(xrange(ymin, ymax))
+	z = np.array(xrange(zmin, zmax))
+
+	indi = array(x / binsize, dtype='int32')
+	indj = array(y / binsize, dtype='int32')
+	indk = array(z / binsize, dtype='int32')
+
+
+	# Compute variance in volume fraction for each grid cell
+	volFrac = []
+
+	for data in dataList:
+
+		Grid = np.zeros((len(indi),len(indj),len(indk)))
+		count = np.zeros((len(indi),len(indj),len(indk)), dtype='int32')
+
+		for i, ig in enumerate(indi):
+			for j, jg in enumerate(indj):
+				for k, kg in enumerate(indk):
+					Grid[ig,jg,kg] += data[i,j,k]
+		
+		volFrac.append(Grid)	
+
+	# Normalize pixels i.e. compute the volume fraction
+	dataVar = []
+	dataMean = []
+	fracTotal = dataList[0] * 0
+
+	for frac in volFrac:
+		fracTotal += frac
+
+	# Ignore all voxels not contaning any data
+	for frac in volFrac:
+		frac[fracTotal > 0] /= fracTotal[fracTotal > 0]
+		dataMean.append(frac[fracTotal > 0].mean())
+		dataVar.append(frac[fracTotal > 0].std()**2.0)
+
+	return dataMean, dataVar
