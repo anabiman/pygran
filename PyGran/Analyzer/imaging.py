@@ -193,7 +193,7 @@ def reconstruct(fimg, imgShow=False):
 
 	return img
 
-def readImg(file, order=False):
+def readImg(file, order=False, processes=None):
 	""" Loads image file(s) and returns an array 
 
 	@file: a list of image file names, or a string containing the image filename(s). In
@@ -219,7 +219,10 @@ def readImg(file, order=False):
 
 			 return data
 
-		for i, img in enumerate(file):
+
+		def func(file):
+			
+			for i, img in enumerate(file):
 			pic = Image.open(img)
 
 			if i == 0:
@@ -233,7 +236,16 @@ def readImg(file, order=False):
 			else:
 				data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
 
-	return data
+			return data
+
+		if processes:
+			pool = multiprocessing.Pool(processes=processes)
+			func = partial(file)
+			pool.map(func, range(nFiles))
+			pool.close()
+			pool.join()
+		else:
+			return func(file)
 
 def intensitySegregation(images, binsize, order=False):
 	""" Computes the intensity of segregation from a set of image files
