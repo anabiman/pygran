@@ -76,10 +76,11 @@ def _mapPositions(Particles, axis, resol=None):
 
 	return x,y,h
 
-def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
+def slice(Particles, zmin, zmax, axis, resol=None, output=None, size=None, imgShow=False):
 	"""
 	Generates a 2D image from a slice (limited by 'zmin/zmax' and of reslution '1/dz') 
 	of a 3D config in the Particles class. The resol is in distance per pixel.
+	@[size]: tuple (length, width) for generated image slice
 	"""
 
 	Particles = Particles.copy()
@@ -91,7 +92,11 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 	x,y,h = _mapPositions(Particles, axis, resol)
 
 	if resol:
-		length, width = max(x), max(y)
+		if size:
+			length, width = size
+		else:
+			length, width = max(x), max(y)
+
 		img = Image.new('RGB', (length, width), "black") # create a new black image
 		pixels = img.load() # create the pixel map
 
@@ -139,8 +144,8 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, imgShow=False):
 			if imgShow:
 				img.show()
 
-			if output:
-				img.save(output)
+	if output:
+		img.save(output)
 
 def reconstruct(fimg, imgShow=False):
 
@@ -219,22 +224,21 @@ def readImg(file, order=False, processes=None):
 
 			 return data
 
-
 		def func(file):
 			
 			for i, img in enumerate(file):
-			pic = Image.open(img)
+				pic = Image.open(img)
 
-			if i == 0:
+				if i == 0:
+					if len(np.array(pic.getdata()).shape) > 1:
+				 		data = np.zeros((pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1], len(file)))
+				 	else:
+				 		data = np.zeros((pic.size[0], pic.size[1], len(file)))
+
 				if len(np.array(pic.getdata()).shape) > 1:
-			 		data = np.zeros((pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1], len(file)))
-			 	else:
-			 		data = np.zeros((pic.size[0], pic.size[1], len(file)))
-
-			if len(np.array(pic.getdata()).shape) > 1:
-				data[:,:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], pic.getdata().shape[-1])
-			else:
-				data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
+					data[:,:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1])
+				else:
+					data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
 
 			return data
 
@@ -247,20 +251,26 @@ def readImg(file, order=False, processes=None):
 		else:
 			return func(file)
 
-def intensitySegregation(images, binsize, order=False):
-	""" Computes the intensity of segregation from a set of image files
+def coarseDiscretize(images, binsize, order=False):
+	""" Discretizes a 3D image into a coarse grid
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
 	@[order]: read images in a chronological order if set to True
 
+	Returns a list of volume fraction 3D arrays, vol fraction mean, 
+	and vol fraction variance
 	"""
 
 	dataList = []
 
 	# Construct a 3D representation of the system
-	if type(images) is list:
+	if isinstance(images, list):
 		for imgs in images:
-			dataList.append(readImg(imgs, order))
+			im = readImg(imgs, order)
+			if len(im.shape) > 3:
+				dataList.append(im[:,:,0,:])
+			else:
+				dataList.append(im)
 	else:
 		raise IOError('Input images must be a list.')
 
@@ -279,26 +289,23 @@ def intensitySegregation(images, binsize, order=False):
 	indj = array(y / binsize, dtype='int32')
 	indk = array(z / binsize, dtype='int32')
 
-
 	# Compute variance in volume fraction for each grid cell
 	volFrac = []
 
 	for data in dataList:
 
-		Grid = np.zeros((len(indi),len(indj),len(indk)))
-		count = np.zeros((len(indi),len(indj),len(indk)), dtype='int32')
+		Grid = np.zeros((max(indi) + 1, max(indj) + 1,max(indk) + 1))
 
 		for i, ig in enumerate(indi):
 			for j, jg in enumerate(indj):
 				for k, kg in enumerate(indk):
 					Grid[ig,jg,kg] += data[i,j,k]
-		
-		volFrac.append(Grid)	
 
-	# Normalize pixels i.e. compute the volume fraction
+		volFrac.append(Grid)
+
+	fracTotal = volFrac[0] * 0
 	dataVar = []
 	dataMean = []
-	fracTotal = dataList[0] * 0
 
 	for frac in volFrac:
 		fracTotal += frac
@@ -309,4 +316,71 @@ def intensitySegregation(images, binsize, order=False):
 		dataMean.append(frac[fracTotal > 0].mean())
 		dataVar.append(frac[fracTotal > 0].std()**2.0)
 
-	return dataMean, dataVar
+	return volFrac, dataMean, dataVar
+
+def intensitySegregation(images, binsize, order=False):
+	""" Computes the intensity of segregation from a set of image files
+	@images: list of image file strings
+	@binsize: length of each discrete grid cell in pixels
+	@[order]: read images in a chronological order if set to True
+
+	Returns the mean volume fraction, variance, and intensity
+
+	TODO: support multi-component systems, not just binary systems
+	"""
+
+	_, dataMean, dataVar = coarseDiscretize(images, binsize, order)
+
+	# Assuming only a binary system .. must be somehow fixed/extended for tertiary systems, etc.
+	return dataMean, dataVar[0], dataVar[0] / (dataMean[0] * dataMean[1])
+
+def scaleSegregation(images, binsize, samplesize, resol, order=False):
+	""" Computes (through Monte Carlo sim) the linear scale of segregation from a set of image files
+	@images: list of image file strings
+	@binsize: length of each discrete grid cell in pixels
+	@samplesize: number of successful Monte Carlo trials
+	@resol: image resolution (distance/pixel)
+	@[order]: read images in a chronological order if set to True
+
+	Returns the coefficient of correlation R(r) and separation distance (r)
+
+	TODO: support multi-component systems, not just binary systems
+	"""
+
+	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order)
+
+	a,b = volFrac[0], volFrac[1]
+
+	volMean = volMean[0]
+	volVar = volVar[0]
+
+	# Begin Monte Carlo simulation
+	trials = 0
+	maxDim = max(a.shape)
+	maxDist = int(np.sqrt(3 * maxDim**2)) + 1
+
+	distance = np.zeros(maxDist)
+	corr = np.zeros(maxDist)
+	count = np.zeros(maxDist)
+
+	while trials < samplesize:
+
+		i1, i2 = np.random.randint(0, a.shape[0], size=2)
+		j1, j2 = np.random.randint(0, a.shape[1], size=2)
+		k1, k2 = np.random.randint(0, a.shape[2], size=2)
+
+		# Make sure we are sampling non-void spatial points
+		if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
+			if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
+
+				dist = np.sqrt((i2 - i1)**2 + (j2 - j1)**2  + (k2 - k1)**2)
+
+				index = int(dist)
+				
+				distance[index] += dist * binsize
+				corr[index] +=  ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
+				count[index] += 1
+
+				trials += 1
+
+	return corr[count > 0] / count[count > 0], distance[count > 0] / count[count > 0] * resol
