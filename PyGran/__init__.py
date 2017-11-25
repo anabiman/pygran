@@ -24,7 +24,7 @@ except:
 	print("WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.")
 
 def run(program):
-	""" Launches an executable program available in the PATH """
+	""" Launches an executable program available in the PATH env variable """
 	paths = os.environ['PATH']
 
 	for path in paths.split(':'):
