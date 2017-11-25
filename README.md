@@ -1,12 +1,12 @@
-PROJECT NAME:
+PROJECT NAME
 =====
 PyGran
 
-DESCRIPTION:
+DESCRIPTION
 =========
 A toolbox for rapid quantitative analysis of granular/powder systems
 
-INSTALLATION:
+INSTALLATION
 ==========
 python setup.py install --user
 
