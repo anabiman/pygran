@@ -1,23 +1,16 @@
-PROJECT NAME
-=====
-PyGran
+# PyGran
 
-DESCRIPTION
-=========
-A toolbox for rapid quantitative analysis of granular/powder systems
+## DESCRIPTION
+A DEM toolbox for rapid quantitative analysis of granular/powder systems
 
-INSTALLATION
-==========
+## INSTALLATION
 python setup.py install --user
 
-AUTHOR
-======
+## AUTHOR
 Andrew Abi-Mansour
 
-EMAIL
-=====
+## EMAIL
 andrew.gaam@gmail.com
 
-License
-=======
+## License
 GPL v2
