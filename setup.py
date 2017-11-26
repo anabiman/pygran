@@ -93,14 +93,16 @@ class LIGGGHTS(install):
 
     def run(self):
         self.do_pre_install_stuff()
-        
+
+import PyGran
+
 setup(
     name = "PyGran",
-    version = "0.0.1",
+    version = PyGran.__version__,
     author = "Andrew Abi-Mansour",
     author_email = "andrew.gaam@gmail.com",
-    description = ("A toolbox for rapid quantitative analysis of granular systems"),
-    license = "GNU v3",
+    description = ("A DEM toolbox for rapid quantitative analysis of granular/powder systems"),
+    license = "GNU v2",
     keywords = "Discrete Element Method, Granular Materials",
     url = "https://github.com/Andrew-AbiMansour/PyGran",
     packages=find_packages(),

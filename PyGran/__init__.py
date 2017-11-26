@@ -15,13 +15,20 @@
 
 # -------------------------------------------------------------------------
 
-from PyGran import Simulator, Analyzer, Tools
+from PyGran import Simulator, Tools
 import os
+
+try:
+	from PyGran import Analyzer
+except:
+	pass # Might be importing from src dir
 
 try:
 	from PyGran import Visualizer
 except:
 	print("WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.")
+
+__version__ = '1.0'
 
 def run(program):
 	""" Launches an executable program available in the PATH env variable """
