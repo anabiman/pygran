@@ -16,7 +16,4 @@ footer-links:
   googleplus: # anything in your profile username that comes after plus.google.com/
 
 exclude:
-  - Gemfile
-  - Gemfile.lock
-  - LICENSE
   - README.md
