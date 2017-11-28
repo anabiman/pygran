@@ -1,5 +1,12 @@
 theme: jekyll-theme-architect
 
+title: PyGran
+description: DEM toolkit
+
+show_downloads: ["true"]
+# google_analytics: [Your Google Analytics tracking ID]
+
+
 footer-links:
   dribbble:
   email:
