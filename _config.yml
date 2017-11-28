@@ -17,3 +17,6 @@ footer-links:
 
 exclude:
   - README.md
+  
+ include:
+  - TEST.md
