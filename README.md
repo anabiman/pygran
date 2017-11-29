@@ -27,21 +27,20 @@ from PyGran.Materials import stearicAcid, steel
 
 pDict = {
 
-		'model': Simulator.models.SpringDashpot,
-		'boundary': ('f','f','f'),
-		'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
+	'model': Simulator.models.SpringDashpot,
+	'boundary': ('f','f','f'),
+	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-		'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'natoms': 1000, 'freq': 'once', 'radius': ('constant', 5e-5),}, 
+	'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'natoms': 1000, 'freq': 'once', 'radius': ('constant', 5e-5),}, 
 		      ),
-		'dt': 1e-6,
-		'gravity': (9.81, 0, 0, -1),
+	'dt': 1e-6,
+	'gravity': (9.81, 0, 0, -1),
 
-		 'mesh': {
-			'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface', 'import': True, 'material': steel},
-		      },
-
-		'stages': {'insertion': 1e4},
-	  }
+	'mesh': {
+		'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface', 'import': True, 'material': steel},
+		},
+	'stages': {'insertion': 1e4},
+}
 
 pDict['model'] = pDict['model'](**pDict)
 sim = Simulator.DEM(**pDict['model'].params)
