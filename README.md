@@ -4,7 +4,7 @@ PyGran is a toolkit primarily designed for analyzing DEM simulation data. In add
 
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and run from the PyGran source directory:
 
-```python
+```bash
 python setup.py install --user
 ```
 
