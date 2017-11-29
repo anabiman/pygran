@@ -31,13 +31,15 @@ pDict = {
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-	'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'natoms': 1000, 'freq': 'once', 'radius': ('constant', 5e-5),}, 
-		      ),
+	'SS': ({'insert': 'by_pack', 'material': stearicAcid,'natoms': 1000, \
+		'freq': 'once', 'radius': ('constant', 5e-5),}, 
+		),
+		
 	'dt': 1e-6,
 	'gravity': (9.81, 0, 0, -1),
 
 	'mesh': {
-		'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface', 'import': True, 'material': steel},
+		'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface', 'material': steel},
 		},
 	'stages': {'insertion': 1e4},
 }
