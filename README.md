@@ -1,16 +1,5 @@
-# PyGran
+# Welcome to the PyGran webpage!
 
-## DESCRIPTION
-A DEM toolbox for rapid quantitative analysis of granular/powder systems
+PyGran is a DEM toolbox for rapid quantitative analysis of granular/powder systems. Its online documentation can be found [here](docs/index.html).
 
-## INSTALLATION
-python setup.py install --user
-
-## AUTHOR
-Andrew Abi-Mansour
-
-## EMAIL
-andrew.gaam@gmail.com
-
-## License
-GPL v2
+Version 1.0 has been released! You can get the source code [here](), and the manual ([pdf](docs/manual-v1.0.pdf)).
