@@ -377,10 +377,10 @@ def scaleSegregation(images, binsize, samplesize, resol, order=False):
 
 				index = int(dist)
 				
-				distance[index] += dist * binsize
+				distance[index] += dist
 				corr[index] +=  ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
 				count[index] += 1
 
 				trials += 1
 
-	return corr[count > 0] / count[count > 0], distance[count > 0] / count[count > 0] * resol
+	return corr[count > 0] / count[count > 0], distance[count > 0] / count[count > 0] * resol * binsize
