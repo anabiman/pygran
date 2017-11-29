@@ -1,10 +1,10 @@
 theme: jekyll-theme-architect
 
 title: PyGran
-description: DEM toolkit
+description: Python toolkit for DEM simulation & analysis
 
 show_downloads: ["true"]
-# google_analytics: [Your Google Analytics tracking ID]
+google_analytics: [UA-110372297-1]
 
 
 footer-links:
