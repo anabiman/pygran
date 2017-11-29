@@ -19,4 +19,4 @@ NNS = Analyzer.Neighbors(Gran.Particles, material=glass)
 overlaps = NNS.overlaps
 ```
 
-![alt text](images/overlap-hist.png "Logo Title Text 1")
+<center><img src="images/overlap-hist.png" width="600" alt="Smiley face"></center>
