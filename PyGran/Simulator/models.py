@@ -41,6 +41,9 @@ class Model(object):
 		self.params = params
 		self.params['nSS'] = 0
 
+		if 'engine' not in self.params:
+			self.params['engine'] = 'engine_liggghts'
+
 		if 'SS' in self.params:
 			self.params['nSS'] += len(self.params['SS'])
 

@@ -370,10 +370,22 @@ class DEMPy:
     """
     This function inserts particles, and assigns particle velocities if requested by the user. If species is 'all',
     all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
+
+    region: tuple of the form ('shape', (xmin, xmax, ymin, ymax, zmin, zmax)) or ('shape', xmin, xmax, ymin, ymax, zmin, zmax)
     """
     if not self.pddName:
       print 'Probability distribution not set for particle insertion. Exiting ...'
       sys.exit()
+
+    if isinstance(region[1], tuple):
+      args = list(region[1])
+      args.insert(0, region[0])
+
+      tmp = region[1]
+      for i in range(len(tmp)):
+        args[i+1] = tmp[i]
+
+      region = tuple(args)
 
     def insert_loc(self, ss, i, name, natomsTotal, *region):
       """ For multi-component system, this functions can cause REAL *trouble*. For now, make sure components
