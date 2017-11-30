@@ -1,13 +1,18 @@
 # Welcome to the PyGran webpage!
 
-PyGran is a toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python.
+PyGran is a toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran supports Python 3.X and is fully backward compatible with Python 2.2 and later versions.
 
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and run from the PyGran source directory:
 ```bash
 python setup.py install --user
 ```
+Alternatively, you can use pip (or pip3) to install PyGran:
+```bash
+pip (or pip3) install PyGran --user
+```
 For more options and information on setting up PyGran, see chapter I in the manual.
+
 ## Basic Usage
 ### Contact Analysis
 Using PyGran is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
