@@ -17,7 +17,7 @@ For more options and information on setting up PyGran, see chapter I in the manu
 ### Contact Analysis
 Using PyGran is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
 
-<p style="text-align:center;"><img src="images/overlap-hist.png" width="600"></p>
+<p style="text-align:center;"><img src="images/overlap-hist.png"></p>
 
 ```python
 from PyGran import Analyzer
