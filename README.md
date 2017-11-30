@@ -10,7 +10,9 @@ python setup.py install --user
 For more options and information on setting up PyGran, see chapter I in the manual.
 ## Basic Usage
 ### Contact Analysis
-Using PyGran is also quite straight forward. Computing particle overlaps for instance can be done in few lines of code:
+Using PyGran is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
+
+<p style="text-align:center;"><img src="images/overlap-hist.png" width="600"></p>
 
 ```python
 from PyGran import Analyzer
@@ -20,13 +22,15 @@ Gran = Analyzer.System(Particles='granular.dump')
 NNS = Analyzer.Neighbors(Gran.Particles, material=glass)
 overlaps = NNS.overlaps
 ```
-<p style="text-align:center;"><img src="images/overlap-hist.png" width="600"></p>
 ### Simulating Granular Flow
 PyGran also provides an interface for running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code). A sample script that simulates flow in a hopper is shown below.
+
+<p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 
 ```python
 from PyGran import Simulator
 from PyGran.Materials import stearicAcid, steel
+
 
 pDict = {
 
@@ -52,5 +56,4 @@ sim = Simulator.DEM(**pDict['model'].params)
 insert = sim.insert('cubic', 1, *('block', pDict['box'])
 sim.run(pDict['stages']['insertion'], pDict['dt'])
 ```
-<p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 For more examples on using PyGran for running DEM simulation, see chapter II in the manual.
