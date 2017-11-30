@@ -35,14 +35,8 @@ import matplotlib.pylab as plt
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)
 	neighbors from which contacts, overlaps, force chains, etc. can be determined.
-
-	@Particles = a derivative of SubSystem to be analyzed
-	@[material]: Python dictionary for material params
-	@[cutoff]: max radius by default
-	@[binary]: False by default. Set to True when analyzing 2-component systems.
-
 	"""
-	def __init__(self, Particles, material = None, cutoff = None, binary=False):
+	def __init__(self, Particles, material = None, cutoff = None):
 
 		self._Particles = Particles
 		self._coords = numpy.array([Particles.x, Particles.y, Particles.z]).T
@@ -50,13 +44,6 @@ class Neighbors(object):
 
 		if not cutoff:
 			cutoff = 2.0 * Particles.radius.max()
-
-		self._binary = binary
-		if binary:
-			if not hasattr(self._Particles, 'type'):
-				raise RuntimeError('Binary Particles object must contain type attribute!')
-
-		self._neigh = self._tree.query_ball_point(self._coords, cutoff)
 
 		self._pairs = self._tree.query_pairs(cutoff)
 		self._distances = numpy.zeros(len(self._pairs))
@@ -93,20 +80,6 @@ class Neighbors(object):
 	    return self._pairs
 
 	@property
-	def coon(self):
-		""" Returns the coordination number per particle """
-		if self._binary:
-			typeA, typeB = [], []
-
-			for cn in self._neigh:
-				typeA.append(sum(self._Particles[cn].type == 1))
-				typeB.append(sum(self._Particles[cn].type == 2))
-
-			return typeA, typeB
-		else:
-			return [len(cn) for cn in self._neigh]
-
-	@property
 	def overlaps(self):
 	    return self._overlaps
 
@@ -118,25 +91,27 @@ class Neighbors(object):
 		"""
 
 		percent /= 100.0
-		indices = []
-		count = 0
-
-		Particles = self._Particles
 
 		if percent:
-			for pair in self._pairs:
-				i, j = pair
+			indices = numpy.array(self._overlaps[:,1:], 'int')
+			ri, rj = self._Particles.radius[indices[:,0]], self._Particles.radius[indices[:,1]]
+			radii = ri * rj / (ri + rj)
 
-				if ( (Particles.radius[i] + Particles.radius[j] - self._distances[count]) <= percent * 0.5 * (Particles.radius[i] + Particles.radius[j]) ):
-					indices.append(i)
-					indices.append(j)
-				
-				count = count + 1
+			indices = numpy.unique(numpy.array(indices[self._overlaps[:,0] <= percent * radii, 1:]))
 
-		indices = numpy.unique(indices)
-		indices = numpy.array(indices, dtype='int64')
+			print indices
+			return self._Particles[indices]
+		
+		count = numpy.zeros(len(self._Particles))
 
-		return Particles[indices]
+		for ind in indices:
+			i,j = ind
+			count[i] += 1
+			count[j] += 1
+			
+		indices = numpy.where(count <= 1)[0]
+
+		return self._Particles[indices]
 
 	def forceChain(self, axis = (0,2), alpha = numpy.pi/4, plot_stress=True, plot_parts=False, peters=True, threshold=1):
 		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
@@ -328,6 +303,7 @@ class Neighbors(object):
 		""" Find all points within distance r of point(s) coords.
 		TODO: Support walls aligned arbitrarily in space """
 
+		indices =  numpy.arange(self._Particles.natoms) #self._tree.query_ball_point(coords, r)
 		#indices = [item for i in indices for item in i]
 		indices = list(numpy.unique(indices))
 
