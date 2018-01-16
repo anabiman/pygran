@@ -358,12 +358,13 @@ def intensitySegregation(images, binsize, order=False):
 	# Assuming only a binary system .. must be somehow fixed/extended for tertiary systems, etc.
 	return dataMean, dataVar[0], dataVar[0] / (dataMean[0] * dataMean[1])
 
-def scaleSegregation(images, binsize, samplesize, resol, order=False):
+def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=False):
 	""" Computes (through Monte Carlo sim) the linear scale of segregation from a set of image files
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
-	@samplesize: number of successful Monte Carlo trials
+	@samplesize: number of Monte Carlo trials to sample each bin
 	@resol: image resolution (distance/pixel)
+	@[maxDist]: maximum radial distance to sample
 	@[order]: read images in a chronological order if set to True
 
 	Returns the coefficient of correlation R(r) and separation distance (r)
@@ -379,32 +380,41 @@ def scaleSegregation(images, binsize, samplesize, resol, order=False):
 	volVar = volVar[0]
 
 	# Begin Monte Carlo simulation
-	trials = 0
 	maxDim = max(a.shape)
-	maxDist = int(np.sqrt(3 * maxDim**2)) + 1
+	
+	if not maxDist:
+		maxDist = int(np.sqrt(3 * maxDim**2)) + 1
+		
+	corrfunc = np.zeros(maxDist)
+	
+	incr = resol
+	count = 0
+	
+	for dist in np.arange(incr, maxDist, incr):
+		nTrials = 0
+		corr = 0
+		
+		while nTrials < samplesize:
+			
+			theta, phi = np.random.rand() * np.pi, np.random.rand() * 2 * np.pi
+			i1 = np.random.randint(0, a.shape[0], size=1)
+			j1 = np.random.randint(0, a.shape[1], size=1)
+			k1 = np.random.randint(0, a.shape[2], size=1)
+			
+			i2 = np.int(dist * np.sin(theta) * np.sin(phi));
+			j2 = np.int(dist * np.sin(theta) * np.cos(phi));
+			k2 = np.int(dist * np.cos(theta));
+			
+			# Make sure we are sampling non-void spatial points
+			if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
+				if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
 
-	distance = np.zeros(maxDist)
-	corr = np.zeros(maxDist)
-	count = np.zeros(maxDist)
+					print dist, np.sqrt((i2 - i1)**2 + (j2 - j1)**2  + (k2 - k1)**2)
 
-	while trials < samplesize:
-
-		i1, i2 = np.random.randint(0, a.shape[0], size=2)
-		j1, j2 = np.random.randint(0, a.shape[1], size=2)
-		k1, k2 = np.random.randint(0, a.shape[2], size=2)
-
-		# Make sure we are sampling non-void spatial points
-		if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
-			if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
-
-				dist = np.sqrt((i2 - i1)**2 + (j2 - j1)**2  + (k2 - k1)**2)
-
-				index = int(dist)
-				
-				distance[index] += dist
-				corr[index] +=  ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
-				count[index] += 1
-
-				trials += 1
-
-	return corr[count > 0] / count[count > 0], distance[count > 0] / count[count > 0] * resol * binsize
+					corr += ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
+					nTrials += 1
+					
+		corrfunc[count] = corr / samplesize
+		count += 1
+		
+	return corrfunc,  np.arange(incr, maxDist, incr) * resol * binsize
