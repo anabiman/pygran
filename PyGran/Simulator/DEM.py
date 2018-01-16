@@ -295,8 +295,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.moveMesh(name, *args)
-        break
+        return self.dem.moveMesh(name, *args)
 
   def saveas(self, name, fname):
     """
