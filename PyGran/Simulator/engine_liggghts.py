@@ -491,7 +491,9 @@ class DEMPy:
     self.integrate(nsteps, dt)
 
   def moveMesh(self, name, *args):
-    self.lmp.command('fix moveMesh all move/mesh mesh {} '.format(name) + ('{} ' * len(args)).format(*args))
+    randName = 'moveMesh' + '{}'.format(np.random.randint(0,10**6))
+    self.lmp.command('fix {} all move/mesh mesh {} '.format(randName, name) + ('{} ' * len(args)).format(*args))
+    return randName
 
   def importMesh(self, name, file, mtype, material, *args):
     """
