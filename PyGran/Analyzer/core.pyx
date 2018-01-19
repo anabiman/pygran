@@ -404,18 +404,18 @@ class Mesh(SubSystem):
 
 		super(Mesh, self).__init__(fname=fname)
 
-		self._reader.SetFileName(fname)
+		# Assert mesh input filname is VTK
+		if not hasattr(self, '_mesh'):
+			if self._fname:
+				if self._fname.split('.')[-1] != 'vtk':
+					raise IOError('Input mesh must be of VTK type.')
+
+				self._fname = sorted(glob.glob(self._fname), key=numericalSort)
+				self._mesh = self._fname[0]
+
+		self._reader.SetFileName(self._mesh)
 		self._reader.Update() # Needed if we need to call GetScalarRange
 		self._output = self._reader.GetOutput()
-
-		# Assert mesh input filname is VTK
-		if self._mfname:
-			if self._mfname.split('.')[-1] != 'vtk':
-				raise IOError('Input mesh must be of VTK type.')
-
-			self._mfname = sorted(glob.glob(self._mfname), key=numericalSort)
-			self._mesh = self._mfname[0]
-
 
 		try:
 			points = self._output.GetPoints().GetData()
@@ -485,7 +485,7 @@ class Mesh(SubSystem):
 	def _updateSystem(self):
 		""" Class function for updating the state of a Mesh """
 		# Must make sure fname is passed in case we're looping over a trajectory
-		self.__init__(self._mesh, self._units, self._vtk, fname=self._fname)
+		self.__init__(mesh=self._mesh, units=self._units, vtk_type=self._vtk, fname=self._fname)
 		self._constructAttributes()
 
 	def nCells(self):
@@ -570,7 +570,7 @@ class Particles(SubSystem):
 							self._readFile(0)
 
 						else:
-							raise IOError('Input trajectory must be a valid LAMMPS/LIGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+							raise IOError('Input trajectory must be a valid LAMMPS/LIGGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
 
 			self._constructAttributes(sel)
 			self.data['natoms'] = len(self)
@@ -1046,7 +1046,7 @@ class Factory(object):
 			if(Factory._str_to_class(ss)):
 
 				# Delete the filename so we can pass all other args to the SubSystem
-				fname= args[ss]
+				fname = args[ss]
 				del args_copy[ss]
 
 				obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
