@@ -491,8 +491,11 @@ class DEMPy:
     self.integrate(nsteps, dt)
 
   def moveMesh(self, name, *args):
-    randName = 'moveMesh' + '{}'.format(np.random.randint(0,10**6))
+    
+    randName = 'moveMesh' + str(np.random.randint(10**5,10**8))
+
     self.lmp.command('fix {} all move/mesh mesh {} '.format(randName, name) + ('{} ' * len(args)).format(*args))
+
     return randName
 
   def importMesh(self, name, file, mtype, material, *args):
@@ -688,7 +691,12 @@ class DEMPy:
     self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
     if 'mfile' in self.pargs['traj']:
-      self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel '.format(**self.pargs['traj']))
+      if 'mName' in self.pargs['traj']:
+        # TODO: make any mesh specified by the user writable as output
+
+        self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**self.pargs['traj']))
+      else:
+        self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel'.format(**self.pargs['traj']))
 
   def extractCoords(self, coords):
     """
