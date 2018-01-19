@@ -222,14 +222,19 @@ def reconstruct(fimg, imgShow=False):
 
 	return img
 
-def readImg(file, order=False, processes=None):
+def readImg(file, order=False, processes=None, fillHoles=False):
 	""" Loads image file(s) and returns an array 
 
 	@file: a list of image file names, or a string containing the image filename(s). In
 	the latter case, if the string ends in '*' (e.g. img*), then all image files starting
 	with 'img' are read (in a chronological order if order is set to True).
 
-	@[order]: read a list of image files chronologically """
+	@[order]: read a list of image files chronologically
+	@[processes]: run in parallel???
+	@[fillHoles]: fill holes in 3D image
+
+	TODO: fix processes
+	"""
 
 	if type(file) is list:
 		pass
@@ -264,7 +269,11 @@ def readImg(file, order=False, processes=None):
 				else:
 					data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
 
-			return data
+			if fillHoles:
+				from scipy import ndimage
+				return ndimage.morphology.binary_fill_holes(data).astype(int)
+			else:
+				return data
 
 		if processes:
 			pool = multiprocessing.Pool(processes=processes)
@@ -275,11 +284,12 @@ def readImg(file, order=False, processes=None):
 		else:
 			return func(file)
 
-def coarseDiscretize(images, binsize, order=False):
+def coarseDiscretize(images, binsize, order=False, fillHoles=False):
 	""" Discretizes a 3D image into a coarse grid
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
 	@[order]: read images in a chronological order if set to True
+	@[fillHoles]: fill holes in 3D image
 
 	Returns a list of volume fraction 3D arrays, vol fraction mean, 
 	and vol fraction variance
@@ -296,7 +306,8 @@ def coarseDiscretize(images, binsize, order=False):
 			else:
 				dataList.append(im)
 	else:
-		raise IOError('Input images must be a list.')
+		im = readImg(images, order)
+		dataList.append(im)
 
 	# Discretize system into cells of size 'binsize'
 	data = dataList[0]
@@ -331,14 +342,24 @@ def coarseDiscretize(images, binsize, order=False):
 	dataVar = []
 	dataMean = []
 
-	for frac in volFrac:
-		fracTotal += frac
+	if len(dataList) > 1:
+		for frac in volFrac:
+			fracTotal += frac
 
-	# Ignore all voxels not contaning any data
-	for frac in volFrac:
-		frac[fracTotal > 0] /= fracTotal[fracTotal > 0]
-		dataMean.append(frac[fracTotal > 0].mean())
-		dataVar.append(frac[fracTotal > 0].std()**2.0)
+		# Ignore all voxels not contaning any data
+		for frac in volFrac:
+			frac[fracTotal > 0] /= fracTotal[fracTotal > 0]
+			dataMean.append(frac[fracTotal > 0].mean())
+			dataVar.append(frac[fracTotal > 0].std()**2.0)
+	else:
+		data = dataList[0]
+		c1, c2 = data[data > 0].min(), data.max()
+		volFrac = [data * 0, data * 0]
+		volFrac[0][data == c1], volFrac[1][data == c2] = data[data == c1] / c1, data[data == c2] / c2
+
+		v1, v2 = volFrac[0], volFrac[1]
+		dataMean = [v1[data > 0].mean(), v2[data > 0].mean()]
+		dataVar = [v1[data > 0].std()**2, v2[data > 0].std()**2]
 
 	return volFrac, dataMean, dataVar
 
@@ -358,21 +379,23 @@ def intensitySegregation(images, binsize, order=False):
 	# Assuming only a binary system .. must be somehow fixed/extended for tertiary systems, etc.
 	return dataMean, dataVar[0], dataVar[0] / (dataMean[0] * dataMean[1])
 
-def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=False):
+def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=False, fillHoles=False):
 	""" Computes (through Monte Carlo sim) the linear scale of segregation from a set of image files
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
-	@samplesize: number of Monte Carlo trials to sample each bin
+	@samplesize: number of successful Monte Carlo trials
 	@resol: image resolution (distance/pixel)
-	@[maxDist]: maximum radial distance to sample
+
+	@[maxDist]: maximum distance (in pixels) to sample
 	@[order]: read images in a chronological order if set to True
+	@[fillHoles]: fill holes in 3D image
 
 	Returns the coefficient of correlation R(r) and separation distance (r)
 
 	TODO: support multi-component systems, not just binary systems
 	"""
 
-	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order)
+	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order, fillHoles)
 
 	a,b = volFrac[0], volFrac[1]
 
@@ -384,37 +407,37 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 	
 	if not maxDist:
 		maxDist = int(np.sqrt(3 * maxDim**2)) + 1
-		
-	corrfunc = np.zeros(maxDist)
-	
-	incr = resol
+
+	corrfunc = np.zeros(maxDist - 1)
 	count = 0
-	
+	incr = 1
+
 	for dist in np.arange(incr, maxDist, incr):
 		nTrials = 0
 		corr = 0
-		
+
 		while nTrials < samplesize:
-			
+
 			theta, phi = np.random.rand() * np.pi, np.random.rand() * 2 * np.pi
 			i1 = np.random.randint(0, a.shape[0], size=1)
 			j1 = np.random.randint(0, a.shape[1], size=1)
 			k1 = np.random.randint(0, a.shape[2], size=1)
-			
-			i2 = np.int(dist * np.sin(theta) * np.sin(phi));
-			j2 = np.int(dist * np.sin(theta) * np.cos(phi));
-			k2 = np.int(dist * np.cos(theta));
-			
-			# Make sure we are sampling non-void spatial points
-			if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
-				if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
 
-					print dist, np.sqrt((i2 - i1)**2 + (j2 - j1)**2  + (k2 - k1)**2)
+			i2 = i1 + np.int(dist * np.sin(theta) * np.sin(phi))
+			j2 = j1 + np.int(dist * np.sin(theta) * np.cos(phi))
+			k2 = k1 + np.int(dist * np.cos(theta))
 
-					corr += ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
-					nTrials += 1
-					
+			# Check for boundary pts
+			if i2 < a.shape[0] and j2 < a.shape[1] and k2 < a.shape[2]:
+
+				# Make sure we are sampling non-void spatial points
+				if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
+					if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
+
+						corr += ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
+						nTrials += 1
+
 		corrfunc[count] = corr / samplesize
 		count += 1
-		
-	return corrfunc,  np.arange(incr, maxDist, incr) * resol * binsize
+
+	return corrfunc, np.arange(incr, maxDist, incr) * resol * binsize
