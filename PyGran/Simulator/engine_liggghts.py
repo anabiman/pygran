@@ -163,22 +163,22 @@ class liggghts:
 
   def extract_global(self,name,type):
     if type == 0:
-      self.lib.lammps_extract_global.restype = POINTER(ctypes.c_int)
+      self.lib.lammps_extract_global.restype = ctypes.POINTER(ctypes.c_int)
     elif type == 1:
-      self.lib.lammps_extract_global.restype = POINTER(c_double)
+      self.lib.lammps_extract_global.restype = ctypes.POINTER(ctypes.c_double)
     else: return None
     ptr = self.lib.lammps_extract_global(self.lmp,name)
     return ptr[0]
 
   def extract_atom(self,name,type):
     if type == 0:
-      self.lib.lammps_extract_atom.restype = POINTER(ctypes.c_int)
+      self.lib.lammps_extract_atom.restype = ctypes.POINTER(ctypes.c_int)
     elif type == 1:
-      self.lib.lammps_extract_atom.restype = POINTER(POINTER(ctypes.c_int))
+      self.lib.lammps_extract_atom.restype = ctypes.POINTER(ctypes.POINTER(ctypes.c_int))
     elif type == 2:
-      self.lib.lammps_extract_atom.restype = POINTER(c_double)
+      self.lib.lammps_extract_atom.restype = ctypes.POINTER(ctypes.c_double)
     elif type == 3:
-      self.lib.lammps_extract_atom.restype = POINTER(POINTER(c_double))
+      self.lib.lammps_extract_atom.restype = ctypes.POINTER(ctypes.POINTER(ctypes.c_double))
     else: return None
     ptr = self.lib.lammps_extract_atom(self.lmp,name)
     return ptr
@@ -186,15 +186,15 @@ class liggghts:
   def extract_compute(self,id,style,type):
     if type == 0:
       if style > 0: return None
-      self.lib.lammps_extract_compute.restype = POINTER(c_double)
+      self.lib.lammps_extract_compute.restype = ctypes.POINTER(ctypes.c_double)
       ptr = self.lib.lammps_extract_compute(self.lmp,id,style,type)
       return ptr[0]
     if type == 1:
-      self.lib.lammps_extract_compute.restype = POINTER(c_double)
+      self.lib.lammps_extract_compute.restype = ctypes.POINTER(ctypes.c_double)
       ptr = self.lib.lammps_extract_compute(self.lmp,id,style,type)
       return ptr
     if type == 2:
-      self.lib.lammps_extract_compute.restype = POINTER(POINTER(c_double))
+      self.lib.lammps_extract_compute.restype = ctypes.POINTER(ctypes.POINTER(ctypes.c_double))
       ptr = self.lib.lammps_extract_compute(self.lmp,id,style,type)
       return ptr
     return None
@@ -204,16 +204,16 @@ class liggghts:
 
   def extract_fix(self,id,style,type,i=0,j=0):
     if style == 0:
-      self.lib.lammps_extract_fix.restype = POINTER(c_double)
+      self.lib.lammps_extract_fix.restype = ctypes.POINTER(ctypes.c_double)
       ptr = self.lib.lammps_extract_fix(self.lmp,id,style,type,i,j)
       result = ptr[0]
       self.lib.lammps_free(ptr)
       return result
     elif (style == 1) or (style == 2):
       if type == 1:
-        self.lib.lammps_extract_fix.restype = POINTER(c_double)
+        self.lib.lammps_extract_fix.restype = ctypes.POINTER(ctypes.c_double)
       elif type == 2:
-        self.lib.lammps_extract_fix.restype = POINTER(POINTER(c_double))
+        self.lib.lammps_extract_fix.restype = ctypes.POINTER(ctypes.POINTER(ctypes.c_double))
       else:
         return None
       ptr = self.lib.lammps_extract_fix(self.lmp,id,style,type,i,j)
@@ -227,17 +227,17 @@ class liggghts:
 
   def extract_variable(self,name,group,type):
     if type == 0:
-      self.lib.lammps_extract_variable.restype = POINTER(c_double)
+      self.lib.lammps_extract_variable.restype = ctypes.POINTER(ctypes.c_double)
       ptr = self.lib.lammps_extract_variable(self.lmp,name,group)
       result = ptr[0]
       self.lib.lammps_free(ptr)
       return result
     if type == 1:
-      self.lib.lammps_extract_global.restype = POINTER(ctypes.c_int)
+      self.lib.lammps_extract_global.restype = ctypes.POINTER(ctypes.c_int)
       nlocalptr = self.lib.lammps_extract_global(self.lmp,"nlocal")
       nlocal = nlocalptr[0]
-      result = (c_double*nlocal)()
-      self.lib.lammps_extract_variable.restype = POINTER(c_double)
+      result = (ctypes.c_double*nlocal)()
+      self.lib.lammps_extract_variable.restype = ctypes.POINTER(ctypes.c_double)
       ptr = self.lib.lammps_extract_variable(self.lmp,name,group)
       for i in xrange(nlocal): result[i] = ptr[i]
       self.lib.lammps_free(ptr)
@@ -339,6 +339,12 @@ class DEMPy:
       logging.info('Backing up {} file'.format(scriptFile))
       os.system('cp {}/{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
 
+  def extract_global(self,name,type):
+    return self.lmp.extract_global(name, type)
+
+  def extract_compute(self,id,style,type):
+    return self.lmp.extract_compute(id,style,type)
+
   def createDomain(self):
     """ Define the domain of the simulation
     @ nsys: number of subsystems
@@ -425,16 +431,16 @@ class DEMPy:
 
           if ss['insert'] == 'by_rate':
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
           elif ss['insert'] == 'by_pack':
             self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, ss['id'], seed, self.pddName[i]) + \
-              ' insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              ' insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
           else:
             print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in yes vel constant'.format(**ss) \
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
               + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
         else:
           if not self.rank:
@@ -448,6 +454,8 @@ class DEMPy:
     natomsTotal = 0
 
     if species != 'all':
+
+      species = int(species)
 
       for i in range(species):
         ss = self.pargs['SS'][i]
@@ -693,8 +701,14 @@ class DEMPy:
     if 'mfile' in self.pargs['traj']:
       if 'mName' in self.pargs['traj']:
         # TODO: make any mesh specified by the user writable as output
-
-        self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**self.pargs['traj']))
+        if type(self.pargs['traj']['mfile']) is list:
+          for i, mfile in enumerate(self.pargs['traj']['mfile']):
+            args = self.pargs['traj'].copy()
+            args['mfile'] = mfile
+            args['mName'] = self.pargs['traj']['mName'][i]
+            self.lmp.command('dump meshDump{} all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(i,**args))
+        else:
+          self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**self.pargs['traj']))
       else:
         self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel'.format(**self.pargs['traj']))
 
