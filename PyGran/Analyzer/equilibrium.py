@@ -92,15 +92,71 @@ class Neighbors(object):
 	def pairs(self):
 	    return self._pairs
 
-	@property
-	def coon(self):
-		""" Returns the coordination number per particle """
-		if self._binary:
-			typeA, typeB = [], []
+	def coon(self, type1=1, type2=2):
+		""" Returns the coordination number per particle. For binary mixtures
+		the default coordinations numbers are returned as two cross coordination 
+		number arrays (tuple). For auto (self) coordination numbers, specify type1
+		and type2 accordingly.
 
-			for cn in self._neigh:
-				typeA.append(sum(self._Particles[cn].type == 1))
-				typeB.append(sum(self._Particles[cn].type == 2))
+		[type1]: which type to compute 1st coon for in a binay mixture
+		[type2]:  which type to compute 2nd coon for in a binay mixture
+
+		TODO: support multi-body entities for single component systems
+		TODO: support tertiary systems 
+		"""
+		
+		if self._binary:
+			
+			partsA = self._Particles[self._Particles.type == 1]
+			partsB = self._Particles[self._Particles.type == 2]
+
+			Na, Nb = len(partsA), len(partsB)
+
+			typeA, typeB = numpy.zeros(Na, dtype='int64'), numpy.zeros(Nb, dtype='int64')
+			count = 0
+
+			for i, cn in enumerate(self._neigh):
+				if self._Particles[i].type == 1:
+					if hasattr(self._Particles, 'mol'):
+						if partsB.mol.max() > 0:
+							typeA[count] = len(numpy.unique((self._Particles[cn][self._Particles[cn].type == type2]).mol))
+						else:
+							typeA[count] = sum(self._Particles[cn].type == type2)
+					else:
+						typeA[count] = sum(self._Particles[cn].type == type2)
+
+					count += 1
+
+			count = 0
+			for i, cn in enumerate(self._neigh):
+				if self._Particles[i].type == 2:
+					if hasattr(self._Particles, 'mol'):
+						if partsA.mol.max() > 0:
+							typeB[count] = len(numpy.unique((self._Particles[cn][self._Particles[cn].type == type1]).mol))
+						else:
+							typeB[count] = sum(self._Particles[cn].type == type1)
+					else:
+						typeB[count] = sum(self._Particles[cn].type == type1)
+
+					count += 1
+
+			# See if a molecule is defined (i.e. multi-body entity)
+			if hasattr(self._Particles, 'mol'):
+				if partsA.mol.max() > 0:
+					tmpA = numpy.zeros(int(partsA.mol.max()), dtype='int64')
+
+					for i, partA in enumerate(partsA):
+						tmpA[int(partA.mol) - 1] += typeA[i] # mols are numbered from 1 ... N in LAMMPS
+
+					typeA = tmpA
+				
+				if partsB.mol.max() > 0:
+					tmpB = numpy.zeros(int(partsB.mol.max()), dtype='int64')
+
+					for i, partB in enumerate(partsB):
+						tmpB[int(partB.mol) - 1] += typeB[i] # mols are numbered from 1 ... N in LAMMPS
+
+					typeB = tmpB
 
 			return typeA, typeB
 		else:
