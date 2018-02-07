@@ -137,7 +137,7 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, size=None, imgSh
 
 	x,y,h = _mapPositions(Particles, axis, resol)
 	N = Particles.natoms
-	print 'natoms per slice = ', N
+
 	if N > 0:
 
 		# uncommnet the line below for alpha channel estimation
@@ -222,7 +222,7 @@ def reconstruct(fimg, imgShow=False):
 
 	return img
 
-def readImg(file, order=False, processes=None, fillHoles=False):
+def readImg(file, order=False, processes=None, fillHoles=False, flip=False):
 	""" Loads image file(s) and returns an array 
 
 	@file: a list of image file names, or a string containing the image filename(s). In
@@ -232,6 +232,7 @@ def readImg(file, order=False, processes=None, fillHoles=False):
 	@[order]: read a list of image files chronologically
 	@[processes]: run in parallel???
 	@[fillHoles]: fill holes in 3D image
+	@[flip]: flip image indices when reading data (for reading matlab images)
 
 	TODO: fix processes
 	"""
@@ -246,10 +247,15 @@ def readImg(file, order=False, processes=None, fillHoles=False):
 			 # Read single image file
 			 pic = Image.open(file)
 
-			 if len(np.array(pic.getdata()).shape) > 1:
-			 	data = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1])
+			 if flip:
+			 	n,m = pic.size[1], pic.size[0]
 			 else:
-			 	data = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
+			 	n,m = pic.size[0], pic.size[1]
+
+			 if len(np.array(pic.getdata()).shape) > 1:
+			 	data = np.array(pic.getdata()).reshape(n,m, np.array(pic.getdata()).shape[-1])
+			 else:
+			 	data = np.array(pic.getdata()).reshape(n,m)
 
 			 return data
 
@@ -258,16 +264,21 @@ def readImg(file, order=False, processes=None, fillHoles=False):
 			for i, img in enumerate(file):
 				pic = Image.open(img)
 
+				if flip:
+			 		n,m = pic.size[1], pic.size[0]
+			 	else:
+			 		n,m = pic.size[0], pic.size[1]
+
 				if i == 0:
 					if len(np.array(pic.getdata()).shape) > 1:
-				 		data = np.zeros((pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1], len(file)))
+				 		data = np.zeros((n, m, np.array(pic.getdata()).shape[-1], len(file)))
 				 	else:
-				 		data = np.zeros((pic.size[0], pic.size[1], len(file)))
+				 		data = np.zeros((n, m, len(file)))
 
 				if len(np.array(pic.getdata()).shape) > 1:
-					data[:,:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1], np.array(pic.getdata()).shape[-1])
+					data[:,:,:,i] = np.array(pic.getdata()).reshape(n, m, np.array(pic.getdata()).shape[-1])
 				else:
-					data[:,:,i] = np.array(pic.getdata()).reshape(pic.size[0], pic.size[1])
+					data[:,:,i] = np.array(pic.getdata()).reshape(n, m)
 
 			if fillHoles:
 				from scipy import ndimage
@@ -284,12 +295,13 @@ def readImg(file, order=False, processes=None, fillHoles=False):
 		else:
 			return func(file)
 
-def coarseDiscretize(images, binsize, order=False, fillHoles=False):
+def coarseDiscretize(images, binsize, order=False, fillHoles=False, flip=False):
 	""" Discretizes a 3D image into a coarse grid
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
 	@[order]: read images in a chronological order if set to True
 	@[fillHoles]: fill holes in 3D image
+	@[flip]: flip image indices when reading data (for reading matlab images)
 
 	Returns a list of volume fraction 3D arrays, vol fraction mean, 
 	and vol fraction variance
@@ -300,14 +312,17 @@ def coarseDiscretize(images, binsize, order=False, fillHoles=False):
 	# Construct a 3D representation of the system
 	if isinstance(images, list):
 		for imgs in images:
-			im = readImg(imgs, order)
+			im = readImg(imgs, order, fillHoles=fillHoles, flip=flip)
 			if len(im.shape) > 3:
 				dataList.append(im[:,:,0,:])
 			else:
 				dataList.append(im)
 	else:
-		im = readImg(images, order)
-		dataList.append(im)
+		im = readImg(images, order, fillHoles=fillHoles, flip=flip)
+		if len(im.shape) > 3:
+			dataList.append(im[:,:,0,:])
+		else:
+			dataList.append(im)
 
 	# Discretize system into cells of size 'binsize'
 	data = dataList[0]
@@ -342,44 +357,35 @@ def coarseDiscretize(images, binsize, order=False, fillHoles=False):
 	dataVar = []
 	dataMean = []
 
-	if len(dataList) > 1:
-		for frac in volFrac:
-			fracTotal += frac
+	for frac in volFrac:
+		fracTotal += frac
 
-		# Ignore all voxels not contaning any data
-		for frac in volFrac:
-			frac[fracTotal > 0] /= fracTotal[fracTotal > 0]
-			dataMean.append(frac[fracTotal > 0].mean())
-			dataVar.append(frac[fracTotal > 0].std()**2.0)
-	else:
-		data = dataList[0]
-		c1, c2 = data[data > 0].min(), data.max()
-		volFrac = [data * 0, data * 0]
-		volFrac[0][data == c1], volFrac[1][data == c2] = data[data == c1] / c1, data[data == c2] / c2
-
-		v1, v2 = volFrac[0], volFrac[1]
-		dataMean = [v1[data > 0].mean(), v2[data > 0].mean()]
-		dataVar = [v1[data > 0].std()**2, v2[data > 0].std()**2]
+	# Ignore all voxels not contaning any data
+	for frac in volFrac:
+		frac[fracTotal > 0] /= fracTotal[fracTotal > 0]
+		dataMean.append(frac[fracTotal > 0].mean())
+		dataVar.append(frac[fracTotal > 0].std()**2.0)
 
 	return volFrac, dataMean, dataVar
 
-def intensitySegregation(images, binsize, order=False):
+def intensitySegregation(images, binsize, order=False, flip=False):
 	""" Computes the intensity of segregation from a set of image files
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
 	@[order]: read images in a chronological order if set to True
+	@[flip]: flip image indices when reading data (for reading matlab images)
 
 	Returns the mean volume fraction, variance, and intensity
 
 	TODO: support multi-component systems, not just binary systems
 	"""
 
-	_, dataMean, dataVar = coarseDiscretize(images, binsize, order)
+	_, dataMean, dataVar = coarseDiscretize(images, binsize, order, flip)
 
 	# Assuming only a binary system .. must be somehow fixed/extended for tertiary systems, etc.
 	return dataMean, dataVar[0], dataVar[0] / (dataMean[0] * dataMean[1])
 
-def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=False, fillHoles=False):
+def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=False, fillHoles=False, flip=False):
 	""" Computes (through Monte Carlo sim) the linear scale of segregation from a set of image files
 	@images: list of image file strings
 	@binsize: length of each discrete grid cell in pixels
@@ -389,15 +395,19 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 	@[maxDist]: maximum distance (in pixels) to sample
 	@[order]: read images in a chronological order if set to True
 	@[fillHoles]: fill holes in 3D image
+	@[flip]: flip image indices when reading data (for reading matlab images)
 
 	Returns the coefficient of correlation R(r) and separation distance (r)
 
 	TODO: support multi-component systems, not just binary systems
 	"""
 
-	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order, fillHoles)
+	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order, fillHoles, flip)
 
-	a,b = volFrac[0], volFrac[1]
+	if len(volFrac) > 1:
+		a,b = volFrac[0], volFrac[1]
+	else:
+		a,b = volFrac[0], 0 * volFrac[0]
 
 	volMean = volMean[0]
 	volVar = volVar[0]
@@ -408,28 +418,27 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 	if not maxDist:
 		maxDist = int(np.sqrt(3 * maxDim**2)) + 1
 
-	corrfunc = np.zeros(maxDist - 1)
+	corrfunc = np.zeros(maxDist)
 	count = 0
 	incr = 1
 
-	for dist in np.arange(incr, maxDist, incr):
+	for dist in np.arange(0, maxDist, incr):
 		nTrials = 0
 		corr = 0
 
 		while nTrials < samplesize:
 
-			theta, phi = np.random.rand() * np.pi, np.random.rand() * 2 * np.pi
+			theta, phi = np.arccos(1.0 - 2 * np.random.rand()), np.random.rand() * 2 * np.pi
 			i1 = np.random.randint(0, a.shape[0], size=1)
 			j1 = np.random.randint(0, a.shape[1], size=1)
 			k1 = np.random.randint(0, a.shape[2], size=1)
 
-			i2 = i1 + np.int(dist * np.sin(theta) * np.sin(phi))
-			j2 = j1 + np.int(dist * np.sin(theta) * np.cos(phi))
-			k2 = k1 + np.int(dist * np.cos(theta))
+			j2 = i1 + np.int(np.ceil(dist * np.sin(theta) * np.sin(phi)))
+			i2 = j1 + np.int(np.ceil(dist * np.sin(theta) * np.cos(phi)))
+			k2 = k1 + np.int(np.ceil(dist * np.cos(theta)))
 
 			# Check for boundary pts
-			if i2 < a.shape[0] and j2 < a.shape[1] and k2 < a.shape[2]:
-
+			if i2 < a.shape[0] and i2 >= 0 and j2 < a.shape[1] and j2 >= 0 and k2 < a.shape[2] and k2 >=0:
 				# Make sure we are sampling non-void spatial points
 				if a[i1,j1,k1] > 0 or b[i1,j1,k1] > 0:
 					if a[i2,j2,k2] > 0 or b[i2,j2,k2] > 0:
@@ -440,4 +449,4 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 		corrfunc[count] = corr / samplesize
 		count += 1
 
-	return corrfunc, np.arange(incr, maxDist, incr) * resol * binsize
+	return corrfunc, np.arange(0, maxDist, incr) * resol * binsize
