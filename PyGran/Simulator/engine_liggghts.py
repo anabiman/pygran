@@ -263,7 +263,7 @@ class liggghts:
       data = ((count*natoms)*ctypes.c_int)()
       self.lib.lammps_gather_atoms(self.lmp, name, type, count, data)
     elif type == 1:
-      data = ((count*natoms)*c_double)()
+      data = ((count*natoms)*ctypes.c_double)()
       self.lib.lammps_gather_atoms(self.lmp, name, type, count, data)
     else: return None
     return data
@@ -338,6 +338,15 @@ class DEMPy:
       scriptFile = argv[0]
       logging.info('Backing up {} file'.format(scriptFile))
       os.system('cp {}/{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
+
+  def get_natoms(self):
+    return self.lmp.get_natoms()
+
+  def scatter_atoms(self,name,type,count,data):
+    return self.lmp.scatter_atoms(name,type,count,data)
+
+  def gather_atoms(self,name,type,count):
+    return self.lmp.gather_atoms(name,type,count)
 
   def extract_global(self,name,type):
     return self.lmp.extract_global(name, type)
@@ -423,7 +432,7 @@ class DEMPy:
             print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
           raise
 
-        seed = np.random.randint(1e8)
+        seed = 32452843
 
         if natoms > 0:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))

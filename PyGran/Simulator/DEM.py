@@ -147,8 +147,32 @@ class DEM:
     else:
       self.dumpSetup()
 
-  def initialize(self):
+  def scatter_atoms(self,name,type,count,data):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        return self.dem.scatter_atoms(name,type,count,data)
 
+  def gather_atoms(self,name,type,count):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        return self.dem.gather_atoms(name,type,count)
+
+  def get_natoms(self):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        return self.dem.get_natoms()
+
+  def extract_global(self,name,type):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        return self.dem.extract_global(name, type)
+        
+  def extract_compute(self,id,style,type):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        return self.dem.extract_compute(id,style,type)
+
+  def initialize(self):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         self.dem.initialize()
