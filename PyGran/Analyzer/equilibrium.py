@@ -86,11 +86,13 @@ class Neighbors(object):
 
 	@property
 	def distances(self):
-	    return self._distances
+		" Returns all neighbor pair-wise distance "
+		return self._distances
 
 	@property
 	def pairs(self):
-	    return self._pairs
+		" Returns the pair indices for each overlap "
+		return self._pairs
 
 	def coon(self, type1=1, type2=2):
 		""" Returns the coordination number per particle. For binary mixtures
@@ -107,36 +109,56 @@ class Neighbors(object):
 		
 		if self._binary:
 			
-			partsA = self._Particles[self._Particles.type == 1]
-			partsB = self._Particles[self._Particles.type == 2]
+			partsA = self._Particles[self._Particles.type == type1]
+			partsB = self._Particles[self._Particles.type == type2]
 
 			Na, Nb = len(partsA), len(partsB)
 
 			typeA, typeB = numpy.zeros(Na, dtype='int64'), numpy.zeros(Nb, dtype='int64')
 			count = 0
 
+			# Must take into account the case where both A and B are molecules!!!
+
+			# Begin calculating the C.N. of type A
 			for i, cn in enumerate(self._neigh):
-				if self._Particles[i].type == 1:
+				if self._Particles[i].type == type1:
 					if hasattr(self._Particles, 'mol'):
 						if partsB.mol.max() > 0:
+							# B is a molecule but A is a sphere
 							typeA[count] = len(numpy.unique((self._Particles[cn][self._Particles[cn].type == type2]).mol))
 						else:
-							typeA[count] = sum(self._Particles[cn].type == type2)
+							# A and B are spheres / *not* molecules
+							if type1 == type2:
+								typeA[count] = sum(self._Particles[cn].type == type2) - 1
+								print typeA[count]
+							else:
+								typeA[count] = sum(self._Particles[cn].type == type2)
 					else:
-						typeA[count] = sum(self._Particles[cn].type == type2)
+						# no molecules , just spheres!
+						if type1 == type2:
+							typeA[count] = sum(self._Particles[cn].type == type2) - 1
+						else:
+							typeA[count] = sum(self._Particles[cn].type == type2)
 
 					count += 1
 
 			count = 0
 			for i, cn in enumerate(self._neigh):
-				if self._Particles[i].type == 2:
+				if self._Particles[i].type == type2:
 					if hasattr(self._Particles, 'mol'):
 						if partsA.mol.max() > 0:
-							typeB[count] = len(numpy.unique((self._Particles[cn][self._Particles[cn].type == type1]).mol))
+							typeB[cpunt] = len(numpy.unique((self._Particles[cn][self._Particles[cn].type == type1]).mol))
+						else:
+							# A and B are spheres / *not* molecules
+							if type1 == type2:
+								typeB[count] = sum(self._Particles[cn].type == type1)  - 1
+							else:
+								typeB[count] = sum(self._Particles[cn].type == type1)
+					else:
+						if type1 == type2:
+							typeB[count] = sum(self._Particles[cn].type == type1) - 1
 						else:
 							typeB[count] = sum(self._Particles[cn].type == type1)
-					else:
-						typeB[count] = sum(self._Particles[cn].type == type1)
 
 					count += 1
 
@@ -160,11 +182,25 @@ class Neighbors(object):
 
 			return typeA, typeB
 		else:
-			return [len(cn) for cn in self._neigh]
+
+			if hasattr(self._Particles, 'mol'):
+				if self._Particles.mol[0] > 0:
+					coon = numpy.zeros(len(self._Particles.mol))
+					for i, cn in enumerate(self._neigh):
+						coon[int(self._Particles.mol[i])] += len(numpy.unique(self._Particles[cn].mol)) - 1
+
+					return coon
+				else:
+					return numpy.array([len(cn) - 1 for cn in self._neigh])
+			else:
+				return numpy.array([len(cn) - 1 for cn in self._neigh])
 
 	@property
 	def overlaps(self):
-	    return self._overlaps
+		""" Returns all overlapping distances and their indices in the form of an N x 3 numpy array
+		where N is the number of particles. 1st column contains the distances, 2nd and 3rd colum the corresponding
+		indices """
+		return self._overlaps
 
 	def filter(self, percent=None):
 		""" Returns a non-overlapping Particles class from the given configuration 
