@@ -436,21 +436,21 @@ class DEMPy:
 
         if natoms > 0:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
-          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box volume_limit 1e-30')
 
           if ss['insert'] == 'by_rate':
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
+              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
           elif ss['insert'] == 'by_pack':
             self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, ss['id'], seed, self.pddName[i]) + \
-              ' insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
+              ' insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
+              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
           else:
             print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
+              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i]) +  ' {} {} {}'.format()  + ' region {} ntry_mc 10000'.format(name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
