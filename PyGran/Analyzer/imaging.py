@@ -27,6 +27,7 @@ from PIL import Image
 import glob, os
 from numpy import random, array, linspace, sqrt, fabs
 import numpy as np
+from scipy.stats import binned_statistic
 
 try:
 	import cv2
@@ -100,7 +101,7 @@ def _mapPositions(Particles, axis, resol=None):
 
 	return x,y,h
 
-def slice(Particles, zmin, zmax, axis, resol=None, output=None, size=None, imgShow=False):
+def slice(Particles, zmin, zmax, axis, size, resol=None, output=None, imgShow=False):
 	"""
 	Generates a 2D image from a slice (limited by 'zmin/zmax' and of reslution '1/dz') 
 	of a 3D config in the Particles class. The resol is in distance per pixel.
@@ -115,14 +116,10 @@ def slice(Particles, zmin, zmax, axis, resol=None, output=None, size=None, imgSh
 
 	x,y,h = _mapPositions(Particles, axis, resol)
 
-	if resol:
-		if size:
-			length, width = size
-		else:
-			length, width = max(x), max(y)
+	length, width = size[0], size[1]
 
-		img = Image.new('RGB', (length, width), "black") # create a new black image
-		pixels = img.load() # create the pixel map
+	img = Image.new('RGB', (length, width), "black") # create a new black image
+	pixels = img.load() # create the pixel map
 
 	Particles = Particles[h >= zmin - maxRad]
 
@@ -433,8 +430,8 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 			j1 = np.random.randint(0, a.shape[1], size=1)
 			k1 = np.random.randint(0, a.shape[2], size=1)
 
-			j2 = i1 + np.int(np.ceil(dist * np.sin(theta) * np.sin(phi)))
-			i2 = j1 + np.int(np.ceil(dist * np.sin(theta) * np.cos(phi)))
+			i2 = i1 + np.int(np.ceil(dist * np.sin(theta) * np.sin(phi)))
+			j2 = j1 + np.int(np.ceil(dist * np.sin(theta) * np.cos(phi)))
 			k2 = k1 + np.int(np.ceil(dist * np.cos(theta)))
 
 			# Check for boundary pts
@@ -450,3 +447,65 @@ def scaleSegregation(images, binsize, samplesize, resol, maxDist=None, order=Fal
 		count += 1
 
 	return corrfunc, np.arange(0, maxDist, incr) * resol * binsize
+
+def scaleSegregation_fft(images, binsize, resol, order=False, fillHoles=False, flip=False, Npts=None):
+	""" Computes (through Monte Carlo sim) the linear scale of segregation from a set of image files
+	@images: list of image file strings
+	@binsize: length of each discrete grid cell in pixels
+	@samplesize: number of successful Monte Carlo trials
+	@resol: image resolution (distance/pixel)
+
+	@[maxDist]: maximum distance (in pixels) to sample
+	@[order]: read images in a chronological order if set to True
+	@[fillHoles]: fill holes in 3D image
+	@[flip]: flip image indices when reading data (for reading matlab images)
+	@[Npts]: number of data points to average fft correlation over (bin size)
+
+	Returns the coefficient of correlation R(r) and separation distance (r)
+
+	TODO: support multi-component systems, not just binary systems
+	"""
+
+	if not Npts:
+		Npts = 50
+
+	volFrac, volMean, volVar = coarseDiscretize(images, binsize, order, fillHoles, flip)
+
+	if len(volFrac) > 1:
+		a,b = volFrac[0], volFrac[1]
+	else:
+		a,b = volFrac[0], 0 * volFrac[0]
+
+	dist = a * 0
+
+	x = np.arange(a.shape[0]) 
+	y = np.arange(a.shape[1]) 
+	z = np.arange(a.shape[2])
+
+	for i in range(a.shape[0]):
+		for j in range(a.shape[1]):
+			for k in range(a.shape[2]):
+
+				if a[i,j,k] > 0 or b[i,j,k] > 0:
+					dist[i,j,k] = np.sqrt(x[i]**2 + y[j]**2 + z[k]**2)
+
+
+	dist = dist.flatten()
+	a = a.flatten()
+	b = b.flatten()
+
+	a, _, _ = binned_statistic(dist, a, 'mean', Npts)
+	b, dist, _ = binned_statistic(dist, b, 'mean', Npts)
+
+	dist = dist[:-1]
+	
+	a = a - a.mean()
+
+	corrfunc = a * 0
+
+	var = np.linalg.norm(a)**2
+
+	N = 2 * len(a) - 1
+	corrfunc = (np.real(np.fft.ifft(np.fft.fft(a, N) * np.conj(np.fft.fft(a, N)))) / var)[:len(a)]
+		
+	return corrfunc, dist * resol * binsize
