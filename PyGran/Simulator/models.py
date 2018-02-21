@@ -79,12 +79,8 @@ class Model(object):
 			self.params['dim'] = 3
 
 		if 'vel' not in self.params:
-			self.params['vel'] = ()
-
-			if 'SS' in self.params:
-				# the user did not specify the initial velocities, so we assume they're zero
-				for comp in range(len(self.params['SS'])):
-					self.params['vel'] += ((0,0,0),)
+			self.params['vel'] = ((0,0,0),) * len(self.params['SS']) # the user did not specify the initial velocities, so we assume they're zero
+			self.params['vel_type'] = ('constant', ) * len(self.params['SS']) # assume the user wants a constant velocity
 
 		if 'nns_skin' not in self.params:
 			self.params['nns_skin'] = 1e-3
@@ -109,7 +105,7 @@ class Model(object):
 
 		# Default traj I/O args
 		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
-                   'args': ('id', 'x', 'y', 'z', 'radius', \
+                   'args': ('id', 'type', 'x', 'y', 'z', 'radius', \
                    'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
 
 		if 'traj' in self.params:
