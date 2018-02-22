@@ -126,6 +126,9 @@ class Model(object):
 			for ss in self.params['SS']:
 				ss['material'] = Materials.LIGGGHTS(**ss['material'])
 
+				if 'style' not in ss:
+					ss['style'] = 'sphere'
+
 			# Use 1st component to find all material params ~ hackish!!! 
 			ss = self.params['SS'][0]
 
