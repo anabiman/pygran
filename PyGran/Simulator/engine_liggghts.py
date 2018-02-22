@@ -272,7 +272,7 @@ class liggghts:
   # assume vector is of correct type and length, as created by gather_atoms()
 
   def scatter_atoms(self,name,type,count,data):
-    self.lib.lammps_scatter_atoms(self.lmp,name,type,count,data)
+    self.lib.lammps_scatter_atoms(self.lmp, name, type, count, data)
 
 class DEMPy:
   """A class that implements a python interface for DEM computations"""
@@ -354,6 +354,9 @@ class DEMPy:
   def extract_compute(self,id,style,type):
     return self.lmp.extract_compute(id,style,type)
 
+  def createParticles(self, type, style, *args):
+    self.lmp.createParticles(type, style, *args)
+
   def createDomain(self):
     """ Define the domain of the simulation
     @ nsys: number of subsystems
@@ -369,7 +372,7 @@ class DEMPy:
 
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
-  def setupParticles(self):
+  def setupParticles(self, *args):
     """ Setup particle for insertion if requested by the user
     """
 
@@ -390,7 +393,13 @@ class DEMPy:
             ss['vol_lim'] = 1e-12
 
           self.lmp.command('group group{id} type {id}'.format(**ss))
-          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/sphere 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius))
+
+          if 'radius' in ss:
+            self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(radius)).format(*radius) \
+            + (' {}' * len(args)).format(*args))
+          else:
+            self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(args)).format(*args))
+          
           self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
 
           #Do NOT unfix randName! Will cause a memory corruption error
@@ -436,21 +445,21 @@ class DEMPy:
 
         if natoms > 0:
           randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
-          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box volume_limit 1e-30')
+          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
 
           if ss['insert'] == 'by_rate':
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
-              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
           elif ss['insert'] == 'by_pack':
             self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, ss['id'], seed, self.pddName[i]) + \
-              ' insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
-              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
+              ' insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
           else:
             print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
             self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel '.format(**ss) \
-              + ' {}'.format(self.pargs['vel_type'][i]) + (' {}' * len(self.pargs['vel'][i])).format(*self.pargs['vel'][i]) +  ' {} {} {}'.format()  + ' region {} ntry_mc 10000'.format(name) )
+              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
+              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
         else:
           if not self.rank:
             print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
@@ -575,6 +584,16 @@ class DEMPy:
     if group == None:
       for idSS in self.pargs['idSS']:
         self.lmp.command('group group{} type {}'.format(idSS, idSS))
+
+  def createParticles(self, type, style, *args):
+    """
+    Creates particles of type 'type' (1,2, ...) using style 'style' (box or region or single or random)
+    @[args]: 'basis' or 'remap' or 'units' or 'all_in' 
+    """
+    if not self.rank:
+      logging.info('Creating particles {} with args'.format(name) + (' {}' * len(args)).format(*args))
+
+    self.lmp.command('create_atoms type {} style {}'.format(type, style) +  (' {}' * len(args)).format(*args))
 
   def setupNeighbor(self, **params):
     """
