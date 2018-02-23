@@ -372,7 +372,7 @@ class DEMPy:
 
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
-  def setupParticles(self, *args):
+  def setupParticles(self):
     """ Setup particle for insertion if requested by the user
     """
 
@@ -383,27 +383,30 @@ class DEMPy:
         if not self.rank:
           logging.info('Setting up particles for group{id}'.format(**ss))
 
-        if 'insert' in ss:
+        randName = np.random.randint(10**5,10**8)
+        pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
+
+        if 'vol_lim' not in ss:
+          ss['vol_lim'] = 1e-12
+
+        self.lmp.command('group group{id} type {id}'.format(**ss))
+
+        if 'args'in ss:
+          args = ss['args']
+        else:
+          args = ()
+
+        if 'radius' in ss:
           radius = ss['radius']
+          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius) \
+          + (' {}' * len(args)).format(*args))
+        else:
+          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(args)).format(*args))
+        
+        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
 
-          randName = np.random.randint(10**5,10**8)
-          pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
-
-          if 'vol_lim' not in ss:
-            ss['vol_lim'] = 1e-12
-
-          self.lmp.command('group group{id} type {id}'.format(**ss))
-
-          if 'radius' in ss:
-            self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(radius)).format(*radius) \
-            + (' {}' * len(args)).format(*args))
-          else:
-            self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(args)).format(*args))
-          
-          self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
-
-          #Do NOT unfix randName! Will cause a memory corruption error
-          self.pddName.append(pddName)
+        #Do NOT unfix randName! Will cause a memory corruption error
+        self.pddName.append(pddName)
 
   def insert(self, name, species, *region):
     """
@@ -496,13 +499,13 @@ class DEMPy:
 
     return randName
 
-  def run(self, nsteps, dt=None, itype='sphere'):
+  def run(self, nsteps, dt=None, itype='sphere', group=None):
     """ Runs a simulation for number of steps specified by the user
      @itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)
      @dt = timestep"""
 
-    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6), itype=itype)
-
+    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6), itype=itype, group=group)
+    
     if not dt:
       if 'dt' in self.pargs:
         dt = self.pargs['dt']
@@ -575,15 +578,17 @@ class DEMPy:
     """
     self.lmp.command('unfix {}'.format(name))
 
-  def createGroup(self, group = None):
+  def createGroup(self, *group):
     """ Create groups of atoms
     """
     if not self.rank:
       logging.info('Creating atom group {}'.format(group))
 
-    if group == None:
+    if not len(group):
       for idSS in self.pargs['idSS']:
         self.lmp.command('group group{} type {}'.format(idSS, idSS))
+    else:
+      self.lmp.command('group ' + ('{} ' * len(group)).format(*group))
 
   def createParticles(self, type, style, *args):
     """
@@ -591,12 +596,17 @@ class DEMPy:
     @[args]: 'basis' or 'remap' or 'units' or 'all_in' 
     """
     if not self.rank:
-      logging.info('Creating particles {} with args'.format(name) + (' {}' * len(args)).format(*args))
+      logging.info('Creating particles {} with args'.format(type) + (' {}' * len(args)).format(*args))
 
-    self.lmp.command('create_atoms type {} style {}'.format(type, style) +  (' {}' * len(args)).format(*args))
+    self.lmp.command('create_atoms {} {}'.format(type, style) +  (' {}' * len(args)).format(*args))
+
+  def set(self, *args):
+    """ Set group/atom attributes """
+    self.lmp.command('set ' + (' {}' * len(args)).format(*args))
 
   def setupNeighbor(self, **params):
     """
+    Sets up NNS list parameters
     """
     if not self.rank:
       logging.info('Setting up nearest neighbor searching parameters')
@@ -670,7 +680,7 @@ class DEMPy:
       self.setupParticles()
       self.setupGravity()
 
-  def setupIntegrate(self, name, itype):
+  def setupIntegrate(self, name, itype, group='all'):
     """
     Specify how Newton's eqs are integrated in time.
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -684,7 +694,13 @@ class DEMPy:
     if self.integrator:
       self.remove(self.integrator)
 
-    self.lmp.command('fix {} all nve/{}'.format(name, itype))
+    if isinstance(group, list) and isinstance(itype, list):
+      assert(len(group) == len(itype))
+
+      for i, g in enumerate(group):
+        self.lmp.command('fix {} {} {}'.format(name + i, g, itype[i]))
+    else:
+      self.lmp.command('fix {} {} {}'.format(name, group, itype))
 
     return name
 

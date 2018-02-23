@@ -158,6 +158,18 @@ class DEM:
         self.dem.createParticles(type, style, *args)
         break
 
+  def createGroup(self, *group):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.createGroup(*group)
+        break
+
+  def set(self, *args):
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.set(*args)
+        break
+
   def gather_atoms(self,name,type,count):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
@@ -195,10 +207,10 @@ class DEM:
       if self.rank < self.nPart * (i + 1):
         return self.dem.insert(name, species, *args)
 
-  def run(self, nsteps=None, dt=None, iType='sphere'):
+  def run(self, nsteps, dt=None, itype='sphere', group=None):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.run(nsteps, dt, iType)
+        self.dem.run(nsteps, dt, itype, group)
         break
         
   def setupParticles(self):
@@ -273,7 +285,7 @@ class DEM:
         self.dem.dumpSetup()
         break
 
-  def setupIntegrate(self, name, itype):
+  def setupIntegrate(self, name, itype, group='all'):
     """
     Specify how Newton's eqs are integrated in time. 
     @ name: name of the fixed simulation ensemble applied to all atoms
@@ -283,7 +295,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupIntegrate(name, itype)
+        self.dem.setupIntegrate(name, itype, group)
         break
 
   def integrate(self, steps, dt):
