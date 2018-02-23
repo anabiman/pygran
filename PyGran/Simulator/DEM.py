@@ -152,7 +152,7 @@ class DEM:
       if self.rank < self.nPart * (i + 1):
         return self.dem.scatter_atoms(name,type,count,data)
 
-  def createParticles(self, type, style, *args)
+  def createParticles(self, type, style, *args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
         self.dem.createParticles(type, style, *args)
