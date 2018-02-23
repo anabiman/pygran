@@ -37,6 +37,7 @@ import collections
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 from PyGran.Tools import convert
+from scipy.stats import binned_statistic
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
@@ -338,18 +339,18 @@ these properties. This class is iterable but NOT an iterator. """
 
 		self._constructAttributes()
 
-	def translate(self, value, attr=('x','y','z')):
+	def translate(self, value, attr):
 		""" Translates all ss elements by a float or int 'value'
 
 		@[attr]: attribute to translate (positions by default)
 		"""
-		for at in attr:
+		for i, at in enumerate(attr):
 			if at in self.data:
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = True
 
-				self.data[at] += value
+				self.data[at] += value[i]
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = False
@@ -730,7 +731,7 @@ class Particles(SubSystem):
 	def mass(self, tdensity):
 		""" Computes the mass of all particles 
 
-		tdensity: true density of the powder
+		@tdensity: true density of the powder
 		returns the summation of the mass of all particles """
 
 		if self.natoms > 0:
@@ -741,6 +742,103 @@ class Particles(SubSystem):
 			return mass
 		else:
 			return None
+
+	def intensitySegregation(self, resol=None):
+		""" Computes the intensity of segregation for binary mixture
+		as defined by Danckwerts:
+
+		I = sigma_a**2 / (mean_a (1 - mean_a))
+
+		@[resol]: bin size for grid construction (default 3 * diameter)
+		returns scalar intensity 
+		"""
+
+		if not resol:
+			resol = self.radius.min() * 3
+
+		if len(np.unique(self.type)) != 2:
+			raise ValueError("Intensity of segergation can be computed only for a binary system.")
+			# should I support tertiary systems or more ???
+
+		nx = int((self.x.max() - self.x.min()) / resol) + 1
+		ny = int((self.y.max() - self.y.min()) / resol) + 1
+		nz = int((self.z.max() - self.z.min()) / resol) + 1
+
+		indices = np.zeros((nx,ny,nz), dtype='float64')
+
+		for sn, ctype in enumerate(np.unique(self.type)):
+
+			parts = self[self.type==ctype]
+
+			parts.translate(value=(-parts.x.min(), -parts.y.min(), -parts.z.min()), attr=('x','y','z'))
+
+			x = np.array(parts.x / resol, dtype='int64')
+			y = np.array(parts.y / resol, dtype='int64')
+			z = np.array(parts.z / resol, dtype='int64')
+
+			for i in range(parts.natoms):
+				indices[x[i],y[i],z[i]] += parts.radius[i]**3
+
+			if sn == 0:
+				indices_a = indices.copy()
+
+		indices_a[indices > 0] /= indices[indices > 0]
+		aMean = indices_a[indices > 0].mean()
+		aStd = indices_a[indices > 0].std()
+
+		return aStd**2 / (aMean * (1.0 - aMean)), indices_a, indices
+
+	def scaleSegregation(self, nTrials=1000, resol=None, Npts=50, maxDist=None):
+		""" Computes the correlation coefficient as defined by Danckwerts:
+		R(r) = a * b / std(a)**2
+
+		This is done via a Monte Carlo simulation.
+
+		@[resol]: bin size for grid construction (default min radius)
+		@[nTrials]: number of Monte Carlo trials (sample size)
+		@[Npts]: number of bins for histogram construction
+		@[maxDist]: maximum distance (in units of grid size) to sample
+
+		Returns the coefficient of correlation R(r) and separation distance (r)
+		"""
+
+		if not resol:
+			resol = self.radius.min()
+	
+		_, a, total = self.intensitySegregation(resol)
+
+		if not maxDist:
+			maxDim = max(a.shape)
+			maxDist = int(np.sqrt(3 * maxDim**2)) + 1
+		
+		volMean = a[total > 0].mean()
+		volVar = a[total > 0].std()**2
+
+		corr = np.zeros(nTrials)
+		dist = np.zeros(nTrials)
+		count = 0
+
+		# Begin Monte Carlo simulation
+		while count < nTrials:
+
+			i1, i2 = np.random.randint(0, a.shape[0], size=2)
+			j1, j2 = np.random.randint(0, a.shape[1], size=2)
+			k1, k2 = np.random.randint(0, a.shape[2], size=2)
+
+			# Make sure we are sampling non-void spatial points
+			if total[i1, j1, k1] > 0 and total[i2, j2, k2] > 0:
+
+				distance = np.sqrt((i2 - i1)**2 + (j2 - j1)**2 + (k2 - k1)**2)
+
+				if distance <= maxDist:
+
+					corr[count] = ((a[i1,j1,k1] - volMean) * (a[i2,j2,k2] - volMean)) / volVar
+					dist[count] = distance
+					count += 1
+
+		corrfunc, distance, _ = binned_statistic(dist, corr, 'mean', Npts)
+
+		return corrfunc[np.invert(np.isnan(corrfunc))], distance[0:-1][np.invert(np.isnan(corrfunc))] * resol
 
 	def density(self, tdensity, shape = 'box', bounds=None):
 		"""
