@@ -389,7 +389,8 @@ class DEMPy:
         if 'vol_lim' not in ss:
           ss['vol_lim'] = 1e-12
 
-        self.lmp.command('group group{id} type {id}'.format(**ss))
+        id = ss['id'] - 1
+        self.lmp.command('group group{} type {}'.format(id, ss['id']))
 
         if 'args'in ss:
           args = ss['args']
@@ -398,17 +399,22 @@ class DEMPy:
 
         if 'radius' in ss:
           radius = ss['radius']
-          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius) \
+          self.lmp.command('fix {} '.format(randName) + 'group{}'.format(id) + ' particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius) \
           + (' {}' * len(args)).format(*args))
         else:
-          self.lmp.command('fix {} '.format(randName) + 'group{id} particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(args)).format(*args))
+          self.lmp.command('fix {} '.format(randName) + 'group{}'.format(id) + ' particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density}'.format(**ss) + (' {}' * len(args)).format(*args))
         
-        self.lmp.command('fix {} '.format(pddName) + 'group{id} particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
+        self.lmp.command('fix {} '.format(pddName) + 'group{}'.format(id) + ' particledistribution/discrete 67867967 1'.format(**ss) + ' {} 1.0'.format(randName))
+
+        if ss['style'] is 'multisphere':
+          itype = ss['style']
+        else:
+          itype = 'nve/{style}'.format(**ss)
 
         #Do NOT unfix randName! Will cause a memory corruption error
         self.pddName.append(pddName)
 
-  def insert(self, name, species, *region):
+  def insert(self, name, species, value, **args):
     """
     This function inserts particles, and assigns particle velocities if requested by the user. If species is 'all',
     all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
@@ -419,93 +425,97 @@ class DEMPy:
       print 'Probability distribution not set for particle insertion. Exiting ...'
       sys.exit()
 
+    if 'region' in args:
+      region = args['region']
+    else:
+      raise RuntimeError('region (tuple) must be supplied when inserting particles.')
+
+    # If region boundary is supplied as a tuple I think?
     if isinstance(region[1], tuple):
-      args = list(region[1])
-      args.insert(0, region[0])
+      targs = list(region[1])
+      targs.insert(0, region[0])
 
       tmp = region[1]
       for i in range(len(tmp)):
-        args[i+1] = tmp[i]
+        targs[i+1] = tmp[i]
 
-      region = tuple(args)
+      region = tuple(targs)
 
-    def insert_loc(self, ss, i, name, natomsTotal, *region):
-      """ For multi-component system, this functions can cause REAL *trouble*. For now, make sure components
+    def insert_loc(self, id, name, value, vel, vel_type, region, mech, **ss):
+      """ For multi-component system, this function can cause REAL *trouble*. For now, make sure components
       are inserted consecutively or all at once.
       """
-      if 'insert' in ss:
-        if not self.rank:
-          logging.info('Inserting particles for species {}'.format(i + 1))
+      if not self.rank:
+        logging.info('Inserting particles for species {}'.format(id + 1))
 
-        natoms = natomsTotal - self.lmp.get_natoms()
+      seed = 32452843
 
-        if natoms < 0:
-          if not self.rank:
-            print 'Too many particles requested for insertion. Increase the total number of particles in your system.'
-          raise
+      randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
+      self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
 
-        seed = 32452843
+      if 'freq' not in ss:
+        ss['freq'] = 'once'
 
-        if natoms > 0:
-          randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
-          self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+      if 'all_in' not in ss:
+        ss['all_in'] = 'yes'
 
-          if ss['insert'] == 'by_rate':
-            self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
-          elif ss['insert'] == 'by_pack':
-            self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, ss['id'], seed, self.pddName[i]) + \
-              ' insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' particles_in_region {} region {} ntry_mc 10000'.format(natoms, name) )
-          else:
-            print 'WARNING: Insertion mechanism not specified by user. Assuming insertion by rate ...'
-            self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} nparticles {}'.format(randName, ss['id'], self.pddName[i], natoms) + \
-              ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in} vel constant'.format(**ss) \
-              + ' {} {} {}'.format(*self.pargs['vel'][i])  + ' region {} ntry_mc 10000'.format(name) )
-        else:
-          if not self.rank:
-            print 'WARNING: no more particles to insert. Ignoring user request for more insertion ...'
-          raise
+      if 'insert' not in ss:
+        ss['insert'] = 'by_pack'
 
-        return randName
+      if ss['insert'] == 'by_rate':
+        if not mech:
+          mech = 'nparticles'
+
+        self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
+          ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
+          + ' {} {} {}'.format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+      elif ss['insert'] == 'by_pack':
+        if not mech:
+          mech = 'particles_in_region'
+
+        self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, id, seed, self.pddName[id]) + \
+          ' insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
+          + ' {} {} {}'.format(*vel)  + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
       else:
-        return None
+        print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**s))
 
-    natomsTotal = 0
+        if not mech:
+          mech = 'nparticles'
+
+        self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
+          ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
+          + ' {} {} {}'.format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+
+      return randName
 
     if species != 'all':
 
       species = int(species)
 
-      for i in range(species):
-        ss = self.pargs['SS'][i]
-        if 'natoms' in ss: # exclude walls
-          natomsTotal += ss['natoms']
-
       ss = self.pargs['SS'][species - 1]
-      randName = insert_loc(self, ss, species - 1, name, natomsTotal, *region)
-    else:
-      randName = []
-      for i, ss in enumerate(self.pargs['SS']):
-        if 'natoms' in ss: # exclude walls
-          natomsTotal += ss['natoms']
-          randName.append(insert_loc(self, ss, i, name + '{}'.format(i), natomsTotal, *region))
 
-    # Check if the user has supplied any initial velocities
-    if 'velocity' in self.pargs:
-      for comp in self.pargs['velocity']:
-        self.velocity(*comp)
+      if 'vel' not in args:
+        args['vel'] = (0,0,0)
+
+      if 'vel_type' not in args:
+        args['vel_type'] = 'constant'
+
+      if 'mech' not in args:
+        args['mech'] = None
+
+      randName = insert_loc(self, species - 1, name, value, **args)
+    else:
+      raise RuntimeError('Insertion of all species is no longer supported in PyGran.')
 
     return randName
 
-  def run(self, nsteps, dt=None, itype='sphere', group=None):
+  def run(self, nsteps, dt=None):
     """ Runs a simulation for number of steps specified by the user
      @itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)
      @dt = timestep"""
-
-    self.integrator = self.setupIntegrate(name=np.random.randint(0,10**6), itype=itype, group=group)
     
+    name = self.setupIntegrate()
+
     if not dt:
       if 'dt' in self.pargs:
         dt = self.pargs['dt']
@@ -518,6 +528,8 @@ class DEMPy:
     self.lmp.command('fix ts_check all check/timestep/gran 1000 0.5 0.5')
 
     self.integrate(nsteps, dt)
+
+    return name
 
   def moveMesh(self, name, *args):
     
@@ -579,7 +591,7 @@ class DEMPy:
     self.lmp.command('unfix {}'.format(name))
 
   def createGroup(self, *group):
-    """ Create groups of atoms
+    """ Create groups of atoms. If group is empty, groups{i} are created for every i species.
     """
     if not self.rank:
       logging.info('Creating atom group {}'.format(group))
@@ -680,29 +692,53 @@ class DEMPy:
       self.setupParticles()
       self.setupGravity()
 
-  def setupIntegrate(self, name, itype, group='all'):
+  def setupIntegrate(self):
     """
     Specify how Newton's eqs are integrated in time.
-    @ name: name of the fixed simulation ensemble applied to all atoms
-    @ dt: timestep
-    @ ensemble: ensemble type (nvt, nve, or npt)
-    @ args: tuple args for npt or nvt simulations
+    TODO: extend this to SQ particles
     """
     if not self.rank:
       logging.info('Setting up integration scheme parameters')
 
+    spheres = []
+    multi = []
+
+    # Get rid of any previous integrator
     if self.integrator:
-      self.remove(self.integrator)
+      for integ in self.integrator:
+        self.remove(integ)
 
-    if isinstance(group, list) and isinstance(itype, list):
-      assert(len(group) == len(itype))
+    self.integrator = []
 
-      for i, g in enumerate(group):
-        self.lmp.command('fix {} {} {}'.format(name + i, g, itype[i]))
-    else:
-      self.lmp.command('fix {} {} {}'.format(name, group, itype))
+    # Find which components (types) are spheres, multi-spheres, QS, etc.
+    for i, ss in enumerate(self.pargs['SS']):
+      if ss['style'] is 'sphere':
+        spheres.append('{}'.format(i+1))
+      elif ss['style'] is 'multisphere':
+        multi.append('{}'.format(i+1))
 
-    return name
+    if len(spheres):
+      #self.createGroup(*('spheres type', (' {}' * len(spheres)).format(*spheres)))
+
+      for sphere in spheres:
+        name = np.random.randint(0,10**6)
+        self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
+        self.integrator.append(name)
+
+    # LIGGGHTS does not permit more than one multisphere group to exist / integrated
+    # So we will reject any MS groups beyond the 1st
+    if len(multi) > 1:
+      raise RuntimeError("LIGGGHTS does not support more than one multisphere group.")
+    elif len(multi): # must be of length 1
+
+      # When LIGGGHTS supports multiple multisphere groups, I should uncommen this
+      #self.createGroup(*('multi type', (' {}' * len(multi)).format(*multi)))
+
+      name = np.random.randint(0,10**6)
+      self.lmp.command('fix {} group{} multisphere'.format(name, int(multi[0])-1))
+      self.integrator.append(name)
+
+    return self.integrator
 
   def integrate(self, steps, dt = None):
     """

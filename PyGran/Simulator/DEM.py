@@ -202,15 +202,15 @@ class DEM:
           self.dem.velocity(*args)
           break
 
-  def insert(self, name, species, *args):
+  def insert(self, name, species, value, **args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        return self.dem.insert(name, species, *args)
+        return self.dem.insert(name, species, value, **args)
 
-  def run(self, nsteps, dt=None, itype='sphere', group=None):
+  def run(self, nsteps, dt=None):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.run(nsteps, dt, itype, group)
+        self.dem.run(nsteps, dt)
         break
         
   def setupParticles(self):
@@ -285,7 +285,7 @@ class DEM:
         self.dem.dumpSetup()
         break
 
-  def setupIntegrate(self, name, itype, group='all'):
+  def setupIntegrate(self, name, itype='nve/sphere', group='all'):
     """
     Specify how Newton's eqs are integrated in time. 
     @ name: name of the fixed simulation ensemble applied to all atoms
