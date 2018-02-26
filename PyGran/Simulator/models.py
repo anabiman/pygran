@@ -78,10 +78,6 @@ class Model(object):
 		if 'dim' not in self.params:
 			self.params['dim'] = 3
 
-		if 'vel' not in self.params:
-			self.params['vel'] = ((0,0,0),) * len(self.params['SS']) # the user did not specify the initial velocities, so we assume they're zero
-			self.params['vel_type'] = ('constant', ) * len(self.params['SS']) # assume the user wants a constant velocity
-
 		if 'nns_skin' not in self.params:
 			self.params['nns_skin'] = 1e-3
 

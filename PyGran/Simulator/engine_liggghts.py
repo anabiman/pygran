@@ -414,7 +414,7 @@ class DEMPy:
         #Do NOT unfix randName! Will cause a memory corruption error
         self.pddName.append(pddName)
 
-  def insert(self, name, species, value, **args):
+  def insert(self, species, value, **args):
     """
     This function inserts particles, and assigns particle velocities if requested by the user. If species is 'all',
     all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
@@ -441,7 +441,7 @@ class DEMPy:
 
       region = tuple(targs)
 
-    def insert_loc(self, id, name, value, vel, vel_type, region, mech, **ss):
+    def insert_loc(self, id, value, vel, vel_type, region, mech, **ss):
       """ For multi-component system, this function can cause REAL *trouble*. For now, make sure components
       are inserted consecutively or all at once.
       """
@@ -449,6 +449,7 @@ class DEMPy:
         logging.info('Inserting particles for species {}'.format(id + 1))
 
       seed = 32452843
+      name = np.random.randint(0,1e8)
 
       randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
       self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
@@ -468,14 +469,14 @@ class DEMPy:
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + ' {} {} {}'.format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+          + (' {}' * len(vel)).format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
       elif ss['insert'] == 'by_pack':
         if not mech:
           mech = 'particles_in_region'
 
         self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, id, seed, self.pddName[id]) + \
           ' insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + ' {} {} {}'.format(*vel)  + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
+          + (' {}' * len(vel)).format(*vel)  + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
       else:
         print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**s))
 
@@ -484,7 +485,7 @@ class DEMPy:
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + ' {} {} {}'.format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+          + (' {}' * len(vel)).format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
 
       return randName
 
@@ -503,7 +504,7 @@ class DEMPy:
       if 'mech' not in args:
         args['mech'] = None
 
-      randName = insert_loc(self, species - 1, name, value, **args)
+      randName = insert_loc(self, species - 1, value, **args)
     else:
       raise RuntimeError('Insertion of all species is no longer supported in PyGran.')
 
@@ -550,7 +551,7 @@ class DEMPy:
 
     self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, fname, material) + ('{} ' * len(args)).format(*args))
 
-  def setupWalls(self, name, wtype, id, plane = None, peq = None):
+  def setupWall(self, wtype, species, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -564,6 +565,8 @@ class DEMPy:
     gran = 'gran' # VERY HACKISH
     model = []
     modelExtra = []
+
+    name = np.random.randint(0,1e8)
 
     for item in self.pargs['model-args']:
       if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser' \
@@ -580,9 +583,11 @@ class DEMPy:
       self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes {} meshes'.format(wtype, nMeshes) \
         + (' {} ' * len(meshName)).format(*meshName)  + ('{} ' * len(modelExtra)).format(*modelExtra))
     elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type {} {} {}'.format(wtype, id, plane, peq))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type {} {} {}'.format(wtype, species, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
+
+    return name
 
   def remove(self, name):
     """

@@ -202,10 +202,10 @@ class DEM:
           self.dem.velocity(*args)
           break
 
-  def insert(self, name, species, value, **args):
+  def insert(self, species, value, **args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        return self.dem.insert(name, species, value, **args)
+        return self.dem.insert(species, value, **args)
 
   def run(self, nsteps, dt=None):
     for i in range(self.nSim):
@@ -255,7 +255,7 @@ class DEM:
         self.dem.importMesh(name, file, mtype, *args)
         break
 
-  def setupWalls(self, name, wtype, id=None, plane = None, peq = None):
+  def setupWall(self, wtype, species, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -265,7 +265,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupWalls(name, wtype, id, plane, peq)
+        self.dem.setupWall(wtype, species, plane, peq)
         break
 
   def printSetup(self):
