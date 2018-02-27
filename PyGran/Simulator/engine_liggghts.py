@@ -366,9 +366,9 @@ class DEMPy:
       logging.info('Creating domain')
 
     if 'box' in self.pargs:
-      self.lmp.command('region domain block ' + ('{} ' * len(self.pargs['box'])).format(*self.pargs['box']) + ' units box')
+      self.lmp.command('region domain block ' + ('{} ' * len(self.pargs['box'])).format(*self.pargs['box']) + ' units box volume_limit 1e-20')
     elif 'cylinder' in self.pargs:
-      self.lmp.command('region domain cylinder ' + ('{} ' * len(self.pargs['cylinder'])).format(*self.pargs['cylinder']) + ' units box') 
+      self.lmp.command('region domain cylinder ' + ('{} ' * len(self.pargs['cylinder'])).format(*self.pargs['cylinder']) + ' units box volume_limit 1e-20') 
 
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
@@ -387,7 +387,7 @@ class DEMPy:
         pddName = 'pdd' + '{}'.format(np.random.randint(10**5,10**8))
 
         if 'vol_lim' not in ss:
-          ss['vol_lim'] = 1e-12
+          ss['vol_lim'] = 1e-20
 
         id = ss['id'] - 1
         self.lmp.command('group group{} type {}'.format(id, ss['id']))
@@ -444,15 +444,18 @@ class DEMPy:
     def insert_loc(self, id, value, vel, vel_type, region, mech, **ss):
       """ For multi-component system, this function can cause REAL *trouble*. For now, make sure components
       are inserted consecutively or all at once.
+
+      TODO: let the user override volume_limit
       """
+
       if not self.rank:
-        logging.info('Inserting particles for species {}'.format(id + 1))
+        logging.info('Inserting particles for species {}'.format(id+1))
 
       seed = 32452843
       name = np.random.randint(0,1e8)
 
       randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
-      self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box')
+      self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box volume_limit 1e-20')
 
       if 'freq' not in ss:
         ss['freq'] = 'once'
@@ -467,6 +470,9 @@ class DEMPy:
         if not mech:
           mech = 'nparticles'
 
+        if mech is 'nparticles':
+          value += self.lmp.get_natoms()
+
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
           + (' {}' * len(vel)).format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
@@ -474,14 +480,19 @@ class DEMPy:
         if not mech:
           mech = 'particles_in_region'
 
+        if mech is 'particles_in_region':
+          value += self.lmp.get_natoms()
+
         self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, id, seed, self.pddName[id]) + \
           ' insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
           + (' {}' * len(vel)).format(*vel)  + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
       else:
         print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**s))
 
-        if not mech:
-          mech = 'nparticles'
+        if mech is 'nparticles':
+          value += self.lmp.get_natoms()
+
+        value += self.lmp.get_natoms()
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
@@ -506,16 +517,16 @@ class DEMPy:
 
       randName = insert_loc(self, species - 1, value, **args)
     else:
-      raise RuntimeError('Insertion of all species is no longer supported in PyGran.')
+      raise RuntimeError('Insertion species {} not supported in PyGran.'.format(species))
 
     return randName
 
-  def run(self, nsteps, dt=None):
+  def run(self, nsteps, dt=None, itype=None):
     """ Runs a simulation for number of steps specified by the user
      @itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)
      @dt = timestep"""
     
-    name = self.setupIntegrate()
+    name = self.setupIntegrate(itype=itype)
 
     if not dt:
       if 'dt' in self.pargs:
@@ -697,7 +708,7 @@ class DEMPy:
       self.setupParticles()
       self.setupGravity()
 
-  def setupIntegrate(self):
+  def setupIntegrate(self, itype=None, group=None):
     """
     Specify how Newton's eqs are integrated in time.
     TODO: extend this to SQ particles
@@ -717,17 +728,21 @@ class DEMPy:
 
     # Find which components (types) are spheres, multi-spheres, QS, etc.
     for i, ss in enumerate(self.pargs['SS']):
-      if ss['style'] is 'sphere':
-        spheres.append('{}'.format(i+1))
-      elif ss['style'] is 'multisphere':
-        multi.append('{}'.format(i+1))
+      if 'id' in ss: # dont count mesh wall(s)
+        if ss['style'] is 'sphere':
+          spheres.append('{}'.format(i+1))
+        elif ss['style'] is 'multisphere':
+          multi.append('{}'.format(i+1))
 
     if len(spheres):
       #self.createGroup(*('spheres type', (' {}' * len(spheres)).format(*spheres)))
 
       for sphere in spheres:
         name = np.random.randint(0,10**6)
-        self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
+        if not itype:
+          self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
+        else:
+          self.lmp.command('fix {} group{} {}'.format(name, int(sphere[0]) -1, itype))
         self.integrator.append(name)
 
     # LIGGGHTS does not permit more than one multisphere group to exist / integrated
