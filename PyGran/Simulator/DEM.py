@@ -207,10 +207,10 @@ class DEM:
       if self.rank < self.nPart * (i + 1):
         return self.dem.insert(species, value, **args)
 
-  def run(self, nsteps, dt=None):
+  def run(self, nsteps, dt=None, itype=None):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.run(nsteps, dt)
+        self.dem.run(nsteps, dt, itype)
         break
         
   def setupParticles(self):
@@ -244,7 +244,7 @@ class DEM:
             wall = True
             
       if wall:
-        self.setupWalls(None, 'mesh')
+        self.setupWall(wtype='mesh')
             
   def importMesh(self, name, file, mtype, *args):
     """
@@ -255,7 +255,7 @@ class DEM:
         self.dem.importMesh(name, file, mtype, *args)
         break
 
-  def setupWall(self, wtype, species, plane = None, peq = None):
+  def setupWall(self, wtype, species = None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -298,13 +298,13 @@ class DEM:
         self.dem.setupIntegrate(name, itype, group)
         break
 
-  def integrate(self, steps, dt):
+  def integrate(self, steps, dt, itype=None):
     """
     Run simulation in time
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.integrate(steps, dt)
+        self.dem.integrate(steps, dt, itype)
         break
 
   def remove(self, name):
