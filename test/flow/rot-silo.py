@@ -6,8 +6,11 @@ Created on April 22, 2017
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyGran import Simulator
+from PyGran import Simulator, Visualizer
 from PyGran.Materials import glass, stearicAcid
+import os
+
+glass['youngsModulus'] = 1e9
 
 pDict = {
 
@@ -20,11 +23,12 @@ pDict = {
 		'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
 		# Define component(s)
-		'SS': ({'insert': 'by_pack', 'material': stearicAcid, 'natoms': 1000, 'freq': 'once', 'radius': ('gaussian number', 5e-5, 5e-6), 'vol_lim': 1e-16}, 
+		'SS': ({'material': stearicAcid, 'radius': ('constant', 5e-5), 'vol_limit': 1e-16}, 
 		      ),
 
 		# Setup I/O params
 		'traj': {'freq':1000, 'pfile': 'traj.dump', 'mfile': 'mesh*.vtk'},
+		'output': 'test',
 
 		# Define computational parameters
 		'nns_skin': 1e-3,
@@ -40,7 +44,7 @@ pDict = {
 		      },
 
 		# Stage runs
-		'stages': {'insertion': 1e4, 'run': 5e4},
+		'stages': {'insertion': 1e4, 'run': 1e4},
 	  }
 
 # Instantiate a class based on the selected model
@@ -50,12 +54,12 @@ pDict['model'] = pDict['model'](**pDict)
 sim = Simulator.DEM(**pDict['model'].params)
 
 # Setup a stopper wall along the xoy plane
-sim.setupWalls(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
+stopper = sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
 
 sim.moveMesh('valve', 'rotate origin 0. 0. 0.', 'axis  0. 0. 1.', 'period 5e-2')
 
 # Insert particles in a cubic region
-insert = sim.insert('cubic', 1, *('block', -5e-4, 5e-4, -5e-4, 5e-4, 2e-3, 3e-3))
+insert = sim.insert(species=1, region=('block', -5e-4, 5e-4, -5e-4, 5e-4, 2e-3, 3e-3), value=100)
 sim.run(pDict['stages']['insertion'], pDict['dt'])
 sim.remove(insert)
 
@@ -63,5 +67,7 @@ sim.remove(insert)
 sim.run(pDict['stages']['run'], pDict['dt'])
 
 # Remove stopper and monitor flow
-sim.remove('stopper')
+sim.remove(stopper)
 sim.run(pDict['stages']['run'], pDict['dt'])
+
+print Visualizer.visualize(output=sim.output, traj=pDict['traj'])
