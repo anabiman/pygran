@@ -42,7 +42,7 @@ class DEM:
     self.rank = self.comm.Get_rank()
     self.tProcs = self.comm.Get_size()
     self.nSim = pargs['nSim']
-    self.model = str(pargs['model']).split('.')[-1]
+    self.model = str(pargs['model']).split("'")[1].split('.')[-1]
     self.pargs = pargs
     self.library = None
     self._dir, _ = __file__.split('DEM.py')
@@ -265,8 +265,7 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.setupWall(wtype, species, plane, peq)
-        break
+        return self.dem.setupWall(wtype, species, plane, peq)
 
   def printSetup(self):
     """
