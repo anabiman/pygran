@@ -23,8 +23,6 @@ pDict = {
 		'model': Simulator.models.SpringDashpot,
         	'engine': Simulator.engines.liggghts,
 
-		'style': 'sphere',
-
 		# Define the system
 		'boundary': ('p','p','p'), # fixed BCs
 		'box':  (-0.002, 0.004, -0.001, 0.001, -0.001, 0.001), # simulation box size
