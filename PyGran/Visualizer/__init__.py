@@ -21,4 +21,4 @@ Created on July 11, 2016
 
 # -------------------------------------------------------------------------
 
-from PyGran.Visualizer.visualize import *
+from PyGran.Visualizer.ovito import *
