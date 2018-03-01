@@ -381,7 +381,6 @@ class DEMPy:
       # Make sure we are setting up particles, not walls (so we check for id existence)
       if 'id' in ss and 'wall' not in ss:
         if not self.rank:
-          print ss
           logging.info('Setting up particles for group{id}'.format(**ss))
 
         randName = np.random.randint(10**5,10**8)
@@ -552,6 +551,20 @@ class DEMPy:
 
     return randName
 
+  def importMeshes(self):
+    wall = False
+
+    if 'mesh' in self.pargs:
+      for mesh in self.pargs['mesh'].keys():
+
+          if self.pargs['mesh'][mesh]['import']:
+            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+            wall = True
+            
+      if wall:
+        self.setupWall(wtype='mesh')
+    
+
   def importMesh(self, name, file, mtype, material, *args):
     """
     Imports a specific surface mesh requested by the user
@@ -563,7 +576,7 @@ class DEMPy:
 
     self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, fname, material) + ('{} ' * len(args)).format(*args))
 
-  def setupWall(self, wtype, species, plane = None, peq = None):
+  def setupWall(self, wtype, species = None, plane = None, peq = None):
     """
     Creates a wall
     @ name: name of the variable defining a wall or a mesh
@@ -605,7 +618,38 @@ class DEMPy:
     """
     Deletes a specified variable
     """
-    self.lmp.command('unfix {}'.format(name))
+    # Remove any DUMP-IDS 1st in case the user wants to move a mesh
+    if name in self.pargs['mesh']:
+      # must delete all meshes / dumps in order to re-import remaining meshes
+      for dump in self.pargs['traj']['dump_mname']:
+        self.lmp.command('undump {}'.format(dump))
+
+      self.lmp.command('unfix walls')
+
+      for i, mesh in enumerate(self.pargs['mesh'].keys()):
+        self.lmp.command('unfix {}'.format(mesh))
+
+        if mesh is name:
+          count = i
+
+      if isinstance(self.pargs['traj']['mfile'], list):
+        # if the user has multiple meshes defined, delete only the requested one
+        del self.pargs['traj']['mfile'][count]
+      elif len(self.pargs['mesh']) > 1: # the user has multiple meshes written as one file
+        pass
+      else: # the user has only 1 mesh, so delete it
+        del self.pargs['traj']['mfile']
+
+      del self.pargs['mesh'][name]
+
+      # Re-import any remaining meshes
+      self.importMeshes()
+
+      # Create new dump setups, leaving particle dumps intact
+      self.dumpSetup(only_mesh=True)
+
+    else:
+      self.lmp.command('unfix {}'.format(name))
 
   def createGroup(self, *group):
     """ Create groups of atoms. If group is empty, groups{i} are created for every i species.
@@ -789,29 +833,44 @@ class DEMPy:
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
 
-  def dumpSetup(self):
+  def dumpSetup(self, only_mesh=False):
     """
+    This creates dumps for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during
+    the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.
     """
     if not self.rank:
       logging.info('Setting up trajectory i/o')
 
-    self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
-
-    self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
+    if not only_mesh:
+      self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+      self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
     if 'mfile' in self.pargs['traj']:
-      if 'mName' in self.pargs['traj']:
-        # TODO: make any mesh specified by the user writable as output
-        if type(self.pargs['traj']['mfile']) is list:
-          for i, mfile in enumerate(self.pargs['traj']['mfile']):
-            args = self.pargs['traj'].copy()
-            args['mfile'] = mfile
-            args['mName'] = self.pargs['traj']['mName'][i]
-            self.lmp.command('dump meshDump{} all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(i,**args))
-        else:
-          self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**self.pargs['traj']))
+      # TODO: make any mesh specified by the user writable as output
+
+      self.pargs['traj']['dump_mname'] = []
+
+      if type(self.pargs['traj']['mfile']) is list:
+        for i, mfile in enumerate(self.pargs['traj']['mfile']):
+          args = self.pargs['traj'].copy()
+          args['mfile'] = mfile
+          args['mName'] = self.pargs['mesh'].keys()[i]
+          name = 'dump' + str(np.random.randint(0,1e8))
+          self.pargs['traj']['dump_mname'].append(name)
+
+          self.lmp.command('dump ' + name + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(i,**args))
       else:
-        self.lmp.command('dump meshDump all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel'.format(**self.pargs['traj']))
+        name = ''
+
+        # see if we have many meshes to dump if the name of one mfile supplied by the user
+        for mesh in self.pargs['mesh'].keys():
+            name += mesh + ' '
+
+        name = name[:-1] # remove last space to avoid fake (empty) mesh IDs
+        dname = 'dump' + str(np.random.randint(0,1e8))
+        self.pargs['traj']['dump_mname'] = [dname]
+
+        self.lmp.command('dump ' + dname + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel '.format(**self.pargs['traj']) + name)
 
   def extractCoords(self, coords):
     """

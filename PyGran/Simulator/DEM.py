@@ -234,18 +234,14 @@ class DEM:
         break
 
   def importMeshes(self):
-    wall = False
+    """
+    An internal function that is called during DEM initialization for importing meshes
+    """
+    for i in range(self.nSim):
+      if self.rank < self.nPart * (i + 1):
+        self.dem.importMeshes()
+        break
 
-    if 'mesh' in self.pargs:
-      for mesh in self.pargs['mesh'].keys():
-
-          if self.pargs['mesh'][mesh]['import']:
-            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
-            wall = True
-            
-      if wall:
-        self.setupWall(wtype='mesh')
-            
   def importMesh(self, name, file, mtype, *args):
     """
     Imports a mesh file (STL or VTK)
