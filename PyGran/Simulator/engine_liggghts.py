@@ -379,8 +379,9 @@ class DEMPy:
     for ss in self.pargs['SS']:
 
       # Make sure we are setting up particles, not walls (so we check for id existence)
-      if 'id' in ss:
+      if 'id' in ss and 'wall' not in ss:
         if not self.rank:
+          print ss
           logging.info('Setting up particles for group{id}'.format(**ss))
 
         randName = np.random.randint(10**5,10**8)
@@ -728,7 +729,7 @@ class DEMPy:
 
     # Find which components (types) are spheres, multi-spheres, QS, etc.
     for i, ss in enumerate(self.pargs['SS']):
-      if 'id' in ss: # dont count mesh wall(s)
+      if 'id' in ss and 'wall' not in ss: # dont count mesh wall(s)
         if ss['style'] is 'sphere':
           spheres.append('{}'.format(i+1))
         elif ss['style'] is 'multisphere':
