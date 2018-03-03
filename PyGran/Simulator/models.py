@@ -78,14 +78,8 @@ class Model(object):
 		if 'dim' not in self.params:
 			self.params['dim'] = 3
 
-		if 'nns_skin' not in self.params:
-			self.params['nns_skin'] = 1e-3
-
 		if 'nns_type' not in self.params:
 			self.params['nns_type'] = 'bin'
-
-		if 'nns_freq' not in self.params:
-                        self.params['nns_freq'] = 100
 
 		if 'restart' not in self.params:
 			self.params['restart'] = (5000, 'restart', 'restart.binary', False, None)
