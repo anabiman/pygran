@@ -9,63 +9,52 @@ Created on July 9, 2016
 from PyGran import Simulator, Analyzer, Visualizer
 from PyGran.Materials import glass
 
+glass['youngsModulus'] = 1e7
+
 # Create a dictionary of physical parameters
 pDict = {
 
-		'model': Simulator.models.SpringDashpot,
-        	'engine': Simulator.engines.liggghts,
-
 		# Define the system
 		'boundary': ('p','p','f'), # fixed BCs
-		'box':  (-0.001, 0.001, -0.001, 0.001, -0.0001, 0.004), # simulation box size
-		'nns_skin': 1e-3,
+		'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
 
 		# Define component(s)
-		'SS': ({'insert':'by_pack', 'id':1, 'natoms': 800, 'material':glass, 'vol_lim': 1e-16, \
-			'freq': 'once', 'radius': ('gaussian number', 70e-6, 10e-6)}, 
-		      ), 
+		'SS': ({'material': glass, 'radius': ('constant', 2e-4)}, 
+		      ),
 
-		'traj': {'sel': 'all', 'freq': 100, 'dir': 'traj', 'style': 'custom', 'file': 'traj.dump', \
-                   'args': ('id', 'x', 'y', 'z', 'radius', 'omegax', 'omegay', 'omegaz', \
-                   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')},
-
+		# Timestep
 		'dt': 2e-6,
 
 		# Apply gravitional force in the negative direction along the z-axis
 		'gravity': (9.81, 0, 0, -1),
 
-		# Stage runs
-		'stages': {'insertion': 1.5e3, 'run': 1.5e3},
+		# Number of simulation steps (non-PyGran variable)
+		'nsteps': 1e5,
 
-		# Meshes
+		# Import surface mesh
 		 'mesh': {
-			'hopper': {'file': 'square.stl', 'mtype': 'mesh/surface/stress', 'import': True, 'material': glass, \
-			'args': ('scale', '1e-3')},
+			'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': glass, 'args': ('scale 1e-3',)}
 		      },
 	  }
 
 if __name__ == '__main__':
 
-	# Instantiate a class based on the selected model
-	pDict['model'] = pDict['model'](**pDict)
-
 	# Create an instance of the DEM class
-	sim = Simulator.DEM(**pDict['model'].params)
+        sim = Simulator.DEM(**pDict)
 
-	# Setup a stopper wall along the xoy plane
-	sim.setupWalls(name='stopper', wtype='primitive', plane = 'zplane', peq = 0.0)
+	# Setup a primitive wall along the xoy plane at z=0
+	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
 
-	high = 0.5e-3
-	scale = 10.0
+	# Insert the particles
+	insert = sim.insert(species=1, value=100, region=('block', -1e-3,1e-3, -1e-3, 1e-3, 0, 3e-3))
+	sim.run(pDict['nsteps'], pDict['dt'])
+	sim.remove(insert)
 
-	for i in range(2):
+	# Move wall at constant speed
+	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.01'))
+	sim.run(pDict['nsteps'], pDict['dt'])
+	sim.remove(moveZ)
 
-		factorLow = scale * (i / (i+1.))**2.0 * high - i * high
-		factorHigh = scale * ((i+1.) / (i+2.))**2.0 * high - i * high
-
-		print 'factorLow = {}, factorHigh = {}'.format(factorLow, factorHigh) 
-		insert = sim.insert('void{}'.format(i), 1, *('block', -1e-3, 1e-3, -1e-3, 1e-3, 5e-5 + factorLow, 5e-5 + factorHigh))
-		sim.run(pDict['stages']['insertion'], pDict['dt'])
-		sim.remove(insert)
-
-	sim.run(pDict['stages']['run'], pDict['dt'])
+	# Relax the system
+	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
+	sim.run(pDict['nsteps'], pDict['dt'])
