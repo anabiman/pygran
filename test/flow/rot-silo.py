@@ -13,25 +13,18 @@ import os
 glass['youngsModulus'] = 1e9
 
 pDict = {
-
-		# Setup model + DEM engine
-		'model': Simulator.models.SpringDashpot,
-		'engine': Simulator.engines.liggghts,
-
 		# Define the system
 		'boundary': ('f','f','f'),
 		'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
 		# Define component(s)
-		'SS': ({'material': stearicAcid, 'radius': ('constant', 5e-5), 'vol_limit': 1e-16}, 
-		      ),
+		'SS': ({'material': stearicAcid, 'radius': ('constant', 5e-5)},),
 
 		# Setup I/O params
 		'traj': {'freq':1000, 'pfile': 'traj.dump', 'mfile': 'mesh*.vtk'},
 		'output': 'test',
 
 		# Define computational parameters
-		'nns_skin': 1e-3,
 		'dt': 1e-6,
 
 		# Apply a gravitional force in the negative direction along the z-axis
@@ -47,11 +40,8 @@ pDict = {
 		'stages': {'insertion': 1e4, 'run': 1e4},
 	  }
 
-# Instantiate a class based on the selected model
-pDict['model'] = pDict['model'](**pDict)
-
 # Create an instance of the DEM class
-sim = Simulator.DEM(**pDict['model'].params)
+sim = Simulator.DEM(**pDict)
 
 # Setup a stopper wall along the xoy plane
 stopper = sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
@@ -69,5 +59,3 @@ sim.run(pDict['stages']['run'], pDict['dt'])
 # Remove stopper and monitor flow
 sim.remove(stopper)
 sim.run(pDict['stages']['run'], pDict['dt'])
-
-print Visualizer.visualize(output=sim.output, traj=pDict['traj'])
