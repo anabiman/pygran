@@ -22,20 +22,28 @@ Created on February 28, 2018
 # -------------------------------------------------------------------------
 
 import subprocess
+import os
+from mpi4py import MPI
 
-def visualize(output, traj):
+def visualize(**args):
 
-	cmd = ['ovito']
+	comm = MPI.COMM_WORLD
+	rank = comm.Get_rank()
 
-	if 'pfile' in traj:
-		cmd.append('{}/traj/{} '.format(output, traj['pfile']))
+	if rank == 0:
+		cmd = ['ovito']
+		traj = args['traj']
+		output = os.path.abspath('.')
 
-	if 'mfile' in traj:
-		if isinstance(traj['mfile'], list):
-			for mfile in traj['mfile']:
-				cmd.append('/{}/traj/{}'.format(output, mfile))
-		else:
-			cmd.append('{}/traj/{}'.format(output, traj['mfile']))
+		if 'pfile' in traj:
+			cmd.append('{}/traj/{}'.format(output, traj['pfile']))
 
-	print cmd
-	return subprocess.Popen(cmd)
+		# Can we even call meshes as args to ovito from the terminal? maybe we dont need this
+		if 'mesh' in traj:
+			if isinstance(traj['mfile'], list):
+				for mfile in traj['mfile']:
+					cmd.append(' {}/traj/{}'.format(output, mfile))
+			else:
+				cmd.append(' {}/traj/{}'.format(output, traj['mfile']))
+
+		return subprocess.Popen(cmd)
