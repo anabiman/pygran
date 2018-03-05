@@ -67,19 +67,18 @@ class liggghts:
     pass
 
   # create instance of LIGGGHTS
-
   def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
 
     if library:
       if not comm.Get_rank():
-        print "Using " + library + " as a shared library for DEM computations"
+        print("Using " + library + " as a shared library for DEM computations")
     else:
       if not comm.Get_rank():
-        print "Make sure " + library + " is properly installed on your system"
+        print("Make sure " + library + " is properly installed on your system")
       else:
-        print 'Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library)
+        print('Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library))
       sys.exit()
 
     self.lib = ctypes.CDLL(library, ctypes.RTLD_GLOBAL)
@@ -130,6 +129,7 @@ class liggghts:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
           cargs = (ctypes.c_char_p*narg)(*cmdargs)
+          
           self.lmp = ctypes.c_void_p()
           self.lib.lammps_open_no_mpi(narg,cargs, ctypes.byref(self.lmp))
         else:
@@ -146,11 +146,12 @@ class liggghts:
       self.lmp = ctypes.c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
 
   def __del__(self):
-    if self.lmp and self.opened: self.lib.lammps_close(self.lmp)
+    if hasattr(self, 'lmp') and self.opened: self.lib.lammps_close(self.lmp)
 
   def close(self):
-    if self.opened: self.lib.lammps_close(self.lmp)
-    self.lmp = None
+    if self.opened: 
+        self.lib.lammps_close(self.lmp)
+        self.lmp = None
 
   def version(self):
     return self.lib.lammps_version(self.lmp)
@@ -420,17 +421,23 @@ class DEMPy:
     all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
 
     region: tuple of the form ('shape', (xmin, xmax, ymin, ymax, zmin, zmax)) or ('shape', xmin, xmax, ymin, ymax, zmin, zmax)
+
+    TODO: support insertion of all or multiple species at the same time for multiple regions. 
     """
     if not self.pddName:
-      print 'Probability distribution not set for particle insertion. Exiting ...'
+      print('Probability distribution not set for particle insertion. Exiting ...')
       sys.exit()
 
     if 'region' in args:
       region = args['region']
     else:
-      raise RuntimeError('region (tuple) must be supplied when inserting particles.')
+      # Default region is sim box
+      region = ('block', self.pargs['box'])
+      region = tuple([region[0]] + [i for i in region[1:][0]])
+      args['region'] = region
 
-    # If region boundary is supplied as a tuple I think?
+    # I think this is for creating tuples of lists, corresponding to many regions
+    # This is prolly for inserting many species at the same time in different regions
     if isinstance(region[1], tuple):
       targs = list(region[1])
       targs.insert(0, region[0])
@@ -457,6 +464,9 @@ class DEMPy:
       randName = 'insert' + '{}'.format(np.random.randint(0,10**6))
       self.lmp.command('region {} '.format(name) + ('{} ' * len(region)).format(*region) + 'units box volume_limit 1e-20')
 
+      if 'args' not in ss:
+        ss['args'] = ()
+
       if 'freq' not in ss:
         ss['freq'] = 'once'
 
@@ -475,7 +485,7 @@ class DEMPy:
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + (' {}' * len(vel)).format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+          + (' {}' * len(vel)).format(*vel)  + (' {}' * len(ss['args'])).format(*ss['args']) + ' region {} ntry_mc 10000'.format(name) )
       elif ss['insert'] == 'by_pack':
         if not mech:
           mech = 'particles_in_region'
@@ -485,7 +495,7 @@ class DEMPy:
 
         self.lmp.command('fix {} group{} insert/pack seed {} distributiontemplate {}'.format(randName, id, seed, self.pddName[id]) + \
           ' insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + (' {}' * len(vel)).format(*vel)  + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
+          + (' {}' * len(vel)).format(*vel)  + (' {}' * len(ss['args'])).format(*ss['args']) + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
       else:
         print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**s))
 
@@ -496,7 +506,7 @@ class DEMPy:
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
           ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
-          + (' {}' * len(vel)).format(*vel)  + ' region {} ntry_mc 10000'.format(name) )
+          + (' {}' * len(vel)).format(*vel)  + (' {}' * len(ss['args'])).format(*ss['args']) + ' region {} ntry_mc 10000'.format(name))
 
       return randName
 
@@ -533,7 +543,7 @@ class DEMPy:
         dt = self.pargs['dt']
       else:
         if not self.rank:
-          print 'Could not find dt in user-supplied dictionary. Aborting ...'
+          print('Could not find dt in user-supplied dictionary. Aborting ...')
         sys.exit()
 
     # check timestep
@@ -551,16 +561,27 @@ class DEMPy:
 
     return randName
 
-  def importMeshes(self):
+  def importMeshes(self, name=None):
+    """ Imports all meshes and sets them up as walls. Can import only one mesh specified by the 'name' keyword.
+    @file: mesh filename
+    @mtype: mesh type
+    @args: additional args
+    """
     wall = False
 
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
+          if name:
+            if mesh == name:
+              self.pargs['mesh'][mesh]['import'] = True
+              self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+              wall = True
 
-          if self.pargs['mesh'][mesh]['import']:
-            self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
-            wall = True
-            
+          elif 'import' in self.pargs['mesh'][mesh]:
+            if self.pargs['mesh'][mesh]['import']:
+              self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+              wall = True
+              
       if wall:
         self.setupWall(wtype='mesh')
     
@@ -616,38 +637,43 @@ class DEMPy:
 
   def remove(self, name):
     """
-    Deletes a specified variable
+    Deletes a specified fix. If the fix is for a mesh, we must unfix it and re-import all meshes again and setup them
+    up as walls. Very tedious!
     """
     # Remove any DUMP-IDS 1st in case the user wants to move a mesh
     if 'mesh' in self.pargs:
-      if name in self.pargs['mesh']:
-        # must delete all meshes / dumps in order to re-import remaining meshes
-        for dump in self.pargs['traj']['dump_mname']:
-          self.lmp.command('undump {}'.format(dump))
+      if 'import' in self.pargs['mesh']:
+        if self.pargs['mesh']['import']:
+          if name in self.pargs['mesh']:
+            # must delete all meshes / dumps in order to re-import remaining meshes
+            for dump in self.pargs['traj']['dump_mname']:
+              self.lmp.command('undump {}'.format(dump))
 
-        self.lmp.command('unfix walls')
+            self.lmp.command('unfix walls')
 
-        for i, mesh in enumerate(self.pargs['mesh'].keys()):
-          self.lmp.command('unfix {}'.format(mesh))
+            for i, mesh in enumerate(self.pargs['mesh'].keys()):
+              self.lmp.command('unfix {}'.format(mesh))
 
-        if 'mfile' in self.pargs['traj']:
-          if isinstance(self.pargs['traj']['mfile'], list):
-            raise RuntimeError('mfile cannot be a list. Something is not setup correctly.')
-          elif self.pargs['traj']['mfile']: # the user has requested all mesh(es) be written as one file
-            pass
-          else: # self.pargs['traj']['mfile'] had better be None
-            assert(self.pargs['traj']['mfile'] is None)
+            if 'mfile' in self.pargs['traj']:
+              if isinstance(self.pargs['traj']['mfile'], list):
+                raise RuntimeError('mfile cannot be a list. Something is not setup correctly.')
+              elif self.pargs['traj']['mfile']: # the user has requested all mesh(es) be written as one file
+                pass
+              else: # self.pargs['traj']['mfile'] had better be None
+                assert(self.pargs['traj']['mfile'] is None)
 
-        del self.pargs['mesh'][name]
+            del self.pargs['mesh'][name]
 
-        # Re-import any remaining meshes
-        self.importMeshes()
+            # Re-import any remaining meshes
+            self.importMeshes()
 
-        # Create new dump setups, leaving particle dumps intact
-        self.dumpSetup(only_mesh=True)
+            # Create new dump setups, leaving particle dumps intact
+            self.dumpSetup(only_mesh=True)
 
-    else:
-      self.lmp.command('unfix {}'.format(name))
+            return 0
+    
+    # Otherwise, we are just unfixing a non-mesh fix
+    self.lmp.command('unfix {}'.format(name))
 
   def createGroup(self, *group):
     """ Create groups of atoms. If group is empty, groups{i} are created for every i species.
@@ -737,7 +763,7 @@ class DEMPy:
 
     self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart'][:-1]))
     self.pddName = []
-    self.integrator = None
+    self.integrator = []
 
     if self.pargs['restart'][3] == False and self.pargs['read_data'] == False:
 
@@ -774,12 +800,13 @@ class DEMPy:
     spheres = []
     multi = []
 
-    # Get rid of any previous integrator
+    # Get rid of any previous integrator, multisphere can be set only ONCE in LIGGGHTs
+    # Hence keep it!
     if self.integrator:
       for integ in self.integrator:
-        self.remove(integ)
-
-    self.integrator = []
+        if not integ.startswith('multisphere'):
+          self.remove(integ)
+          self.integrator.remove(integ)
 
     # Find which components (types) are spheres, multi-spheres, QS, etc.
     for i, ss in enumerate(self.pargs['SS']):
@@ -793,7 +820,7 @@ class DEMPy:
       #self.createGroup(*('spheres type', (' {}' * len(spheres)).format(*spheres)))
 
       for sphere in spheres:
-        name = np.random.randint(0,10**6)
+        name = 'sphere_' + str(np.random.randint(0,10**6))
         if not itype:
           self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
         else:
@@ -803,15 +830,21 @@ class DEMPy:
     # LIGGGHTS does not permit more than one multisphere group to exist / integrated
     # So we will reject any MS groups beyond the 1st
     if len(multi) > 1:
-      raise RuntimeError("LIGGGHTS does not support more than one multisphere group.")
+      raise RuntimeError("LIGGGHTS (3.x) does not currently support more than one multisphere group.")
     elif len(multi): # must be of length 1
 
-      # When LIGGGHTS supports multiple multisphere groups, I should uncommen this
+      # When LIGGGHTS supports multiple multisphere groups, I should uncomment this
       #self.createGroup(*('multi type', (' {}' * len(multi)).format(*multi)))
 
-      name = np.random.randint(0,10**6)
-      self.lmp.command('fix {} group{} multisphere'.format(name, int(multi[0])-1))
-      self.integrator.append(name)
+      ms = True
+      for integ in self.integrator:
+        if integ.startswith('multisphere'):
+          ms = False
+
+      if ms:
+        name = 'multisphere_' + str(np.random.randint(0,10**6))
+        self.lmp.command('fix {} group{} multisphere'.format(name, int(multi[0])-1))
+        self.integrator.append(name)
 
     return self.integrator
 
@@ -852,7 +885,12 @@ class DEMPy:
       logging.info('Setting up trajectory i/o')
 
     # Make sure the user did not request no particles be saved to a traj file, or we're not just re-initializing the meshes
-    if not only_mesh and self.pargs['traj']['pfile'] is not None:
+    if not only_mesh and self.pargs['traj']['pfile']:
+
+      if hasattr(self, 'dump'):
+        if self.dump:
+          self.lmp.command('undump dump')
+
       self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
       self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
@@ -860,33 +898,44 @@ class DEMPy:
 
     # Make sure meshes are define so we can dump them if requested (or not)
     if 'mesh' in self.pargs:
+      if hasattr(self, 'dump'):
+        if self.dump:
+          for dname in self.pargs['traj']['dump_mname']:
+            self.lmp.command('undump ' + dname)
+
       if 'mfile' not in self.pargs['traj']:
         for mesh in self.pargs['mesh'].keys():
-          args = self.pargs['traj'].copy()
-          args['mfile'] = mesh + '-*.vtk'
-          args['mName'] = mesh
-          name = 'dump' + str(np.random.randint(0,1e8))
-          self.pargs['traj']['dump_mname'].append(name)
 
-          self.lmp.command('dump ' + name + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**args))
+          if self.pargs['mesh'][mesh]['import']:
+            args = self.pargs['traj'].copy()
+            args['mfile'] = mesh + '-*.vtk'
+            args['mName'] = mesh
+            name = 'dump' + str(np.random.randint(0,1e8))
+            self.pargs['traj']['dump_mname'].append(name)
+
+            self.lmp.command('dump ' + name + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**args))
       elif not isinstance(self.pargs['traj']['mfile'], list):
-        if self.pargs['traj']['mfile'] is not None:
+        if self.pargs['traj']['mfile']:
           name = ''
 
           # see if we have many meshes to dump if the name of one mfile supplied by the user
           for mesh in self.pargs['mesh'].keys():
+            if self.pargs['mesh'][mesh]['import']:
               name += mesh + ' '
 
-          name = name[:-1] # remove last space to avoid fake (empty) mesh IDs
+          if len(name):
+            name = name[:-1] # remove last space to avoid fake (empty) mesh IDs
 
-          args = self.pargs['traj'].copy()
-          args['mfile'] = 'mesh-*.vtk'
-          args['mName'] = name
-          
-          dname = 'dump' + str(np.random.randint(0,1e8))
-          self.pargs['traj']['dump_mname'] = [dname]
+            args = self.pargs['traj'].copy()
+            args['mfile'] = 'mesh-*.vtk'
+            args['mName'] = name
+            
+            dname = 'dump' + str(np.random.randint(0,1e8))
+            self.pargs['traj']['dump_mname'] = [dname]
 
-          self.lmp.command('dump ' + dname + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel '.format(**args) + name)
+            self.lmp.command('dump ' + dname + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel '.format(**args) + name)
+
+    self.dump = True
 
   def extractCoords(self, coords):
     """
@@ -917,29 +966,48 @@ class DEMPy:
     self.lmp.command('compute {} all {}'.format(var, name))
     self.lmp.command('fix my{} {} ave/time 1 1 1 c_{} file {}'.format(var, group, var, file))
 
+  def add_viscous(self, **args):
+    """ Adds a viscous damping force: F = - gamma * v for each particle
+    @species = 1,2, ... or all
+    @gamma: real number (viscosity coefficient)
+    @[scale]: tuple (species, ratio) to scale gamma with
+    """
+    if 'scale' not in args:
+      args['scale'] = (args['species'], 1)
+
+    if 'species' in args:
+      if isinstance(args['species'], int):
+        args['species'] = 'group' + str(args['species']-1)
+    else:
+      raise RuntimeError('Species must be specified (1,2,..., or "all") for which the viscous force applies.')
+
+    name = np.random.randint(0, 1e8)
+
+    self.lmp.command('fix {}'.format(name) + ' {species} viscous {gamma} scale '.format(**args) + (' {} ' * len(args['scale'])).format(*args['scale']) )
+
+    return name
+
   def plot(self, fname, xlabel, ylabel, output=None, xscale=None):
     """
     """
     if not self.rank:
       try:
-     	#plt.rc('text', usetex=True)
-     	data = np.loadtxt(fname, comments='#')
+        #plt.rc('text', usetex=True)
+        data = np.loadtxt(fname, comments='#')
+        time = data[:,0]
 
-	time = data[:,0]
+        if xscale is not None:
+          time *= xscale
 
-	if xscale is not None:
-		time *= xscale
+          plt.plot(time, data[:,1])
+          plt.xlabel(r"{}".format(xlabel))
+          plt.ylabel(ylabel)
+          plt.grid()
 
-      	plt.plot(time, data[:,1])
-     	plt.xlabel(r"{}".format(xlabel))
-      	plt.ylabel(ylabel)
-	plt.grid()
-
-      	if output:
+        if output:
           plt.savefig(output)
       except:
-	print "Unexpected error:", sys.exc_info()[0]
-	raise
+        raise("Unexpected error:", sys.exc_info()[0])
 
   def saveas(self, name, fname):
     """
@@ -947,10 +1015,9 @@ class DEMPy:
     if not self.rank:
 
       try:
-      	np.savetxt(fname, np.array(self.vars[name]))
+        np.savetxt(fname, np.array(self.vars[name]))
       except:
-	print "Unexpected error:", sys.exc_info()[0]
-        raise
+         raise("Unexpected error:", sys.exc_info()[0])
 
   def command(self, cmd):
     """
@@ -980,4 +1047,4 @@ class DEMPy:
   def __del__(self):
     """ Destructor
     """
-    self.lmp.close()
+    pass

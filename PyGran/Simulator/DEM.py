@@ -31,12 +31,19 @@ from importlib import import_module
 from datetime import datetime
 import os, sys
 from PyGran.Tools import find
+from PyGran.Simulator import models
 
 class DEM:
   """A *generic* class that handles communication for a DEM object independent of the engine used"""
 
   def __init__(self, **pargs):
     """ Initializes COMM and partition proccesors based on user input """
+
+    # Instantiate contact model and store it in pargs
+    if 'model' not in pargs:
+      pargs['model'] = models.SpringDashpot
+
+    pargs = pargs['model'](**pargs).params
 
     self.comm = MPI.COMM_WORLD
     self.rank = self.comm.Get_rank()
@@ -132,13 +139,16 @@ class DEM:
     if 'materials' in self.pargs:
       for item in self.pargs['materials'].keys():
         # Overloaded function 'createProperty' will partition coeffRest based on MPI's coloring split scheme
-	if type(self.pargs['materials'][item]) is tuple: # Make sure we're not reading user-defined scalars (e.g. density)
-        	self.createProperty(item, *self.pargs['materials'][item])
+        if type(self.pargs['materials'][item]) is tuple: # Make sure we're not reading user-defined scalars (e.g. density)
+          self.createProperty(item, *self.pargs['materials'][item])
 
     # Import and setup all meshes as rigid walls
     self.importMeshes()
 
     self.printSetup()
+
+    # run for 1 step test and make sure all atomic (e.g. molecular MS) attributes are written
+    self.run(1, dt=1e-12)
 
     # Write output to trajectory by default unless the user specifies otherwise
     if 'dump' in self.pargs:
@@ -202,6 +212,16 @@ class DEM:
           self.dem.velocity(*args)
           break
 
+  def add_viscous(self, **args):
+    """ Adds a viscous damping force: F = - gamma * v for each particle
+    @species = 1,2, ... or all
+    @gamma: real number (viscosity coefficient)
+    @[scale]: tuple (species, ratio) to scale gamma with
+    """
+    for i in range(self.nSim):
+        if self.rank < self.nPart * (i + 1):
+          return self.dem.add_viscous(**args)
+
   def insert(self, species, value, **args):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
@@ -233,13 +253,14 @@ class DEM:
           self.dem.createProperty(name, *args)
         break
 
-  def importMeshes(self):
+  def importMeshes(self, name=None):
     """
-    An internal function that is called during DEM initialization for importing meshes
+    An internal function that is called during DEM initialization for importing meshes.
+    This function imports all meshes and sets them up as walls. Can import only one mesh specified by the 'name' keyword.
     """
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.importMeshes()
+        self.dem.importMeshes(name)
         break
 
   def importMesh(self, name, file, mtype, *args):

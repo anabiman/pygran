@@ -41,6 +41,9 @@ class Model(object):
 		self.params = params
 		self.params['nSS'] = 0
 
+		if 'model' not in self.params:
+			raise RuntimeError('Contact model must be specified when creating an instance of Simulator.Model')
+
 		if 'engine' not in self.params:
 			self.params['engine'] = 'engine_liggghts'
 
@@ -62,15 +65,16 @@ class Model(object):
 			for mesh in self.params['mesh']:
 				self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
 
+				# By default all meshes are imported
+				if 'import' not in self.params['mesh'][mesh]:
+					self.params['mesh'][mesh]['import'] = True
+
 				if 'id' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['id'] = idc
 					idc += 1
 
 				if 'args' not in self.params['mesh'][mesh]:
 					self.params['mesh'][mesh]['args'] = ()
-
-		if 'style' not in self.params:
-			self.params['style'] = 'granular'
 
 		if 'units' not in self.params:
 			self.params['units'] = 'si'
@@ -92,17 +96,6 @@ class Model(object):
 
 		if 'read_data' not in self.params:
 			self.params['read_data'] = False
-
-		# Default traj I/O args
-		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
-                   'args': ('id', 'type', 'x', 'y', 'z', 'radius', \
-                   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
-
-		if 'traj' in self.params:
-			for key in self.params['traj']:
-				traj[key] = self.params['traj'][key]
-
-		self.params['traj'] = traj
 
         # Compute mean material properties
 		self.materials = {}
@@ -166,6 +159,34 @@ class Model(object):
 							sys.exit()
 
 			self.params['materials'] = self.materials
+
+		# Default traj I/O args
+		ms = False
+		if 'SS' in self.params:
+			for ss in self.params['SS']:
+				if ss['style'] is 'multisphere':
+					ms = True
+
+		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
+               'args': ('id', 'type', 'x', 'y', 'z', 'radius', \
+               'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+
+		if ms:
+			traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
+                   'args': ('id', 'mol', 'type', 'x', 'y', 'z', 'radius', \
+                   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+
+           	if 'style' not in self.params:
+				self.params['style'] = 'sphere'
+
+		elif 'style' not in self.params:
+				self.params['style'] = 'granular'
+
+		if 'traj' in self.params:
+			for key in self.params['traj']:
+				traj[key] = self.params['traj'][key]
+
+		self.params['traj'] = traj
 
 		if 'dt' not in self.params:
 			# Estimate the allowed sim timestep

@@ -579,6 +579,33 @@ class Particles(SubSystem):
 			# Make sure natoms is updated ~ DUH
 			self._constructAttributes()
 
+		# see if multi-spheres are present
+		if 'mol' in args:
+			data = collections.OrderedDict()
+			nmols = int(self.mol.max())
+			nspheres = self.natoms / nmols
+
+			for key in self.data.keys():
+				if key != 'mol': # elminate recursive call (we dont need mol anyway)
+					if type(self.data[key]) == np.ndarray:
+						data[key] = np.zeros(nmols)
+
+						for atom, prop in enumerate(self.data[key]):
+							data[key][int(self.mol[atom])-1] += prop
+
+						data[key] /= nspheres
+						# we average all atomic properties and assign them to the molecules ~ makes no sense to atomic IDs?
+					else:
+						data[key] = self.data[key] # must be natoms
+
+			data['natoms'] = nmols
+
+			# Make sure molecules can be updated if reading a trajectory, so we delete it
+			if hasattr(self, 'molecules'):
+				del self.molecules
+
+			self.molecules = Particles(units=self._units, data=data)
+
 	def _updateSystem(self):
 		""" Class function for updating the state of Particles """
 		# Must make sure fname is passed in case we're looping over a trajectory
