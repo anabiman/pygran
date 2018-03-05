@@ -53,6 +53,20 @@ stearicAcid = {
 		'density': 997.164
 		}
 
+
+organic = {
+		'youngsModulus': 1e7,
+		'poissonsRatio': 0.25,
+		'coefficientFriction': 0.5,
+		'coefficientRollingFriction': 0.0,
+		'cohesionEnergyDensity': 0.05,
+		'coefficientRestitution': 0.9,
+		'coefficientRollingViscousDamping': 0.1,
+		'yieldPress': 2.2e6,
+		'characteristicVelocity': 0.1,
+		'density': 1000.0
+		}
+
 def LIGGGHTS(**material):
 	""" Transform a PyGran material database into a LIGGGHTS material dictionary """
 
