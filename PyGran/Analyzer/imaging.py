@@ -58,7 +58,7 @@ def readExcel(fname):
 					if isinstance(cell.value, Number):
 						data[dname].append(cell.value)
 					else:
-						print cell.value, ' ignored'
+						print(cell.value, ' ignored')
 
 	for key in data.keys():
 		data[key] = array(data[key])
@@ -168,57 +168,6 @@ def slice(Particles, zmin, zmax, axis, size, resol=None, output=None, imgShow=Fa
 	if output:
 		img.save(output)
 
-def reconstruct(fimg, imgShow=False):
-
-	img = cv2.imread(fimg)
-	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-	ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-
-	# noise removal
-	kernel = np.ones((3,3),np.uint8)
-	opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = 2)
-
-	# sure background area
-	sure_bg = cv2.dilate(opening,kernel,iterations=3)
-
-	# Finding sure foreground area
-	if int(cv2.__version__.split('.')[0]) < 3:
-    		dist_transform = cv2.distanceTransform(opening, cv2.cv.CV_DIST_L2, 5)
-	else:
-		dist_transform = cv2.distanceTransform(opening, cv2.DIST_L2, 5)
-
-   	ret, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(), 255, 0)
-
-   	# Finding unknown region
-   	sure_fg = np.uint8(sure_fg)
-   	unknown = cv2.subtract(sure_bg,sure_fg)
-
-	if int(cv2.__version__.split('.')[0]) == 3:
-		# Marker labelling
-		ret, markers = cv2.connectedComponents(sure_fg)
-
-    		# Add one to all labels to make sure background is not 0, but 1
-    		markers = markers+1
-
-    		# Now, mark the region of unknown with zero
-		markers[unknown==255] = 0
-
-		# Now our marker is ready. It is time for final step, apply watershed. 
-		# Then marker image will be modified. The boundary region will be marked with -1.
-		markers = cv2.watershed(img,markers)
-		img[markers == -1] = [255,0,0]
-	else:
-
-		img = cv2.add(sure_bg,sure_fg)
-
-	if imgShow:
-		cv2.imshow('image', img)
-		#cv2.imwrite('image.png',img)
-		cv2.waitKey(0)
-                cv2.destroyAllWindows()
-
-	return img
-
 def readImg(file, order=False, processes=None, fillHoles=False, flip=False):
 	""" Loads image file(s) and returns an array 
 
@@ -233,7 +182,6 @@ def readImg(file, order=False, processes=None, fillHoles=False, flip=False):
 
 	TODO: fix processes
 	"""
-
 	if type(file) is list:
 		pass
 	elif type(file) is str:
@@ -241,56 +189,54 @@ def readImg(file, order=False, processes=None, fillHoles=False, flip=False):
 			file = glob.glob("{}*".format(file))
 			file.sort(key=os.path.getmtime)
 		else:
-			 # Read single image file
-			 pic = Image.open(file)
+			# Read single image file
+			pic = Image.open(file)
 
-			 if flip:
-			 	n,m = pic.size[1], pic.size[0]
-			 else:
-			 	n,m = pic.size[0], pic.size[1]
-
-			 if len(np.array(pic.getdata()).shape) > 1:
-			 	data = np.array(pic.getdata()).reshape(n,m, np.array(pic.getdata()).shape[-1])
-			 else:
-			 	data = np.array(pic.getdata()).reshape(n,m)
-
-			 return data
-
-		def func(file):
-			
-			for i, img in enumerate(file):
-				pic = Image.open(img)
-
-				if flip:
-			 		n,m = pic.size[1], pic.size[0]
-			 	else:
-			 		n,m = pic.size[0], pic.size[1]
-
-				if i == 0:
-					if len(np.array(pic.getdata()).shape) > 1:
-				 		data = np.zeros((n, m, np.array(pic.getdata()).shape[-1], len(file)))
-				 	else:
-				 		data = np.zeros((n, m, len(file)))
-
-				if len(np.array(pic.getdata()).shape) > 1:
-					data[:,:,:,i] = np.array(pic.getdata()).reshape(n, m, np.array(pic.getdata()).shape[-1])
-				else:
-					data[:,:,i] = np.array(pic.getdata()).reshape(n, m)
-
-			if fillHoles:
-				from scipy import ndimage
-				return ndimage.morphology.binary_fill_holes(data).astype(int)
+			if flip:
+				n,m = pic.size[1], pic.size[0]
 			else:
-				return data
+				n,m = pic.size[0], pic.size[1]
 
-		if processes:
-			pool = multiprocessing.Pool(processes=processes)
-			func = partial(file)
-			pool.map(func, range(nFiles))
-			pool.close()
-			pool.join()
+			if len(np.array(pic.getdata()).shape) > 1:
+				data = np.array(pic.getdata()).reshape(n,m, np.array(pic.getdata()).shape[-1])
+			else:
+				data = np.array(pic.getdata()).reshape(n,m)
+			return data
+
+	def func(file):
+		for i, img in enumerate(file):
+			pic = Image.open(img)
+
+			if flip:
+				n,m = pic.size[1], pic.size[0]
+			else:
+				n,m = pic.size[0], pic.size[1]
+
+			if i == 0:
+				if len(np.array(pic.getdata()).shape) > 1:
+					data = np.zeros((n, m, np.array(pic.getdata()).shape[-1], len(file)))
+				else:
+					data = np.zeros((n, m, len(file)))
+
+			if len(np.array(pic.getdata()).shape) > 1:
+				data[:,:,:,i] = np.array(pic.getdata()).reshape(n, m, np.array(pic.getdata()).shape[-1])
+			else:
+				data[:,:,i] = np.array(pic.getdata()).reshape(n, m)
+
+		if fillHoles:
+			from scipy import ndimage
+			return ndimage.morphology.binary_fill_holes(data).astype(int)
 		else:
-			return func(file)
+			return data
+
+	if processes:
+		pool = multiprocessing.Pool(processes=processes)
+		func = partial(file)
+		pool.map(func, range(nFiles))
+		pool.close()
+		pool.join()
+	else:
+		return func(file)
 
 def coarseDiscretize(images, binsize, order=False, fillHoles=False, flip=False):
 	""" Discretizes a 3D image into a coarse grid

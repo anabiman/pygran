@@ -130,7 +130,6 @@ class Neighbors(object):
 							# A and B are spheres / *not* molecules
 							if type1 == type2:
 								typeA[count] = sum(self._Particles[cn].type == type2) - 1
-								print typeA[count]
 							else:
 								typeA[count] = sum(self._Particles[cn].type == type2)
 					else:
@@ -409,7 +408,7 @@ class Neighbors(object):
 							#chain.append((index,ni))
 							#print (index,ni)
 			
-			print 'Natoms highly stressed = {} out of {} particles'.format(len(chain), self._Particles.natoms)
+			print('Natoms highly stressed = {} out of {} particles'.format(len(chain), self._Particles.natoms))
 				
 			plt.axis('scaled')
 			plt.show()
