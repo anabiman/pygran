@@ -580,6 +580,7 @@ class Particles(SubSystem):
 			self._constructAttributes()
 
 		# see if multi-spheres are present
+		# TODO: support polydisperse multisphere
 		if 'mol' in args:
 			data = collections.OrderedDict()
 			nmols = int(self.mol.max())
@@ -599,6 +600,26 @@ class Particles(SubSystem):
 						data[key] = self.data[key] # must be natoms
 
 			data['natoms'] = nmols
+
+			# Compute length of multispheres
+			dim = 3 # ~ HACKISH!
+			data['length'] = np.zeros((nmols,dim,2))
+
+			for atom in range(self.natoms):
+				data['length'][int(self.mol[atom])-1,0,0] = min(self.x[atom], data['length'][int(self.mol[atom])-1,0,0])
+				data['length'][int(self.mol[atom])-1,1,0] = min(self.y[atom], data['length'][int(self.mol[atom])-1,1,0])
+				data['length'][int(self.mol[atom])-1,2,0] = min(self.z[atom], data['length'][int(self.mol[atom])-1,2,0])
+
+				data['length'][int(self.mol[atom])-1,0,1] = max(self.x[atom], data['length'][int(self.mol[atom])-1,0,1])
+				data['length'][int(self.mol[atom])-1,1,1] = max(self.y[atom], data['length'][int(self.mol[atom])-1,1,1])
+				data['length'][int(self.mol[atom])-1,2,1] = max(self.z[atom], data['length'][int(self.mol[atom])-1,2,1])
+
+			tmp = np.zeros(nmols)
+
+			for dim in range(dim):
+				tmp += (data['length'][:,dim,1] - data['length'][:,dim,0])**2
+
+			data['length'] = np.sqrt(tmp)
 
 			# Make sure molecules can be updated if reading a trajectory, so we delete it
 			if hasattr(self, 'molecules'):
