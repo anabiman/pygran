@@ -180,7 +180,7 @@ class Model(object):
 				self.params['style'] = 'sphere'
 
 		elif 'style' not in self.params:
-				self.params['style'] = 'granular'
+				self.params['style'] = 'sphere'
 
 		if 'traj' in self.params:
 			for key in self.params['traj']:
@@ -341,7 +341,7 @@ class SpringDashpot(Model):
 		super(SpringDashpot, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
+			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'off', 'rolling_friction', \
 						'cdt', 'tangential_damping', 'on', 'limitForce', 'on', 'ktToKnUser', 'on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
