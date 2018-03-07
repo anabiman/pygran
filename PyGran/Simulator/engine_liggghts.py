@@ -546,9 +546,6 @@ class DEMPy:
           print('Could not find dt in user-supplied dictionary. Aborting ...')
         sys.exit()
 
-    # check timestep
-    self.lmp.command('fix ts_check all check/timestep/gran 1000 0.5 0.5')
-
     self.integrate(nsteps, dt)
 
     return name
@@ -789,9 +786,19 @@ class DEMPy:
       self.setupParticles()
       self.setupGravity()
 
+    self.setupIntegrate()
+    self.importMeshes()
+    
+    # Write output to trajectory by default unless the user specifies otherwise
+    if 'dump' in self.pargs:
+      if self.pargs['dump'] == True:
+        self.dumpSetup()
+    else:
+      self.dumpSetup()
+
   def setupIntegrate(self, itype=None, group=None):
     """
-    Specify how Newton's eqs are integrated in time.
+    Specify how Newton's eqs are integrated in time. MUST BE EXECUTED ONLY ONCE.
     TODO: extend this to SQ particles
     """
     if not self.rank:
@@ -800,51 +807,48 @@ class DEMPy:
     spheres = []
     multi = []
 
-    # Get rid of any previous integrator, multisphere can be set only ONCE in LIGGGHTs
-    # Hence keep it!
-    if self.integrator:
-      for integ in self.integrator:
-        if not integ.startswith('multisphere'):
-          self.remove(integ)
-          self.integrator.remove(integ)
+    if not self.integrator:
 
-    # Find which components (types) are spheres, multi-spheres, QS, etc.
-    for i, ss in enumerate(self.pargs['SS']):
-      if 'id' in ss and 'wall' not in ss: # dont count mesh wall(s)
-        if ss['style'] is 'sphere':
-          spheres.append('{}'.format(i+1))
-        elif ss['style'] is 'multisphere':
-          multi.append('{}'.format(i+1))
+      # check timestep ~ do this only ONCE
+      self.lmp.command('fix ts_check all check/timestep/gran 1000 0.5 0.5')
 
-    if len(spheres):
-      #self.createGroup(*('spheres type', (' {}' * len(spheres)).format(*spheres)))
+      # Find which components (types) are spheres, multi-spheres, QS, etc.
+      for i, ss in enumerate(self.pargs['SS']):
+        if 'id' in ss and 'wall' not in ss: # dont count mesh wall(s)
+          if ss['style'] == 'sphere':
+            spheres.append('{}'.format(i+1))
+          elif ss['style'] == 'multisphere':
+            multi.append('{}'.format(i+1))
 
-      for sphere in spheres:
-        name = 'sphere_' + str(np.random.randint(0,10**6))
-        if not itype:
-          self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
-        else:
-          self.lmp.command('fix {} group{} {}'.format(name, int(sphere[0]) -1, itype))
-        self.integrator.append(name)
+      if len(spheres):
+        #self.createGroup(*('spheres type', (' {}' * len(spheres)).format(*spheres)))
 
-    # LIGGGHTS does not permit more than one multisphere group to exist / integrated
-    # So we will reject any MS groups beyond the 1st
-    if len(multi) > 1:
-      raise RuntimeError("LIGGGHTS (3.x) does not currently support more than one multisphere group.")
-    elif len(multi): # must be of length 1
+        for sphere in spheres:
+          name = 'sphere_' + str(np.random.randint(0,10**6))
+          if not itype:
+            self.lmp.command('fix {} group{} nve/sphere'.format(name, int(sphere[0]) -1))
+          else:
+            self.lmp.command('fix {} group{} {}'.format(name, int(sphere[0]) -1, itype))
+          self.integrator.append(name)
 
-      # When LIGGGHTS supports multiple multisphere groups, I should uncomment this
-      #self.createGroup(*('multi type', (' {}' * len(multi)).format(*multi)))
+      # LIGGGHTS does not permit more than one multisphere group to exist / integrated
+      # So we will reject any MS groups beyond the 1st
+      if len(multi) > 1:
+        raise RuntimeError("LIGGGHTS (3.x) does not currently support more than one multisphere group.")
+      elif len(multi): # must be of length 1
 
-      ms = True
-      for integ in self.integrator:
-        if integ.startswith('multisphere'):
-          ms = False
+        # When LIGGGHTS supports multiple multisphere groups, I should uncomment this
+        #self.createGroup(*('multi type', (' {}' * len(multi)).format(*multi)))
 
-      if ms:
-        name = 'multisphere_' + str(np.random.randint(0,10**6))
-        self.lmp.command('fix {} group{} multisphere'.format(name, int(multi[0])-1))
-        self.integrator.append(name)
+        ms = True
+        for integ in self.integrator:
+          if integ.startswith('multisphere'):
+            ms = False
+
+        if ms:
+          name = 'multisphere_' + str(np.random.randint(0,10**6))
+          self.lmp.command('fix {} group{} multisphere'.format(name, int(multi[0])-1))
+          self.integrator.append(name)
 
     return self.integrator
 

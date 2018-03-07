@@ -133,6 +133,7 @@ class DEM:
         logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
 
     # All I/O done ~ phew! Now initialize DEM
+    # Import and setup all meshes as rigid walls
     self.initialize()
 
     # Setup material properties
@@ -142,20 +143,7 @@ class DEM:
         if type(self.pargs['materials'][item]) is tuple: # Make sure we're not reading user-defined scalars (e.g. density)
           self.createProperty(item, *self.pargs['materials'][item])
 
-    # Import and setup all meshes as rigid walls
-    self.importMeshes()
-
     self.printSetup()
-
-    # run for 1 step test and make sure all atomic (e.g. molecular MS) attributes are written
-    self.run(1, dt=1e-12)
-
-    # Write output to trajectory by default unless the user specifies otherwise
-    if 'dump' in self.pargs:
-      if self.pargs['dump'] == True:
-        self.dumpSetup()
-    else:
-      self.dumpSetup()
 
   def scatter_atoms(self,name,type,count,data):
     for i in range(self.nSim):
@@ -230,8 +218,7 @@ class DEM:
   def run(self, nsteps, dt=None, itype=None):
     for i in range(self.nSim):
       if self.rank < self.nPart * (i + 1):
-        self.dem.run(nsteps, dt, itype)
-        break
+        return self.dem.run(nsteps, dt, itype)
         
   def setupParticles(self):
 
