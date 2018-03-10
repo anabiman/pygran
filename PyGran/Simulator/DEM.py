@@ -101,21 +101,25 @@ class DEM:
       print("Number of simulations ({}) cannot exceed number of available processors ({})".format(self.nSim, self.tProcs))
       sys.exit(0)
 
-    self.nPart = self.tProcs // self.nSim
+    self.pProcs = self.tProcs // self.nSim
 
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.color = i
-        self.split = self.comm.Split(self.color, key=0)
+
+        self.split = self.comm.Split(color=self.color, key=self.rank)
 
         module = import_module('PyGran.Simulator.' + self.pargs['engine'])
-        self.output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
+        output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
         if not self.split.Get_rank():
-          if os.path.exists(self.output):
-            print('WARNING: output dir {} already exists. Proceeding ...'.format(self.output))
+          if os.path.exists(output):
+            print('WARNING: output dir {} already exists. Proceeding ...'.format(output))
           else:
-            os.mkdir(self.output)
+            os.mkdir(output)
+
+        # Make sure output in self.pargs is updated before instantiating dem class
+        self.pargs['output'] = output
 
         self.split.barrier() # Synchronize all procs
         self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here      
@@ -132,6 +136,9 @@ class DEM:
       if self.nSim > 1:
         logging.info('Running {} simulations: multi-mode on'.format(self.nSim))
 
+      if self.pProcs > 0:
+        logging.info('Using {} cores per simulation'.format(self.pProcs))
+
     # All I/O done ~ phew! Now initialize DEM
     # Import and setup all meshes as rigid walls
     self.initialize()
@@ -147,56 +154,56 @@ class DEM:
 
   def scatter_atoms(self,name,type,count,data):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.scatter_atoms(name,type,count,data)
 
   def createParticles(self, type, style, *args):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.createParticles(type, style, *args)
         break
 
   def createGroup(self, *group):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.createGroup(*group)
         break
 
   def set(self, *args):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.set(*args)
         break
 
   def gather_atoms(self,name,type,count):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.gather_atoms(name,type,count)
 
   def get_natoms(self):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.get_natoms()
 
   def extract_global(self,name,type):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.extract_global(name, type)
         
   def extract_compute(self,id,style,type):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.extract_compute(id,style,type)
 
   def initialize(self):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.initialize()
         break
   
   def velocity(self, *args):
       for i in range(self.nSim):
-        if self.rank < self.nPart * (i + 1):
+        if self.rank < self.pProcs * (i + 1):
           self.dem.velocity(*args)
           break
 
@@ -207,23 +214,23 @@ class DEM:
     @[scale]: tuple (species, ratio) to scale gamma with
     """
     for i in range(self.nSim):
-        if self.rank < self.nPart * (i + 1):
+        if self.rank < self.pProcs * (i + 1):
           return self.dem.add_viscous(**args)
 
   def insert(self, species, value, **args):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.insert(species, value, **args)
 
   def run(self, nsteps, dt=None, itype=None):
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.run(nsteps, dt, itype)
         
   def setupParticles(self):
 
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.setupParticles()
         break
 
@@ -233,7 +240,7 @@ class DEM:
     """
 
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         if type(args[0]) is tuple:
           self.dem.createProperty(name, *args[i])
         else:
@@ -246,7 +253,7 @@ class DEM:
     This function imports all meshes and sets them up as walls. Can import only one mesh specified by the 'name' keyword.
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.importMeshes(name)
         break
 
@@ -255,7 +262,7 @@ class DEM:
     Imports a mesh file (STL or VTK)
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.importMesh(name, file, mtype, *args)
         break
 
@@ -268,7 +275,7 @@ class DEM:
     @ peq: plane equation for primitive walls
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.setupWall(wtype, species, plane, peq)
 
   def printSetup(self):
@@ -276,7 +283,7 @@ class DEM:
     Specify which variables to write to file, and their format
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.printSetup()
         break
 
@@ -284,7 +291,7 @@ class DEM:
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.dumpSetup()
         break
 
@@ -297,7 +304,7 @@ class DEM:
     @ args: tuple args for npt or nvt simulations
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.setupIntegrate(name, itype, group)
         break
 
@@ -306,7 +313,7 @@ class DEM:
     Run simulation in time
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.integrate(steps, dt, itype)
         break
 
@@ -315,7 +322,7 @@ class DEM:
     Delete variable/object
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.remove(name)
         break
 
@@ -323,7 +330,7 @@ class DEM:
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.monitor(name, group, var, file)
         break
 
@@ -331,7 +338,7 @@ class DEM:
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.plot(fname, xlabel, ylabel, output, xscale)
         break
 
@@ -339,14 +346,14 @@ class DEM:
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         return self.dem.moveMesh(name, *args)
 
   def saveas(self, name, fname):
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.saveas(name, fname)
         break
 
@@ -354,7 +361,7 @@ class DEM:
     """
     """
     for i in range(self.nSim):
-      if self.rank < self.nPart * (i + 1):
+      if self.rank < self.pProcs * (i + 1):
         self.dem.command(cmd)
         break
 
