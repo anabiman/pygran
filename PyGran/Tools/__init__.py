@@ -22,14 +22,15 @@ Created on April 25, 2016
 import os
 
 # Conversion unit systems
-# S.I.: m, s, Kg
-# CGS: cm, s, g
-# Micro: micron, micro s, micro g
+# si.: meters, seconds, kilograms
+# cgs: centimeters, seconds, grams
+# micro: microns, seconds, micrograms
+# nano: nanometers, seconds, nanograms 
 
 conversion = {'si': {'distance': 1, 'time': 1, 'mass': 1}, \
 			'cgs': {'distance': 1e-2,'time': 1, 'mass': 1e-3}, \
-			'micro': {'distance': 1e-6, 'time': 1e-6, 'mass': 1e-9}, \
-			'nano': {'distance': 1e-9, 'time': 1e-9, 'mass': 1e-12}
+			'micro': {'distance': 1e-6, 'time': 1, 'mass': 1e-9}, \
+			'nano': {'distance': 1e-9, 'time': 1, 'mass': 1e-12}
 			}
 
 def convert(unitso, unitsf):
