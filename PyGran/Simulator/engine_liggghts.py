@@ -67,7 +67,7 @@ class liggghts:
     pass
 
   # create instance of LIGGGHTS
-  def __init__(self, library=None, style = 'granular', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
+  def __init__(self, library=None, style = 'spherical', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
 
     comm = MPI.COMM_WORLD
 
@@ -120,6 +120,7 @@ class liggghts:
         self.lmp = ctypes.c_void_p()
         comm_ptr = liggghts.MPI._addressof(comm)
         comm_val = MPI_Comm.from_address(comm_ptr)
+
         self.lib.lammps_open(narg,cargs,comm_val, ctypes.byref(self.lmp))
 
       else:
@@ -315,12 +316,13 @@ class DEMPy:
       if not os.path.exists(self.pargs['traj']['dir']):
         os.makedirs(self.pargs['traj']['dir'])
 
-      if not os.path.exists(self.pargs['restart'][1]):
-        os.makedirs(self.pargs['restart'][1])
+      if self.pargs['restart']:
+        if not os.path.exists(self.pargs['restart'][1]):
+          os.makedirs(self.pargs['restart'][1])
 
       logging.info('Instantiating LIGGGHTS object')
 
-    self.lmp = liggghts(comm=split, library=library.strip(), cmdargs=['-log', 'liggghts.log'])
+    self.lmp = liggghts(comm=self.split, library=library.strip(), cmdargs=['-log', 'liggghts.log'])
 
     if not self.rank:
       logging.info('Setting up problem dimensions and boundaries')
@@ -568,16 +570,18 @@ class DEMPy:
 
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
-          if name:
-            if mesh == name:
-              self.pargs['mesh'][mesh]['import'] = True
-              self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
-              wall = True
 
-          elif 'import' in self.pargs['mesh'][mesh]:
-            if self.pargs['mesh'][mesh]['import']:
-              self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
-              wall = True
+        if 'file' in self.pargs['mesh'][mesh]:
+            if name:
+              if mesh == name:
+                self.pargs['mesh'][mesh]['import'] = True
+                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+                wall = True
+
+            elif 'import' in self.pargs['mesh'][mesh]:
+              if self.pargs['mesh'][mesh]['import']:
+                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+                wall = True
               
       if wall:
         self.setupWall(wtype='mesh')
@@ -613,18 +617,27 @@ class DEMPy:
 
     for item in self.pargs['model-args']:
       if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser' \
-        and item != 'off' and item != 'radiusGrowth':
+        and item != 'off' and item != 'radiusGrowth' and item != 'history' and item != 'tangential':
         model.append(item)
       elif item != 'gran':
         modelExtra.append(item)
 
+    # Replace any user-specified model args for all mesh walls
+    for i, key in enumerate(modelExtra):
+      if wtype == 'mesh':
+        if key in self.pargs['mesh']:
+          modelExtra[i+1] = self.pargs['mesh'][key]
+
     model = tuple(model)
+    modelExtra = tuple(modelExtra)
 
     if wtype == 'mesh':
-      nMeshes = len(self.pargs['mesh'])
-      meshName = tuple(self.pargs['mesh'].keys())
-      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ' {} n_meshes {} meshes'.format(wtype, nMeshes) \
-        + (' {} ' * len(meshName)).format(*meshName)  + ('{} ' * len(modelExtra)).format(*modelExtra))
+      meshName = tuple([mname for mname in self.pargs['mesh'].keys() if 'file' in self.pargs['mesh'][mname]])
+      nMeshes = len(meshName)
+
+      # What about modelExtra args for primitive walls?
+      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ('{} ' * len(modelExtra)).format(*modelExtra) + \
+      ' {} n_meshes {} meshes'.format(wtype, nMeshes) + (' {} ' * nMeshes).format(*meshName))
     elif wtype == 'primitive':
       self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type {} {} {}'.format(wtype, species, plane, peq))
     else:
@@ -758,11 +771,16 @@ class DEMPy:
     """
     """
 
-    self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart'][:-1]))
+    if self.pargs['restart']:
+      self.lmp.command('restart {} {}/{}'.format(*self.pargs['restart'][:-1]))
+    else:
+      # create dummy restart tuple to pass below
+      self.pargs['restart'] = (None, None, None, False)
+
     self.pddName = []
     self.integrator = []
 
-    if self.pargs['restart'][3] == False and self.pargs['read_data'] == False:
+    if not self.pargs['restart'][3] and not self.pargs['read_data']:
 
       self.createDomain()
       #self.createGroup()
@@ -910,28 +928,32 @@ class DEMPy:
       if 'mfile' not in self.pargs['traj']:
         for mesh in self.pargs['mesh'].keys():
 
-          if self.pargs['mesh'][mesh]['import']:
-            args = self.pargs['traj'].copy()
-            args['mfile'] = mesh + '-*.vtk'
-            args['mName'] = mesh
-            name = 'dump' + str(np.random.randint(0,1e8))
-            self.pargs['traj']['dump_mname'].append(name)
+          if 'file' in self.pargs['mesh'][mesh]:
+          # Make sure only mehs keywords supplied with files are counter, otherwise, they're args to the mesh wall!
 
-            self.lmp.command('dump ' + name + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**args))
+            if self.pargs['mesh'][mesh]['import']:
+              args = self.pargs['traj'].copy()
+              args['mfile'] = mesh + '-*.vtk'
+              args['mName'] = mesh
+              name = 'dump' + str(np.random.randint(0,1e8))
+              self.pargs['traj']['dump_mname'].append(name)
+
+              self.lmp.command('dump ' + name + ' all mesh/vtk {freq} {dir}/{mfile} id stress stresscomponents vel {mName}'.format(**args))
       elif not isinstance(self.pargs['traj']['mfile'], list):
         if self.pargs['traj']['mfile']:
           name = ''
 
           # see if we have many meshes to dump if the name of one mfile supplied by the user
           for mesh in self.pargs['mesh'].keys():
-            if self.pargs['mesh'][mesh]['import']:
-              name += mesh + ' '
+            if 'file' in self.pargs['mesh'][mesh]:
+              if self.pargs['mesh'][mesh]['import']:
+                name += mesh + ' '
 
           if len(name):
             name = name[:-1] # remove last space to avoid fake (empty) mesh IDs
 
             args = self.pargs['traj'].copy()
-            args['mfile'] = 'mesh-*.vtk'
+            args['mfile'] = self.pargs['traj']['mfile']
             args['mName'] = name
             
             dname = 'dump' + str(np.random.randint(0,1e8))
