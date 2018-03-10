@@ -61,20 +61,23 @@ class Model(object):
 
 		# Treat any mesh as an additional component
 		if 'mesh' in self.params:
-			self.params['nSS'] += len(self.params['mesh'])
 			for mesh in self.params['mesh']:
-				self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
 
-				# By default all meshes are imported
-				if 'import' not in self.params['mesh'][mesh]:
-					self.params['mesh'][mesh]['import'] = True
+				# Make sure only mehs keywords supplied with files are counter, otherwise, they're args to the mesh wall!
+				if 'file' in self.params['mesh'][mesh]:
+					self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
+					self.params['nSS'] += 1
 
-				if 'id' not in self.params['mesh'][mesh]:
-					self.params['mesh'][mesh]['id'] = idc
-					idc += 1
+					# By default all meshes are imported
+					if 'import' not in self.params['mesh'][mesh]:
+						self.params['mesh'][mesh]['import'] = True
 
-				if 'args' not in self.params['mesh'][mesh]:
-					self.params['mesh'][mesh]['args'] = ()
+					if 'id' not in self.params['mesh'][mesh]:
+						self.params['mesh'][mesh]['id'] = idc
+						idc += 1
+
+					if 'args' not in self.params['mesh'][mesh]:
+						self.params['mesh'][mesh]['args'] = ()
 
 		if 'units' not in self.params:
 			self.params['units'] = 'si'
@@ -341,7 +344,7 @@ class SpringDashpot(Model):
 		super(SpringDashpot, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'off', 'rolling_friction', \
+			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
 						'cdt', 'tangential_damping', 'on', 'limitForce', 'on', 'ktToKnUser', 'on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
