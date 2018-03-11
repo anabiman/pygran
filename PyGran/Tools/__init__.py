@@ -27,10 +27,10 @@ import os
 # micro: microns, seconds, micrograms
 # nano: nanometers, seconds, nanograms 
 
-conversion = {'si': {'distance': 1, 'time': 1, 'mass': 1}, \
-			'cgs': {'distance': 1e-2,'time': 1, 'mass': 1e-3}, \
-			'micro': {'distance': 1e-6, 'time': 1, 'mass': 1e-9}, \
-			'nano': {'distance': 1e-9, 'time': 1, 'mass': 1e-12}
+conversion = {'si': {'distance': [1, 'm'], 'time': [1, 's'], 'mass': [1, 'kg']}, \
+			'cgs': {'distance': [1e-2, 'cm'],'time': [1, 's'], 'mass': [1e-3, 'g']}, \
+			'micro': {'distance': [1e-6, '$\mu m$'], 'time': [1, 's'], 'mass': [1e-9, '$\mu g$']}, \
+			'nano': {'distance': [1e-9, 'nm'], 'time': [1, 's'], 'mass': [1e-12, 'ng']}
 			}
 
 def convert(unitso, unitsf):
@@ -40,7 +40,7 @@ def convert(unitso, unitsf):
 			conv = conversion[unitso]
 
 			for key in conv:
-				conv[key] /= conversion[unitsf][key]
+				conv[key][0] /= conversion[unitsf][key][0]
 
 			return conv
 		else:
