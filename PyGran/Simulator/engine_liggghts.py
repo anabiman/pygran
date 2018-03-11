@@ -616,30 +616,34 @@ class DEMPy:
     name = np.random.randint(0,1e8)
 
     for item in self.pargs['model-args']:
-      if item != 'gran' and item != 'tangential_damping' and item != 'on' and item != 'limitForce' and item != 'ktToKnUser' \
-        and item != 'off' and item != 'radiusGrowth' and item != 'history' and item != 'tangential':
+      if item != 'gran' and not item.startswith('tangential_damping') and not item.startswith('limitForce') and not item.startswith('ktToKnUser') \
+        and not item.startswith('model'):
         model.append(item)
-      elif item != 'gran':
+      elif item != 'gran' and item.startswith('model'):
         modelExtra.append(item)
 
     # Replace any user-specified model args for all mesh walls
-    for i, key in enumerate(modelExtra):
+    for i, key in enumerate(model):
       if wtype == 'mesh':
-        if key in self.pargs['mesh']:
-          modelExtra[i+1] = self.pargs['mesh'][key]
+        kname = key.split()[0]
+        if kname in self.pargs['mesh']:
+          if len(self.pargs['mesh'][kname]) == 1: # make sure this is an actual mesh keyword, not a mesh defined with a keyname same as a mesh arg!
+            model[i] = kname + self.pargs['mesh'][kname]
 
     model = tuple(model)
     modelExtra = tuple(modelExtra)
+
+    # Can we take model args into account for walls???
 
     if wtype == 'mesh':
       meshName = tuple([mname for mname in self.pargs['mesh'].keys() if 'file' in self.pargs['mesh'][mname]])
       nMeshes = len(meshName)
 
-      # What about modelExtra args for primitive walls?
-      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ('{} ' * len(modelExtra)).format(*modelExtra) + \
-      ' {} n_meshes {} meshes'.format(wtype, nMeshes) + (' {} ' * nMeshes).format(*meshName))
+      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(modelExtra)).format(*modelExtra) + ('{} ' * len(model)).format(*model) + \
+      '{} n_meshes {} meshes'.format(wtype, nMeshes) + (' {} ' * nMeshes).format(*meshName))
     elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  '{} type {} {} {}'.format(wtype, species, plane, peq))
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(modelExtra)).format(*modelExtra) +  ('{} ' * len(model)).format(*model) + \
+        '{} type {} {} {}'.format(wtype, species, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
 

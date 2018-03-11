@@ -156,7 +156,7 @@ these properties. This class is iterable but NOT an iterator. """
 		return eval(type(self).__name__)(units=self._units, data=data)
 
 	def conversion(self, factors):
-		""" Convesion factors from S.I. to micro and vice versa """
+		""" Convesion factors from S.I., micro, cgs, or nano, and vice versa """
 
 		for key in self.data.keys():
 
@@ -165,7 +165,7 @@ these properties. This class is iterable but NOT an iterator. """
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = True
 				
-				self.data[key] *= factors['distance']
+				self.data[key] *= factors['distance'][0]
 
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = False
@@ -175,7 +175,7 @@ these properties. This class is iterable but NOT an iterator. """
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = True
 
-				self.data[key] *= factors['distance'] / factors['time']
+				self.data[key] *= factors['distance'][0] / factors['time'][0]
 
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = False
@@ -185,7 +185,7 @@ these properties. This class is iterable but NOT an iterator. """
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = True
 
-				self.data[key] /= factors['time']
+				self.data[key] /= factors['time'][0]
 				
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = False
@@ -195,16 +195,20 @@ these properties. This class is iterable but NOT an iterator. """
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = True
 				
-				self.data[key] *= factors['mass'] * factors['distance'] / factors['time']**2.0
+				self.data[key] *= factors['mass'][0] * factors['distance'][0] / factors['time'][0]**2.0
 				
 				if(type(self.data[key]) == np.ndarray):
 					self.data[key].flags.writeable = False
 			else:
 				pass
 
-	def units(self, units):
-		""" Sets the unit system """
-		
+	def units(self, units=None):
+		""" Change unit system to units ore return units if None
+		units:  si, micro, cgs, or nano """
+
+		if not units:
+			return self._units
+
 		self.conversion(convert(self._units, units))
 		self._units = units
 
@@ -1268,13 +1272,20 @@ class System(object):
 
 		if 'units' in args:
 			self.units(args['units'])
+		else:
+			self.units('si')
 
 	def __iter__(self):
 		return self
 
-	def units(self, units):
-		""" Change unit system to:  si (S.I.), or micro (microns) """
-		if units == 'si' or 'micro':
+	def units(self, units=None):
+		""" Change unit system to units ore return units if None
+		units:  si, micro, cgs, or nano"""
+
+		if not units:
+			return self._units
+
+		if (units == 'si') or (units == 'micro'):
 			for ss in self.__dict__:
 				if hasattr(self.__dict__[ss], 'units'):
 					self.__dict__[ss].units(units)

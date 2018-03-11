@@ -343,9 +343,10 @@ class SpringDashpot(Model):
 
 		super(SpringDashpot, self).__init__(**params)
 
+		# the order is very imp in model-args ~ stupid LIGGGHTS!
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hooke', 'tangential', 'history', 'rolling_friction', \
-						'cdt', 'tangential_damping', 'on', 'limitForce', 'on', 'ktToKnUser', 'on') # the order matters here
+			self.params['model-args'] = ('gran', 'model hooke', 'tangential history', 'rolling_friction cdt',
+				'limitForce on', 'ktToKnUser on', 'tangential_damping on') 
 		else:
 			self.params['model-args'] = self.params['model-args']
 
@@ -427,8 +428,8 @@ class HertzMindlin(Model):
 		super(HertzMindlin, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential', 'history', 'cohesion', 'sjkr', \
-			'tangential_damping', 'on', 'limitForce', 'on') # the order matters here
+			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential history', 'cohesion sjkr', \
+			'tangential_damping on', 'limitForce on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
 
