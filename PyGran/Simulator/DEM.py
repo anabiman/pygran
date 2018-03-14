@@ -122,6 +122,9 @@ class DEM:
         self.pargs['output'] = output
 
         self.split.barrier() # Synchronize all procs
+        
+        os.chdir(self.pargs['output'])
+
         self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here      
         break
 
@@ -368,4 +371,6 @@ class DEM:
   def __del__(self):
     """
     """
-    MPI.Finalize()
+    # Dont call this since the user might be running multiple simulations in one script
+    #MPI.Finalize()
+    os.chdir('..')    

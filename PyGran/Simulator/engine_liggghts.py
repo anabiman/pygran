@@ -303,9 +303,6 @@ class DEMPy:
     if not self.rank:
       global logging
 
-    os.chdir(self.output)
-
-    if not self.rank:
       logging = import_module(name='logging')
 
       logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
@@ -340,7 +337,7 @@ class DEMPy:
       from sys import argv
       scriptFile = argv[0]
       logging.info('Backing up {} file'.format(scriptFile))
-      os.system('cp {}/{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
+      os.system('cp {}/../{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
 
   def get_natoms(self):
     return self.lmp.get_natoms()
@@ -591,7 +588,7 @@ class DEMPy:
     """
     Imports a specific surface mesh requested by the user
     """
-    fname = self.path + '/' + file
+    fname = self.path + '/../' + file
     
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
