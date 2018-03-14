@@ -519,8 +519,6 @@ class Mesh(SubSystem):
 		try:
 			self._mesh = self._fname[frame]
 		except:
-			frame -=1
-			self.rewind()
 			raise StopIteration
 		else:
 			frame += 1
@@ -978,7 +976,6 @@ class Particles(SubSystem):
 			else:
 				self._fp = open(self._files[0])
 
-
 	def _goto(self, iframe, frame):
 		""" This function assumes we're reading a non-const N trajectory.
 		"""
@@ -1174,8 +1171,6 @@ class Particles(SubSystem):
 					self._constructAttributes()
 
 		except:
-			frame -=1
-			self.rewind()
 			raise
 		else:
 			frame += 1
@@ -1320,11 +1315,11 @@ class System(object):
 	def rewind(self):
 		"""Read trajectory from the beginning"""
 
-		self.frame = 0
+		self.frame = -1
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], 'rewind'):
-				self.frame = self.__dict__[ss].rewind()
+				self.__dict__[ss].rewind()
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
