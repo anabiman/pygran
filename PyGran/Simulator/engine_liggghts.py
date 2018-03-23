@@ -613,10 +613,9 @@ class DEMPy:
     name = np.random.randint(0,1e8)
 
     for item in self.pargs['model-args']:
-      if item != 'gran' and not item.startswith('tangential_damping') and not item.startswith('limitForce') and not item.startswith('ktToKnUser') \
-        and not item.startswith('model'):
+      if item.startswith('model'):
         model.append(item)
-      elif item != 'gran' and item.startswith('model'):
+      elif item.startswith('cohesion') or item.startswith('tangential ') or item.startswith('rolling_friction'):
         modelExtra.append(item)
 
     # Replace any user-specified model args for all mesh walls
@@ -636,10 +635,10 @@ class DEMPy:
       meshName = tuple([mname for mname in self.pargs['mesh'].keys() if 'file' in self.pargs['mesh'][mname]])
       nMeshes = len(meshName)
 
-      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(modelExtra)).format(*modelExtra) + ('{} ' * len(model)).format(*model) + \
+      self.lmp.command('fix walls all wall/{} '.format(gran) + ('{} ' * len(model)).format(*model) + ('{} ' * len(modelExtra)).format(*modelExtra) + \
       '{} n_meshes {} meshes'.format(wtype, nMeshes) + (' {} ' * nMeshes).format(*meshName))
     elif wtype == 'primitive':
-      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(modelExtra)).format(*modelExtra) +  ('{} ' * len(model)).format(*model) + \
+      self.lmp.command('fix {} all wall/{} '.format(name, gran) + ('{} ' * len(model)).format(*model) +  ('{} ' * len(modelExtra)).format(*modelExtra) + \
         '{} type {} {} {}'.format(wtype, species, plane, peq))
     else:
       raise ValueError('Wall type can be either primitive or mesh')
