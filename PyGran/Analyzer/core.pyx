@@ -98,7 +98,7 @@ these properties. This class is iterable but NOT an iterator. """
 			if hasattr(self, key):
 				delattr(self, key)
 
-			if type(self.data[key]) == np.ndarray:
+			if isinstance(self.data[key], np.ndarray):
 
 				if sel is not None:
 					self.data[key] = self.data[key][sel]
@@ -487,6 +487,15 @@ class Mesh(SubSystem):
 			else:
 				break
 
+		index = 0
+		while True:
+			key = self._output.GetPointData().GetArrayName(index)
+			if key:
+				self.data[key] = vtk_to_numpy(self._output.GetPointData().GetArray(key))
+				index += 1
+			else:
+				break
+
 	def _updateSystem(self):
 		""" Class function for updating the state of a Mesh """
 		# Must make sure fname is passed in case we're looping over a trajectory
@@ -572,8 +581,14 @@ class Particles(SubSystem):
 							# Read 1st frame
 							self._readFile(0)
 
+						elif self._ftype == 'vtk':
+							if self._fname.split('.')[:-1][0].endswith('*'):
+								self._files = sorted(glob.glob(self._fname), key=numericalSort)
+								self._fp = open(self._files[0], 'r')
+							else:
+								self._fp = open(self._fname, 'r')
 						else:
-							raise IOError('Input trajectory must be a valid LAMMPS/LIGGGHTS (dump), ESyS-Particle (txt), Yade (?), or DEM-Blaze file (?)')
+							raise IOError('Input trajectory must be a valid LAMMPS/LIGGGHTS (dump) or vtk file.')
 
 			self._constructAttributes(sel)
 			self.data['natoms'] = len(self)
@@ -1157,6 +1172,9 @@ class Particles(SubSystem):
 					self.data['timestep'] = ts
 					self._constructAttributes()
 
+				else:
+					raise IOError('{} format does not support trajectory files.'.format(self._ftype))
+
 			else:
 				if self._ftype == 'dump':
 
@@ -1170,6 +1188,60 @@ class Particles(SubSystem):
 					ts = self._readDumpFile()
 					self._constructAttributes()
 
+				elif self._ftype == 'vtk':
+
+					if frame > len(self._files) - 1:
+						raise StopIteration
+
+					self._fp.close()
+					frame += 1
+					self._fname = self._files[frame]
+
+					self._reader = vtk.vtkPolyDataReader()
+
+					self._reader.SetFileName(self._fname)
+					self._reader.Update() # Needed if we need to call GetScalarRange
+					self._output = self._reader.GetOutput()
+
+					pos = vtk_to_numpy(self._output.GetPoints().GetData())
+					self.data['x'] = pos[:,0]
+
+					if pos.shape[1]  >= 1:
+						self.data['y'] = pos[:,1]
+
+					if pos.shape[1] >= 2:
+						self.data['z'] = pos[:,2]
+
+					index = 0
+					while True:
+						key = self._output.GetCellData().GetArrayName(index)
+						if key:
+							self.data[key] = vtk_to_numpy(self._output.GetCellData().GetArray(key))
+							index += 1
+						else:
+							break
+
+					index = 0
+					while True:
+						key = self._output.GetPointData().GetArrayName(index)
+						if key:
+							self.data[key] = vtk_to_numpy(self._output.GetPointData().GetArray(key))
+							index += 1
+						else:
+							break
+
+					# This doesnot work for 2D / 1D systems
+					for key in self.data.keys():
+						if isinstance(self.data[key], np.ndarray):
+							if len(self.data[key].shape) > 1:
+								if self.data[key].shape[1]  == 3:
+									self.data[key + 'x'] = self.data[key][:,0]
+									self.data[key + 'y'] = self.data[key][:,1]
+									self.data[key + 'z'] = self.data[key][:,2]
+
+									del self.data[key]
+
+					self._constructAttributes()
 		except:
 			raise
 		else:
