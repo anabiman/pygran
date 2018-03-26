@@ -48,7 +48,6 @@ insert = sim.insert(species=1, region=('block', pDict['box']), value=1000)
 
 # Evolve the system in time 
 sim.run(nsteps=1e6, dt=1e-6)
-
 ```
 ### Simulating Granular Flow
 Using PyGran for doing post-analysis is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
