@@ -584,6 +584,11 @@ class Particles(SubSystem):
 						elif self._ftype == 'vtk':
 							if self._fname.split('.')[:-1][0].endswith('*'):
 								self._files = sorted(glob.glob(self._fname), key=numericalSort)
+
+								for filen in self._files:
+									if 'boundingBox' in filen:
+										self._files.remove(filen)
+
 								self._fp = open(self._files[0], 'r')
 							else:
 								self._fp = open(self._fname, 'r')
@@ -676,6 +681,13 @@ class Particles(SubSystem):
 		vol = 4.0/3.0 * np.pi * self.radius**3
 
 		return np.array([np.dot(self.x, vol), np.dot(self.y, vol), np.dot(self.z, vol)]) / vol.sum()
+
+	def gcom(self):
+		""" Returns the geometric center of mass """
+		vol = 4.0/3.0 * np.pi * self.radius**3
+
+		return np.array([(self.x * vol)**r, (self.y, vol)**r, (self.z, vol)**r]) / vol.sum()
+
 
 	def computeRadius(self, N=100):
 		""" Computes the maximum radius of an N-particle (spherical) system
@@ -1182,7 +1194,6 @@ class Particles(SubSystem):
 						raise StopIteration
 
 					self._fp.close()
-					frame += 1
 					self._fname = self._files[frame]
 					self._fp = open(self._fname, 'r')
 					ts = self._readDumpFile()
@@ -1194,7 +1205,6 @@ class Particles(SubSystem):
 						raise StopIteration
 
 					self._fp.close()
-					frame += 1
 					self._fname = self._files[frame]
 
 					self._reader = vtk.vtkPolyDataReader()
