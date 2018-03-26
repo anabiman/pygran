@@ -25,7 +25,6 @@ Created on March 06, 2018
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # -------------------------------------------------------------------------
-
 import matplotlib.pylab as plt
 import matplotlib
 import matplotlib.ticker as ticker
@@ -44,15 +43,21 @@ def _fmt(x, pos):
 	b = int(b)
 	return r'${} \times 10^{{{}}}$'.format(a, b)
 
-def _initialize(Particles, fig, value, subplot, axes):
+def _initialize(Particles, fig, value, subplot, axes, **args):
 	"""
 	An internal function that initializes fig and extracts target value.
 	"""
 
 	z = None
 
+	if 'figsize' not in args:
+		figsize = (8, 6)
+
+	if 'dpi' not in args:
+		dpi = 80
+
 	if not fig:
-		fig = plt.figure()
+		fig = plt.figure(figsize=figsize, dpi=dpi)
 
 	if value:
 		if isinstance(value, tuple):
@@ -86,7 +91,7 @@ def quiver(Particles, value=None, axes='xy', title=None, color='k', units='xy', 
 	@[radius]: radii of the particles  (numpy array)
 	"""
 
-	fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes)
+	fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes, **args)
 
 	if value:
 		vx, vy = z
@@ -179,3 +184,70 @@ def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar,
 	ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
+def timePlot(System, attr, framei=0, framef=None, metric=None, title=None, xlabel=None, ylabel=None, scale=None, **args):
+
+	var = _timeExtract(System, attr, framei, framef, metric)
+	frame = np.arange(len(var))
+
+	if scale:
+		frame = frame * scale
+
+	if 'figsize' not in args:
+		figsize = (8, 6)
+
+	if 'dpi' not in args:
+		dpi = 80
+
+	fig = plt.figure(figsize=figsize, dpi=dpi)
+
+	ax = fig.gca()
+
+	if not xlabel:
+		xlabel = 'Frame'
+
+	if not ylabel:
+		ylabel = attr
+
+	ax.set_xlabel(xlabel, fontsize=16)
+	ax.set_ylabel(ylabel, fontsize=16)
+
+	plt.plot(var)
+
+	ax.grid(linestyle=':')
+
+	ax.set_xticks(np.linspace(frame.min(), frame.max(), 8))
+	ax.set_yticks(np.linspace(var.min(), var.max(), 8))
+
+	ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+	fig.show()
+
+	return fig
+
+def _timeExtract(System, attr, framei=0, framef=None, metric=None):
+
+	Particles = System.Particles
+
+	if not hasattr(Particles, attr):
+		raise IOError('{} not found in Particles class.'.format(attr))
+
+	System.goto(framei)
+	var = []
+
+	if not metric:
+		if isinstance(Particles.data[attr], np.ndarray):
+			metric = 'mean'
+
+	for ts in System:
+		if framef:
+			if ts >= framef:
+				return np.array(var)
+
+		if metric:
+			method_to_call = getattr(np, metric)
+			var.append(method_to_call(Particles.data[attr]))
+		else:
+			var.append(Particles.data[attr])
+
+	return np.array(var)
