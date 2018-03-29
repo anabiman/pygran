@@ -38,11 +38,17 @@ pDict = {
 		# Timestep
 		'dt': 1e-6,
 
+		'output': 'output',
+ 
+		'restart': ('5000', 'restart', 'restart.binary',  True, 'restart.binary.700000'),
+
 		# Apply gravitional force in the negative direction along the z-axis
 		'gravity': (9.81, 0, 0, -1),
 
+		'traj': {'pfile': 'rotating.dump', 'mfile': 'rotating*.vtk'},
+
 		# Stage runs [optional]
-          'stages': {'insertion': 1e5, 'rotation': 1e5},
+          'stages': {'insertion': 1e6, 'rotation': 1e6},
 
 		# Meshes
           'mesh': {
@@ -54,16 +60,16 @@ pDict = {
 sim = Simulator.DEM(**pDict)
 
 # Insert particles
-insert = sim.insert(species=1, value=1000, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args=('orientation random',))
+# insert = sim.insert(species=1, value=1000, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args=('orientation random',))
 
 # Add viscous force
 # air_resistance = sim.add_viscous(species=1, gamma=0.1)
 
 # Run insertion stage
-sim.run(pDict['stages']['insertion'], pDict['dt'])
+sim.run(pDict['stages']['insertion'] * 0.1, pDict['dt'])
 
 # Delete insertion fix
-sim.remove(insert)
+# sim.remove(insert)
 # sim.remove(air_resistance)
 
 # Rotate mesh along the xoz plane

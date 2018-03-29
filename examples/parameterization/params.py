@@ -29,12 +29,9 @@ pDict = {
 		'gravity': (9.81, 0, 0, -1),
 
 		# Number of simulation steps (non-PyGran variable)
-		'nsteps': 1e5,
+		'nsteps': 1e3,
 
-		# Import surface mesh
-		 'mesh': {
-			'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': glass, 'args': ('scale 1e-3',)}
-		      },
+		'nSim': 2
 	  }
 
 if __name__ == '__main__':
@@ -50,11 +47,7 @@ if __name__ == '__main__':
 	sim.run(pDict['nsteps'], pDict['dt'])
 	sim.remove(insert)
 
-	# Move wall at constant speed
-	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.01'))
-	sim.run(pDict['nsteps'], pDict['dt'])
-	sim.remove(moveZ)
-
 	# Relax the system
-	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
 	sim.run(pDict['nsteps'], pDict['dt'])
+
+	#print sim.command('shell pwd')

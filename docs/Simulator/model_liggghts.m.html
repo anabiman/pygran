@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>PyGran.Simulator.model_liggghts API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Created on July 1, 2016
+@author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -858,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1064,79 +1068,108 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">PyGran.Simulator.model_liggghts</span> module</h1>
-  
+  <p>Created on July 1, 2016
+@author: Andrew Abi-Mansour</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.model_liggghts', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.model_liggghts" class="source">
-    <div class="codehilite"><pre><span class="n">model_specs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="s">&#39;MY_MODEL&#39;</span><span class="p">,</span>\
-			   <span class="s">&#39;type&#39;</span><span class="p">:</span><span class="s">&#39;NORMAL&#39;</span><span class="p">,</span> \
-			   <span class="s">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;Yeff&#39;</span><span class="p">:</span> <span class="s">&#39;double **&#39;</span><span class="p">,</span> <span class="s">&#39;Geff&#39;</span><span class="p">:</span> <span class="s">&#39;double **&#39;</span> <span class="p">},</span> \
-			   <span class="s">&#39;registerOnOff&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;tangential_damping&#39;</span><span class="p">:</span> <span class="s">&#39;bool&#39;</span><span class="p">},</span> \
+    <div class="codehilite"><pre><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on July 1, 2016</span>
+<span class="sd">@author: Andrew Abi-Mansour</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># !/usr/bin/python</span>
+<span class="c1"># -*- coding: utf8 -*-</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   Python module for analyzing contact models for DEM simulations</span>
+<span class="c1">#</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
+<span class="c1">#   it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#   the Free Software Foundation, either version 2 of the License, or</span>
+<span class="c1">#   (at your option) any later version.</span>
+
+<span class="c1">#   This program is distributed in the hope that it will be useful,</span>
+<span class="c1">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1">#   GNU General Public License for more details.</span>
+
+<span class="c1">#   You should have received a copy of the GNU General Public License</span>
+<span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="c1"># ----------------------------------------------</span>
+
+<span class="n">model_specs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="s1">&#39;MY_MODEL&#39;</span><span class="p">,</span>\
+			   <span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span> \
+			   <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Yeff&#39;</span><span class="p">:</span> <span class="s1">&#39;double **&#39;</span><span class="p">,</span> <span class="s1">&#39;Geff&#39;</span><span class="p">:</span> <span class="s1">&#39;double **&#39;</span> <span class="p">},</span> \
+			   <span class="s1">&#39;registerOnOff&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tangential_damping&#39;</span><span class="p">:</span> <span class="s1">&#39;bool&#39;</span><span class="p">},</span> \
 
 			   <span class="p">}</span>
 
-<span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;sNAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-<span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;mNumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;sNAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;mNumber&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
 
 <span class="n">initial_params</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="c"># Read core params </span>
-<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">]:</span>
-	<span class="n">dtype</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="c1"># Read core params </span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
+	<span class="n">dtype</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">:</span>
-		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s">&#39;NULL&#39;</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
-		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s">&#39;NULL&#39;</span><span class="p">)</span>
-	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;***&#39;</span><span class="p">:</span>
-		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s">&#39;NULL&#39;</span><span class="p">)</span>
+		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
+		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;**&#39;</span><span class="p">:</span>
+		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;***&#39;</span><span class="p">:</span>
+		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
 
-<span class="c"># Read registerOnOff settings</span>
-<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;registerOnOff&#39;</span><span class="p">]:</span>
-	<span class="n">dtype</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;registerOnOff&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="c1"># Read registerOnOff settings</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;registerOnOff&#39;</span><span class="p">]:</span>
+	<span class="n">dtype</span> <span class="o">=</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;registerOnOff&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;registerOnOff&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">initial_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;registerOnOff&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Input for registerOnOff should be a boolean variable.&#39;</span><span class="p">)</span>
+		<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Input for registerOnOff should be a boolean variable.&#39;</span><span class="p">)</span>
 
-<span class="c"># Write C++ code for initial_params</span>
+<span class="c1"># Write C++ code for initial_params</span>
 
 <span class="n">key_params</span> <span class="o">=</span> <span class="n">initial_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="n">key_code</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-<span class="n">protected_vars</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+<span class="n">key_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="n">protected_vars</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-<span class="c"># Concetenate key params with curly brackets to be used to fill in the code below</span>
+<span class="c1"># Concetenate key params with curly brackets to be used to fill in the code below</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key_params</span><span class="p">)):</span>
-	<span class="n">key_code</span> <span class="o">=</span> <span class="n">key_code</span> <span class="o">+</span> <span class="s">&#39;          {}({}),</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initial_params</span><span class="p">[</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-	<span class="n">protected_vars</span> <span class="o">=</span> <span class="n">protected_vars</span> <span class="o">+</span> <span class="s">&#39;    {} {};,</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">initial_params</span><span class="p">[</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span> <span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+	<span class="n">key_code</span> <span class="o">=</span> <span class="n">key_code</span> <span class="o">+</span> <span class="s1">&#39;          {}({}),</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">initial_params</span><span class="p">[</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+	<span class="n">protected_vars</span> <span class="o">=</span> <span class="n">protected_vars</span> <span class="o">+</span> <span class="s1">&#39;    {} {};,</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">initial_params</span><span class="p">[</span><span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span> <span class="n">key_params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-<span class="n">register_code</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+<span class="n">register_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-<span class="c"># Write C++ code for registerOnOff</span>
-<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s">&#39;registerOnOff&#39;</span><span class="p">]:</span>
-	<span class="n">register_code</span> <span class="o">=</span> <span class="n">register_code</span> <span class="o">+</span> <span class="s">&#39;	settings.registerOnOff(&quot;{}&quot;, {}, false);</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
+<span class="c1"># Write C++ code for registerOnOff</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_specs</span><span class="p">[</span><span class="s1">&#39;registerOnOff&#39;</span><span class="p">]:</span>
+	<span class="n">register_code</span> <span class="o">=</span> <span class="n">register_code</span> <span class="o">+</span> <span class="s1">&#39;	settings.registerOnOff(&quot;{}&quot;, {}, false);</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
 
-<span class="n">code</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">#ifdef NORMAL_MODEL</span>
-<span class="s">{type}_MODEL({name},{sNAME},{mNumber})</span>
-<span class="s">#else</span>
-<span class="s">#ifndef {type}_MODEL_{name}_H_</span>
-<span class="s">#define {type}_MODEL_{name}_H_</span>
-<span class="s">#include &quot;global_properties.h&quot;</span>
-<span class="s">#include &lt;math.h&gt;</span>
+<span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">#ifdef NORMAL_MODEL</span>
+<span class="s2">{type}_MODEL({name},{sNAME},{mNumber})</span>
+<span class="s2">#else</span>
+<span class="s2">#ifndef {type}_MODEL_{name}_H_</span>
+<span class="s2">#define {type}_MODEL_{name}_H_</span>
+<span class="s2">#include &quot;global_properties.h&quot;</span>
+<span class="s2">#include &lt;math.h&gt;</span>
 
-<span class="s">namespace LIGGGHTS {{</span>
+<span class="s2">namespace LIGGGHTS {{</span>
 
-<span class="s">namespace ContactModels</span>
-<span class="s">{{</span>
-<span class="s">  template&lt;&gt;</span>
-<span class="s">  class NormalModel&lt;{name}&gt; : protected Pointers</span>
-<span class="s">  {{</span>
-<span class="s">  public:</span>
-<span class="s">    static const int MASK = CM_REGISTER_SETTINGS | CM_CONNECT_TO_PROPERTIES | CM_SURFACES_INTERSECT;</span>
+<span class="s2">namespace ContactModels</span>
+<span class="s2">{{</span>
+<span class="s2">  template&lt;&gt;</span>
+<span class="s2">  class NormalModel&lt;{name}&gt; : protected Pointers</span>
+<span class="s2">  {{</span>
+<span class="s2">  public:</span>
+<span class="s2">    static const int MASK = CM_REGISTER_SETTINGS | CM_CONNECT_TO_PROPERTIES | CM_SURFACES_INTERSECT;</span>
 
-<span class="s">   	NormalModel(LAMMPS * lmp, IContactHistorySetup* hsetup, class ContactModelBase *c) : Pointers(lmp), </span><span class="se">\n</span><span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">model_specs</span><span class="p">)</span> <span class="o">+</span> \
+<span class="s2">   	NormalModel(LAMMPS * lmp, IContactHistorySetup* hsetup, class ContactModelBase *c) : Pointers(lmp), </span><span class="se">\n</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">model_specs</span><span class="p">)</span> <span class="o">+</span> \
 <span class="n">key_code</span> <span class="o">+</span> \
    	<span class="sd">&quot;&quot;&quot;          cmb(c)</span>
 <span class="sd">    {</span>

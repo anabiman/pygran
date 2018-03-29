@@ -4,8 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>PyGran.GUI.Settings.Language API documentation</title>
-    <meta name="description" content="Created on Sep 11, 2013
-
+    <meta name="description" content="Created on Sep 8, 2016
 @author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -860,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -896,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1081,80 +1083,101 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">PyGran.GUI.Settings.Language</span> module</h1>
-  <p>Created on Sep 11, 2013</p>
-<p>@author: Andrew Abi-Mansour</p>
+  <p>Created on Sep 8, 2016
+@author: Andrew Abi-Mansour</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.GUI.Settings.Language', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.GUI.Settings.Language" class="source">
-    <div class="codehilite"><pre><span class="c">#!/usr/bin/python</span>
-<span class="c"># -*- coding: utf8 -*- </span>
+    <div class="codehilite"><pre><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: utf8 -*- </span>
+
+<span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
+<span class="c1">#   it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#   the Free Software Foundation, either version 2 of the License, or</span>
+<span class="c1">#   (at your option) any later version.</span>
+
+<span class="c1">#   This program is distributed in the hope that it will be useful,</span>
+<span class="c1">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1">#   GNU General Public License for more details.</span>
+
+<span class="c1">#   You should have received a copy of the GNU General Public License</span>
+<span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on Sep 8, 2016</span>
+<span class="sd">@author: Andrew Abi-Mansour</span>
+<span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">Created on Sep 11, 2013</span>
 
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="n">__SofName__</span> <span class="o">=</span> <span class="s">&#39;PyGran GUI&#39;</span>
+<span class="n">__SofName__</span> <span class="o">=</span> <span class="s1">&#39;PyGran GUI&#39;</span>
 
 <span class="k">class</span> <span class="nc">French</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">__SofName__</span> <span class="o">=</span> <span class="n">__SofName__</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;Dossier&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ouvrir&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Terminer&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configurer&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analyse&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Assistance&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;&amp;Changer Dir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;Dossier&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Ouvrir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Terminer&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configurer&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analyse&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Assistance&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;&amp;Changer Dir&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Analyse macromolÃ©culaire et la modÃ©lisation est une boÃ®te Ã  </span>
-<span class="s">        outils la construction et la manipulation des capsides virales. Les caractÃ©ristiques comprennent puissant haut-</span>
-<span class="s">gÃ©nÃ©rateur de capside d&#39;une unitÃ© monomÃ¨re, des capacitÃ©s avancÃ©es de recherche sur le Web, la production oligomÃ¨res</span>
-<span class="s">et la manipulation, l&#39;intÃ©gration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
-<span class="s">etc, etc.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Analyse macromoléculaire et la modélisation est une boîte à </span>
+<span class="s2">        outils la construction et la manipulation des capsides virales. Les caractéristiques comprennent puissant haut-</span>
+<span class="s2">générateur de capside d&#39;une unité monomère, des capacités avancées de recherche sur le Web, la production oligomères</span>
+<span class="s2">et la manipulation, l&#39;intégration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
+<span class="s2">etc, etc.&quot;&quot;&quot;</span>
 
 
 <span class="k">class</span> <span class="nc">Arabic</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">__SofName__</span> <span class="o">=</span> <span class="s">&#39;&lt;&lt;ÙØ±Ø§ÙØ±&gt;&gt;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø§ÙØªØ­&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø£ØºÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªÙÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªØ­ÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙØ³Ø§Ø¹Ø¯Ø©&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;ØºÙØ± Ø¯ÙÙÙ&#39;</span>
+        <span class="n">__SofName__</span> <span class="o">=</span> <span class="s1">&#39;&lt;&lt;كرامر&gt;&gt;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;ملف&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;افتح&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;أغلق&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;تكوين&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;تحليل&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;مساعدة&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;غير دليل&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot; ØªØ­ÙÙÙ Ø§ÙØ¬Ø²ÙØ¦Ø§Øª ÙØ§ÙÙÙØ°Ø¬Ø© ÙÙ ÙØ¬ÙÙØ¹Ø© Ø£Ø¯ÙØ§Øª ÙØ¨ÙØ§Ø¡ ÙØ§ÙØªÙØ§Ø¹Ø¨ Ø§ÙÙÙØ±ÙØ³ÙØ© ÙØªØ´ÙÙ Ø§ÙÙÙØ²Ø§Øª </span>
-<span class="s">        Ø§ÙÙÙÙØ© Ø§ÙÙØ¯ÙØ¬ ÙÙ ÙÙÙØ¯ ÙÙÙØµØ© ÙÙ ÙØ­Ø¯Ø© ÙÙÙÙÙØ±Ø ÙØ¯Ø±Ø§Øª ÙØªØ·ÙØ±Ø© ÙØªØµÙØ­ Ø§ÙØ§ÙØªØ±ÙØª Ø¬ÙÙ ÙÙÙÙ </span>
-<span class="s">        ÙØ­Ø¯Ø§Øª ÙØ§ÙØªÙØ§Ø¹Ø¨Ø ÙØ§ÙØªÙØ§ÙÙ ÙØ¹ ÙÙØ© Ø§ÙØªØµÙØ± Ø§ÙØ¨Ø±ÙØ¬ÙØ§Øª ÙØ«Ù ,  ÙØºÙØ±ÙØ§Ø ÙØ£ÙØ«Ø± ÙÙ </span>
-<span class="s">        .Ø°ÙÙ</span>
-<span class="s">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; تحليل الجزيئات والنمذجة هو مجموعة أدوات لبناء والتلاعب الفيروسية وتشمل الميزات </span>
+<span class="s2">        القوية المدمج في مولد قفيصة من وحدة مونومر، قدرات متطورة لتصفح الانترنت جيل قليل </span>
+<span class="s2">        وحدات والتلاعب، والتكامل مع قوة التصور البرمجيات مثل ,  وغيرها، وأكثر من </span>
+<span class="s2">        .ذلك</span>
+<span class="s2">        &quot;&quot;&quot;</span>
         
 <span class="k">class</span> <span class="nc">English</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;File&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Open&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Close&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configure&#39;</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analysis&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Help&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s">&#39;Change &amp;Dir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;File&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Open&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Close&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configure&#39;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analysis&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Help&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s1">&#39;Change &amp;Dir&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">        DEM simulation engine, released by </span>
-<span class="s">        DCS Computing Gmbh, Linz, Austria</span>
-<span class="s">        www.dcs-computing.com, office@dcs-computing.com</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        DEM simulation engine, released by </span>
+<span class="s2">        DCS Computing Gmbh, Linz, Austria</span>
+<span class="s2">        www.dcs-computing.com, office@dcs-computing.com</span>
 
-<span class="s">        LIGGGHTSÂ® is open-source, distributed under the </span>
-<span class="s">        terms of the GNU Public License, version 2 or later.</span>
+<span class="s2">        LIGGGHTS® is open-source, distributed under the </span>
+<span class="s2">        terms of the GNU Public License, version 2 or later.</span>
 
-<span class="s">        LIGGGHTSÂ® is part of CFDEMÂ®project: </span>
-<span class="s">        www.liggghts.com | www.cfdem.com</span>
+<span class="s2">        LIGGGHTS® is part of CFDEM®project: </span>
+<span class="s2">        www.liggghts.com | www.cfdem.com</span>
 
-<span class="s">        Core developer and main author:</span>
-<span class="s">        Andrew Abi-Mansour</span>
-<span class="s">        &quot;&quot;&quot;</span>
+<span class="s2">        Core developer and main author:</span>
+<span class="s2">        Andrew Abi-Mansour</span>
+<span class="s2">        &quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1175,20 +1198,20 @@ table {
   <div id="source-PyGran.GUI.Settings.Language.Arabic" class="source">
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Arabic</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">__SofName__</span> <span class="o">=</span> <span class="s">&#39;&lt;&lt;ÙØ±Ø§ÙØ±&gt;&gt;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø§ÙØªØ­&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø£ØºÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªÙÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªØ­ÙÙÙ&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙØ³Ø§Ø¹Ø¯Ø©&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;ØºÙØ± Ø¯ÙÙÙ&#39;</span>
+        <span class="n">__SofName__</span> <span class="o">=</span> <span class="s1">&#39;&lt;&lt;كرامر&gt;&gt;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;ملف&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;افتح&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;أغلق&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;تكوين&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;تحليل&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;مساعدة&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;غير دليل&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot; ØªØ­ÙÙÙ Ø§ÙØ¬Ø²ÙØ¦Ø§Øª ÙØ§ÙÙÙØ°Ø¬Ø© ÙÙ ÙØ¬ÙÙØ¹Ø© Ø£Ø¯ÙØ§Øª ÙØ¨ÙØ§Ø¡ ÙØ§ÙØªÙØ§Ø¹Ø¨ Ø§ÙÙÙØ±ÙØ³ÙØ© ÙØªØ´ÙÙ Ø§ÙÙÙØ²Ø§Øª </span>
-<span class="s">        Ø§ÙÙÙÙØ© Ø§ÙÙØ¯ÙØ¬ ÙÙ ÙÙÙØ¯ ÙÙÙØµØ© ÙÙ ÙØ­Ø¯Ø© ÙÙÙÙÙØ±Ø ÙØ¯Ø±Ø§Øª ÙØªØ·ÙØ±Ø© ÙØªØµÙØ­ Ø§ÙØ§ÙØªØ±ÙØª Ø¬ÙÙ ÙÙÙÙ </span>
-<span class="s">        ÙØ­Ø¯Ø§Øª ÙØ§ÙØªÙØ§Ø¹Ø¨Ø ÙØ§ÙØªÙØ§ÙÙ ÙØ¹ ÙÙØ© Ø§ÙØªØµÙØ± Ø§ÙØ¨Ø±ÙØ¬ÙØ§Øª ÙØ«Ù ,  ÙØºÙØ±ÙØ§Ø ÙØ£ÙØ«Ø± ÙÙ </span>
-<span class="s">        .Ø°ÙÙ</span>
-<span class="s">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; تحليل الجزيئات والنمذجة هو مجموعة أدوات لبناء والتلاعب الفيروسية وتشمل الميزات </span>
+<span class="s2">        القوية المدمج في مولد قفيصة من وحدة مونومر، قدرات متطورة لتصفح الانترنت جيل قليل </span>
+<span class="s2">        وحدات والتلاعب، والتكامل مع قوة التصور البرمجيات مثل ,  وغيرها، وأكثر من </span>
+<span class="s2">        .ذلك</span>
+<span class="s2">        &quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1295,20 +1318,20 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.GUI.Settings.Language.Arabic.__init__', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.GUI.Settings.Language.Arabic.__init__" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">__SofName__</span> <span class="o">=</span> <span class="s">&#39;&lt;&lt;ÙØ±Ø§ÙØ±&gt;&gt;&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙÙÙ&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø§ÙØªØ­&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Ø£ØºÙÙ&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªÙÙÙÙ&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;ØªØ­ÙÙÙ&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;ÙØ³Ø§Ø¹Ø¯Ø©&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;ØºÙØ± Ø¯ÙÙÙ&#39;</span>
+    <span class="n">__SofName__</span> <span class="o">=</span> <span class="s1">&#39;&lt;&lt;كرامر&gt;&gt;&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;ملف&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;افتح&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;أغلق&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;تكوين&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;تحليل&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;مساعدة&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;غير دليل&#39;</span>
     
-    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot; ØªØ­ÙÙÙ Ø§ÙØ¬Ø²ÙØ¦Ø§Øª ÙØ§ÙÙÙØ°Ø¬Ø© ÙÙ ÙØ¬ÙÙØ¹Ø© Ø£Ø¯ÙØ§Øª ÙØ¨ÙØ§Ø¡ ÙØ§ÙØªÙØ§Ø¹Ø¨ Ø§ÙÙÙØ±ÙØ³ÙØ© ÙØªØ´ÙÙ Ø§ÙÙÙØ²Ø§Øª </span>
-<span class="s">    Ø§ÙÙÙÙØ© Ø§ÙÙØ¯ÙØ¬ ÙÙ ÙÙÙØ¯ ÙÙÙØµØ© ÙÙ ÙØ­Ø¯Ø© ÙÙÙÙÙØ±Ø ÙØ¯Ø±Ø§Øª ÙØªØ·ÙØ±Ø© ÙØªØµÙØ­ Ø§ÙØ§ÙØªØ±ÙØª Ø¬ÙÙ ÙÙÙÙ </span>
-<span class="s">    ÙØ­Ø¯Ø§Øª ÙØ§ÙØªÙØ§Ø¹Ø¨Ø ÙØ§ÙØªÙØ§ÙÙ ÙØ¹ ÙÙØ© Ø§ÙØªØµÙØ± Ø§ÙØ¨Ø±ÙØ¬ÙØ§Øª ÙØ«Ù ,  ÙØºÙØ±ÙØ§Ø ÙØ£ÙØ«Ø± ÙÙ </span>
-<span class="s">    .Ø°ÙÙ</span>
-<span class="s">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot; تحليل الجزيئات والنمذجة هو مجموعة أدوات لبناء والتلاعب الفيروسية وتشمل الميزات </span>
+<span class="s2">    القوية المدمج في مولد قفيصة من وحدة مونومر، قدرات متطورة لتصفح الانترنت جيل قليل </span>
+<span class="s2">    وحدات والتلاعب، والتكامل مع قوة التصور البرمجيات مثل ,  وغيرها، وأكثر من </span>
+<span class="s2">    .ذلك</span>
+<span class="s2">    &quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1328,28 +1351,28 @@ table {
   <div id="source-PyGran.GUI.Settings.Language.English" class="source">
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">English</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;File&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Open&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Close&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configure&#39;</span> 
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analysis&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Help&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s">&#39;Change &amp;Dir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;File&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Open&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Close&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configure&#39;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analysis&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Help&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s1">&#39;Change &amp;Dir&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">        DEM simulation engine, released by </span>
-<span class="s">        DCS Computing Gmbh, Linz, Austria</span>
-<span class="s">        www.dcs-computing.com, office@dcs-computing.com</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        DEM simulation engine, released by </span>
+<span class="s2">        DCS Computing Gmbh, Linz, Austria</span>
+<span class="s2">        www.dcs-computing.com, office@dcs-computing.com</span>
 
-<span class="s">        LIGGGHTSÂ® is open-source, distributed under the </span>
-<span class="s">        terms of the GNU Public License, version 2 or later.</span>
+<span class="s2">        LIGGGHTS® is open-source, distributed under the </span>
+<span class="s2">        terms of the GNU Public License, version 2 or later.</span>
 
-<span class="s">        LIGGGHTSÂ® is part of CFDEMÂ®project: </span>
-<span class="s">        www.liggghts.com | www.cfdem.com</span>
+<span class="s2">        LIGGGHTS® is part of CFDEM®project: </span>
+<span class="s2">        www.liggghts.com | www.cfdem.com</span>
 
-<span class="s">        Core developer and main author:</span>
-<span class="s">        Andrew Abi-Mansour</span>
-<span class="s">        &quot;&quot;&quot;</span>
+<span class="s2">        Core developer and main author:</span>
+<span class="s2">        Andrew Abi-Mansour</span>
+<span class="s2">        &quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1456,25 +1479,25 @@ table {
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.GUI.Settings.Language.English.__init__', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.GUI.Settings.Language.English.__init__" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;File&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Open&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Close&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configure&#39;</span> 
-    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analysis&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Help&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s">&#39;Change &amp;Dir&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;File&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Open&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Close&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configure&#39;</span> 
+    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analysis&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Help&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ChaneDir</span> <span class="o">=</span><span class="s1">&#39;Change &amp;Dir&#39;</span>
     
-    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">    DEM simulation engine, released by </span>
-<span class="s">    DCS Computing Gmbh, Linz, Austria</span>
-<span class="s">    www.dcs-computing.com, office@dcs-computing.com</span>
-<span class="s">    LIGGGHTSÂ® is open-source, distributed under the </span>
-<span class="s">    terms of the GNU Public License, version 2 or later.</span>
-<span class="s">    LIGGGHTSÂ® is part of CFDEMÂ®project: </span>
-<span class="s">    www.liggghts.com | www.cfdem.com</span>
-<span class="s">    Core developer and main author:</span>
-<span class="s">    Andrew Abi-Mansour</span>
-<span class="s">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    DEM simulation engine, released by </span>
+<span class="s2">    DCS Computing Gmbh, Linz, Austria</span>
+<span class="s2">    www.dcs-computing.com, office@dcs-computing.com</span>
+<span class="s2">    LIGGGHTS® is open-source, distributed under the </span>
+<span class="s2">    terms of the GNU Public License, version 2 or later.</span>
+<span class="s2">    LIGGGHTS® is part of CFDEM®project: </span>
+<span class="s2">    www.liggghts.com | www.cfdem.com</span>
+<span class="s2">    Core developer and main author:</span>
+<span class="s2">    Andrew Abi-Mansour</span>
+<span class="s2">    &quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1495,19 +1518,19 @@ table {
     <div class="codehilite"><pre><span class="k">class</span> <span class="nc">French</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">__SofName__</span> <span class="o">=</span> <span class="n">__SofName__</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;Dossier&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ouvrir&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Terminer&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configurer&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analyse&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Assistance&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;&amp;Changer Dir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;Dossier&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Ouvrir&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Terminer&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configurer&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analyse&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Assistance&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;&amp;Changer Dir&#39;</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Analyse macromolÃ©culaire et la modÃ©lisation est une boÃ®te Ã  </span>
-<span class="s">        outils la construction et la manipulation des capsides virales. Les caractÃ©ristiques comprennent puissant haut-</span>
-<span class="s">gÃ©nÃ©rateur de capside d&#39;une unitÃ© monomÃ¨re, des capacitÃ©s avancÃ©es de recherche sur le Web, la production oligomÃ¨res</span>
-<span class="s">et la manipulation, l&#39;intÃ©gration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
-<span class="s">etc, etc.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Analyse macromoléculaire et la modélisation est une boîte à </span>
+<span class="s2">        outils la construction et la manipulation des capsides virales. Les caractéristiques comprennent puissant haut-</span>
+<span class="s2">générateur de capside d&#39;une unité monomère, des capacités avancées de recherche sur le Web, la production oligomères</span>
+<span class="s2">et la manipulation, l&#39;intégration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
+<span class="s2">etc, etc.&quot;&quot;&quot;</span>
 </pre></div>
 
   </div>
@@ -1615,19 +1638,19 @@ table {
   <div id="source-PyGran.GUI.Settings.Language.French.__init__" class="source">
     <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">__SofName__</span> <span class="o">=</span> <span class="n">__SofName__</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s">&#39;&amp;Dossier&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s">&#39;&amp;Ouvrir&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s">&#39;&amp;Terminer&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s">&#39;&amp;Configurer&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s">&#39;&amp;Analyse&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s">&#39;&amp;Assistance&#39;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s">&#39;&amp;Changer Dir&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="s1">&#39;&amp;Dossier&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Open</span> <span class="o">=</span> <span class="s1">&#39;&amp;Ouvrir&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Close</span> <span class="o">=</span> <span class="s1">&#39;&amp;Terminer&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Configure</span> <span class="o">=</span> <span class="s1">&#39;&amp;Configurer&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Analysis</span> <span class="o">=</span> <span class="s1">&#39;&amp;Analyse&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">Help</span> <span class="o">=</span> <span class="s1">&#39;&amp;Assistance&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ChangeDir</span> <span class="o">=</span> <span class="s1">&#39;&amp;Changer Dir&#39;</span>
     
-    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Analyse macromolÃ©culaire et la modÃ©lisation est une boÃ®te Ã  </span>
-<span class="s">    outils la construction et la manipulation des capsides virales. Les caractÃ©ristiques comprennent puissant haut-</span>
-<span class="s">Ã©rateur de capside d&#39;une unitÃ© monomÃ¨re, des capacitÃ©s avancÃ©es de recherche sur le Web, la production oligomÃ¨res</span>
-<span class="s">a manipulation, l&#39;intÃ©gration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
-<span class="s"> etc.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Analyse macromoléculaire et la modélisation est une boîte à </span>
+<span class="s2">    outils la construction et la manipulation des capsides virales. Les caractéristiques comprennent puissant haut-</span>
+<span class="s2">érateur de capside d&#39;une unité monomère, des capacités avancées de recherche sur le Web, la production oligomères</span>
+<span class="s2">a manipulation, l&#39;intégration avec un puissant logiciel de MD de visualisation comme VMD, Chimera,</span>
+<span class="s2"> etc.&quot;&quot;&quot;</span>
 </pre></div>
 
   </div>

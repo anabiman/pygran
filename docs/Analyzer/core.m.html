@@ -859,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -895,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1088,12 +1091,14 @@ table {
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.copy">copy</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.density">density</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.densityLocal">densityLocal</a></li>
+    <li class="mono"><a href="#PyGran.Analyzer.core.Particles.intensitySegregation">intensitySegregation</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.mass">mass</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.perturb">perturb</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.rdf">rdf</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.rewind">rewind</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.rog">rog</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.scale">scale</a></li>
+    <li class="mono"><a href="#PyGran.Analyzer.core.Particles.scaleSegregation">scaleSegregation</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.translate">translate</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.units">units</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.core.Particles.volume">volume</a></li>
@@ -1267,7 +1272,7 @@ This class is iterable but NOT an iterator.</p></div>
 
     
   
-    <div class="desc inherited"><p>Convesion factors from S.I. to micro and vice versa</p></div>
+    <div class="desc inherited"><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p></div>
   <div class="source_cont">
 </div>
 
@@ -1407,7 +1412,8 @@ This class is iterable but NOT an iterator.</p></div>
 
     
   
-    <div class="desc inherited"><p>Sets the unit system</p></div>
+    <div class="desc inherited"><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p></div>
   <div class="source_cont">
 </div>
 
@@ -1513,7 +1519,7 @@ of the radius of the first N max data points.</p></div>
 
     
   
-    <div class="desc inherited"><p>Convesion factors from S.I. to micro and vice versa</p></div>
+    <div class="desc inherited"><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p></div>
   <div class="source_cont">
 </div>
 
@@ -1550,7 +1556,8 @@ of the radius of the first N max data points.</p></div>
     <div class="desc"><p>Computes the bulk density for a selection of particles from their <em>true</em> density.
 The volume is determined approximately by constructing a box/cylinder/cone
 embedding the particles. Particles are assumed to be spherical in shape.</p>
-<p>@[shape]: box, cylinder-x, cylinder-y, or cylinder-z</p></div>
+<p>@tdensity: true powder density
+@[shape]: box, cylinder-x, cylinder-y, or cylinder-z</p></div>
   <div class="source_cont">
 </div>
 
@@ -1574,6 +1581,25 @@ along an axis specified by the user</p></div>
   
             
   <div class="item">
+    <div class="name def" id="PyGran.Analyzer.core.Particles.intensitySegregation">
+    <p>def <span class="ident">intensitySegregation</span>(</p><p>...)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Computes the intensity of segregation for binary mixture
+as defined by Danckwerts:</p>
+<p>I = sigma_a**2 / (mean_a (1 - mean_a))</p>
+<p>@[resol]: bin size for grid construction (default 3 * diameter)
+returns scalar intensity</p></div>
+  <div class="source_cont">
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="PyGran.Analyzer.core.Particles.mass">
     <p>def <span class="ident">mass</span>(</p><p>...)</p>
     </div>
@@ -1581,7 +1607,9 @@ along an axis specified by the user</p></div>
 
     
   
-    <div class="desc"><p>Computes the mass of all particles</p></div>
+    <div class="desc"><p>Computes the mass of all particles </p>
+<p>@tdensity: true density of the powder
+returns the summation of the mass of all particles</p></div>
   <div class="source_cont">
 </div>
 
@@ -1697,6 +1725,28 @@ compute ROG as \sum_i <r_i^T r_i> - rm ^T rm</p></div>
   
             
   <div class="item">
+    <div class="name def" id="PyGran.Analyzer.core.Particles.scaleSegregation">
+    <p>def <span class="ident">scaleSegregation</span>(</p><p>...)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Computes the correlation coefficient as defined by Danckwerts:
+R(r) = a * b / std(a)**2</p>
+<p>This is done via a Monte Carlo simulation.</p>
+<p>@[resol]: bin size for grid construction (default min radius)
+@[nTrials]: number of Monte Carlo trials (sample size)
+@[Npts]: number of bins for histogram construction
+@[maxDist]: maximum distance (in units of grid size) to sample</p>
+<p>Returns the coefficient of correlation R(r) and separation distance (r)</p></div>
+  <div class="source_cont">
+</div>
+
+  </div>
+  
+            
+  <div class="item">
     <div class="name def" id="PyGran.Analyzer.core.Particles.translate">
     <p>def <span class="ident">translate</span>(</p><p>...)</p>
     </div>
@@ -1728,7 +1778,8 @@ compute ROG as \sum_i <r_i^T r_i> - rm ^T rm</p></div>
 
     
   
-    <div class="desc inherited"><p>Sets the unit system</p></div>
+    <div class="desc inherited"><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p></div>
   <div class="source_cont">
 </div>
 
@@ -1807,7 +1858,7 @@ compute ROG as \sum_i <r_i^T r_i> - rm ^T rm</p></div>
 
     
   
-    <div class="desc"><p>Convesion factors from S.I. to micro and vice versa</p></div>
+    <div class="desc"><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p></div>
   <div class="source_cont">
 </div>
 
@@ -1885,7 +1936,8 @@ compute ROG as \sum_i <r_i^T r_i> - rm ^T rm</p></div>
 
     
   
-    <div class="desc"><p>Sets the unit system</p></div>
+    <div class="desc"><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p></div>
   <div class="source_cont">
 </div>
 
@@ -2013,7 +2065,8 @@ then this function will read the last frame</p></div>
 
     
   
-    <div class="desc"><p>Change unit system to:  si (S.I.), or micro (microns)</p></div>
+    <div class="desc"><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p></div>
   <div class="source_cont">
 </div>
 

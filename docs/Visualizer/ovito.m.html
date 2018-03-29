@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>PyGran.Simulator API documentation</title>
-    <meta name="description" content="Created on March 30, 2016
+    <title>PyGran.Visualizer.ovito API documentation</title>
+    <meta name="description" content="Created on February 28, 2018
 @author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1037,25 +1037,16 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
       
   <ul>
-    <li class="mono"><a href="#PyGran.Simulator.engines">engines</a></li>
+    <li class="mono"><a href="#PyGran.Visualizer.ovito.visualize">visualize</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="DEM.m.html">PyGran.Simulator.DEM</a></li>
-        <li class="mono"><a href="engine_liggghts.m.html">PyGran.Simulator.engine_liggghts</a></li>
-        <li class="mono"><a href="generator.m.html">PyGran.Simulator.generator</a></li>
-        <li class="mono"><a href="model_liggghts.m.html">PyGran.Simulator.model_liggghts</a></li>
-        <li class="mono"><a href="models.m.html">PyGran.Simulator.models</a></li>
-      </ul>
-    </li>
     </ul>
   </div>
 
@@ -1067,18 +1058,22 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">PyGran.Simulator</span> module</h1>
-  <p>Created on March 30, 2016
+  <h1 class="title"><span class="name">PyGran.Visualizer.ovito</span> module</h1>
+  <p>Created on February 28, 2018
 @author: Andrew Abi-Mansour</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Simulator" class="source">
-    <div class="codehilite"><pre><span class="c1"># !/usr/bin/python</span>
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Visualizer.ovito', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.Visualizer.ovito" class="source">
+    <div class="codehilite"><pre><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on February 28, 2018</span>
+<span class="sd">@author: Andrew Abi-Mansour</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># !/usr/bin/python</span>
 <span class="c1"># -*- coding: utf8 -*- </span>
-<span class="c1"># -----------------------------------------------------------------------</span>
 <span class="c1">#</span>
 <span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
-<span class="c1">#   it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#   it under the terms of the GNU General Public License as published byO</span>
 <span class="c1">#   the Free Software Foundation, either version 2 of the License, or</span>
 <span class="c1">#   (at your option) any later version.</span>
 
@@ -1092,33 +1087,32 @@ table {
 
 <span class="c1"># -------------------------------------------------------------------------</span>
 
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Created on March 30, 2016</span>
-<span class="sd">@author: Andrew Abi-Mansour</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
 
-<span class="kn">from</span> <span class="nn">PyGran.Simulator.DEM</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span> <span class="k">as</span> <span class="n">_glob</span>
-<span class="kn">from</span> <span class="nn">PyGran.Simulator.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
 
-<span class="k">class</span> <span class="nc">_findEngines</span><span class="p">:</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="c1"># Any engine module *must* follow the naming convention: engine_foo.py</span>
-		<span class="c1"># If the engine is found, it will be linked via setattr to be imported</span>
-		<span class="c1"># in DEM.py as PyGran.Simulator.engine_foo. The engine is set by the user</span>
-		<span class="c1"># as DEM.Simulator.engines.foo</span>
+	<span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+	<span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
 
-		<span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
-		<span class="n">pyFiles</span> <span class="o">=</span> <span class="n">_glob</span><span class="p">(</span><span class="n">_dir</span> <span class="o">+</span> <span class="s1">&#39;*.py&#39;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ovito&#39;</span><span class="p">]</span>
+		<span class="n">traj</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;traj&#39;</span><span class="p">]</span>
+		<span class="n">output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
 
-		<span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">pyFiles</span><span class="p">:</span>
-			<span class="n">_</span><span class="p">,</span> <span class="n">fileName</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_dir</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s1">&#39;pfile&#39;</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">:</span>
+			<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;pfile&#39;</span><span class="p">]))</span>
 
-			<span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;engine_&#39;</span><span class="p">):</span>	
-				<span class="n">engine</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fileName</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span>
-				<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;engine_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">engine</span><span class="p">)</span>
+		<span class="c1"># Can we even call meshes as args to ovito from the terminal? maybe we dont need this</span>
+		<span class="k">if</span> <span class="s1">&#39;mesh&#39;</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">mfile</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">]:</span>
+					<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; {}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">mfile</span><span class="p">))</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; {}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">]))</span>
 
-<span class="n">engines</span> <span class="o">=</span> <span class="n">_findEngines</span><span class="p">()</span>
+		<span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1126,59 +1120,51 @@ table {
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="PyGran.Simulator.engines" class="name">var <span class="ident">engines</span></p>
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
+  <div class="item">
+    <div class="name def" id="PyGran.Visualizer.ovito.visualize">
+    <p>def <span class="ident">visualize</span>(</p><p>**args)</p>
+    </div>
+    
+
+    
   
   <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Visualizer.ovito.visualize', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.Visualizer.ovito.visualize" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
+
+	<span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+	<span class="n">rank</span> <span class="o">=</span> <span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ovito&#39;</span><span class="p">]</span>
+		<span class="n">traj</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;traj&#39;</span><span class="p">]</span>
+		<span class="n">output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="s1">&#39;pfile&#39;</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">:</span>
+			<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;pfile&#39;</span><span class="p">]))</span>
+
+		<span class="c1"># Can we even call meshes as args to ovito from the terminal? maybe we dont need this</span>
+		<span class="k">if</span> <span class="s1">&#39;mesh&#39;</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+				<span class="k">for</span> <span class="n">mfile</span> <span class="ow">in</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">]:</span>
+					<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; {}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">mfile</span><span class="p">))</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; {}/traj/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">traj</span><span class="p">[</span><span class="s1">&#39;mfile&#39;</span><span class="p">]))</span>
+
+		<span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+</pre></div>
+
+  </div>
 </div>
 
-      </div>
-
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="DEM.m.html">PyGran.Simulator.DEM</a></p>
-      
+  </div>
   
-    <div class="desc"><p>Created on April 25, 2016
-@author: Andrew Abi-Mansour</p></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="engine_liggghts.m.html">PyGran.Simulator.engine_liggghts</a></p>
-      
-  
-    <div class="desc"><p>Created on March 30, 2016
-@author: Andrew Abi-Mansour</p></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="generator.m.html">PyGran.Simulator.generator</a></p>
-      
-  
-    <div class="desc"><p>Created on March 30, 2016
-@author: Andrew Abi-Mansour</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="model_liggghts.m.html">PyGran.Simulator.model_liggghts</a></p>
-      
-  
-    <div class="desc"><p>Created on July 1, 2016
-@author: Andrew Abi-Mansour</p></div>
-
-      </div>
-      <div class="item">
-      <p class="name"><a href="models.m.html">PyGran.Simulator.models</a></p>
-      
-  
-    <div class="desc"><p>Created on July 1, 2016
-@author: Andrew Abi-Mansour</p></div>
-
-      </div>
   </section>
 
     </article>

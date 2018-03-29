@@ -859,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -895,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1038,6 +1041,7 @@ table {
       
   <ul>
     <li class="mono"><a href="#PyGran.Materials.glass">glass</a></li>
+    <li class="mono"><a href="#PyGran.Materials.organic">organic</a></li>
     <li class="mono"><a href="#PyGran.Materials.stearicAcid">stearicAcid</a></li>
   </ul>
 
@@ -1074,67 +1078,81 @@ table {
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="c"># !/usr/bin/python</span>
-<span class="c"># -*- coding: utf8 -*-</span>
-<span class="c"># -------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c">#   Python module for storing material properties</span>
-<span class="c">#</span>
-<span class="c"># --------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c">#   This program is free software: you can redistribute it and/or modify</span>
-<span class="c">#   it under the terms of the GNU General Public License as published by</span>
-<span class="c">#   the Free Software Foundation, either version 3 of the License, or</span>
-<span class="c">#   (at your option) any later version.</span>
+<span class="c1"># !/usr/bin/python</span>
+<span class="c1"># -*- coding: utf8 -*-</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   Python module for storing material properties</span>
+<span class="c1">#</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
+<span class="c1">#   it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#   the Free Software Foundation, either version 2 of the License, or</span>
+<span class="c1">#   (at your option) any later version.</span>
 
-<span class="c">#   This program is distributed in the hope that it will be useful,</span>
-<span class="c">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<span class="c">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<span class="c">#   GNU General Public License for more details.</span>
+<span class="c1">#   This program is distributed in the hope that it will be useful,</span>
+<span class="c1">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1">#   GNU General Public License for more details.</span>
 
-<span class="c">#   You should have received a copy of the GNU General Public License</span>
-<span class="c">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#   You should have received a copy of the GNU General Public License</span>
+<span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
-<span class="c"># -------------------------------------------------------------------------</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
 
 <span class="n">glass</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="s">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">63e9</span><span class="p">,</span>
-		<span class="s">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.24</span><span class="p">,</span>
-		<span class="s">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">0</span><span class="p">,</span>
-		<span class="s">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-		<span class="s">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">62e9</span><span class="p">,</span>
-		<span class="s">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-		<span class="s">&#39;density&#39;</span><span class="p">:</span> <span class="mf">2500.0</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">63e9</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.24</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">62e9</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">2500.0</span>
 		<span class="p">}</span>
 
 <span class="n">stearicAcid</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="s">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">4.15e7</span><span class="p">,</span>
-		<span class="s">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
-		<span class="s">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-		<span class="s">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.033</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
-		<span class="s">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-		<span class="s">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
-		<span class="s">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
-		<span class="s">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">4.15e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.033</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span>
+		<span class="p">}</span>
+
+
+<span class="n">organic</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">1000.0</span>
 		<span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">LIGGGHTS</span><span class="p">(</span><span class="o">**</span><span class="n">material</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Transform a PyGran material database into a LIGGGHTS material dictionary &quot;&quot;&quot;</span>
 
 	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">material</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;yieldPress&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;cohesionEnergyDensity&#39;</span> \
-			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;cohesionEnergyDensity&#39;</span> \
+			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 
 	<span class="k">return</span> <span class="n">material</span>
 </pre></div>
@@ -1147,6 +1165,14 @@ table {
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
       <p id="PyGran.Materials.glass" class="name">var <span class="ident">glass</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.Materials.organic" class="name">var <span class="ident">organic</span></p>
       
   
   <div class="source_cont">
@@ -1180,13 +1206,13 @@ table {
 	<span class="sd">&quot;&quot;&quot; Transform a PyGran material database into a LIGGGHTS material dictionary &quot;&quot;&quot;</span>
 
 	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">material</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;yieldPress&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;cohesionEnergyDensity&#39;</span> \
-			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
-		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
-			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;cohesionEnergyDensity&#39;</span> \
+			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
 
 	<span class="k">return</span> <span class="n">material</span>
 </pre></div>

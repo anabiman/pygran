@@ -4,7 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
     <title>PyGran.Tools API documentation</title>
-    <meta name="description" content="" />
+    <meta name="description" content="Created on April 25, 2016
+@author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -858,8 +859,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -894,6 +897,7 @@ table {
 .codehilite .nv { color: #19177C } /* Name.Variable */
 .codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
 .codehilite .mf { color: #666666 } /* Literal.Number.Float */
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
@@ -1046,6 +1050,7 @@ table {
   <ul>
     <li class="mono"><a href="#PyGran.Tools.convert">convert</a></li>
     <li class="mono"><a href="#PyGran.Tools.find">find</a></li>
+    <li class="mono"><a href="#PyGran.Tools.run">run</a></li>
   </ul>
 
     </li>
@@ -1063,21 +1068,44 @@ table {
 
   <header id="section-intro">
   <h1 class="title"><span class="name">PyGran.Tools</span> module</h1>
-  
+  <p>Created on April 25, 2016
+@author: Andrew Abi-Mansour</p>
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Tools', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Tools" class="source">
-    <div class="codehilite"><pre><span class="kn">import</span> <span class="nn">os</span>
+    <div class="codehilite"><pre><span class="c1"># -----------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
+<span class="c1">#   it under the terms of the GNU General Public License as published by</span>
+<span class="c1">#   the Free Software Foundation, either version 2 of the License, or</span>
+<span class="c1">#   (at your option) any later version.</span>
 
-<span class="c"># Conversion unit systems</span>
-<span class="c"># S.I.: m, s, Kg</span>
-<span class="c"># CGS: cm, s, g</span>
-<span class="c"># Micro: micron, micro s, micro g</span>
+<span class="c1">#   This program is distributed in the hope that it will be useful,</span>
+<span class="c1">#   but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1">#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1">#   GNU General Public License for more details.</span>
 
-<span class="n">conversion</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;si&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;distance&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;mass&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> \
-			<span class="s">&#39;cgs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;distance&#39;</span><span class="p">:</span> <span class="mf">1e-2</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1e-3</span><span class="p">},</span> \
-			<span class="s">&#39;micro&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;distance&#39;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">},</span> \
-			<span class="s">&#39;nano&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;distance&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span> <span class="s">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">}</span>
+<span class="c1">#   You should have received a copy of the GNU General Public License</span>
+<span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># -----------------------------------------------------------------------</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on April 25, 2016</span>
+<span class="sd">@author: Andrew Abi-Mansour</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Conversion unit systems</span>
+<span class="c1"># si.: meters, seconds, kilograms</span>
+<span class="c1"># cgs: centimeters, seconds, grams</span>
+<span class="c1"># micro: microns, seconds, micrograms</span>
+<span class="c1"># nano: nanometers, seconds, nanograms </span>
+
+<span class="n">conversion</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;si&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">],</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;kg&#39;</span><span class="p">]},</span> \
+			<span class="s1">&#39;cgs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-2</span><span class="p">,</span> <span class="s1">&#39;cm&#39;</span><span class="p">],</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-3</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">]},</span> \
+			<span class="s1">&#39;micro&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-6</span><span class="p">,</span> <span class="s1">&#39;$\mu m$&#39;</span><span class="p">],</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-9</span><span class="p">,</span> <span class="s1">&#39;$\mu g$&#39;</span><span class="p">]},</span> \
+			<span class="s1">&#39;nano&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-9</span><span class="p">,</span> <span class="s1">&#39;nm&#39;</span><span class="p">],</span> <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">],</span> <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;ng&#39;</span><span class="p">]}</span>
 			<span class="p">}</span>
 
 <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">unitso</span><span class="p">,</span> <span class="n">unitsf</span><span class="p">):</span>
@@ -1087,13 +1115,13 @@ table {
 			<span class="n">conv</span> <span class="o">=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitso</span><span class="p">]</span>
 
 			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">conv</span><span class="p">:</span>
-				<span class="n">conv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">/=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitsf</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+				<span class="n">conv</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitsf</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 			<span class="k">return</span> <span class="n">conv</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitsf</span><span class="p">))</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitsf</span><span class="p">))</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitso</span><span class="p">))</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitso</span><span class="p">))</span>
 
 <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -1101,6 +1129,22 @@ table {
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">program</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Unix only: launches an executable program available in the PATH environment variable.</span>
+<span class="sd">	Returns 0 if successful and 1 otherwise. &quot;&quot;&quot;</span>
+	<span class="n">paths</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span>
+
+	<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">):</span>
+		<span class="n">found</span> <span class="o">=</span> <span class="n">Tools</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Launching {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">found</span><span class="p">))</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">found</span> <span class="o">+</span> <span class="s1">&#39; &amp;&#39;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="mi">0</span>
+
+	<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Could not find {} in {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">paths</span><span class="p">))</span>
+	<span class="k">return</span> <span class="mi">1</span>
 </pre></div>
 
   </div>
@@ -1138,13 +1182,13 @@ table {
 			<span class="n">conv</span> <span class="o">=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitso</span><span class="p">]</span>
 
 			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">conv</span><span class="p">:</span>
-				<span class="n">conv</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">/=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitsf</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+				<span class="n">conv</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="n">conversion</span><span class="p">[</span><span class="n">unitsf</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 			<span class="k">return</span> <span class="n">conv</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitsf</span><span class="p">))</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitsf</span><span class="p">))</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitso</span><span class="p">))</span>
+		<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input unit system not supported: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unitso</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1170,6 +1214,42 @@ table {
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="bp">None</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="PyGran.Tools.run">
+    <p>def <span class="ident">run</span>(</p><p>program)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Unix only: launches an executable program available in the PATH environment variable.
+Returns 0 if successful and 1 otherwise.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Tools.run', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.Tools.run" class="source">
+    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">program</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Unix only: launches an executable program available in the PATH environment variable.</span>
+<span class="sd">	Returns 0 if successful and 1 otherwise. &quot;&quot;&quot;</span>
+	<span class="n">paths</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span>
+
+	<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">):</span>
+		<span class="n">found</span> <span class="o">=</span> <span class="n">Tools</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">found</span><span class="p">:</span>
+			<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Launching {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">found</span><span class="p">))</span>
+			<span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">found</span> <span class="o">+</span> <span class="s1">&#39; &amp;&#39;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="mi">0</span>
+
+	<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Could not find {} in {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="n">paths</span><span class="p">))</span>
+	<span class="k">return</span> <span class="mi">1</span>
 </pre></div>
 
   </div>
