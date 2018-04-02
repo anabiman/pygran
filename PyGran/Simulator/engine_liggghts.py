@@ -504,7 +504,7 @@ class DEMPy:
         value += self.lmp.get_natoms()
 
         self.lmp.command('fix {} group{} insert/rate/region seed 123481 distributiontemplate {} {} {}'.format(randName, id, self.pddName[id], mech, value) + \
-          ' particlerate {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
+          ' {rate_type} {rate} insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
           + (' {}' * len(vel)).format(*vel)  + (' {}' * len(ss['args'])).format(*ss['args']) + ' region {} ntry_mc 10000'.format(name))
 
       return randName
@@ -898,7 +898,7 @@ class DEMPy:
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
 
-  def dumpSetup(self, only_mesh=False):
+  def dumpSetup(self, only_mesh=False, name=None):
     """
     This creates dumps for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during
     the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.
@@ -913,8 +913,11 @@ class DEMPy:
         if self.dump:
           self.lmp.command('undump dump')
 
-      self.lmp.command('dump dump {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
-      self.lmp.command('dump_modify dump ' +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
+      if not name:
+        name = 'dump'
+
+      self.lmp.command('dump {} ' + ' {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+      self.lmp.command('dump_modify {} '.format(name) +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
     self.pargs['traj']['dump_mname'] = []
 
@@ -963,7 +966,9 @@ class DEMPy:
 
     self.dump = True
 
-  def extractCoords(self, coords):
+    return name
+
+  def extractCoords(self):
     """
     Extracts atomic positions from a certian frame and adds it to coords
     """
@@ -977,8 +982,10 @@ class DEMPy:
     self.lmp.command('variable z atom z')
     z = Rxn.lmp.extract_variable("z", "group1", 1)
 
-    for i in range(Rxn.lmp.get_natoms()):
-      coords[i,:] += x[i], y[i], z[i]
+    coords = np.zeros((self.lmp.get_natoms(),3))
+
+    for i in range(self.lmp.get_natoms()):
+      coords[i,:] = x[i], y[i], z[i]
 
     self.lmp.command('variable x delete')
     self.lmp.command('variable y delete')
@@ -986,10 +993,10 @@ class DEMPy:
 
     return coords
 
-  def monitor(self, name, group, var, file):
+  def monitor(self, name, group, var, file, species='all'):
     """
     """
-    self.lmp.command('compute {} all {}'.format(var, name))
+    self.lmp.command('compute {} {} {}'.format(var, species, name))
     self.lmp.command('fix my{} {} ave/time 1 1 1 c_{} file {}'.format(var, group, var, file))
 
   def add_viscous(self, **args):
