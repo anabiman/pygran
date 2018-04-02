@@ -290,13 +290,12 @@ class DEM:
         self.dem.printSetup()
         break
 
-  def dumpSetup(self):
+  def dumpSetup(self, only_mesh=False, name=None):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        self.dem.dumpSetup()
-        break
+        return self.dem.dumpSetup(only_mesh, name)
 
   def setupIntegrate(self, name, itype='nve/sphere', group='all'):
     """
