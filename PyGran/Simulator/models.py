@@ -478,8 +478,8 @@ class ThorntonNing(Model):
 		super(ThorntonNing, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hysteresis_coh/thorn', \
-					'tangential', 'history')
+			self.params['model-args'] = ('gran', 'model hysteresis_coh/thorn', \
+					'tangential history')
 		else:
 			self.params['model-args'] = self.params['model-args']
 
