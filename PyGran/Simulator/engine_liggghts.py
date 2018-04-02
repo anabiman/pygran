@@ -61,7 +61,7 @@ class liggghts:
   try:
     from mpi4py import MPI
     from mpi4py import __version__ as mpi4py_version
-    if mpi4py_version.split('.')[0] == '2':
+    if int(mpi4py_version.split('.')[0]) >= 2:
       has_mpi4py_v2 = True
   except:
     pass
@@ -69,7 +69,8 @@ class liggghts:
   # create instance of LIGGGHTS
   def __init__(self, library=None, style = 'spherical', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
 
-    comm = MPI.COMM_WORLD
+    if not comm:
+      comm = MPI.COMM_WORLD
 
     if library:
       if not comm.Get_rank():
@@ -109,20 +110,20 @@ class liggghts:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
           cargs = (ctypes.c_char_p*narg)(*cmdargs)
-          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_char_p*narg, \
-                                           MPI_Comm, ctypes.c_void_p()]
+          #self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_char_p*narg, \
+                                           #MPI_Comm, ctypes.c_void_p()]
         else:
           self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_int, \
                                            MPI_Comm, ctypes.c_void_p()]
 
-        self.lib.lammps_open.restype = None
+        #self.lib.lammps_open.restype = None
         self.opened = 1
         self.lmp = ctypes.c_void_p()
-        comm_ptr = liggghts.MPI._addressof(comm)
+        comm_ptr = MPI._addressof(comm)
         comm_val = MPI_Comm.from_address(comm_ptr)
 
         self.lib.lammps_open(narg,cargs,comm_val, ctypes.byref(self.lmp))
-
+        
       else:
         self.opened = 1
 
@@ -147,7 +148,8 @@ class liggghts:
       self.lmp = ctypes.c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
 
   def __del__(self):
-    if hasattr(self, 'lmp') and self.opened: self.lib.lammps_close(self.lmp)
+    if hasattr(self, 'lmp') and self.opened: 
+      self.close()
 
   def close(self):
     if self.opened: 
@@ -916,7 +918,7 @@ class DEMPy:
       if not name:
         name = 'dump'
 
-      self.lmp.command('dump {} ' + ' {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
+      self.lmp.command('dump {} '.format(name) + ' {sel} {style} {freq} {dir}/{pfile}'.format(**self.pargs['traj']) + (' {} ' * len(self.pargs['traj']['args'])).format(*self.pargs['traj']['args']))
       self.lmp.command('dump_modify {} '.format(name) +  (' {} ' * len(self.pargs['dump_modify'])).format(*self.pargs['dump_modify']))
 
     self.pargs['traj']['dump_mname'] = []

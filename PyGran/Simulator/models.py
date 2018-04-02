@@ -34,6 +34,7 @@ from scipy.integrate import ode
 from scipy.optimize import fsolve
 from PyGran import Materials
 import math
+from mpi4py import MPI
 
 class Model(object):
 	def __init__(self, **params):
@@ -95,7 +96,7 @@ class Model(object):
 			self.params['dump_modify'] = ('append', 'yes')
 
 		if 'nSim' not in self.params:
-			self.params['nSim'] =  1
+			self.params['nSim'] = 1
 
 		if 'read_data' not in self.params:
 			self.params['read_data'] = False
@@ -104,12 +105,24 @@ class Model(object):
 		self.materials = {}
 
 		# For analysis
-		if 'material' in params:
-			self.materials = params['material']
+		if 'material' in self.params:
+			self.materials = self.params['material']
 
 		# Expand material properties based on number of components
 		if 'SS' in self.params:
 			for ss in self.params['SS']:
+
+
+				# See if we're running PyGran in multi-mode
+				if self.params['nSim'] > 1:
+					rank = MPI.COMM_WORLD.Get_rank()
+
+					if isinstance(ss['material'], list):
+						ss['material'] = ss['material'][rank]
+
+					if isinstance(ss['radius'], list):
+						ss['radius'] = ss['radius'][rank]
+
 				ss['material'] = Materials.LIGGGHTS(**ss['material'])
 
 				if 'style' not in ss:
