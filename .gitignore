@@ -16,3 +16,4 @@ dist
 .config
 *.c
 PyGran.egg-info*
+*.ipynb
