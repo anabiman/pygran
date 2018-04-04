@@ -327,6 +327,7 @@ class DEMPy:
       logging.info('Setting up problem dimensions and boundaries')
 
     self.lmp.command('units {}'.format(self.pargs['units']))
+    self.lmp.command('hard_particles yes')
     self.lmp.command('dimension {}'.format(self.pargs['dim']))
     self.lmp.command('atom_style {}'.format(style))
     self.lmp.command('atom_modify map array') # array is faster than hash in looking up atomic IDs, but the former takes more memory
