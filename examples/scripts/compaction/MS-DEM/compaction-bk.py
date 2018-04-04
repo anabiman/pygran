@@ -34,7 +34,7 @@ pDict = {
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-    sim = Simulator.DEM(**pDict)
+    	sim = Simulator.DEM(**pDict)
 
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
@@ -44,11 +44,11 @@ if __name__ == '__main__':
 	sim.run(1e4, pDict['dt'])
 	sim.remove(insert)
 
-    # Move wall at constant speed
-    moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.01'))
-    sim.run(pDict['nsteps'], pDict['dt'])
-    sim.remove(moveZ)
+    	# Move wall at constant speed
+    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.01'))
+    	sim.run(pDict['nsteps'], pDict['dt'])
+    	sim.remove(moveZ)
 
-    # Relax the system
-    moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
-    sim.run(pDict['nsteps'], pDict['dt'])
+    	# Relax the system
+    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
+    	sim.run(pDict['nsteps'], pDict['dt'])
