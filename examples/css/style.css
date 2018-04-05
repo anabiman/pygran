@@ -35,6 +35,9 @@
     border:none;
     transform:scale(1);
     transition:all 1s;
+    position: relative;
+    text-align: center;
+    color: blue;
 }
 
 #rig li:hover .rig-img {
