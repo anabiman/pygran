@@ -4,51 +4,49 @@ from PyGran.Materials import glass
 glass['youngsModulus'] = 1e7
 
 # Create a dictionary of physical parameters
-pDict = {
+params = {
 
-		# Define the system
-		'boundary': ('p','p','p'), # fixed BCs
-		'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
+	# Define the system
+	'boundary': ('p','p','p'), # fixed BCs
+	'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
 
-		# Define component(s)
-		'SS': ({'material': glass, 'radius': ('constant', 2e-4)}, 
-		      ),
+	# Define component(s)
+	'SS': ({'material': glass, 'radius': ('constant', 2e-4)}, ),
 
-		# Timestep
-		'dt': 1e-6,
+	# Timestep
+	'dt': 1e-6,
 
-		# Apply gravitional force in the negative direction along the z-axis
-		'gravity': (9.81, 0, 0, -1),
+	# Apply gravitional force in the negative direction along the z-axis
+	'gravity': (9.81, 0, 0, -1),
 
-		'output': 'MS-DEM',
+	# Number of simulation steps (non-PyGran variable)
+	'nsteps': 2.5e4,
 
-		# Number of simulation steps (non-PyGran variable)
-		'nsteps': 2.5e4,
-
-		# Import surface mesh
-		 'mesh': {
-			'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': glass, 'args': ('scale 1e-3',)}
-		      },
-	  }
+	# Import surface mesh
+	'mesh': {
+		'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': glass, \
+			'args': ('scale 1e-3','move 0 0 1e-3')}
+		},
+}
 
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-    	sim = Simulator.DEM(**pDict)
+    	sim = Simulator.DEM(**params)
 
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
 
-	# Insert the particles
-	insert = sim.insert(species=1, value=100, region=('block', -1e-3,1e-3, -1e-3, 1e-3, 0, 3e-3))
-	sim.run(1e4, pDict['dt'])
+	# Insert 200 particles
+	insert = sim.insert(species=1, value=200, freq=params['nsteps']/3)
+	sim.run(params['nsteps'], params['dt'])
 	sim.remove(insert)
 
     	# Move wall at constant speed
-    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.01'))
-    	sim.run(pDict['nsteps'], pDict['dt'])
+    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.03'))
+    	sim.run(params['nsteps'] * 2, params['dt'])
     	sim.remove(moveZ)
 
     	# Relax the system
     	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
-    	sim.run(pDict['nsteps'], pDict['dt'])
+    	sim.run(params['nsteps'] * 2, params['dt'])

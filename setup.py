@@ -111,10 +111,20 @@ setup(
     install_requires=['numpy', 'pyvtk', 'pytools>=2011.2', 'pygmsh'],
     long_description=read('README.md'),
     classifiers=[
-        "Development Status :: 1 - Alpha",
+        "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
-        "License :: GNU License",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+	"Programming Language :: Python :: 2.7",
+	"Programming Language :: Python :: 3"
     ],
+    project_urls={
+    	'Documentation': 'https://packaging.python.org/tutorials/distributing-packages/',
+    	'Funding': 'https://donate.pypi.org',
+    	'Say Thanks!': 'http://saythanks.io/to/example',
+    	'Source': 'https://github.com/pypa/sampleproject/',
+    	'Tracker': 'https://github.com/pypa/sampleproject/issues',
+    },
+
     cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
     ext_modules=cythonize("PyGran/Analyzer/*.pyx"),
