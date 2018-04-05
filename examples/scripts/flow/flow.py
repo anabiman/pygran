@@ -18,8 +18,7 @@ params = {
 	'SS': ({'material': organic, 'radius': ('constant', 5e-5)},),
 
 	# Setup I/O params
-	#'traj': {'freq':1000, 'style': 'custom/vtk', 'pfile': 'traj*.vtk', 'mfile': 'mesh*.vtk'},
-	'traj': {'freq':1000, 'pfile': 'traj.dump', 'mfile': 'mesh*.vtk'},
+	'traj': {'freq':1000, 'style': 'custom/vtk', 'pfile': 'traj*.vtk', 'mfile': 'mesh*.vtk'},
 
 	# Define computational parameters
 	'dt': 1e-6,

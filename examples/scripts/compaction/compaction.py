@@ -1,7 +1,5 @@
-from PyGran import Simulator, Analyzer, Visualizer
-from PyGran.Materials import glass
-
-glass['youngsModulus'] = 1e7
+from PyGran import Simulator
+from PyGran.Materials import organic
 
 # Create a dictionary of physical parameters
 params = {
@@ -11,7 +9,7 @@ params = {
 	'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
 
 	# Define component(s)
-	'SS': ({'material': glass, 'radius': ('constant', 2e-4)}, ),
+	'SS': ({'material': organic, 'radius': ('constant', 2e-4)}, ),
 
 	# Timestep
 	'dt': 1e-6,
@@ -24,7 +22,7 @@ params = {
 
 	# Import surface mesh
 	'mesh': {
-		'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': glass, \
+		'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': organic, \
 			'args': ('scale 1e-3','move 0 0 1e-3')}
 		},
 }
