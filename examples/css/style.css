@@ -1,10 +1,16 @@
+body {
+    background-image: url('../imgs/bg-repeat.png');
+    background-repeat: repeat;
+
+}
+
 #rig {
     max-width:50%;
     margin:0 auto; /*center aligned*/
     padding:2% 20%;
     font-size:0; /* Remember to change it back to normal font size if have captions */
     list-style:none;
-    background-color:#013;
+    background-color:#020E15;
 }
 
 #rig li {
@@ -133,4 +139,18 @@
     #rig li {
         width:50%;
     }
+}
+
+.banner {
+
+    /* Set a specific height */
+    height: 20%;
+
+    /* Position and center the image to scale nicely on all screens */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+
+    left: 33%;
 }
