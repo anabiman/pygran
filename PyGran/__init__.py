@@ -20,13 +20,8 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from PyGran import Simulator, Tools
+from PyGran import Simulator, Tools, Analyzer
 import os
-
-try:
-	from PyGran import Analyzer
-except:
-	pass # Might be importing from src dir
 
 try:
 	from PyGran import Visualizer

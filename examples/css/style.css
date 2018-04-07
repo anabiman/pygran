@@ -7,27 +7,28 @@ body {
 #rig {
     max-width:50%;
     margin:0 auto; /*center aligned*/
-    padding:2% 20%;
+    padding:2% 15%;
     font-size:0; /* Remember to change it back to normal font size if have captions */
     list-style:none;
     background-color:#020E15;
+    width: 50%;
+    height: 50%;
+
 }
 
 #rig li {
     display: inline-block;
     *display:inline;/*for IE6 - IE7*/
-    width:25%;
     vertical-align:middle;
     horizontal-align:middle;
     box-sizing:border-box;
-    margin:10%;
+    margin:2%;
     padding:0;
 }
         
 /* The wrapper for each item */
 .rig-cell {
-    /*margin:12px;
-    box-shadow:0 0 6px rgba(0,0,0,0.3);*/
+    /* box-shadow:0 0 6px rgba(0,0,255,0.3); */
     display:block;
     position: relative;
     overflow:hidden;
@@ -92,10 +93,8 @@ body {
     font-family: 'Oswald', sans-serif;
     font-weight:normal!important;
     top:40%;
+    vertical-align: middle;
     color:white;
-    opacity:0;
-    filter:alpha(opacity=0);/*For older IE*/
-    transform:translateY(-20px);
 }
 
 .rig-text {
@@ -125,10 +124,12 @@ body {
 
 @media (max-width: 9000px) {
     #rig li {
-        width:25%;
+        width:27%;
+	height:70%;
     }
 }
 
+/*
 @media (max-width: 700px) {
     #rig li {
         width:33.33%;
@@ -140,6 +141,7 @@ body {
         width:50%;
     }
 }
+*/
 
 .banner {
 
@@ -153,4 +155,15 @@ body {
     position: relative;
 
     left: 33%;
+}
+
+#text
+{
+    z-index:100;
+    position:absolute;    
+    color:white;
+    font-size:24px;
+    font-weight:bold;
+    left:150px;
+    top:350px;
 }

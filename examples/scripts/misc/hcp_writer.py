@@ -4,7 +4,7 @@ from PyGran import Analyzer
 import collections
 
 data = collections.OrderedDict()
-natoms = 200
+natoms = 10
 radius = 1
 
 data['natoms'] = natoms * natoms * natoms
@@ -26,8 +26,8 @@ data['radius'] = ones(data['natoms']) * radius
 data['timestep'] = 0
 data['box'] = ([data['x'].min(), data['x'].max()], [data['y'].min(), data['y'].max()], [data['z'].min(), data['z'].max()])
 
-system = Analyzer.System()
-system.data = data
-system.Particles = Analyzer.Particles(data=data, units='micro')
-system.Particles.write('hpc.dump')
-print system.Particles.density(1)
+Particles = Analyzer.Particles(data=data, units='micro')
+
+System = Analyzer.System(Particles=Particles)
+System.Particles.write('hpc.dump')
+print System.Particles.density(1)

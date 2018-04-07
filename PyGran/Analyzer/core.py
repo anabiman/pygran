@@ -27,7 +27,6 @@ Created on July 10, 2016
 # -------------------------------------------------------------------------
 
 import numpy as np
-cimport numpy as np
 import types
 from random import choice
 from string import ascii_uppercase
@@ -1277,16 +1276,11 @@ class Factory(object):
 		for ss in args:
 			if(Factory._str_to_class(ss)):
 
-				# Make sure a filename (str) was passed, else this could be an object instantiation
-				if isinstance(args[ss], str):
-					# Delete the filename so we can pass all other args to the SubSystem
-					fname = args[ss]
-					del args_copy[ss]
+				# Delete the filename so we can pass all other args to the SubSystem
+				fname = args[ss]
+				del args_copy[ss]
 
-					obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
-				else:
-					# We must be passing a SubSystem class to instantiate System
-					obj.append([ss, args[ss]])
+				obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
 
 		return obj
 
