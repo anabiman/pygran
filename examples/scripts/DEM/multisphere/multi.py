@@ -10,6 +10,9 @@ from PyGran import Simulator, Analyzer, Visualizer
 from PyGran.Materials import organic
 
 def template_tablet(nspheres, radius, length):
+	""" This function creates a multi-sphere tablet (cylinder) of
+	radius "radius" and height "length" constituting nspheres spheres.
+	"""
 
 	delta = (2 * radius * nspheres - length) / (nspheres-1)
 	ms = ('nspheres {}'.format(nspheres), 'ntry 1000000 spheres')
@@ -33,6 +36,7 @@ params = {
 	'SS': ({'material': organic, 'style':'multisphere', 'args': template_tablet(12, 2e-2, 1e-1)},
 				),
 
+	# Set skin distance to be 1/4 particle diameter 
 	'nns_skin': 5e-3,
 
 	# Timestep
@@ -42,12 +46,12 @@ params = {
 	'gravity': (9.81, 0, 0, -1),
 
 	# Setup I/O
-	'traj': {'pfile': 'rotating.dump', 'mfile': 'rotating*.vtk'},
+	'traj': {'pfile': 'rotating.dump', 'mfile': 'particles*.vtk'},
 
 	# Stage runs [optional]
          'stages': {'insertion': 1e6, 'rotation': 1e6},
 
-	# Meshes
+	# Define mesh for rotating drum (trumbler)
 	'mesh': {
               'tumbler': {'file': 'mesh/tumbler.stl', 'mtype': 'mesh/surface/stress', 'material': organic, 'args': ('scale 1e-3',)},
 	}
@@ -67,11 +71,9 @@ sim.run(params['stages']['insertion'], params['dt'])
 
 # Delete insertion fix
 sim.remove(insert)
-sim.remove(air_resistance)
 
 # Rotate mesh along the xoz plane
 sim.moveMesh('tumbler', 'rotate origin 0 0 0', 'axis  0 1 0', 'period 5e-1')
 
 # Run rotation stage
 sim.run(params['stages']['rotation'], params['dt'])
-
