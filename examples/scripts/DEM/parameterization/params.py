@@ -37,7 +37,7 @@ params = {
 	# Number of simulation steps (non-PyGran variable)
 	'nsteps': 1e3,
 
-	# numver of concurrent simulation to run
+	# Number of concurrent simulations to run
 	'nSim': nSim
 }
 
