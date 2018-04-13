@@ -42,9 +42,6 @@ class Model(object):
 		self.params = params
 		self.params['nSS'] = 0
 
-		if 'model' not in self.params:
-			raise RuntimeError('Contact model must be specified when creating an instance of Simulator.Model')
-
 		if 'engine' not in self.params:
 			self.params['engine'] = 'engine_liggghts'
 
@@ -260,6 +257,7 @@ class Model(object):
 		def generator():
 			while inte.successful() and (inte.t <= Tc):
 				inte.integrate(inte.t + dt)
+
 				yield inte.t + dt, inte.y, self.normalForce(inte.y[0]) + self.dissForce(inte.y[0], inte.y[1])
 
 		for t, soln, f in generator():
@@ -293,7 +291,11 @@ class Model(object):
 			self.end = True
 
 		radius = self.radius
-		contRadius = np.sqrt(delta * radius)
+
+		if delta >= 0:
+			contRadius = np.sqrt(delta * radius)
+		else:
+			contRadius = 0
 		
 		if False:
 			Gamma = self.cohesionEnergyDensity
@@ -455,7 +457,9 @@ class HertzMindlin(Model):
 		radius = self.radius
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		return 4.0 / 3.0 * yEff * np.sqrt(self.radius * delta)
+		contRadius = self.contactRadius(delta)
+
+		return 4.0 / 3.0 * yEff * contRadius
 
 	def normalForce(self, delta):
 		""" Returns the Hertzian normal force"""
