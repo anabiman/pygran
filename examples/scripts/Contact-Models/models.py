@@ -1,21 +1,27 @@
 import PyGran.Simulator as Si
 from PyGran.Materials import stearicAcid
-from numpy import random
 import matplotlib.pylab as plt
 
+# Create a list of contact models to analyze
 models = [Si.models.SpringDashpot, Si.models.HertzMindlin]
-radius = 1e-4
 
-# Compute the displacement vs time curve for e = 0.9
+# Set particle radius to 100 microns
+stearicAcid['radius'] = 1e-4
+
+# Compute the force-displacement curve
 for model in models:
 	model = model(material=stearicAcid)
 
-	time, delta = model.displacement(radius)
-	force = model.normalForce(delta[:,0], radius) + model.dissForce(delta[:,0], delta[:,1], radius)
+	time, delta, force = model.displacement()
 
 	deltan = delta[force > 0,0]
 	force = force[force > 0]
-	plt.plot(deltan, force)
+	plt.plot(deltan * 1e6, force * 1e3)
 
-plt.legend(['SpringDashpot', 'HertzMindlin'])
+plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+plt.legend(['SpringDashpot', 'HertzMindlin'], loc='best')
+plt.xlabel(r'$\delta$ $(\mu m)$')
+plt.ylabel('Force (mN)')
+plt.grid(linestyle=':')
 plt.show()
