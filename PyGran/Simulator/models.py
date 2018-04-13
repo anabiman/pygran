@@ -529,7 +529,7 @@ class ThorntonNing(Model):
 		mass = self.mass
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		return 4.0 / 3.0 * yEff * np.sqrt(radius * delta)
+		return 4.0 / 3.0 * yEff * self.contactRadius(delta)
 
 	def normalForce(self, delta):
 		""" Returns the Hertzian-like normal force"""
