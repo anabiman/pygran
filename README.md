@@ -64,4 +64,4 @@ Gran = Analyzer.System(Particles='granular.dump')
 NNS = Analyzer.Neighbors(Gran.Particles)
 overlaps = NNS.overlaps
 ```
-For more examples on using PyGran for running DEM simulation, see chapter II in the manual.
+For more examples on using PyGran for running DEM simulation, check out the <a href="examples/examples.html">examples</a>.
