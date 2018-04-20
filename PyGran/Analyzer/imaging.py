@@ -103,12 +103,26 @@ def _mapPositions(Particles, axis, resol=None):
 
 def slice(Particles, zmin, zmax, axis, size, resol=None, output=None, imgShow=False):
 	"""
-	Generates a 2D image from a slice (limited by 'zmin/zmax' and of reslution '1/dz') 
+	Generates a 2D image from a slice (limited by 'zmin/zmax' and of resolution '1/dz') 
 	of a 3D config in the Particles class. The resol is in distance per pixel.
-	@[size]: tuple (length, width) for generated image slice
+	
+	@Particles: a PyGran.Analyzer.core.SubSystem class
+	@zmin: minimum height/depth/width of the slice
+	@max: maximum height/depth/width of the slice
+	@axis: a str that sets the axis to slice the image across ('x', 'y', or 'z')
+	@size: tuple (length, width) specifying the generated image size
+	@[resol]: image resolution in meters/pixel
+	@[output]: a str that sets the img output filename to be written
+	@[imgShow]: boolean variable, if true displays the output image
+
 	"""
 
 	Particles = Particles.copy()
+
+	Particles.translate(('x', -Particles.x.min()))
+	Particles.translate(('y', -Particles.y.min()))
+	Particles.translate(('z', -Particles.z.min()))
+
 	maxRad = Particles.radius.max()
 
 	if resol:
