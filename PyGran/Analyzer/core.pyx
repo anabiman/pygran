@@ -60,7 +60,7 @@ these properties. This class is iterable but NOT an iterator. """
 
 			self._constructAttributes()
 
-		else:
+		else: # otherwise, we're instantiating a new object
 			if 'units' in args:
 				self._units = args['units']
 
@@ -75,7 +75,7 @@ these properties. This class is iterable but NOT an iterator. """
 			if 'fname' in args:
 				self._fname = args['fname']
 
-		# If data is already coped from Particles, do nothing
+		# If data is already copied from Particles, do nothing
 		if not hasattr(self, 'data'):
 			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
 			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).
@@ -403,9 +403,17 @@ class Mesh(SubSystem):
 			self._vtk = None
 
 		if self._vtk == 'poly':
-			self._reader = vtk.vtkPolyDataReader()
+			# Try polydata otherwise unstructured reader ... need to make this better
+			# The try-except control makes self._vtk kinda useless, right?
+			try:
+				self._reader = vtk.vtkPolyDataReader()
+			except:
+				self._reader = vtk.vtkUnstructuredGridReader()
 		else:
-			self._reader = vtk.vtkUnstructuredGridReader()
+			try:
+				self._reader = vtk.vtkUnstructuredGridReader()
+			except:
+				self._reader = vtk.vtkUnstructuredGridReader()			
 
 		super(Mesh, self).__init__(fname=fname)
 
@@ -496,6 +504,8 @@ class Mesh(SubSystem):
 			else:
 				break
 
+		self._constructAttributes()
+		
 	def _updateSystem(self):
 		""" Class function for updating the state of a Mesh """
 		# Must make sure fname is passed in case we're looping over a trajectory
@@ -732,16 +742,14 @@ class Particles(SubSystem):
 		if not (self.natoms > 0):
 			raise RuntimeError('No Particles found.')
 
-		x, y, z = self.x, self.y, self.z
+		x, y, z = self.x.copy(), self.y.copy(), self.z.copy()
 
 		# center positions around 0
 		if center:
-			self.translate(-x.mean(), 'x')
-			self.translate(-y.mean(), 'y')
-			self.translate(-z.mean(), 'z')
-
-		print x.max(), y.max(), z.max()
-
+			x -= x.mean()
+			y -= y.mean()
+			z -= z.mean()
+		
 		S = min(x.max(), y.max(), z.max())
 
 		if rMax is None:
@@ -1186,7 +1194,7 @@ class Particles(SubSystem):
 					self._constructAttributes()
 
 				else:
-					raise IOError('{} format does not support trajectory files.'.format(self._ftype))
+					raise IOError('{} format is not a supported trajectory file.'.format(self._ftype))
 
 			else:
 				if self._ftype == 'dump':
@@ -1416,9 +1424,13 @@ class System(object):
 	def next(self):
 		""" This method updates the system attributes! """
 
+		frame = self.frame
+
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_readFile'):
-				self.frame = self.__dict__[ss]._readFile(self.frame)
+				self.frame = self.__dict__[ss]._readFile(frame)
+			else:
+				raise RuntimeError("SubSystem {} does not have a _readFile method!".format(ss))
 
 		self._updateSystem()
 
