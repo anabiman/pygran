@@ -108,8 +108,8 @@ setup(
     packages=find_packages(),
     package_dir={'PyGran': 'PyGran'},
     package_data={'': ['.config', 'GUI/Icons/*.png']},
-    install_requires=['numpy', 'pyvtk', 'pytools>=2011.2', 'pygmsh'],
-    long_description=read('README.md'),
+    install_requires=['numpy', 'scipy', 'pyvtk', 'pytools>=2011.2', 'cython'],
+    long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See https://andrew-abimansour.github.io/PyGran.',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
