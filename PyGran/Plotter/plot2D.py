@@ -117,15 +117,14 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	Plots a 2D pcolor for a set of particles
 
 	@Particles: PyGran.Analyzer.SubSystem object
-	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), or ... any attribute contained in Particles.
-	or a tuple ('attr', array) with array being a list or numpy array of length natoms
+	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), etc, or 
+	any attribute contained in Particles, or a tuple ('attr', array) with array being a list or numpy array of length natoms
 
 	@[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz') 
 	@[title]: string specifying the title of the plot
 	@[color]: string specifying the color of the arrows (default black)
 	@[radius]: radii of the particles  (numpy array)
 	"""
-
 
 	fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes)
 
@@ -150,7 +149,6 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	return fig
 
 def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar, **args):
-
 	if title:
 		ax.set_title(title)
 
@@ -185,7 +183,21 @@ def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar,
 	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 def timePlot(System, attr, framei=0, framef=None, metric=None, title=None, xlabel=None, ylabel=None, scale=None, **args):
+	"""
+	Produces a temporal plot for a time series specified by the string 'attr' that represents a property contained in a 
+	PyGran.Simulator.System object created from an input trajectory file. 
 
+	@System: a PyGran.Simulator.System object to extract time series from
+	@attr: a str object specifying the proprety to be calculated
+	@[framei]: initial frame to read
+	@[framef]: final frame to read
+	@[metric]: a str object specifying which data metric to use for calculating the time series. 
+			   By default, the arithmetic mean is used. Any metric available in numpy (min, max, ...) can be used.
+	@[title]: a str specifying the plot title
+	@[xlabel]: a str specifying the x-axis label
+	@[ylabel]: a str specifying the y-axis label
+	@[scale]: a float/integer scaling factor to apply to the variables of interest
+	"""
 	var = _timeExtract(System, attr, framei, framef, metric)
 	frame = np.arange(len(var))
 
