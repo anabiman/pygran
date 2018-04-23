@@ -28,6 +28,7 @@ Created on March 06, 2018
 import matplotlib.pylab as plt
 import matplotlib
 import matplotlib.ticker as ticker
+import types
 
 import numpy as np
 from PyGran.Tools import conversion
@@ -52,6 +53,8 @@ def _initialize(Particles, fig, value, subplot, axes, **args):
 
 	if 'figsize' not in args:
 		figsize = (8, 6)
+	else:
+		figsize = args['figsize']
 
 	if 'dpi' not in args:
 		dpi = 80
@@ -68,14 +71,13 @@ def _initialize(Particles, fig, value, subplot, axes, **args):
 			elif len(value) == 1:
 				z = Particles.data['{}{}'.format(value,axes[0])], Particles.data['{}{}'.format(value, axes[1])]
 		else:
-			raise IOError('value must a string or a tuple')
+			raise IOError('value must be a string or a tuple')
 
 	ax = fig.add_subplot(subplot)
 
 	x,y = Particles.data['{}'.format(axes[0])], Particles.data['{}'.format(axes[1])]
 
 	return fig, ax, value, x, y, z
-
 
 def quiver(Particles, value=None, axes='xy', title=None, color='k', units='xy', scale=None, cmap='seismic', subplot=111, fig=None, **args):
 	"""
@@ -117,8 +119,8 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	Plots a 2D pcolor for a set of particles
 
 	@Particles: PyGran.Analyzer.SubSystem object
-	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), etc, or 
-	any attribute contained in Particles, or a tuple ('attr', array) with array being a list or numpy array of length natoms
+	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), or ... any attribute contained in Particles.
+	or a tuple ('attr', array) with array being a list or numpy array of length natoms
 
 	@[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz') 
 	@[title]: string specifying the title of the plot
@@ -126,7 +128,8 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	@[radius]: radii of the particles  (numpy array)
 	"""
 
-	fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes)
+
+	fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes, **args)
 
 	ymin, ymax = y.min(), y.max()
 	xmin, xmax = x.min(), x.max()
@@ -149,6 +152,7 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	return fig
 
 def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar, **args):
+
 	if title:
 		ax.set_title(title)
 
@@ -183,21 +187,7 @@ def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar,
 	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
 def timePlot(System, attr, framei=0, framef=None, metric=None, title=None, xlabel=None, ylabel=None, scale=None, **args):
-	"""
-	Produces a temporal plot for a time series specified by the string 'attr' that represents a property contained in a 
-	PyGran.Simulator.System object created from an input trajectory file. 
 
-	@System: a PyGran.Simulator.System object to extract time series from
-	@attr: a str object specifying the proprety to be calculated
-	@[framei]: initial frame to read
-	@[framef]: final frame to read
-	@[metric]: a str object specifying which data metric to use for calculating the time series. 
-			   By default, the arithmetic mean is used. Any metric available in numpy (min, max, ...) can be used.
-	@[title]: a str specifying the plot title
-	@[xlabel]: a str specifying the x-axis label
-	@[ylabel]: a str specifying the y-axis label
-	@[scale]: a float/integer scaling factor to apply to the variables of interest
-	"""
 	var = _timeExtract(System, attr, framei, framef, metric)
 	frame = np.arange(len(var))
 
@@ -248,18 +238,24 @@ def _timeExtract(System, attr, framei=0, framef=None, metric=None):
 	var = []
 
 	if not metric:
-		if isinstance(Particles.data[attr], np.ndarray):
-			metric = 'mean'
+		if not isinstance(getattr(Particles, attr), types.MethodType):
+			if isinstance(Particles.data[attr], np.ndarray):
+				metric = 'mean'
+			# otherwise, the user requested a function call
 
 	for ts in System:
+
 		if framef:
 			if ts >= framef:
 				return np.array(var)
 
 		if metric:
 			method_to_call = getattr(np, metric)
-			var.append(method_to_call(Particles.data[attr]))
+			var.append(method_to_call(System.Particles.data[attr]))
 		else:
-			var.append(Particles.data[attr])
+			if isinstance(getattr(System.Particles, attr), types.MethodType):
+				var.append(getattr(System.Particles, attr)())
+			else:
+				var.append(System.Particles.data[attr])
 
 	return np.array(var)
