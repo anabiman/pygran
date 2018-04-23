@@ -427,6 +427,9 @@ class Mesh(SubSystem):
 				self._mesh = self._fname[0]
 
 		self._reader.SetFileName(self._mesh)
+		self._reader.ReadAllVectorsOn()
+		self._reader.ReadAllScalarsOn()
+
 		self._reader.Update() # Needed if we need to call GetScalarRange
 		self._output = self._reader.GetOutput()
 
@@ -543,10 +546,6 @@ class Mesh(SubSystem):
 			frame += 1
 
 		return frame
-
-	def rewind(self):
-		if self._fname:
-			self._mesh = self._fname[0]
 
 	def __del__(self):
 
@@ -1002,16 +1001,6 @@ class Particles(SubSystem):
 
 		return 0
 
-	def rewind(self):
-
-		if self._fp:
-			self._fp.close()
-
-			if self._singleFile:
-				self._fp = open(self._fname)
-			else:
-				self._fp = open(self._files[0])
-
 	def _goto(self, iframe, frame):
 		""" This function assumes we're reading a non-const N trajectory.
 		"""
@@ -1397,11 +1386,14 @@ class System(object):
 		if frame < self.frame and frame >= 0:
 			self.rewind()
 
-		for ss in self.__dict__:
-			if hasattr(self.__dict__[ss], '_goto'):
-				self.frame = self.__dict__[ss]._goto(frame, self.frame)
+		else:
+			for ss in self.__dict__:
+				if hasattr(self.__dict__[ss], '_goto'):
+					self.frame = self.__dict__[ss]._goto(frame, self.frame)
 
-		self._updateSystem()
+			# Rewind already updates the system, so we call _updateSystem only if
+			# the frame is moving forward
+			self._updateSystem()
 
 	@property
 	def keys(self):
@@ -1411,26 +1403,25 @@ class System(object):
 	def rewind(self):
 		"""Read trajectory from the beginning"""
 
-		self.frame = -1
-
-		for ss in self.__dict__:
-			if hasattr(self.__dict__[ss], 'rewind'):
-				self.__dict__[ss].rewind()
+		self.__init__(**self.args)
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
 		return self.next()
 
 	def next(self):
-		""" This method updates the system attributes! """
-
-		frame = self.frame
+		""" This method updates the system attributes!
+		TODO: Frame 0 / initial frame  is always excluded with this approach.
+		 """
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_readFile'):
-				self.frame = self.__dict__[ss]._readFile(frame)
-			else:
-				raise RuntimeError("SubSystem {} does not have a _readFile method!".format(ss))
+				self.__dict__[ss]._readFile(self.frame)
+
+				# we update the fame only after _readFile is called. If the latter
+				# fails, the frame is not updated (due to yield), which is exactly
+				# the behavior we want. Ding!
+				self.frame += 1
 
 		self._updateSystem()
 
