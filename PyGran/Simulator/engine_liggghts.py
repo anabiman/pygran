@@ -622,12 +622,12 @@ class DEMPy:
         modelExtra.append(item)
 
     # Replace any user-specified model args for all mesh walls
-    for i, key in enumerate(model):
+    for i, key in enumerate(modelExtra):
       if wtype == 'mesh':
         kname = key.split()[0]
         if kname in self.pargs['mesh']:
-          if len(self.pargs['mesh'][kname]) == 1: # make sure this is an actual mesh keyword, not a mesh defined with a keyname same as a mesh arg!
-            model[i] = kname + self.pargs['mesh'][kname]
+          if isinstance(self.pargs['mesh'][kname], str): # make sure this is an actual mesh keyword, not a mesh defined with a keyname same as a mesh arg!
+            modelExtra[i] = kname + self.pargs['mesh'][kname]
 
     model = tuple(model)
     modelExtra = tuple(modelExtra)
