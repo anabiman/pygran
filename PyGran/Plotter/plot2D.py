@@ -186,39 +186,55 @@ def format(Particles, axes, ax, fig, title, value, xmin, xmax, ymin, ymax, cbar,
 	ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-def timePlot(System, attr, framei=0, framef=None, metric=None, title=None, xlabel=None, ylabel=None, scale=None, **args):
+def timePlot(System, attr, framei=0, framef=None, metric=None, title=None, xlabel=None, ylabel=None, xscale=None, yscale=None, **args):
 
-	var = _timeExtract(System, attr, framei, framef, metric)
-	frame = np.arange(len(var))
+	time, var = _timeExtract(System, attr, framei, framef, metric)
 
-	if scale:
-		frame = frame * scale
+	if xscale:
+		time = time * xscale
+
+	if yscale:
+		var = var * yscale
 
 	if 'figsize' not in args:
 		figsize = (8, 6)
+	else:
+		figsize = args['figsize']
 
 	if 'dpi' not in args:
 		dpi = 80
+	else:
+		dpi = args['dpi']
+
+	if 'lineStyle' in args:
+		lineStyle = args['lineStyle']
+	else:
+		lineStyle = '-'
+
+	if 'marker' in args:
+		marker = args['marker']
+	else:
+		marker = 'o'
 
 	fig = plt.figure(figsize=figsize, dpi=dpi)
 
 	ax = fig.gca()
 
 	if not xlabel:
-		xlabel = 'Frame'
+		xlabel = 'Time'
 
 	if not ylabel:
 		ylabel = attr
 
-	ax.set_xlabel(xlabel, fontsize=16)
+	ax.set_xlabel('Time ({})'.format(conversion[System.Particles.units()]['time'][1]), fontsize=16)
 	ax.set_ylabel(ylabel, fontsize=16)
 
-	plt.plot(var)
+	plt.plot(time, var, lineStyle=lineStyle, marker=marker)
 
 	ax.grid(linestyle=':')
 
-	ax.set_xticks(np.linspace(frame.min(), frame.max(), 8))
-	ax.set_yticks(np.linspace(var.min(), var.max(), 8))
+	#ax.set_xticks(np.linspace(time.min(), time.max(), 8))
+	#ax.set_yticks(np.linspace(var.min(), var.max(), 8))
 
 	ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 	ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
@@ -235,7 +251,9 @@ def _timeExtract(System, attr, framei=0, framef=None, metric=None):
 		raise IOError('{} not found in Particles class.'.format(attr))
 
 	System.goto(framei)
+	System.skip()
 	var = []
+	time = []
 
 	if not metric:
 		if not isinstance(getattr(Particles, attr), types.MethodType):
@@ -258,4 +276,6 @@ def _timeExtract(System, attr, framei=0, framef=None, metric=None):
 			else:
 				var.append(System.Particles.data[attr])
 
-	return np.array(var)
+		time.append(ts)
+
+	return np.array(time), np.array(var)
