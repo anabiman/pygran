@@ -627,7 +627,7 @@ class DEMPy:
         kname = key.split()[0]
         if kname in self.pargs['mesh']:
           if isinstance(self.pargs['mesh'][kname], str): # make sure this is an actual mesh keyword, not a mesh defined with a keyname same as a mesh arg!
-            modelExtra[i] = kname + self.pargs['mesh'][kname]
+            modelExtra[i] = kname + ' ' + self.pargs['mesh'][kname]
 
     model = tuple(model)
     modelExtra = tuple(modelExtra)
