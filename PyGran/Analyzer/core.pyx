@@ -1345,6 +1345,7 @@ class System(object):
 	def __init__(self, **args):
 
 		self.frame = 0
+		self.args = args
 		objs = Factory.factory(**args)
 
 		for ss, obj in objs:
@@ -1394,6 +1395,22 @@ class System(object):
 			# Rewind already updates the system, so we call _updateSystem only if
 			# the frame is moving forward
 			self._updateSystem()
+
+	def skip(self):
+		""" Skips all empty frames i.e. moves the trajectory to the 1st frame containing
+		non-zero elements """
+		forward = True
+
+		while forward:
+			for ss in self.__dict__: 
+				if hasattr(self.__dict__[ss], '_constructAttributes'):
+					if len(self.__dict__[ss]):
+						forward = False
+
+			if not forward:
+				break
+			else:
+				self.frame = self.next()
 
 	@property
 	def keys(self):
