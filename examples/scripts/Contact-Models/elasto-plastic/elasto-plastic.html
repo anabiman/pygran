@@ -11790,12 +11790,6 @@ div#notebook {
 <span class="c1"># Import numpy + matplotlib modules</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">arange</span><span class="p">,</span> <span class="n">fabs</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-
-<span class="c1"># Setup matplotlib params</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">})</span>
 
 <span class="c1"># Contact model</span>
 <span class="n">cModel</span> <span class="o">=</span> <span class="n">Sim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ThorntonNing</span>

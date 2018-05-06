@@ -11771,7 +11771,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Numerical-analysis-of-contact-models">Numerical analysis of contact models<a class="anchor-link" href="#Numerical-analysis-of-contact-models">&#182;</a></h1><p>In this tutorial, we compute the force-displacement curves for tow different viscoelastic models: Hertz-Mindlin and Spring-Dashpot. The input script file is found in the examples/scripts/Contact-Models directory.</p>
+<h1 id="Numerical-Analysis-of-Contact-Models">Numerical Analysis of Contact Models<a class="anchor-link" href="#Numerical-Analysis-of-Contact-Models">&#182;</a></h1><p>In this tutorial, we compute the force-displacement curves for tow different viscoelastic models: Hertz-Mindlin and Spring-Dashpot. The input script file is found in the examples/scripts/Contact-Models directory.</p>
 
 </div>
 </div>
@@ -11788,22 +11788,13 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">PyGran.Materials</span> <span class="kn">import</span> <span class="n">stearicAcid</span>
 
 <span class="c1"># Import matplotlib for plotting</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-
-<span class="c1"># Setup matplotlib params</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">})</span>
-                    
+ 
 <span class="c1"># Create a list of contact models to analyze</span>
 <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">Si</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">SpringDashpot</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">HertzMindlin</span><span class="p">]</span>
 
 <span class="c1"># Set particle radius to 100 microns</span>
 <span class="n">stearicAcid</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-4</span>
-
-<span class="c1"># Create a figure with pylab</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span> <span class="mi">80</span><span class="p">)</span>
 
 <span class="c1"># Compute the force-displacement curve</span>
 <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>

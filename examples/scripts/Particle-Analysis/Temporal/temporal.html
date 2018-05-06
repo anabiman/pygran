@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Temporal</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>temporal</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11784,17 +11784,9 @@ div#notebook {
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Import PyGran + matplotlib modules</span>
 <span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Analyzer</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-
-<span class="c1"># Set matplotlib params</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline 
 
 <span class="c1"># Create a PyGran System from a dump file (default si units)</span>
-<span class="n">System</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;/home/levnon/Desktop/flow/output/traj/traj*.dump&#39;</span><span class="p">)</span>
-
-<span class="c1"># Load snapshot of the system</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span> 
-<span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;snapshot.png&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">368</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">590</span><span class="p">)</span>
+<span class="n">System</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;traj*.dump&#39;</span><span class="p">)</span>
 
 <span class="c1"># Timestep used in simulation (s)</span>
 <span class="n">dt</span> <span class="o">=</span> <span class="mf">1e-6</span>
@@ -11852,16 +11844,7 @@ height=590
 <span class="n">data</span> <span class="o">=</span> <span class="n">array</span><span class="p">([[</span><span class="n">ts</span> <span class="o">*</span> <span class="n">dt</span><span class="p">,</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span> <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">System</span><span class="p">])</span>
 
 <span class="c1"># Plot bed height (mm) vs time (ms)</span>
-<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">})</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">)</span>
-
-<span class="c1"># Add plot labels</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (ms)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Height (mm)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11913,10 +11896,6 @@ height=590
 <span class="c1"># method, such as com, density, etc.</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plot2D</span><span class="o">.</span><span class="n">timePlot</span><span class="p">(</span><span class="n">System</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">xscale</span><span class="o">=</span><span class="n">dt</span><span class="o">*</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">yscale</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> \
                       <span class="n">lineStyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
-
-<span class="c1"># Modify y-axis label</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Height (mm)&#39;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time (ms)&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>

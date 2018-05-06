@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Structural</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>structural</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11784,19 +11784,9 @@ div#notebook {
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Import PyGran + matplotlib modules</span>
 <span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Analyzer</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-
-<span class="c1"># Set matplotlib params</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline 
-<span class="n">mpl</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span><span class="mi">18</span><span class="p">})</span>
 
 <span class="c1"># Create a granular object from a LIGGGHTS dump file</span>
-<span class="n">Sys</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;traj*.dump&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;si&#39;</span><span class="p">)</span>
-
-<span class="c1"># Load snapshot of the system</span>
-<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span> 
-<span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;snapshot.png&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">368</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">590</span><span class="p">)</span>
+<span class="n">Sys</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;traj*.dump&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11957,7 +11947,7 @@ Resolution chosen is 3.94889564659
 <span class="n">radius</span> <span class="o">=</span> <span class="n">Sys</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
 <span class="c1"># Construct + plot histogram of overlaps over 20 bins</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">overlaps</span> <span class="o">/</span> <span class="n">radius</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">overlaps</span> <span class="o">/</span> <span class="n">radius</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 
 </div>
