@@ -5,7 +5,7 @@ PyGran is an open-source toolkit primarily designed for analyzing DEM simulation
 The main features of PyGran:
 
 - Interactive DEM simulation and/or analysis using Python 
-- Parallel "multiple parameter, single script" DEM simulations for parametrization (DOE) and sensitivity analysis
+- Parallel "multiple parameter, single script" simulation for parametrization and sensitivity analysis
 - Intuitive (matlab-like) syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)
 - Post-processing coupled particle-mesh DEM simulation with VTK
 - Quick and easy plotting of DEM data with matplotlib
