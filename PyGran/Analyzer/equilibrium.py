@@ -95,7 +95,7 @@ class Neighbors(object):
 		return self._pairs
 
 	def coon(self, type1=1, type2=2):
-		""" Returns the coordination number per particle. For binary mixtures
+		""" Computes the coordination number per particle. For binary mixtures
 		the default coordinations numbers are returned as two cross coordination 
 		number arrays (tuple). For auto (self) coordination numbers, specify type1
 		and type2 accordingly.
@@ -105,6 +105,8 @@ class Neighbors(object):
 
 		TODO: support multi-body entities for single component systems
 		TODO: support tertiary systems 
+
+		Returns an array of coon for all particles of size natoms x ntypes
 		"""
 		
 		if self._binary:
@@ -179,7 +181,7 @@ class Neighbors(object):
 
 					typeB = tmpB
 
-			return typeA, typeB
+			return numpy.array([typeA, typeB]).T
 		else:
 
 			if hasattr(self._Particles, 'mol'):
@@ -205,7 +207,8 @@ class Neighbors(object):
 		""" Returns a non-overlapping Particles class from the given configuration 
 		
 		@[percent]: filter all particles overlapping by a certain percentage
-		@
+
+		Returns a new Particles class
 		"""
 
 		percent /= 100.0
@@ -229,12 +232,12 @@ class Neighbors(object):
 
 		return Particles[indices]
 
-	def forceChain(self, axis = (0,2), alpha = numpy.pi/4, plot_stress=True, plot_parts=False, peters=True, threshold=1):
+	def forceChain(self, axes = (0,2), alpha = numpy.pi/4, plot_stress=True, plot_parts=False, peters=True, threshold=1):
 		""" Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
 		'Characterization of force chains in granular material'.
 
-		@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -> (x,y)
-		@ alpha: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.
+		@ [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -> (x,y)
+		@ [alpha]: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.
 		Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of the paper cited above.
 		"""
 
@@ -242,7 +245,7 @@ class Neighbors(object):
 		stress_prin = numpy.zeros((self._Particles.natoms, 3)) # 2 stress components + angle = 4 dims
 
 		coords = numpy.array([self._Particles.x, self._Particles.y, self._Particles.z])
-		x,y = coords[axis[0]], coords[axis[1]]
+		x,y = coords[axes[0]], coords[axes[1]]
 
 		# Compute net stresses on all particles
 		for contact in self._overlaps:
@@ -286,7 +289,7 @@ class Neighbors(object):
 			Particles = self._Particles[indices]
 
 			coords = numpy.array([Particles.x, Particles.y, Particles.z])
-			x,y = coords[axis[0]], coords[axis[1]]
+			x,y = coords[axes[0]], coords[axes[1]]
 
 			stress_prin = stress_prin[indices,:]
 			stress_norm = stress_norm[indices]
@@ -315,8 +318,6 @@ class Neighbors(object):
 
 			return stress_prin
 
-
-
 		else: # use Peters' algorithm for computing force chain propagation
 			# Section V. THE ALGORITHM (page 4)
 			# Step 1: filter out particles with less than the mean principal stress
@@ -326,7 +327,7 @@ class Neighbors(object):
 
 			# Step 2: filter out particles which are in contact with 1 or less 'highly stressed' particles
 			# Construct an nns list
-			coords = self._coords[indices,:][:,axis] 
+			coords = self._coords[indices,:][:,axes] 
 			stress_prin = stress_prin[indices,:]
 			radii = self._Particles.radius[indices]
 
@@ -414,19 +415,3 @@ class Neighbors(object):
 			plt.show()
 
 			return chain, stress_prin
-
-	def findWithin(self, coords , r):
-		""" Find all points within distance r of point(s) coords.
-		TODO: Support walls aligned arbitrarily in space """
-
-		#indices = [item for i in indices for item in i]
-		indices = list(numpy.unique(indices))
-
-		if len(indices):
-			# calculate distance along the z-axis (must take other axes into account)
-			lengths = numpy.fabs(self._coords[indices,-1] - coords[:,-1][0])
-
-			parts = self._Particles[indices]
-			return parts[numpy.where(lengths <= parts.radius)]
-
-		return None
