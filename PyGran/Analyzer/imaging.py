@@ -101,17 +101,19 @@ def _mapPositions(Particles, axis, resol=None):
 
 	return x,y,h
 
-def slice(Particles, zmin, zmax, axis, size, resol=None, output=None, imgShow=False):
+def slice(Particles, zmin, zmax, axis, size=None, resol=None, output=None, imgShow=False):
 	"""
 	Generates a 2D image from a slice (limited by 'zmin/zmax' and of resolution '1/dz') 
-	of a 3D config in the Particles class. The resol is in distance per pixel.
+	of a 3D config in the Particles class. The 'resol' is in distance per pixel, which controls
+	the image size unless 'size' is supplied by the user. The latter is useful when constructing
+	a 3D image of constant number of rows/columns.
 	
 	@Particles: a PyGran.Analyzer.core.SubSystem class
 	@zmin: minimum height/depth/width of the slice
 	@max: maximum height/depth/width of the slice
 	@axis: a str that sets the axis to slice the image across ('x', 'y', or 'z')
-	@size: tuple (length, width) specifying the generated image size
-	@[resol]: image resolution in meters/pixel
+	@[resol]: image resolution in distance/pixel (default 1)
+	@[size]: tuple (length, width) specifying the generated image size
 	@[output]: a str that sets the img output filename to be written
 	@[imgShow]: boolean variable, if true displays the output image
 
@@ -130,7 +132,10 @@ def slice(Particles, zmin, zmax, axis, size, resol=None, output=None, imgShow=Fa
 
 	x,y,h = _mapPositions(Particles, axis, resol)
 
-	length, width = size[0], size[1]
+	if size:
+		length, width = size[0], size[1]
+	else:
+		length, width = max(int(y.max() / resol)), max(int(x.max() / resol))
 
 	img = Image.new('RGB', (length, width), "black") # create a new black image
 	pixels = img.load() # create the pixel map
