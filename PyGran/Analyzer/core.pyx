@@ -38,6 +38,8 @@ import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 from PyGran.Tools import convert
 from scipy.stats import binned_statistic
+import importlib
+import numbers
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
@@ -81,6 +83,14 @@ these properties. This class is iterable but NOT an iterator. """
 			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).
 			# ONLY arrays can be slices based on user selection.
 
+	@property
+	def keys(self):
+		""" Returns all stored attribute keynames """
+		if hasattr(self, 'data'):
+			return self.data.keys()
+		else:
+			return None
+
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing)
 		and return as numpy arrays for numerical computations / manipulations"""
@@ -101,7 +111,13 @@ these properties. This class is iterable but NOT an iterator. """
 			if isinstance(self.data[key], np.ndarray):
 
 				if sel is not None:
+					if type(self.data[key]) is np.ndarray:
+						self.data[key].flags.writeable = True
+					
 					self.data[key] = self.data[key][sel]
+
+					if type(self.data[key]) is np.ndarray:
+						self.data[key].flags.writeable = False
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -133,7 +149,8 @@ these properties. This class is iterable but NOT an iterator. """
 		""" SubSystem can be sliced with this function """
 
 		# Get the type of the class (not necessarily SubSystem for derived classes)
-		cName = eval(type(self).__name__)
+		module = importlib.import_module(__name__)
+		cName = getattr(module, type(self).__name__)
 
 		obj = cName(sel=sel, units=self._units, data=self.data.copy())
 
@@ -227,35 +244,29 @@ these properties. This class is iterable but NOT an iterator. """
 
 	def __add__(self, obj):
 		""" Adds two classes together, or operates scalars/vectors on particle radii/positions
-		TODO: get this working with meshes """
+		TODO: get this working with meshes."""
+
+		data = collections.OrderedDict()
 
 		if type(obj) is type(self):
 
-			if len(obj) == len(self):
+			for key in self.keys:
 
-				if len(self.data.keys())  < len(obj.data.keys()):
-					data = self.data.copy()
-					datac = obj.data
-				else:
-					data = obj.data.copy()
-					datac = self.data
-
-				for key in datac.keys():
-					if key in data:
-						if type(datac[key]) is np.array:
-							data[key] = data[key].copy()
-
-						data[key] += datac[key]
+				if key in obj.data:
+					if isinstance(self.data[key], np.ndarray):
+						data[key] = np.concatenate((self.data[key], obj.data[key]))
+					elif isinstance(self.data[key], numbers.Number):
+						data[key] = self.data[key] + obj.data[key]
 					else:
-						if type(datac[key]) is np.array:
-							data[key] = datac[key].copy()
-						else:
-							data[key] = datac[key]
+						# what to do with tuples / lists such as box size ???
+						pass
 
-				return eval(type(self).__name__)(None, self._units, **data)
-			else:
-				print('Two subsystems with different numbers of elements cannot be added.')
-				return None
+			module = importlib.import_module(__name__)
+			cName = getattr(module, type(self).__name__)
+
+			return cName(sel=None, units=self._units, data=data)
+		else:
+			raise RuntimeError("Cannot add two objects of different types: {} and {}".format(type(obj), type(self)))
 
 	def __sub__(self, obj):
 		""" Subtracts scalars/vectors from particle radii/positions
@@ -274,7 +285,7 @@ these properties. This class is iterable but NOT an iterator. """
 		return self
 
 	def __mul__(self, obj):
-		""" Subtracts scalars/vectors from particle radii/positions
+		""" Multiplies scalars/vectors from particle radii/positions
 		TODO: get this working with meshes """
 
 		if type(obj) is tuple:
@@ -290,7 +301,7 @@ these properties. This class is iterable but NOT an iterator. """
 		return self
 
 	def __div__(self, obj):
-		""" Subtracts scalars/vectors from particle radii/positions
+		""" Divides scalars/vectors from particle radii/positions
 		TODO: get this working with meshes """
 
 		if type(obj) is tuple:
