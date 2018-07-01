@@ -434,7 +434,11 @@ class DEMPy:
       region = args['region']
     else:
       # Default region is sim box
-      region = ('block', self.pargs['box'])
+      if 'cylinder' in self.pargs:
+        region = ('cylinder', self.pargs['cylinder'])
+      else:
+        region = ('block', self.pargs['box'])
+        
       region = tuple([region[0]] + [i for i in region[1:][0]])
       args['region'] = region
 
@@ -655,35 +659,33 @@ class DEMPy:
     """
     # Remove any DUMP-IDS 1st in case the user wants to move a mesh
     if 'mesh' in self.pargs:
-      if 'import' in self.pargs['mesh']:
-        if self.pargs['mesh']['import']:
-          if name in self.pargs['mesh']:
-            # must delete all meshes / dumps in order to re-import remaining meshes
-            for dump in self.pargs['traj']['dump_mname']:
-              self.lmp.command('undump {}'.format(dump))
+      if name in self.pargs['mesh']:
+        # must delete all meshes / dumps in order to re-import remaining meshes
+        for dump in self.pargs['traj']['dump_mname']:
+          self.lmp.command('undump {}'.format(dump))
 
-            self.lmp.command('unfix walls')
+        self.lmp.command('unfix walls')
 
-            for i, mesh in enumerate(self.pargs['mesh'].keys()):
-              self.lmp.command('unfix {}'.format(mesh))
+        for i, mesh in enumerate(self.pargs['mesh'].keys()):
+          self.lmp.command('unfix {}'.format(mesh))
 
-            if 'mfile' in self.pargs['traj']:
-              if isinstance(self.pargs['traj']['mfile'], list):
-                raise RuntimeError('mfile cannot be a list. Something is not setup correctly.')
-              elif self.pargs['traj']['mfile']: # the user has requested all mesh(es) be written as one file
-                pass
-              else: # self.pargs['traj']['mfile'] had better be None
-                assert(self.pargs['traj']['mfile'] is None)
+        if 'mfile' in self.pargs['traj']:
+          if isinstance(self.pargs['traj']['mfile'], list):
+            raise RuntimeError('mfile cannot be a list. Something is not setup correctly.')
+          elif self.pargs['traj']['mfile']: # the user has requested all mesh(es) be written as one file
+            pass
+          else: # self.pargs['traj']['mfile'] had better be None
+            assert(self.pargs['traj']['mfile'] is None)
 
-            del self.pargs['mesh'][name]
+        del self.pargs['mesh'][name]
 
-            # Re-import any remaining meshes
-            self.importMeshes()
+        # Re-import any remaining meshes
+        self.importMeshes()
 
-            # Create new dump setups, leaving particle dumps intact
-            self.dumpSetup(only_mesh=True)
+        # Create new dump setups, leaving particle dumps intact
+        self.dumpSetup(only_mesh=True)
 
-            return 0
+        return 0
     
     # Otherwise, we are just unfixing a non-mesh fix
     self.lmp.command('unfix {}'.format(name))
@@ -924,7 +926,7 @@ class DEMPy:
 
     self.pargs['traj']['dump_mname'] = []
 
-    # Make sure meshes are define so we can dump them if requested (or not)
+    # Make sure meshes are defined so we can dump them if requested (or not)
     if 'mesh' in self.pargs:
       if hasattr(self, 'dump'):
         if self.dump:
