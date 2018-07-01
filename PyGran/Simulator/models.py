@@ -443,7 +443,7 @@ class HertzMindlin(Model):
 		super(HertzMindlin, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model', 'hertz', 'tangential history', 'cohesion sjkr', \
+			self.params['model-args'] = ('gran', 'model hertz', 'tangential history', 'cohesion sjkr', \
 			'tangential_damping on', 'limitForce on') # the order matters here
 		else:
 			self.params['model-args'] = self.params['model-args']
