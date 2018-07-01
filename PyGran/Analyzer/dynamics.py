@@ -23,17 +23,23 @@ class Temporal(object):
 	def __init__(self, System):
 		self.System = System
 
-	def timeSeries(self, att):
+	def series(self, attr):
 		out = []
+		self.System.rewind()
+
 		for ts in self.System:
-			out.append(self.System.Particles.__getattribute__(att))
+			if attr in self.System.Particles.data:
+				out.append(self.System.Particles.__getattribute__(attr))
+
+		self.System.rewind()
 
 		return numpy.array(out)
 		
-	def computeFlow(self, density, dt):
+	def flow(self, density=None, dt=1):
 		"""
-		Computes flow rate: N/t for a selection *sel*
-		@ data: list of dictionaries containing simulation and particle data (box size, x,y,z, etc.)
+		Computes flow rate
+		@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time
+		@[dt]: timestep in units of time, default 1.
 
 		TODO: Make it more efficient
 		"""
@@ -54,4 +60,6 @@ class Temporal(object):
 				time = (self.System.Particles.timestep - t0) * dt
 				mass.append( numpy.sum(- density * 4.0 / 3.0 * numpy.pi * (self.System.Particles.natoms - N0) * (self.System.Particles.radius**3.0) / time) )
 				
-		return mass
+		self.System.rewind()
+
+		return numpy.array(mass)
