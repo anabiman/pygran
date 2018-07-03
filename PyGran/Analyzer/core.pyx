@@ -280,7 +280,7 @@ these properties. This class is iterable but NOT an iterator. """
 				elif len(obj) == len(self): # gotta make sure both classes being subtracted have the same number of elements
 					self.data[att] -= obj.data[att]
 				else:
-					print 'Two subsystems with different number of elements cannot be subtracted.'
+					print('Two subsystems with different number of elements cannot be subtracted.')
 
 		return self
 
@@ -288,17 +288,27 @@ these properties. This class is iterable but NOT an iterator. """
 		""" Multiplies scalars/vectors from particle radii/positions
 		TODO: get this working with meshes """
 
-		if type(obj) is tuple:
-			obj, att = obj
-			if type(obj) is type(self):
-				if att is 'all':
-					pass
-				elif len(obj) == len(self): # gotta make sure both classes being multiplied have the same number of elements
-					self.data[att] *= obj.data[att]
-				else:
-					print 'Two subsystems with different number of elements cannot be multiplied.'
+		if type(obj) is not type(self):
+			raise RuntimeError('Two subsystems with different types cannot be multiplied.')
+		
+		if len(obj) != len(self): # gotta make sure both classes being multiplied have the same number of elements
+			raise RuntimeError('Two subsystems with different number of elements cannot be multiplied.')
 
-		return self
+		data = collections.OrderedDict()
+
+		for key in self.keys:
+
+			if key in obj.data:
+				if isinstance(self.data[key], np.ndarray):
+					data[key] = np.sqrt(np.outer(self.data[key], obj.data[key])).flatten()
+				else:
+					# what to do with tuples / lists such as box size ???
+					pass
+
+		module = importlib.import_module(__name__)
+		cName = getattr(module, type(self).__name__)
+
+		return cName(sel=None, units=self._units, data=data)
 
 	def __div__(self, obj):
 		""" Divides scalars/vectors from particle radii/positions
@@ -312,7 +322,7 @@ these properties. This class is iterable but NOT an iterator. """
 				elif len(obj) == len(self): # gotta make sure both classes being divided have the same number of elements
 					self.data[att] /= obj.data[att]
 				else:
-					print 'Two subsystems with different number of elements cannot be divided.'
+					print('Two subsystems with different number of elements cannot be divided.')
 
 		return self
 
@@ -357,7 +367,7 @@ these properties. This class is iterable but NOT an iterator. """
 	def translate(self, value, attr):
 		""" Translates all ss elements by a float or int 'value'
 
-		@[attr]: attribute to translate (positions by default)
+		@[attr]: tuple of attributes to translate system by (positions by default)
 		"""
 		for i, at in enumerate(attr):
 			if at in self.data:
@@ -536,7 +546,7 @@ class Mesh(SubSystem):
 
 		if self._fname:
 			if frame >= len(self._fname):
-				print 'Input frame exceeds max number of frames'
+				print('Input frame exceeds max number of frames')
 			else:
 				if frame == iframe:
 					pass
@@ -771,8 +781,8 @@ class Particles(SubSystem):
 		# Find particles which are close enough to the cube center that a sphere of radius
 		# rMax will not cross any face of the cube
 
-		print 'Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S * 2.0, rMax)
-		print 'Resolution chosen is {}'.format(dr)
+		print('Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S * 2.0, rMax))
+		print('Resolution chosen is {}'.format(dr))
 
 		bools1 = x > rMax - S
 		bools2 = x < (S - rMax)
@@ -1056,7 +1066,7 @@ class Particles(SubSystem):
 
 			if self._fp:
 				if iframe >= len(self._files):
-					print 'Input frame exceeds max number of frames'
+					print('Input frame exceeds max number of frames')
 				else:
 					if frame == iframe:
 						pass
@@ -1384,7 +1394,7 @@ class System(object):
 
 			self._units = units
 		else:
-			print 'Only S.I. and micro units currently supported'
+			print('Only S.I. and micro units currently supported')
 
 	def goto(self, frame):
 		""" Go to a specific frame in the trajectory. If frame is -1
@@ -1487,7 +1497,7 @@ def select(data, *region):
 			return np.arange(data['NATOMS'], dtype='int')
 		else:
 			if len(region) != 6:
-				print 'Length of region must be 6: (xmin, xmax, ymin, ymax, zmin, zmax)'
+				print('Length of region must be 6: (xmin, xmax, ymin, ymax, zmin, zmax)')
 				raise
 
 		xmin, xmax, ymin, ymax, zmin, zmax = region

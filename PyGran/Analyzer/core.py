@@ -37,6 +37,8 @@ import vtk
 from vtk.util.numpy_support import vtk_to_numpy
 from PyGran.Tools import convert
 from scipy.stats import binned_statistic
+import importlib
+import numbers
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
@@ -59,7 +61,7 @@ these properties. This class is iterable but NOT an iterator. """
 
 			self._constructAttributes()
 
-		else:
+		else: # otherwise, we're instantiating a new object
 			if 'units' in args:
 				self._units = args['units']
 
@@ -74,11 +76,19 @@ these properties. This class is iterable but NOT an iterator. """
 			if 'fname' in args:
 				self._fname = args['fname']
 
-		# If data is already coped from Particles, do nothing
+		# If data is already copied from Particles, do nothing
 		if not hasattr(self, 'data'):
 			self.data = collections.OrderedDict() # am ordered dict that contains either arrays
 			#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).
 			# ONLY arrays can be slices based on user selection.
+
+	@property
+	def keys(self):
+		""" Returns all stored attribute keynames """
+		if hasattr(self, 'data'):
+			return self.data.keys()
+		else:
+			return None
 
 	def _metaget(self, key):
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing)
@@ -100,7 +110,13 @@ these properties. This class is iterable but NOT an iterator. """
 			if isinstance(self.data[key], np.ndarray):
 
 				if sel is not None:
+					if type(self.data[key]) is np.ndarray:
+						self.data[key].flags.writeable = True
+					
 					self.data[key] = self.data[key][sel]
+
+					if type(self.data[key]) is np.ndarray:
+						self.data[key].flags.writeable = False
 
 		# Checks if the trajectory file supports reduction in key getters
 		# It's important to construct a (lambda) function for each attribute individually
@@ -132,7 +148,8 @@ these properties. This class is iterable but NOT an iterator. """
 		""" SubSystem can be sliced with this function """
 
 		# Get the type of the class (not necessarily SubSystem for derived classes)
-		cName = eval(type(self).__name__)
+		module = importlib.import_module(__name__)
+		cName = getattr(module, type(self).__name__)
 
 		obj = cName(sel=sel, units=self._units, data=self.data.copy())
 
@@ -226,35 +243,29 @@ these properties. This class is iterable but NOT an iterator. """
 
 	def __add__(self, obj):
 		""" Adds two classes together, or operates scalars/vectors on particle radii/positions
-		TODO: get this working with meshes """
+		TODO: get this working with meshes."""
+
+		data = collections.OrderedDict()
 
 		if type(obj) is type(self):
 
-			if len(obj) == len(self):
+			for key in self.keys:
 
-				if len(self.data.keys())  < len(obj.data.keys()):
-					data = self.data.copy()
-					datac = obj.data
-				else:
-					data = obj.data.copy()
-					datac = self.data
-
-				for key in datac.keys():
-					if key in data:
-						if type(datac[key]) is np.array:
-							data[key] = data[key].copy()
-
-						data[key] += datac[key]
+				if key in obj.data:
+					if isinstance(self.data[key], np.ndarray):
+						data[key] = np.concatenate((self.data[key], obj.data[key]))
+					elif isinstance(self.data[key], numbers.Number):
+						data[key] = self.data[key] + obj.data[key]
 					else:
-						if type(datac[key]) is np.array:
-							data[key] = datac[key].copy()
-						else:
-							data[key] = datac[key]
+						# what to do with tuples / lists such as box size ???
+						pass
 
-				return eval(type(self).__name__)(None, self._units, **data)
-			else:
-				print('Two subsystems with different numbers of elements cannot be added.')
-				return None
+			module = importlib.import_module(__name__)
+			cName = getattr(module, type(self).__name__)
+
+			return cName(sel=None, units=self._units, data=data)
+		else:
+			raise RuntimeError("Cannot add two objects of different types: {} and {}".format(type(obj), type(self)))
 
 	def __sub__(self, obj):
 		""" Subtracts scalars/vectors from particle radii/positions
@@ -268,28 +279,38 @@ these properties. This class is iterable but NOT an iterator. """
 				elif len(obj) == len(self): # gotta make sure both classes being subtracted have the same number of elements
 					self.data[att] -= obj.data[att]
 				else:
-					print 'Two subsystems with different number of elements cannot be subtracted.'
+					print('Two subsystems with different number of elements cannot be subtracted.')
 
 		return self
 
 	def __mul__(self, obj):
-		""" Subtracts scalars/vectors from particle radii/positions
+		""" Multiplies scalars/vectors from particle radii/positions
 		TODO: get this working with meshes """
 
-		if type(obj) is tuple:
-			obj, att = obj
-			if type(obj) is type(self):
-				if att is 'all':
-					pass
-				elif len(obj) == len(self): # gotta make sure both classes being multiplied have the same number of elements
-					self.data[att] *= obj.data[att]
-				else:
-					print 'Two subsystems with different number of elements cannot be multiplied.'
+		if type(obj) is not type(self):
+			raise RuntimeError('Two subsystems with different types cannot be multiplied.')
+		
+		if len(obj) != len(self): # gotta make sure both classes being multiplied have the same number of elements
+			raise RuntimeError('Two subsystems with different number of elements cannot be multiplied.')
 
-		return self
+		data = collections.OrderedDict()
+
+		for key in self.keys:
+
+			if key in obj.data:
+				if isinstance(self.data[key], np.ndarray):
+					data[key] = np.sqrt(np.outer(self.data[key], obj.data[key])).flatten()
+				else:
+					# what to do with tuples / lists such as box size ???
+					pass
+
+		module = importlib.import_module(__name__)
+		cName = getattr(module, type(self).__name__)
+
+		return cName(sel=None, units=self._units, data=data)
 
 	def __div__(self, obj):
-		""" Subtracts scalars/vectors from particle radii/positions
+		""" Divides scalars/vectors from particle radii/positions
 		TODO: get this working with meshes """
 
 		if type(obj) is tuple:
@@ -300,7 +321,7 @@ these properties. This class is iterable but NOT an iterator. """
 				elif len(obj) == len(self): # gotta make sure both classes being divided have the same number of elements
 					self.data[att] /= obj.data[att]
 				else:
-					print 'Two subsystems with different number of elements cannot be divided.'
+					print('Two subsystems with different number of elements cannot be divided.')
 
 		return self
 
@@ -345,7 +366,7 @@ these properties. This class is iterable but NOT an iterator. """
 	def translate(self, value, attr):
 		""" Translates all ss elements by a float or int 'value'
 
-		@[attr]: attribute to translate (positions by default)
+		@[attr]: tuple of attributes to translate system by (positions by default)
 		"""
 		for i, at in enumerate(attr):
 			if at in self.data:
@@ -402,9 +423,17 @@ class Mesh(SubSystem):
 			self._vtk = None
 
 		if self._vtk == 'poly':
-			self._reader = vtk.vtkPolyDataReader()
+			# Try polydata otherwise unstructured reader ... need to make this better
+			# The try-except control makes self._vtk kinda useless, right?
+			try:
+				self._reader = vtk.vtkPolyDataReader()
+			except:
+				self._reader = vtk.vtkUnstructuredGridReader()
 		else:
-			self._reader = vtk.vtkUnstructuredGridReader()
+			try:
+				self._reader = vtk.vtkUnstructuredGridReader()
+			except:
+				self._reader = vtk.vtkUnstructuredGridReader()			
 
 		super(Mesh, self).__init__(fname=fname)
 
@@ -418,6 +447,9 @@ class Mesh(SubSystem):
 				self._mesh = self._fname[0]
 
 		self._reader.SetFileName(self._mesh)
+		self._reader.ReadAllVectorsOn()
+		self._reader.ReadAllScalarsOn()
+
 		self._reader.Update() # Needed if we need to call GetScalarRange
 		self._output = self._reader.GetOutput()
 
@@ -495,6 +527,8 @@ class Mesh(SubSystem):
 			else:
 				break
 
+		self._constructAttributes()
+		
 	def _updateSystem(self):
 		""" Class function for updating the state of a Mesh """
 		# Must make sure fname is passed in case we're looping over a trajectory
@@ -511,7 +545,7 @@ class Mesh(SubSystem):
 
 		if self._fname:
 			if frame >= len(self._fname):
-				print 'Input frame exceeds max number of frames'
+				print('Input frame exceeds max number of frames')
 			else:
 				if frame == iframe:
 					pass
@@ -532,10 +566,6 @@ class Mesh(SubSystem):
 			frame += 1
 
 		return frame
-
-	def rewind(self):
-		if self._fname:
-			self._mesh = self._fname[0]
 
 	def __del__(self):
 
@@ -731,16 +761,14 @@ class Particles(SubSystem):
 		if not (self.natoms > 0):
 			raise RuntimeError('No Particles found.')
 
-		x, y, z = self.x, self.y, self.z
+		x, y, z = self.x.copy(), self.y.copy(), self.z.copy()
 
 		# center positions around 0
 		if center:
-			self.translate(-x.mean(), 'x')
-			self.translate(-y.mean(), 'y')
-			self.translate(-z.mean(), 'z')
-
-		print x.max(), y.max(), z.max()
-
+			x -= x.mean()
+			y -= y.mean()
+			z -= z.mean()
+		
 		S = min(x.max(), y.max(), z.max())
 
 		if rMax is None:
@@ -752,8 +780,8 @@ class Particles(SubSystem):
 		# Find particles which are close enough to the cube center that a sphere of radius
 		# rMax will not cross any face of the cube
 
-		print 'Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S * 2.0, rMax)
-		print 'Resolution chosen is {}'.format(dr)
+		print('Constructing a cube of length {} and a circumscribed sphere of radius {}'.format(S * 2.0, rMax))
+		print('Resolution chosen is {}'.format(dr))
 
 		bools1 = x > rMax - S
 		bools2 = x < (S - rMax)
@@ -993,16 +1021,6 @@ class Particles(SubSystem):
 
 		return 0
 
-	def rewind(self):
-
-		if self._fp:
-			self._fp.close()
-
-			if self._singleFile:
-				self._fp = open(self._fname)
-			else:
-				self._fp = open(self._files[0])
-
 	def _goto(self, iframe, frame):
 		""" This function assumes we're reading a non-const N trajectory.
 		"""
@@ -1047,7 +1065,7 @@ class Particles(SubSystem):
 
 			if self._fp:
 				if iframe >= len(self._files):
-					print 'Input frame exceeds max number of frames'
+					print('Input frame exceeds max number of frames')
 				else:
 					if frame == iframe:
 						pass
@@ -1185,7 +1203,7 @@ class Particles(SubSystem):
 					self._constructAttributes()
 
 				else:
-					raise IOError('{} format does not support trajectory files.'.format(self._ftype))
+					raise IOError('{} format is not a supported trajectory file.'.format(self._ftype))
 
 			else:
 				if self._ftype == 'dump':
@@ -1276,11 +1294,16 @@ class Factory(object):
 		for ss in args:
 			if(Factory._str_to_class(ss)):
 
-				# Delete the filename so we can pass all other args to the SubSystem
-				fname = args[ss]
-				del args_copy[ss]
+				# Make sure a filename (str) was passed, else this could be an object instantiation
+				if isinstance(args[ss], str):
+					# Delete the filename so we can pass all other args to the SubSystem
+					fname = args[ss]
+					del args_copy[ss]
 
-				obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
+					obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
+				else:
+					# We must be passing a SubSystem class to instantiate System
+					obj.append([ss, args[ss]])
 
 		return obj
 
@@ -1342,6 +1365,7 @@ class System(object):
 	def __init__(self, **args):
 
 		self.frame = 0
+		self.args = args
 		objs = Factory.factory(**args)
 
 		for ss, obj in objs:
@@ -1369,7 +1393,7 @@ class System(object):
 
 			self._units = units
 		else:
-			print 'Only S.I. and micro units currently supported'
+			print('Only S.I. and micro units currently supported')
 
 	def goto(self, frame):
 		""" Go to a specific frame in the trajectory. If frame is -1
@@ -1383,11 +1407,30 @@ class System(object):
 		if frame < self.frame and frame >= 0:
 			self.rewind()
 
-		for ss in self.__dict__:
-			if hasattr(self.__dict__[ss], '_goto'):
-				self.frame = self.__dict__[ss]._goto(frame, self.frame)
+		else:
+			for ss in self.__dict__:
+				if hasattr(self.__dict__[ss], '_goto'):
+					self.frame = self.__dict__[ss]._goto(frame, self.frame)
 
-		self._updateSystem()
+			# Rewind already updates the system, so we call _updateSystem only if
+			# the frame is moving forward
+			self._updateSystem()
+
+	def skip(self):
+		""" Skips all empty frames i.e. moves the trajectory to the 1st frame containing
+		non-zero elements """
+		forward = True
+
+		while forward:
+			for ss in self.__dict__: 
+				if hasattr(self.__dict__[ss], '_constructAttributes'):
+					if len(self.__dict__[ss]):
+						forward = False
+
+			if not forward:
+				break
+			else:
+				self.frame = self.next()
 
 	@property
 	def keys(self):
@@ -1397,22 +1440,25 @@ class System(object):
 	def rewind(self):
 		"""Read trajectory from the beginning"""
 
-		self.frame = -1
-
-		for ss in self.__dict__:
-			if hasattr(self.__dict__[ss], 'rewind'):
-				self.__dict__[ss].rewind()
+		self.__init__(**self.args)
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
 		return self.next()
 
 	def next(self):
-		""" This method updates the system attributes! """
+		""" This method updates the system attributes!
+		TODO: Frame 0 / initial frame  is always excluded with this approach.
+		 """
 
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_readFile'):
-				self.frame = self.__dict__[ss]._readFile(self.frame)
+				self.__dict__[ss]._readFile(self.frame)
+
+				# we update the fame only after _readFile is called. If the latter
+				# fails, the frame is not updated (due to yield), which is exactly
+				# the behavior we want. Ding!
+				self.frame += 1
 
 		self._updateSystem()
 
@@ -1450,7 +1496,7 @@ def select(data, *region):
 			return np.arange(data['NATOMS'], dtype='int')
 		else:
 			if len(region) != 6:
-				print 'Length of region must be 6: (xmin, xmax, ymin, ymax, zmin, zmax)'
+				print('Length of region must be 6: (xmin, xmax, ymin, ymax, zmin, zmax)')
 				raise
 
 		xmin, xmax, ymin, ymax, zmin, zmax = region
