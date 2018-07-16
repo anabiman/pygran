@@ -41,6 +41,7 @@ class Model(object):
 
 		self.params = params
 		self.params['nSS'] = 0
+		self.JKR = False # Assume JKR cohesion model is by default OFF
 
 		if 'debug' in params:
 			self._debug = params['debug']
@@ -227,7 +228,9 @@ class Model(object):
 			setattr(self, prop, self.materials[prop])
 
 	def contactTime(self):
-		""" Computes the characteristic collision time assuming for a spring dashpot model """
+		""" Computes the characteristic collision time assuming for a spring dashpot model 
+
+		Returns the contact time (float) """
 
 		if not hasattr(self, 'coefficientRestitution'):
 			rest = 0.9
@@ -247,10 +250,13 @@ class Model(object):
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
 
 	def displacement(self):
-		""" Generator that computes (iteratively) the contact overlap as a function of time """
+		""" Generator that computes (iteratively) the contact overlap as a function of time 
+
+		Returns time, delta, force as numpy arrays.
+		"""
 
 		if not hasattr(self, 'characteristicVelocity'):
-			self.characteristicVelocity = 0
+			self.characteristicVelocity = 0.1
 
 		y0 = np.array([0, self.characteristicVelocity])
 		t0 = .0
@@ -260,8 +266,8 @@ class Model(object):
 		inte.set_integrator('dopri5')
 		inte.set_initial_value(y0, t0)
 
-		Tc = self.contactTime()
-		dt = Tc / 100.
+		Tc = self.contactTime() * 10
+		dt = Tc / 1000.0
 
 		self.end = False
 		time, delta, force = [], [], []
@@ -304,30 +310,51 @@ class Model(object):
 
 		radius = self.radius
 
-		if delta >= 0:
-			self._contRadius = np.sqrt(delta * radius)
-		
-		if hasattr(self, 'cohesionEnergyDensity'):
-			Gamma = self.cohesionEnergyDensity
+		if self.JKR:
+			if hasattr(self, 'cohesionEnergyDensity'):
+				Gamma = self.cohesionEnergyDensity
 
-			poiss = self.poissonsRatio
-			yMod = self.youngsModulus
-			yMod /= 2.0 * (1.0  - poiss )
+				poiss = self.poissonsRatio
+				yMod = self.youngsModulus
+				yMod /= 2.0 * (1.0  - poiss )
 
-			def jkr_disp(a, *args):
-				delta, Gamma, yMod, radius = args
-				return delta - a**2.0/radius + np.sqrt(2.0 * np.pi * Gamma * a / yMod)
+				def jkr_disp(a, *args):
+					delta, Gamma, yMod, radius = args
+					return delta - a**4.0/radius + np.sqrt(2.0 * np.pi * Gamma / yMod) * a
 
-			def jkr_jacob(a, *args):
-				_, Gamma, yMod, radius = args
-				return - 2.0 * a /radius + np.sqrt(np.pi * Gamma / (a * 2.0 * yMod))
+				def jkr_jacob(a, *args):
+					_, Gamma, yMod, radius = args
+					return - 4.0 * a**3/radius + np.sqrt(np.pi * Gamma / (a * 2.0 * yMod))
 
-			output = fsolve(jkr_disp, x0 = self._contRadius, args = (delta, Gamma, yMod, radius), full_output=True, fprime = jkr_jacob)
-			contRadius = output[0]
-			info = output[1]
+				def contactRadius_symbolic(deltan, *args):
+					gamma, yeff, reffr = args
 
-			if self._debug:
-				print(info)
+					c0 = reffr * reffr * deltan * deltan
+					c1 = - 4.0 / yeff * np.pi * gamma * reffr * reffr
+					c2 = - 2.0 * reffr * deltan
+					P1 = - c2 * c2 / 12.0 - c0
+					Q1 = - c2 * c2 * c2 / 108.0 + c0 * c2 / 3.0 - c1 * c1 / 8.0
+					U1s = Q1 * Q1 / 4.0 + P1 * P1 * P1 / 27.0
+					U1 =  (-Q1 / 2.0 + np.sqrt(U1s))**(1.0/3.0) if U1s > 0 else (-Q1/2.0)**(1.0/3.0)
+					s1 = -5.0/6.0 * c2 + U1 - P1 / (3. * U1)  if deltan != 0 else - 5.0 / 6.0 * c2 - (Q1)**(1.0/3.0)
+					w1 = np.sqrt(c2 + 2.0 * s1)
+					L1 = c1 / (2.0 * w1)
+					contactRadH = 0 if np.isnan(w1) else 0.5 * w1
+					corrJKRarg = w1 * w1 - 4.0 * ( c2 + s1 + L1 )
+					corrJKR = 0.5 * np.sqrt(corrJKRarg)
+					contactRad = contactRadH if (np.isnan(corrJKR) or corrJKR < 0) else contactRadH + corrJKR
+
+					return contactRad
+
+				#output = fsolve(jkr_disp, x0 = 0 * np.sqrt(self._contRadius), args = (delta, Gamma, yMod, radius), full_output=True, fprime = jkr_jacob)
+				#contRadius = output[0]**2
+				#info = output[1]
+				contRadius = contactRadius_symbolic(delta, *(Gamma, yMod, radius))
+
+				if self._debug:
+					print(info)
+			else:
+				contRadius = np.sqrt(delta * self.radius)
 		else:
 			contRadius = np.sqrt(delta * self.radius)
 
@@ -514,6 +541,7 @@ class ThorntonNing(Model):
 	def __init__(self, **params):
 
 		super(ThorntonNing, self).__init__(**params)
+		self.JKR = True
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model hysteresis_coh/thorn', \
@@ -538,7 +566,7 @@ class ThorntonNing(Model):
 		py = self.yieldPress
 
 		def obj(x, *args):
-			func =  py * x - 2 * yEff * x**3 / (np.pi * self.radius) 
+			func = py * x - 2 * yEff * x**3 / (np.pi * self.radius) 
 
 			if hasattr(self, 'cohesionEnergyDensity'):
 				func += np.sqrt(2 * self.cohesionEnergyDensity * yEff / np.pi)
@@ -579,7 +607,16 @@ class ThorntonNing(Model):
 		if self.unloading:
 			if not self.noCheck:
 				self.noCheck = True
-				self.radius = self.springStiff(self.maxDisp) * self.maxDisp / self.maxForce * self.radius
+
+				contRadius = self.contactRadius(self.maxDisp)
+				factor = self.maxForce
+
+				if hasattr(self, 'cohesionEnergyDensity'):
+					factor += self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius) 
+					#np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
+
+				reff = self.radius
+				self.radius = 4.0/3.0 * yEff * contRadius**3 / factor
 
 				# Solve for the contact radius
 				a = 4.0 * yEff / (3 * self.radius)
@@ -594,16 +631,12 @@ class ThorntonNing(Model):
 				x = (- b + np.sqrt(b*b - 4*a*c)) / (2 * a)
 				contRadius = x**(2.0/3.0)
 
-				self.deltap = self.maxDisp - contRadius**2 / self.radius
-
-				if hasattr(self, 'cohesionEnergyDensity'):
-					self.deltap +=  np.sqrt(2 * np.pi * self.cohesionEnergyDensity * contRadius / yEff)
+				self.deltap = contRadius*contRadius * (1.0/reff - 1.0/self.radius);
 
 				# if cohesion - 0, deltap becomes:
 				# self.deltap = self.maxDisp - (self.maxForce * 3 / (4. * yEff * np.sqrt(self.radius)))**(2.0/3.0)
 
 			contRadius = self.contactRadius(delta - self.deltap)
-
 			
 			force = 4.0/3.0 * yEff * contRadius**3 / self.radius 
 
@@ -626,7 +659,7 @@ class ThorntonNing(Model):
 			force = 4.0/3.0 * yEff * self.radiusy**3 / self.radius
 
 			if hasattr(self, 'cohesionEnergyDensity'):
-				return force - self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius)
+				force -= self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius)
 			
 			return force
 
