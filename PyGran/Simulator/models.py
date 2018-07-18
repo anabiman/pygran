@@ -269,7 +269,6 @@ class Model(object):
 		Tc = self.contactTime() * 10
 		dt = Tc / 1000.0
 
-		self.end = False
 		time, delta, force = [], [], []
 
 		def generator():
@@ -279,34 +278,30 @@ class Model(object):
 				yield inte.t + dt, inte.y, self.normalForce(inte.y[0]) + self.dissForce(inte.y[0], inte.y[1])
 
 		for t, soln, f in generator():
-			if self.end:
-				break
-			else:
-				time.append(t)
-				delta.append(soln)
-				force.append(f)
 
-				# for hysteretic models
-				if hasattr(self, 'maxDisp'):
-					if soln[0] >= self.maxDisp:
-						self.maxDisp = soln[0]
-					else:
-						self.unloading = True
+			if hasattr(self, 'deltaf'):
+				if soln[0] <= - self.deltaf:
+					break
 
-				# for hysteretic models
-				if hasattr(self,'maxForce'):
-					self.maxForce = max(f, self.maxForce)
-						
+			time.append(t)
+			delta.append(soln)
+			force.append(f)
+
+			# for hysteretic models
+			if hasattr(self, 'maxDisp'):
+				if soln[0] >= self.maxDisp:
+					self.maxDisp = soln[0]
+				else:
+					self.unloading = True
+
+			# for hysteretic models
+			if hasattr(self,'maxForce'):
+				self.maxForce = max(f, self.maxForce)
+
 		return np.array(time), np.array(delta), np.array(force)
 
 	def contactRadius(self, delta):
 		""" Returns the contact radius based on Hertzian or JKR models"""
-
-		if type(delta) == np.ndarray:
-			if (delta < 0).any():
-				self.end = True
-		elif delta < 0:
-			self.end = True
 
 		radius = self.radius
 
@@ -336,13 +331,18 @@ class Model(object):
 					Q1 = - c2 * c2 * c2 / 108.0 + c0 * c2 / 3.0 - c1 * c1 / 8.0
 					U1s = Q1 * Q1 / 4.0 + P1 * P1 * P1 / 27.0
 					U1 =  (-Q1 / 2.0 + np.sqrt(U1s))**(1.0/3.0) if U1s > 0 else (-Q1/2.0)**(1.0/3.0)
+
 					s1 = -5.0/6.0 * c2 + U1 - P1 / (3. * U1)  if deltan != 0 else - 5.0 / 6.0 * c2 - (Q1)**(1.0/3.0)
 					w1 = np.sqrt(c2 + 2.0 * s1)
+
 					L1 = c1 / (2.0 * w1)
 					contactRadH = 0 if np.isnan(w1) else 0.5 * w1
 					corrJKRarg = w1 * w1 - 4.0 * ( c2 + s1 + L1 )
 					corrJKR = 0.5 * np.sqrt(corrJKRarg)
 					contactRad = contactRadH if (np.isnan(corrJKR) or corrJKR < 0) else contactRadH + corrJKR
+
+					if not np.isreal(contactRad):
+						contactRad = np.sqrt(reffr * delta)
 
 					return contactRad
 
@@ -535,7 +535,9 @@ class HertzMindlin(Model):
 
 class ThorntonNing(Model):
 	"""
-	A basic class that implements the Thornton elasto-plastic model
+	A basic class that implements the Thornton elasto-plastic model based on the publicationL
+	'A theoretical model for the stick/bounce behaviour of adhesive, elastic-plastic spheres', Powder
+	Tech, 99 (1998), 154-162
 	"""
 
 	def __init__(self, **params):
@@ -558,7 +560,7 @@ class ThorntonNing(Model):
 			self.noCheck = False
 
 	def computeYieldRadius(self):
-		""" Computes the contact radius at the yield point """
+		""" Computes the contact radius at the yield point based on Eq. (65) in Thornton-Ning's paper """
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -576,14 +578,16 @@ class ThorntonNing(Model):
 		def jacob(x, *args):
 			return py - 6 * yEff * x**2 / (np.pi * self.radius) 
 
-		output = fsolve(obj, x0 = 0, args = (), full_output=True, fprime = jacob)
-		contRadius = output[0] * output[0]
+		guess = py * np.pi * self.radius / (2.0 * yEff)
+
+		output = fsolve(obj, x0 = np.sqrt(guess), args = (), full_output=True, fprime = jacob)
+		contRadius = output[0][0] * output[0][0]
 		info = output[1]
 
 		if self._debug:
 			print(info)
 
-		return (0.5 * py * np.pi / yEff)**2 * self.radius
+		return contRadius
 
 	def springStiff(self, delta):
 		""" Computes the spring constant kn for
@@ -612,8 +616,7 @@ class ThorntonNing(Model):
 				factor = self.maxForce
 
 				if hasattr(self, 'cohesionEnergyDensity'):
-					factor += self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius) 
-					#np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
+					factor += np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
 
 				reff = self.radius
 				self.radius = 4.0/3.0 * yEff * contRadius**3 / factor
@@ -631,7 +634,10 @@ class ThorntonNing(Model):
 				x = (- b + np.sqrt(b*b - 4*a*c)) / (2 * a)
 				contRadius = x**(2.0/3.0)
 
-				self.deltap = contRadius*contRadius * (1.0/reff - 1.0/self.radius);
+				self.deltap = contRadius*contRadius * (1.0/reff - 1.0/self.radius)
+
+				if hasattr(self, 'cohesionEnergyDensity'):
+					self.deltaf = 3.0/4.0 * (np.pi**2 * self.cohesionEnergyDensity**2 * self.radius / yEff**2)**(1.0/3.0)
 
 				# if cohesion - 0, deltap becomes:
 				# self.deltap = self.maxDisp - (self.maxForce * 3 / (4. * yEff * np.sqrt(self.radius)))**(2.0/3.0)
