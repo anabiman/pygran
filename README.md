@@ -9,7 +9,7 @@ The main features of PyGran:
 - Intuitive (matlab-like) syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)
 - Post-processing coupled particle-mesh DEM simulation with VTK
 - Quick and easy plotting of DEM data with matplotlib
-- Support for high-performance computing using MPI
+- Support for high-performance computing with MPI
 
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
@@ -25,7 +25,7 @@ For more options and information on setting up PyGran, see chapter I in the manu
 ## Basic Usage
 ### Running DEM simulation with LIGGGHTS
 
-PyGran also provides an interface for running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code). This is achieved by importing the <i>Simulator</i> module as shown in the script below that simulates granular flow in a hopper.
+PyGran also provides an interface for running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code). This is achieved by importing the <i>Simulator</i> module as shown in the script below for simulating granular flow in a hopper.
 
 <p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 
@@ -40,7 +40,7 @@ param = {
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-	'SS': ({'material': stearicAcid, 'radius': ('constant', 5e-5),}, 
+	'species': ({'material': stearicAcid, 'radius': ('constant', 5e-5),}, 
 		),
 		
 	'gravity': (9.81, 0, 0, -1),
