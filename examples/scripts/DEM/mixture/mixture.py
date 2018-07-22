@@ -11,7 +11,7 @@ params = {
 	'box':  (-0.00025, 0.00025, -0.00025, 0.00025, 0, 0.002),
 
 	# Define component(s)
-	'SS': ({'material': stearicAcid, 'radius': ('gaussian number', 25.00e-6, 4.7e-6)},
+	'species': ({'material': stearicAcid, 'radius': ('gaussian number', 25.00e-6, 4.7e-6)},
 		{'material': glass, 'radius': ('gaussian number', 25.00e-6, 4.7e-6)}
 		),
 

@@ -15,7 +15,7 @@ params = {
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
 	# Define component(s)
-	'SS': ({'material': organic, 'radius': ('constant', 5e-5)},),
+	'species': ({'material': organic, 'radius': ('constant', 5e-5)},),
 
 	# Setup I/O params
 	'traj': {'freq':1000, 'style': 'custom/vtk', 'pfile': 'traj*.vtk', 'mfile': 'mesh*.vtk'},

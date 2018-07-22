@@ -9,7 +9,7 @@ params = {
 	'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
 
 	# Define component(s)
-	'SS': ({'material': organic, 'radius': ('constant', 2e-4)}, ),
+	'species': ({'material': organic, 'radius': ('constant', 2e-4)}, ),
 
 	# Timestep
 	'dt': 1e-6,

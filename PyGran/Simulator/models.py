@@ -51,13 +51,13 @@ class Model(object):
 		if 'engine' not in self.params:
 			self.params['engine'] = 'engine_liggghts'
 
-		if 'SS' in self.params:
-			self.params['nSS'] += len(self.params['SS'])
+		if 'species' in self.params:
+			self.params['nSS'] += len(self.params['species'])
 
 		idc = 1
 
-		if 'SS' in self.params:
-			for ss in self.params['SS']:
+		if 'species' in self.params:
+			for ss in self.params['species']:
 
 				if 'id' not in ss:
 					ss['id'] = idc
@@ -69,7 +69,7 @@ class Model(object):
 
 				# Make sure only mehs keywords supplied with files are counter, otherwise, they're args to the mesh wall!
 				if 'file' in self.params['mesh'][mesh]:
-					self.params['SS'] += ({'material':self.params['mesh'][mesh]['material']},)
+					self.params['species'] += ({'material':self.params['mesh'][mesh]['material']},)
 					self.params['nSS'] += 1
 
 					# By default all meshes are imported
@@ -112,8 +112,8 @@ class Model(object):
 			self.materials = self.params['material']
 
 		# Expand material properties based on number of components
-		if 'SS' in self.params:
-			for ss in self.params['SS']:
+		if 'species' in self.params:
+			for ss in self.params['species']:
 
 
 				# See if we're running PyGran in multi-mode
@@ -132,7 +132,7 @@ class Model(object):
 					ss['style'] = 'sphere'
 
 			# Use 1st component to find all material params ~ hackish!!! 
-			ss = self.params['SS'][0]
+			ss = self.params['species'][0]
 
 			if 'material' in ss:
 
@@ -146,7 +146,7 @@ class Model(object):
 						elif ss['material'][item][1] == 'scalar':
 							self.materials[item] = ss['material'][item][:2]
 				
-			for ss in self.params['SS']:
+			for ss in self.params['species']:
 				for item in ss['material']:
 					if type(ss['material'][item]) is float:
 						
@@ -157,7 +157,7 @@ class Model(object):
 			for item in self.materials:
 				if type(ss['material'][item]) is not float:
 
-					for ss in self.params['SS']:
+					for ss in self.params['species']:
 
 						if ss['material'][item][1] == 'peratomtype':
 							self.materials[item] =  self.materials[item] + (('{}').format(ss['material'][item][2]),)
@@ -166,7 +166,7 @@ class Model(object):
 							# assume the geometric mean suffices for estimating binary properties
 							for nss in range(self.params['nSS']):
 
-								prop = np.sqrt(float(ss['material'][item][2]) * float(self.params['SS'][nss]['material'][item][2]))
+								prop = np.sqrt(float(ss['material'][item][2]) * float(self.params['species'][nss]['material'][item][2]))
 								self.materials[item] =  self.materials[item] + (('{}').format(prop),)
 
 						# we should set this based on species type
@@ -181,8 +181,8 @@ class Model(object):
 
 		# Default traj I/O args
 		ms = False
-		if 'SS' in self.params:
-			for ss in self.params['SS']:
+		if 'species' in self.params:
+			for ss in self.params['species']:
 				if ss['style'] is 'multisphere':
 					ms = True
 
@@ -253,6 +253,8 @@ class Model(object):
 		""" Generator that computes (iteratively) the contact overlap as a function of time 
 
 		Returns time, delta, force as numpy arrays.
+
+		TODO: enable the user control the timestep / resolution.
 		"""
 
 		if not hasattr(self, 'characteristicVelocity'):
@@ -266,10 +268,11 @@ class Model(object):
 		inte.set_integrator('dopri5')
 		inte.set_initial_value(y0, t0)
 
-		Tc = self.contactTime() * 10
-		dt = Tc / 1000.0
+		Tc = self.contactTime() * 2
+		dt = Tc / 200
 
 		time, delta, force = [], [], []
+		self._contRadius = []
 
 		def generator():
 			while inte.successful() and (inte.t <= Tc):
@@ -280,7 +283,7 @@ class Model(object):
 		for t, soln, f in generator():
 
 			if hasattr(self, 'deltaf'):
-				if soln[0] <= - self.deltaf:
+				if soln[0] <= -10: #self.deltaf:
 					break
 
 			time.append(t)
@@ -298,9 +301,16 @@ class Model(object):
 			if hasattr(self,'maxForce'):
 				self.maxForce = max(f, self.maxForce)
 
+			self._contRadius.append(self._contactRadius(soln[0]))
+
 		return np.array(time), np.array(delta), np.array(force)
 
-	def contactRadius(self, delta):
+	@property
+	def contactRadius(self):
+		""" Returns the contact radius as a numpy array """
+		return np.array(self._contRadius)
+
+	def _contactRadius(self, delta):
 		""" Returns the contact radius based on Hertzian or JKR models"""
 
 		radius = self.radius
@@ -500,7 +510,7 @@ class HertzMindlin(Model):
 		radius = self.radius
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		contRadius = self.contactRadius(delta)
+		contRadius = self._contactRadius(delta)
 
 		return 4.0 / 3.0 * yEff * contRadius
 
@@ -524,7 +534,7 @@ class HertzMindlin(Model):
 		radius = self.radius
 		mass = self.mass
 
-		contRadius = self.contactRadius(delta)
+		contRadius = self._contactRadius(delta)
 
 		return 2.0 * np.sqrt(5.0/6.0) * np.log(rest) / np.sqrt(np.log(rest)**2 + np.pi**2) * \
 					np.sqrt(mass * 2 * yEff * contRadius)
@@ -599,7 +609,7 @@ class ThorntonNing(Model):
 		mass = self.mass
 		yEff = yMod * 0.5 / (1.0  - poiss )
 
-		return 4.0 / 3.0 * yEff * self.contactRadius(delta)
+		return 4.0 / 3.0 * yEff * self._contactRadius(delta)
 
 	def normalForce(self, delta):
 		""" Returns the Hertzian-like normal force"""
@@ -612,7 +622,7 @@ class ThorntonNing(Model):
 			if not self.noCheck:
 				self.noCheck = True
 
-				contRadius = self.contactRadius(self.maxDisp)
+				contRadius = self._contactRadius(self.maxDisp)
 				factor = self.maxForce
 
 				if hasattr(self, 'cohesionEnergyDensity'):
@@ -637,12 +647,13 @@ class ThorntonNing(Model):
 				self.deltap = contRadius*contRadius * (1.0/reff - 1.0/self.radius)
 
 				if hasattr(self, 'cohesionEnergyDensity'):
-					self.deltaf = 3.0/4.0 * (np.pi**2 * self.cohesionEnergyDensity**2 * self.radius / yEff**2)**(1.0/3.0)
+					self.deltaf = - 3.0/4.0 * (np.pi**2 * self.cohesionEnergyDensity**2 * self.radius / yEff**2)**(1.0/3.0) + self.deltap
+					self.cutoff_force = - 1.5 * self.radius * self.cohesionEnergyDensity
 
 				# if cohesion - 0, deltap becomes:
 				# self.deltap = self.maxDisp - (self.maxForce * 3 / (4. * yEff * np.sqrt(self.radius)))**(2.0/3.0)
 
-			contRadius = self.contactRadius(delta - self.deltap)
+			contRadius = self._contactRadius(delta - self.deltap)
 			
 			force = 4.0/3.0 * yEff * contRadius**3 / self.radius 
 
@@ -651,7 +662,7 @@ class ThorntonNing(Model):
 
 			return force
 
-		contRadius = self.contactRadius(delta)
+		contRadius = self._contactRadius(delta)
 
 		if contRadius < self.radiusy:
 
@@ -678,7 +689,7 @@ class ThorntonNing(Model):
 			if self.unloading:
 				return 0
 
-			contRadius = self.contactRadius(delta)
+			contRadius = self._contactRadius(delta)
 
 			if contRadius >= self.radiusy:
 				return  np.pi * py * (contRadius**2 - self.radiusy**2)

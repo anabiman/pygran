@@ -299,7 +299,7 @@ class DEMPy:
     self.monitorList = []
     self.vars = {}
     self.path = os.getcwd()
-    self.nSS = len(self.pargs['SS'])
+    self.nSS = len(self.pargs['species'])
     self.output = self.pargs['output']
 
     if not self.rank:
@@ -379,7 +379,7 @@ class DEMPy:
     """ Setup particle for insertion if requested by the user
     """
 
-    for ss in self.pargs['SS']:
+    for ss in self.pargs['species']:
 
       # Make sure we are setting up particles, not walls (so we check for id existence)
       if 'id' in ss and 'wall' not in ss:
@@ -520,7 +520,7 @@ class DEMPy:
 
       species = int(species)
 
-      ss = self.pargs['SS'][species - 1]
+      ss = self.pargs['species'][species - 1]
 
       if 'vel' not in args:
         args['vel'] = (0,0,0)
@@ -729,7 +729,7 @@ class DEMPy:
     if 'nns_skin' not in params:
       radius = 0
 
-      for ss in params['SS']:
+      for ss in params['secies']:
         if 'radius' in ss:
           radius = max(radius, ss['radius'][1])
 
@@ -836,7 +836,7 @@ class DEMPy:
       self.lmp.command('fix ts_check all check/timestep/gran 1000 0.5 0.5')
 
       # Find which components (types) are spheres, multi-spheres, QS, etc.
-      for i, ss in enumerate(self.pargs['SS']):
+      for i, ss in enumerate(self.pargs['species']):
         if 'id' in ss and 'wall' not in ss: # dont count mesh wall(s)
           if ss['style'] == 'sphere':
             spheres.append('{}'.format(i+1))

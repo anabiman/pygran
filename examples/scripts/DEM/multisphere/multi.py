@@ -33,7 +33,7 @@ params = {
 	'box':  (-1, 1, -1 , 1, -1, 1), # simulation box size
 
 	# Define component(s)
-	'SS': ({'material': organic, 'style':'multisphere', 'args': template_tablet(12, 2e-2, 1e-1)},
+	'species': ({'material': organic, 'style':'multisphere', 'args': template_tablet(12, 2e-2, 1e-1)},
 				),
 
 	# Set skin distance to be 1/4 particle diameter 
