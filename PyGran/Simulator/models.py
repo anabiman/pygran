@@ -42,6 +42,9 @@ class Model(object):
 		self.params = params
 		self.params['nSS'] = 0
 		self.JKR = False # Assume JKR cohesion model is by default OFF
+		self.endContact = False
+		self.limitForce = True # for visco-elastic models, make sure the attractive force
+		# at the end of the contact is ZERO.
 
 		if 'debug' in params:
 			self._debug = params['debug']
@@ -249,9 +252,10 @@ class Model(object):
 
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
 
-	def displacement(self):
+	def displacement(self, dt=None):
 		""" Generator that computes (iteratively) the contact overlap as a function of time 
 
+		[dt]: timestep used by the ODE integrator, by default it is 0.1% of contact duration
 		Returns time, delta, force as numpy arrays.
 
 		TODO: enable the user control the timestep / resolution.
@@ -269,7 +273,7 @@ class Model(object):
 		inte.set_initial_value(y0, t0)
 
 		Tc = self.contactTime() * 2
-		dt = Tc / 200
+		dt = Tc / 1000
 
 		time, delta, force = [], [], []
 		self._contRadius = []
@@ -278,13 +282,12 @@ class Model(object):
 			while inte.successful() and (inte.t <= Tc):
 				inte.integrate(inte.t + dt)
 
-				yield inte.t + dt, inte.y, self.normalForce(inte.y[0]) + self.dissForce(inte.y[0], inte.y[1])
+				yield inte.t + dt, inte.y, self.normalForce(inte.y[0], inte.y[1])
 
 		for t, soln, f in generator():
 
-			if hasattr(self, 'deltaf'):
-				if soln[0] <= -10: #self.deltaf:
-					break
+			if self.endContact:
+				break
 
 			time.append(t)
 			delta.append(soln)
@@ -376,25 +379,30 @@ class Model(object):
 	def springStiff(self):
 		raise NotImplementedError('Not yet implemented')
 
-	def normalForce(self):
+	def elasticForce(self):
 		raise NotImplementedError('Not yet implemented')
 
 	def dissForce(self):
+		raise NotImplementedError('Not yet implemented')
+
+	def normalForce(self):
+		raise NotImplementedError('Not yet implemented')
+
+	def cohesiveForce(self):
 		raise NotImplementedError('Not yet implemented')
 
 	def numericalForce(self, time, delta):
 		""" Returns the force used for numerical solvers """
 
 		radius = self.radius
+		force = - self.elasticForce(float(delta[0])) + self.dissForce(float(delta[0]), float(delta[1]))
 
-		Fn = self.normalForce(float(delta[0]))
-		Fd = self.dissForce(float(delta[0]), float(delta[1]))
-		
-		Force = Fn + Fd
+		if hasattr(self, 'cohesionEnergyDensity'):
+			force -= self.cohesiveForce(float(delta[0]))
 
 		mass = self.mass
 
-		return np.array([delta[1], - Force / mass])
+		return np.array([delta[1], force / mass])
 
 	def tangForce(self):
 		raise NotImplementedError('Not yet implemented')
@@ -402,6 +410,10 @@ class Model(object):
 class SpringDashpot(Model):
 	"""
 	A class that implements the linear spring model for granular materials
+
+	@material: python dictionary that specifies the material properties
+	@limitForce: boolean variable that turns on a limitation on the force,
+	preventing it from becoming attractive at the end of a contact.
 	"""
 
 	def __init__(self, **params):
@@ -412,11 +424,12 @@ class SpringDashpot(Model):
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model hooke', 'tangential history', 'rolling_friction cdt',
 				'limitForce on', 'ktToKnUser on', 'tangential_damping on') 
-		else:
-			self.params['model-args'] = self.params['model-args']
+		
+		if 'limitForce' in params:
+			self.limitForce = self.params['limitForce']
 
 	def springStiff(self, delta = None):
-		""" Computes the spring constant kn for F = - kn * \delta
+		""" Computes the spring constant kn for F = - kn * delta
 		"""
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -447,13 +460,23 @@ class SpringDashpot(Model):
 		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
 
 	def dissForce(self, delta, deltav):
-		""" Returns the dissipative force """
-		radius = self.radius
+		""" Returns the dissipative (viscous) force : Fd = - cn * deltav
+		where cn is the dissipative coefficient.
+
+		Returns a numpy array of length(deltav). """
 
 		return - self.dissCoef() * deltav
 
 	def displacementAnalytical(self, dt = None):
-		""" Computes the displacement based on an analytical solution """
+		""" Computes the displacement based on the analytical solution for
+		a spring-dashpot model.
+
+		[dt]: timestep. By default, the timestep is 1% of the contact time.
+
+		Returns numpy arrays: time, displacement, and force of size N, Nx2, and N,
+		respectively, where N is the total number of steps taken by the integrator.
+		The displacement array stores the overlap in its 1st column and the overlap
+		velocity (time derivative) in its 2nd column. """
 
 		rest = self.coefficientRestitution
 		poiss = self.poissonsRatio
@@ -462,18 +485,29 @@ class SpringDashpot(Model):
 		mass = self.mass
 
 		if dt is None:
-			dt = self.contactTime()
+			dt = 0.01 * self.contactTime()
 
 		v0 = self.characteristicVelocity
 		kn = self.springStiff()
 		cn = self.dissCoef()
 
-		const = np.sqrt(4.0 * mass * kn - cn**2.0) / mass
+		time = np.arange(int(self.contactTime() / dt)) * dt
+		const = np.sqrt(kn / mass - 0.25 * (cn / mass)**2.0)
+		delta = np.exp(- 0.5 * cn * time / mass) * v0 / const * np.sin(const * time)
+		deltav = - 0.5 * cn / mass * delta + v0 * np.cos(const * time) * np.exp(- 0.5 * cn * time / mass)
 
-		return time, np.exp(- 0.5 * cn * time / mass) * 2.0 * v0 / const * np.sin(const * time / 2.0)
+		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
 
-	def normalForce(self, delta):
-		""" Returns the normal force based on Hooke's law: Fn = kn * delta """
+		if self.limitForce:
+			time = time[force >= 0]
+			delta = delta[force >= 0]
+			deltav = deltav[force >= 0]
+			force = force[force >= 0]
+
+		return time, np.array([delta, deltav]).T, force
+
+	def elasticForce(self, delta):
+		""" Returns the elastic force based on Hooke's law: Fn = kn * delta """
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -482,10 +516,28 @@ class SpringDashpot(Model):
 
 		kn = self.springStiff(radius)
 
-		if hasattr(self, 'cohesionEnergyDensity'):
-			return kn * delta - self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
-
 		return kn * delta
+
+	def cohesiveForce(self, delta):
+		""" Returns the cohesive force (SJKR) """
+		radius = self.radius
+
+		return self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
+
+	def normalForce(self, delta, deltav):
+		""" Returns the total normal force """
+
+		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+		radius = self.radius
+
+		if self.limitForce and force < 0:
+			force = 0
+			self.endContact = True
+
+		if hasattr(self, 'cohesionEnergyDensity'):
+			force -= self.cohesiveForce(delta)
+
+		return force
 
 class HertzMindlin(Model):
 	"""
@@ -498,8 +550,9 @@ class HertzMindlin(Model):
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model hertz', 'tangential history', 'cohesion sjkr', \
 			'tangential_damping on', 'limitForce on') # the order matters here
-		else:
-			self.params['model-args'] = self.params['model-args']
+
+		if 'limitForce' in params:
+			self.limitForce = self.params['limitForce']
 
 	def springStiff(self, delta):
 		""" Computes the spring constant kn for
@@ -514,13 +567,10 @@ class HertzMindlin(Model):
 
 		return 4.0 / 3.0 * yEff * contRadius
 
-	def normalForce(self, delta):
-		""" Returns the Hertzian normal force"""
+	def elasticForce(self, delta):
+		""" Returns the Hertzian elastic force"""
 
 		force = self.springStiff(delta) * delta
-
-		if hasattr(self, 'cohesionEnergyDensity'):
-			force -= self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * self.radius
 		
 		return force
 
@@ -542,6 +592,21 @@ class HertzMindlin(Model):
 	def dissForce(self, delta, deltav):
 		""" Returns the dissipative force """
 		return - self.dissCoef(delta) * deltav
+
+	def normalForce(self, delta, deltav):
+		""" Returns the total normal force """
+
+		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+		radius = self.radius
+
+		if self.limitForce and force < 0:
+			force = 0
+			self.endContact = True
+
+		if hasattr(self, 'cohesionEnergyDensity'):
+			force -= self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
+
+		return force
 
 class ThorntonNing(Model):
 	"""
@@ -611,8 +676,8 @@ class ThorntonNing(Model):
 
 		return 4.0 / 3.0 * yEff * self._contactRadius(delta)
 
-	def normalForce(self, delta):
-		""" Returns the Hertzian-like normal force"""
+	def elasticForce(self, delta):
+		""" Returns the Hertzian-like elastic force"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -681,7 +746,7 @@ class ThorntonNing(Model):
 			return force
 
 	def dissForce(self, delta, deltav = None):
-		""" Computes the piece-wise defined normal force based on Thornton's model """
+		""" Computes the piece-wise defined elastic force based on Thornton's model """
 
 		def compute(delta):
 			py = self.yieldPress
