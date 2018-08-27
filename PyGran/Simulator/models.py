@@ -110,7 +110,7 @@ class Model(object):
         # Compute mean material properties
 		self.materials = {}
 
-		# For analysis
+		# For analysis ~ do we even need this?
 		if 'material' in self.params:
 			self.materials = self.params['material']
 
@@ -422,9 +422,13 @@ class SpringDashpot(Model):
 
 		# the order is very imp in model-args ~ stupid LIGGGHTS!
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model hooke', 'tangential history', 'rolling_friction cdt',
-				'limitForce on', 'ktToKnUser on', 'tangential_damping on') 
+			self.params['model-args'] = ('gran', 'model hooke', 'tangential history')
 		
+		if 'cohesionEnergyDensity' in self.materials:
+			self.params['model-args'] = self.params['model-args'] + ('cohesion sjkr',)
+
+		self.params['model-args']  = self.params['model-args']  + ('tangential_damping on', 'ktToKnUser on', 'limitForce on') # the order matters here
+
 		if 'limitForce' in params:
 			self.limitForce = self.params['limitForce']
 
@@ -539,6 +543,11 @@ class SpringDashpot(Model):
 
 		return force
 
+	def tangForce(self, delta, deltav):
+		""" Returns the total tangential force based on the Coulomb model """
+		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+
+
 class HertzMindlin(Model):
 	"""
 	A class that implements the linear spring model for granular materials
@@ -548,8 +557,12 @@ class HertzMindlin(Model):
 		super(HertzMindlin, self).__init__(**params)
 
 		if 'model-args' not in self.params:
-			self.params['model-args'] = ('gran', 'model hertz', 'tangential history', 'cohesion sjkr', \
-			'tangential_damping on', 'limitForce on') # the order matters here
+			self.params['model-args'] = ('gran', 'model hertz', 'tangential history')
+
+			if 'cohesionEnergyDensity' in self.materials:
+				self.params['model-args'] = self.params['model-args'] + ('cohesion sjkr',)
+
+			self.params['model-args']  = self.params['model-args']  + ('tangential_damping on', 'limitForce on') # the order matters here
 
 		if 'limitForce' in params:
 			self.limitForce = self.params['limitForce']
