@@ -503,7 +503,7 @@ class DEMPy:
           ' insert_every {freq} overlapcheck yes all_in {all_in}'.format(**ss) + ' vel {}'.format(vel_type) \
           + (' {}' * len(vel)).format(*vel)  + (' {}' * len(ss['args'])).format(*ss['args']) + ' {} {} region {} ntry_mc 10000'.format(mech, value, name) )
       else:
-        print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**s))
+        print('WARNING: Insertion mechanism {insert} not found. Assuming insertion by rate ...'.format(**ss))
 
         if mech is 'nparticles':
           value += self.lmp.get_natoms()
@@ -729,7 +729,7 @@ class DEMPy:
     if 'nns_skin' not in params:
       radius = 0
 
-      for ss in params['secies']:
+      for ss in params['species']:
         if 'radius' in ss:
           radius = max(radius, ss['radius'][1])
 

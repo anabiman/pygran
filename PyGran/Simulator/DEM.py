@@ -155,6 +155,13 @@ class DEM:
 
     self.printSetup()
 
+    # Create links to the particle/mesh files (easily accessible to the user)
+    if 'pfile' in self.pargs['traj']:
+      self.pfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['pfile']
+
+    if 'mfile' in self.pargs['traj']:
+      self.mfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['mfile']
+
   def scatter_atoms(self,name,type,count,data):
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -295,7 +302,16 @@ class DEM:
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        return self.dem.dumpSetup(only_mesh, name)
+        dumpID = self.dem.dumpSetup(only_mesh, name)
+
+        # Create or update links to the particle/mesh files (easily accessible to the user)
+        if 'pfile' in self.lmp.pargs['traj']:
+          self.pfile = self.lmp.pargs['output'] + '/traj/' + self.lmp.pargs['traj']['pfile']
+
+        if 'mfile' in self.lmp.pargs['traj']:
+          self.mfile = self.lmp.pargs['output'] + '/traj/' + self.lmp.pargs['traj']['mfile']
+
+        return dumpID
 
   def setupIntegrate(self, name, itype='nve/sphere', group='all'):
     """
