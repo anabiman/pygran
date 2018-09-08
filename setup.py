@@ -108,7 +108,7 @@ setup(
     packages=find_packages(),
     package_dir={'PyGran': 'PyGran'},
     package_data={'': ['.config', 'GUI/Icons/*.png']},
-    install_requires=['numpy', 'scipy', 'pyvtk', 'pytools>=2011.2', 'cython'],
+    install_requires=['numpy', 'scipy', 'pyvtk', 'pytools>=2011.2', 'cython', 'mpi4py'],
     long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See https://andrew-abimansour.github.io/PyGran.',
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -117,6 +117,7 @@ setup(
 	"Programming Language :: Python :: 2.7",
 	"Programming Language :: Python :: 3"
     ],
+    download_url='http://andrew-abimansour.github.io/PyGran/release/PyGran-v1.0.zip',
 
     cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
