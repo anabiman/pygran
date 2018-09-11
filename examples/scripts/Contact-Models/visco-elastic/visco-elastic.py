@@ -1,6 +1,7 @@
 import PyGran.Simulator as Si
 from PyGran.Materials import steel
 import matplotlib.pylab as plt
+import numpy as np
 
 # Create a list of contact models to analyze
 models = [Si.models.SpringDashpot, Si.models.HertzMindlin]
@@ -18,6 +19,7 @@ for model in models:
 	if hasattr(model, 'displacementAnalytical'):
 		time, delta, force = model.displacementAnalytical()
 		plt.plot(delta[:,0] * 1e6, force * 1e3, ':o')
+
 
 plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
