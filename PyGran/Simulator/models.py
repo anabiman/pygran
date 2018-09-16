@@ -32,19 +32,25 @@ Created on July 1, 2016
 import numpy as np
 from scipy.integrate import ode
 from scipy.optimize import fsolve
-from PyGran import Materials
+from PyGran import Params
 import math
 from mpi4py import MPI
 
 class Model(object):
-	def __init__(self, **params):
+	""" This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS)
+ 	or numerical experiments for a particle-wall collision.
 
+ 	TODO: enable particle-particle experiments to be conducted.
+	"""
+ 	def __init__(self, **params):
+
+		self.viscous = True # be default, all contact models are visco-elstic unless implemented otherwise
 		self.params = params
 		self.params['nSS'] = 0
 		self.JKR = False # Assume JKR cohesion model is by default OFF
-		self.endContact = False
 		self.limitForce = True # for visco-elastic models, make sure the attractive force
 		# at the end of the contact is ZERO.
+		self.deltaf = 0 # when to end contact
 
 		if 'debug' in params:
 			self._debug = params['debug']
@@ -129,7 +135,7 @@ class Model(object):
 					if isinstance(ss['radius'], list):
 						ss['radius'] = ss['radius'][rank]
 
-				ss['material'] = Materials.LIGGGHTS(**ss['material'])
+				ss['material'] = Params.LIGGGHTS(**ss['material'])
 
 				if 'style' not in ss:
 					ss['style'] = 'sphere'
@@ -222,6 +228,9 @@ class Model(object):
 
 		self.setupProps()
 
+
+		# Compute effective radius for particle-wall intxn
+		self.radius = self.radius / 2.0
 		if hasattr(self,'density'):
 			self.mass = 4.0 * self.density * 4.0/3.0 * np.pi * self.radius**3.0
 
@@ -286,7 +295,7 @@ class Model(object):
 
 		for t, soln, f in generator():
 
-			if self.endContact:
+			if soln[0] <= self.deltaf:
 				break
 
 			time.append(t)
@@ -295,28 +304,39 @@ class Model(object):
 
 			# for hysteretic models
 			if hasattr(self, 'maxDisp'):
-				if soln[0] >= self.maxDisp:
-					self.maxDisp = soln[0]
-				else:
+				if soln[0] < self.maxDisp and self.contRadius >= self.radiusy:
 					self.unloading = True
+				else:
+					self.maxDisp = soln[0]
 
 			# for hysteretic models
 			if hasattr(self,'maxForce'):
 				self.maxForce = max(f, self.maxForce)
 
-			self._contRadius.append(self._contactRadius(soln[0]))
+		time, delta, force = np.array(time), np.array(delta), np.array(force)
 
-		return np.array(time), np.array(delta), np.array(force)
+		if hasattr(self, 'limitForce'):
+			if self.limitForce:
+				index = np.where(force < 0)
+
+				if len(index[0]):
+					index = index[0][0]
+				else:
+					index = -1
+
+				delta = delta[:index]
+				time = time[:index]
+				force = force[:index]
+
+		return time, delta, force
 
 	@property
 	def contactRadius(self):
 		""" Returns the contact radius as a numpy array """
 		return np.array(self._contRadius)
 
-	def _contactRadius(self, delta):
+	def _contactRadius(self, delta, radius):
 		""" Returns the contact radius based on Hertzian or JKR models"""
-
-		radius = self.radius
 
 		if self.JKR:
 			if hasattr(self, 'cohesionEnergyDensity'):
@@ -324,7 +344,7 @@ class Model(object):
 
 				poiss = self.poissonsRatio
 				yMod = self.youngsModulus
-				yMod /= 2.0 * (1.0  - poiss )
+				yMod /= 2.0 * (1.0  - poiss**2)
 
 				def jkr_disp(a, *args):
 					delta, Gamma, yMod, radius = args
@@ -367,9 +387,9 @@ class Model(object):
 				if self._debug:
 					print(info)
 			else:
-				contRadius = np.sqrt(delta * self.radius)
+				contRadius = np.sqrt(delta * radius)
 		else:
-			contRadius = np.sqrt(delta * self.radius)
+			contRadius = np.sqrt(delta * radius)
 
 		return contRadius
 
@@ -395,14 +415,12 @@ class Model(object):
 		""" Returns the force used for numerical solvers """
 
 		radius = self.radius
-		force = - self.elasticForce(float(delta[0])) + self.dissForce(float(delta[0]), float(delta[1]))
 
-		if hasattr(self, 'cohesionEnergyDensity'):
-			force -= self.cohesiveForce(float(delta[0]))
+		force = self.normalForce(float(delta[0]), float(delta[1]))
 
 		mass = self.mass
 
-		return np.array([delta[1], force / mass])
+		return np.array([delta[1], - force / mass])
 
 	def tangForce(self):
 		raise NotImplementedError('Not yet implemented')
@@ -440,7 +458,7 @@ class SpringDashpot(Model):
 		radius = self.radius
 		mass = self.mass
 
-		yMod /= 2.0 * (1.0  - poiss )
+		yMod /= 2.0 * (1.0  - poiss**2)
 
 		v0 = self.characteristicVelocity
 
@@ -455,7 +473,7 @@ class SpringDashpot(Model):
 		radius = self.radius
 
 		mass = self.mass
-		yMod /= 2.0 * (1.0  - poiss )
+		yMod /= 2.0 * (1.0  - poiss**2)
 		v0 = self.characteristicVelocity
 
 		kn = self.springStiff()
@@ -469,7 +487,7 @@ class SpringDashpot(Model):
 
 		Returns a numpy array of length(deltav). """
 
-		return - self.dissCoef() * deltav
+		return self.dissCoef() * deltav
 
 	def displacementAnalytical(self, dt = None):
 		""" Computes the displacement based on the analytical solution for
@@ -480,7 +498,10 @@ class SpringDashpot(Model):
 		Returns numpy arrays: time, displacement, and force of size N, Nx2, and N,
 		respectively, where N is the total number of steps taken by the integrator.
 		The displacement array stores the overlap in its 1st column and the overlap
-		velocity (time derivative) in its 2nd column. """
+		velocity (time derivative) in its 2nd column. 
+
+		TODO: take cohesion (SJKR) into account
+		"""
 
 		rest = self.coefficientRestitution
 		poiss = self.poissonsRatio
@@ -497,16 +518,19 @@ class SpringDashpot(Model):
 
 		time = np.arange(int(self.contactTime() / dt)) * dt
 		const = np.sqrt(kn / mass - 0.25 * (cn / mass)**2.0)
-		delta = np.exp(- 0.5 * cn * time / mass) * v0 / const * np.sin(const * time)
-		deltav = - 0.5 * cn / mass * delta + v0 * np.cos(const * time) * np.exp(- 0.5 * cn * time / mass)
+		phase = 0
 
-		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+		delta = v0 / const * np.exp(0.5 * cn * time / mass) * np.sin(const * time + phase)
+		deltav = 0.5 * cn / mass * delta + v0 * np.cos(const * time + phase) * np.exp(0.5 * cn * time / mass)
 
-		if self.limitForce:
-			time = time[force >= 0]
-			delta = delta[force >= 0]
-			deltav = deltav[force >= 0]
-			force = force[force >= 0]
+		force = self.normalForce(delta, deltav)
+
+		if hasattr(self, 'limitForce'):
+			if self.limitForce:
+				delta = delta[force >= 0]
+				deltav = deltav[force >= 0]
+				time = time[force >= 0]
+				force = force[force >= 0]
 
 		return time, np.array([delta, deltav]).T, force
 
@@ -531,12 +555,8 @@ class SpringDashpot(Model):
 	def normalForce(self, delta, deltav):
 		""" Returns the total normal force """
 
-		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+		force = self.elasticForce(delta) - self.dissForce(delta, deltav)
 		radius = self.radius
-
-		if self.limitForce and force < 0:
-			force = 0
-			self.endContact = True
 
 		if hasattr(self, 'cohesionEnergyDensity'):
 			force -= self.cohesiveForce(delta)
@@ -574,9 +594,9 @@ class HertzMindlin(Model):
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
 		radius = self.radius
-		yEff = yMod * 0.5 / (1.0  - poiss )
+		yEff = yMod * 0.5 / (1.0  - poiss**2)
 
-		contRadius = self._contactRadius(delta)
+		contRadius = self._contactRadius(delta, self.radius)
 
 		return 4.0 / 3.0 * yEff * contRadius
 
@@ -592,34 +612,37 @@ class HertzMindlin(Model):
 		rest = self.coefficientRestitution
 		yMod = self.youngsModulus
 		poiss = self.poissonsRatio
-		yEff = yMod * 0.5 / (1.0  - poiss )
+		yEff = yMod * 0.5 / (1.0  - poiss**2)
 
 		radius = self.radius
 		mass = self.mass
 
-		contRadius = self._contactRadius(delta)
+		contRadius = self._contactRadius(delta, self.radius)
 
 		return 2.0 * np.sqrt(5.0/6.0) * np.log(rest) / np.sqrt(np.log(rest)**2 + np.pi**2) * \
 					np.sqrt(mass * 2 * yEff * contRadius)
 
 	def dissForce(self, delta, deltav):
 		""" Returns the dissipative force """
-		return - self.dissCoef(delta) * deltav
+		return self.dissCoef(delta) * deltav
 
 	def normalForce(self, delta, deltav):
 		""" Returns the total normal force """
 
-		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+		force = self.elasticForce(delta) - self.dissForce(delta, deltav)
 		radius = self.radius
 
-		if self.limitForce and force < 0:
-			force = 0
-			self.endContact = True
-
 		if hasattr(self, 'cohesionEnergyDensity'):
-			force -= self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
+			force -= self.cohesiveForce(delta)
 
 		return force
+
+	def cohesiveForce(self, delta):
+		""" Returns the cohesive force (SJKR) """
+		radius = self.radius
+
+		return self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
+
 
 class ThorntonNing(Model):
 	"""
@@ -632,6 +655,7 @@ class ThorntonNing(Model):
 
 		super(ThorntonNing, self).__init__(**params)
 		self.JKR = True
+		self.viscous = False
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model hysteresis_coh/thorn', \
@@ -642,6 +666,7 @@ class ThorntonNing(Model):
 		# We check for the radius 1st since it can change in this model
 		if hasattr(self, 'radius'):
 			self.radiusy = self.computeYieldRadius()
+			self.radiusp = self.radius
 			self.maxDisp = 0
 			self.maxForce = 0
 			self.unloading = False
@@ -652,7 +677,7 @@ class ThorntonNing(Model):
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
-		yEff = self.youngsModulus / (2.0 * (1. - poiss))
+		yEff = self.youngsModulus / (2.0 * (1. - poiss**2))
 		py = self.yieldPress
 
 		def obj(x, *args):
@@ -685,32 +710,32 @@ class ThorntonNing(Model):
 		yMod = self.youngsModulus
 		radius = self.radius	
 		mass = self.mass
-		yEff = yMod * 0.5 / (1.0  - poiss )
+		yEff = yMod * 0.5 / (1.0  - poiss**2)
 
-		return 4.0 / 3.0 * yEff * self._contactRadius(delta)
+		return 4.0 / 3.0 * yEff * self._contactRadius(delta, self.radius)
 
 	def elasticForce(self, delta):
 		""" Returns the Hertzian-like elastic force"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
-		yEff = yMod * 0.5 / (1.0  - poiss)
+		yEff = yMod * 0.5 / (1.0  - poiss**2)
 
 		if self.unloading:
 			if not self.noCheck:
 				self.noCheck = True
 
-				contRadius = self._contactRadius(self.maxDisp)
+				contMaxRadius = self._contactRadius(self.maxDisp, self.radius)
 				factor = self.maxForce
 
 				if hasattr(self, 'cohesionEnergyDensity'):
-					factor += np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
+					factor += np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contMaxRadius**3)
 
 				reff = self.radius
-				self.radius = 4.0/3.0 * yEff * contRadius**3 / factor
+				self.radiusp = 4.0/3.0 * yEff * contMaxRadius**3 / self.maxForce
 
 				# Solve for the contact radius
-				a = 4.0 * yEff / (3 * self.radius)
+				a = 4.0 * yEff / (3 * self.radiusp)
 
 				if hasattr(self, 'cohesionEnergyDensity'):
 					b = - np.sqrt(8.0 * np.pi * self.cohesionEnergyDensity * yEff)
@@ -721,73 +746,86 @@ class ThorntonNing(Model):
 
 				x = (- b + np.sqrt(b*b - 4*a*c)) / (2 * a)
 				contRadius = x**(2.0/3.0)
+				# Why am I doing this? what is contRadius used for???? This seems to be equal to contMaxRadius when cohesion = off
 
-				self.deltap = contRadius*contRadius * (1.0/reff - 1.0/self.radius)
+				self.deltap = contMaxRadius*contMaxRadius * ( 1.0/reff - 1.0/self.radiusp )
 
 				if hasattr(self, 'cohesionEnergyDensity'):
-					self.deltaf = - 3.0/4.0 * (np.pi**2 * self.cohesionEnergyDensity**2 * self.radius / yEff**2)**(1.0/3.0) + self.deltap
-					self.cutoff_force = - 1.5 * self.radius * self.cohesionEnergyDensity
+					self.deltaf = - 3.0/4.0 * (np.pi**2 * self.cohesionEnergyDensity**2 * self.radiusp / yEff**2)**(1.0/3.0) + self.deltap
+					self.cutoff_force = - 1.5 * self.radiusp * self.cohesionEnergyDensity
+				else:
+					self.deltaf = self.deltap
 
 				# if cohesion - 0, deltap becomes:
 				# self.deltap = self.maxDisp - (self.maxForce * 3 / (4. * yEff * np.sqrt(self.radius)))**(2.0/3.0)
 
-			contRadius = self._contactRadius(delta - self.deltap)
-			
-			force = 4.0/3.0 * yEff * contRadius**3 / self.radius 
+			self.contRadius = self._contactRadius(delta - self.deltap, self.radiusp) 
 
-			if hasattr(self, 'cohesionEnergyDensity'):
-				force -= np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
+			force = 4.0/3.0 * yEff * self.contRadius**3 / self.radiusp
 
 			return force
 
-		contRadius = self._contactRadius(delta)
+		self.contRadius = self._contactRadius(delta, self.radius)
 
-		if contRadius < self.radiusy:
+		if self.contRadius < self.radiusy:
 
-			force = 4.0/3.0 * yEff * contRadius**3 / self.radius
-
-			if hasattr(self, 'cohesionEnergyDensity'):
-				force -= np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius**3)
+			force = 4.0/3.0 * yEff * self.contRadius**3 / self.radius
 
 			return force
 		else:
 			force = 4.0/3.0 * yEff * self.radiusy**3 / self.radius
 
-			if hasattr(self, 'cohesionEnergyDensity'):
-				force -= self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * contRadius)
-			
 			return force
 
 	def dissForce(self, delta, deltav = None):
 		""" Computes the piece-wise defined elastic force based on Thornton's model """
+			
+		py = self.yieldPress
 
-		def compute(delta):
-			py = self.yieldPress
+		if self.unloading:
+			return 0
 
-			if self.unloading:
-				return 0
+		contRadius = self._contactRadius(delta, self.radius)
 
-			contRadius = self._contactRadius(delta)
-
-			if contRadius >= self.radiusy:
-				return  np.pi * py * (contRadius**2 - self.radiusy**2)
-			else:
-				return 0
-
-		if type(delta) == np.ndarray:
-			out = []
-			for disp in delta:
-				out.append(compute(disp))
-
-			return np.array(out)
+		if contRadius >= self.radiusy:
+			return np.pi * py * (contRadius**2 - self.radiusy**2)
 		else:
-			return compute(delta)
+			return 0
+
+	def normalForce(self, delta, deltav):
+		""" Returns the total normal force """
+
+		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
+
+		if hasattr(self, 'cohesionEnergyDensity'):
+			force -= self.cohesiveForce()
+
+		return force
+
+	def cohesiveForce(self, delta=None):
+		""" Returns the JKR cohesive force """
+
+		poiss = self.poissonsRatio
+		yMod = self.youngsModulus
+		yEff = yMod * 0.5 / (1.0  - poiss**2)
+
+		if hasattr(self, 'cohesionEnergyDensity'):
+			if self.unloading:
 				
+				force = np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * self.contRadius**3)
+			elif self.contRadius < self.radiusy:
+				force = np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * self.contRadius**3)
+			else:
+				force = self.radiusy * np.sqrt(8 * np.pi * self.cohesionEnergyDensity * yEff * self.contRadius)
+
+		return force
+
+	@property
 	def yieldVel(self):
 		""" Returns the minimum velocity required for a colliding particle to undergo plastic deformation """
 
 		poiss = self.poissonsRatio
-		yEff = self.youngsModulus / (2.0 * (1. - poiss))
+		yEff = 0.5 * self.youngsModulus / (1. - poiss**2)
 		density = self.density
 		py = self.yieldPress
 

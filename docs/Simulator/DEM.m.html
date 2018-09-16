@@ -902,8 +902,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -914,9 +916,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1098,7 +1102,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM" class="source">
-    <div class="codehilite"><pre><span class="c1"># !/usr/bin/python</span>
+    <div class="codehilite"><pre><span></span><span class="c1"># !/usr/bin/python</span>
 <span class="c1"># -*- coding: utf8 -*- </span>
 <span class="c1"># -----------------------------------------------------------------------</span>
 <span class="c1">#</span>
@@ -1136,7 +1140,7 @@ table {
 <span class="k">class</span> <span class="nc">DEM</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;A *generic* class that handles communication for a DEM object independent of the engine used&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Initializes COMM and partition proccesors based on user input &quot;&quot;&quot;</span>
 
     <span class="c1"># Instantiate contact model and store it in pargs</span>
@@ -1152,7 +1156,7 @@ table {
     <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span> <span class="o">=</span> <span class="n">pargs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
     
     <span class="c1"># Check if .config files eixsts else create it</span>
     <span class="c1"># Only one process needs to do this</span>
@@ -1390,13 +1394,12 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">printSetup</span><span class="p">()</span>
         <span class="k">break</span>
 
-  <span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">()</span>
-        <span class="k">break</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">(</span><span class="n">only_mesh</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1468,7 +1471,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">break</span>
 
-  <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Dont call this since the user might be running multiple simulations in one script</span>
@@ -1493,10 +1496,10 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">DEM</span><span class="p">:</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">DEM</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;A *generic* class that handles communication for a DEM object independent of the engine used&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Initializes COMM and partition proccesors based on user input &quot;&quot;&quot;</span>
 
     <span class="c1"># Instantiate contact model and store it in pargs</span>
@@ -1512,7 +1515,7 @@ table {
     <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span> <span class="o">=</span> <span class="n">pargs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
     
     <span class="c1"># Check if .config files eixsts else create it</span>
     <span class="c1"># Only one process needs to do this</span>
@@ -1750,13 +1753,12 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">printSetup</span><span class="p">()</span>
         <span class="k">break</span>
 
-  <span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">()</span>
-        <span class="k">break</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">(</span><span class="n">only_mesh</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -1828,7 +1830,7 @@ table {
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">break</span>
 
-  <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Dont call this since the user might be running multiple simulations in one script</span>
@@ -1844,89 +1846,9 @@ table {
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#PyGran.Simulator.DEM.DEM">DEM</a></li>
+          <li><a href="/builtins.object.ext">builtins.object</a></li>
           </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.comm" class="name">var <span class="ident">comm</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.library" class="name">var <span class="ident">library</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.model" class="name">var <span class="ident">model</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.nSim" class="name">var <span class="ident">nSim</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.pProcs" class="name">var <span class="ident">pProcs</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.pargs" class="name">var <span class="ident">pargs</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.rank" class="name">var <span class="ident">rank</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Simulator.DEM.DEM.tProcs" class="name">var <span class="ident">tProcs</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
+          <h3>Static methods</h3>
             
   <div class="item">
     <div class="name def" id="PyGran.Simulator.DEM.DEM.__init__">
@@ -1940,7 +1862,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.__init__', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pargs</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot; Initializes COMM and partition proccesors based on user input &quot;&quot;&quot;</span>
   <span class="c1"># Instantiate contact model and store it in pargs</span>
   <span class="k">if</span> <span class="s1">&#39;model&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pargs</span><span class="p">:</span>
@@ -1953,7 +1875,7 @@ table {
   <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
   <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span> <span class="o">=</span> <span class="n">pargs</span>
   <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="bp">None</span>
-  <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;DEM.py&#39;</span><span class="p">)</span>
   
   <span class="c1"># Check if .config files eixsts else create it</span>
   <span class="c1"># Only one process needs to do this</span>
@@ -2056,7 +1978,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.add_viscous', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.add_viscous" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">add_viscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_viscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot; Adds a viscous damping force: F = - gamma * v for each particle</span>
 <span class="sd">  @species = 1,2, ... or all</span>
 <span class="sd">  @gamma: real number (viscosity coefficient)</span>
@@ -2084,7 +2006,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.command', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.command" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -2110,7 +2032,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.createGroup', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.createGroup" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">createGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">group</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">createGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">group</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">createGroup</span><span class="p">(</span><span class="o">*</span><span class="n">group</span><span class="p">)</span>
@@ -2134,7 +2056,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.createParticles', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.createParticles" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">createParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">createParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">createParticles</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2159,7 +2081,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.createProperty', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.createProperty" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Material and interaction properties required</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -2180,7 +2102,7 @@ table {
             
   <div class="item">
     <div class="name def" id="PyGran.Simulator.DEM.DEM.dumpSetup">
-    <p>def <span class="ident">dumpSetup</span>(</p><p>self)</p>
+    <p>def <span class="ident">dumpSetup</span>(</p><p>self, only_mesh=False, name=None)</p>
     </div>
     
 
@@ -2189,13 +2111,12 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.dumpSetup', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.dumpSetup" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">dumpSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">()</span>
-      <span class="k">break</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">dumpSetup</span><span class="p">(</span><span class="n">only_mesh</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -2215,7 +2136,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.extract_compute', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.extract_compute" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">extract_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">id</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">extract_compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">id</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">extract_compute</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="nb">type</span><span class="p">)</span>
@@ -2238,7 +2159,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.extract_global', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.extract_global" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">extract_global</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">extract_global</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">extract_global</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
@@ -2261,7 +2182,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.gather_atoms', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.gather_atoms" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">gather_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">gather_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">gather_atoms</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">)</span>
@@ -2284,7 +2205,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.get_natoms', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.get_natoms" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">get_natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">get_natoms</span><span class="p">()</span>
@@ -2308,7 +2229,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.importMesh', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.importMesh" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Imports a mesh file (STL or VTK)</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -2337,7 +2258,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.importMeshes', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.importMeshes" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  An internal function that is called during DEM initialization for importing meshes.</span>
 <span class="sd">  This function imports all meshes and sets them up as walls. Can import only one mesh specified by the &#39;name&#39; keyword.</span>
@@ -2365,7 +2286,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.initialize', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.initialize" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
@@ -2389,7 +2310,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.insert', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.insert" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
@@ -2413,7 +2334,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.integrate', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.integrate" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Run simulation in time</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -2440,7 +2361,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.monitor', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.monitor" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="nb">file</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -2466,7 +2387,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.moveMesh', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.moveMesh" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -2491,7 +2412,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.plot', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.plot" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -2518,7 +2439,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.printSetup', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.printSetup" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Specify which variables to write to file, and their format</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -2546,7 +2467,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.remove', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.remove" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Delete variable/object</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -2573,7 +2494,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.run', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.run" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span>
@@ -2596,7 +2517,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.saveas', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.saveas" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -2622,7 +2543,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.scatter_atoms', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.scatter_atoms" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">scatter_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">scatter_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">scatter_atoms</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
@@ -2645,7 +2566,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.set', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.set" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2674,7 +2595,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.setupIntegrate', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.setupIntegrate" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Specify how Newton&#39;s eqs are integrated in time. </span>
 <span class="sd">  @ name: name of the fixed simulation ensemble applied to all atoms</span>
@@ -2705,7 +2626,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.setupParticles', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.setupParticles" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">setupParticles</span><span class="p">()</span>
@@ -2734,7 +2655,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.setupWall', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.setupWall" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Creates a wall</span>
 <span class="sd">  @ name: name of the variable defining a wall or a mesh</span>
@@ -2764,7 +2685,7 @@ This function imports all meshes and sets them up as walls. Can import only one 
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator.DEM.DEM.velocity', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Simulator.DEM.DEM.velocity" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">velocity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2776,6 +2697,87 @@ This function imports all meshes and sets them up as walls. Can import only one 
 
   </div>
   
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.comm" class="name">var <span class="ident">comm</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.library" class="name">var <span class="ident">library</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.model" class="name">var <span class="ident">model</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.nSim" class="name">var <span class="ident">nSim</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.pProcs" class="name">var <span class="ident">pProcs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.pargs" class="name">var <span class="ident">pargs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.rank" class="name">var <span class="ident">rank</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Simulator.DEM.DEM.tProcs" class="name">var <span class="ident">tProcs</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
       </div>
 

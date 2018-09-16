@@ -902,8 +902,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -914,9 +916,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1049,7 +1053,6 @@ table {
     <li class="mono"><a href="#PyGran.Analyzer.equilibrium.Neighbors.__init__">__init__</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.equilibrium.Neighbors.coon">coon</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.equilibrium.Neighbors.filter">filter</a></li>
-    <li class="mono"><a href="#PyGran.Analyzer.equilibrium.Neighbors.findWithin">findWithin</a></li>
     <li class="mono"><a href="#PyGran.Analyzer.equilibrium.Neighbors.forceChain">forceChain</a></li>
   </ul>
 
@@ -1074,7 +1077,7 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium" class="source">
-    <div class="codehilite"><pre><span class="sd">&#39;&#39;&#39;</span>
+    <div class="codehilite"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">Created on March 10, 2017</span>
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
@@ -1118,7 +1121,7 @@ table {
 <span class="sd">	@[binary]: False by default. Set to True when analyzing 2-component systems.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span> <span class="o">=</span> <span class="n">Particles</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
@@ -1171,7 +1174,7 @@ table {
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pairs</span>
 
 	<span class="k">def</span> <span class="nf">coon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Returns the coordination number per particle. For binary mixtures</span>
+		<span class="sd">&quot;&quot;&quot; Computes the coordination number per particle. For binary mixtures</span>
 <span class="sd">		the default coordinations numbers are returned as two cross coordination </span>
 <span class="sd">		number arrays (tuple). For auto (self) coordination numbers, specify type1</span>
 <span class="sd">		and type2 accordingly.</span>
@@ -1181,6 +1184,8 @@ table {
 
 <span class="sd">		TODO: support multi-body entities for single component systems</span>
 <span class="sd">		TODO: support tertiary systems </span>
+
+<span class="sd">		Returns an array of coon for all particles of size natoms x ntypes</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary</span><span class="p">:</span>
@@ -1255,7 +1260,7 @@ table {
 
 					<span class="n">typeB</span> <span class="o">=</span> <span class="n">tmpB</span>
 
-			<span class="k">return</span> <span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span>
+			<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 		<span class="k">else</span><span class="p">:</span>
 
 			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">,</span> <span class="s1">&#39;mol&#39;</span><span class="p">):</span>
@@ -1281,7 +1286,8 @@ table {
 		<span class="sd">&quot;&quot;&quot; Returns a non-overlapping Particles class from the given configuration </span>
 <span class="sd">		</span>
 <span class="sd">		@[percent]: filter all particles overlapping by a certain percentage</span>
-<span class="sd">		@</span>
+
+<span class="sd">		Returns a new Particles class</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">percent</span> <span class="o">/=</span> <span class="mf">100.0</span>
@@ -1305,12 +1311,12 @@ table {
 
 		<span class="k">return</span> <span class="n">Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
-	<span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):</span>
 <span class="sd">		&#39;Characterization of force chains in granular material&#39;.</span>
 
-<span class="sd">		@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -&gt; (x,y)</span>
-<span class="sd">		@ alpha: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
+<span class="sd">		@ [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -&gt; (x,y)</span>
+<span class="sd">		@ [alpha]: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
 <span class="sd">		Thus, alpha is a measure of the &#39;curvature&#39; of the force chain. See page 5 of the paper cited above.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
@@ -1318,7 +1324,7 @@ table {
 		<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># 2 stress components + angle = 4 dims</span>
 
 		<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 		<span class="c1"># Compute net stresses on all particles</span>
 		<span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlaps</span><span class="p">:</span>
@@ -1362,7 +1368,7 @@ table {
 			<span class="n">Particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
 			<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-			<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+			<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 			<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 			<span class="n">stress_norm</span> <span class="o">=</span> <span class="n">stress_norm</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
@@ -1391,8 +1397,6 @@ table {
 
 			<span class="k">return</span> <span class="n">stress_prin</span>
 
-
-
 		<span class="k">else</span><span class="p">:</span> <span class="c1"># use Peters&#39; algorithm for computing force chain propagation</span>
 			<span class="c1"># Section V. THE ALGORITHM (page 4)</span>
 			<span class="c1"># Step 1: filter out particles with less than the mean principal stress</span>
@@ -1402,7 +1406,7 @@ table {
 
 			<span class="c1"># Step 2: filter out particles which are in contact with 1 or less &#39;highly stressed&#39; particles</span>
 			<span class="c1"># Construct an nns list</span>
-			<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axis</span><span class="p">]</span> 
+			<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axes</span><span class="p">]</span> 
 			<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 			<span class="n">radii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">radius</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
@@ -1490,22 +1494,6 @@ table {
 			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 			<span class="k">return</span> <span class="n">chain</span><span class="p">,</span> <span class="n">stress_prin</span>
-
-	<span class="k">def</span> <span class="nf">findWithin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span> <span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Find all points within distance r of point(s) coords.</span>
-<span class="sd">		TODO: Support walls aligned arbitrarily in space &quot;&quot;&quot;</span>
-
-		<span class="c1">#indices = [item for i in indices for item in i]</span>
-		<span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
-
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
-			<span class="c1"># calculate distance along the z-axis (must take other axes into account)</span>
-			<span class="n">lengths</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-
-			<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-			<span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lengths</span> <span class="o">&lt;=</span> <span class="n">parts</span><span class="o">.</span><span class="n">radius</span><span class="p">)]</span>
-
-		<span class="k">return</span> <span class="bp">None</span>
 </pre></div>
 
   </div>
@@ -1530,7 +1518,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium.Neighbors" class="source">
-    <div class="codehilite"><pre><span class="k">class</span> <span class="nc">Neighbors</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Neighbors</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; A dynamic class that contains all the particle-particle (and optionally particle-wall)</span>
 <span class="sd">	neighbors from which contacts, overlaps, force chains, etc. can be determined.</span>
 
@@ -1540,7 +1528,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 <span class="sd">	@[binary]: False by default. Set to True when analyzing 2-component systems.</span>
 
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span> <span class="o">=</span> <span class="n">Particles</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
@@ -1593,7 +1581,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pairs</span>
 
 	<span class="k">def</span> <span class="nf">coon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Returns the coordination number per particle. For binary mixtures</span>
+		<span class="sd">&quot;&quot;&quot; Computes the coordination number per particle. For binary mixtures</span>
 <span class="sd">		the default coordinations numbers are returned as two cross coordination </span>
 <span class="sd">		number arrays (tuple). For auto (self) coordination numbers, specify type1</span>
 <span class="sd">		and type2 accordingly.</span>
@@ -1603,6 +1591,8 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 <span class="sd">		TODO: support multi-body entities for single component systems</span>
 <span class="sd">		TODO: support tertiary systems </span>
+
+<span class="sd">		Returns an array of coon for all particles of size natoms x ntypes</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary</span><span class="p">:</span>
@@ -1677,7 +1667,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 					<span class="n">typeB</span> <span class="o">=</span> <span class="n">tmpB</span>
 
-			<span class="k">return</span> <span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span>
+			<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 		<span class="k">else</span><span class="p">:</span>
 
 			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">,</span> <span class="s1">&#39;mol&#39;</span><span class="p">):</span>
@@ -1703,7 +1693,8 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 		<span class="sd">&quot;&quot;&quot; Returns a non-overlapping Particles class from the given configuration </span>
 <span class="sd">		</span>
 <span class="sd">		@[percent]: filter all particles overlapping by a certain percentage</span>
-<span class="sd">		@</span>
+
+<span class="sd">		Returns a new Particles class</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="n">percent</span> <span class="o">/=</span> <span class="mf">100.0</span>
@@ -1727,12 +1718,12 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 		<span class="k">return</span> <span class="n">Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
-	<span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):</span>
 <span class="sd">		&#39;Characterization of force chains in granular material&#39;.</span>
 
-<span class="sd">		@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -&gt; (x,y)</span>
-<span class="sd">		@ alpha: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
+<span class="sd">		@ [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -&gt; (x,y)</span>
+<span class="sd">		@ [alpha]: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
 <span class="sd">		Thus, alpha is a measure of the &#39;curvature&#39; of the force chain. See page 5 of the paper cited above.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
@@ -1740,7 +1731,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 		<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># 2 stress components + angle = 4 dims</span>
 
 		<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 		<span class="c1"># Compute net stresses on all particles</span>
 		<span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlaps</span><span class="p">:</span>
@@ -1784,7 +1775,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 			<span class="n">Particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
 			<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-			<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+			<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 
 			<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 			<span class="n">stress_norm</span> <span class="o">=</span> <span class="n">stress_norm</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
@@ -1813,8 +1804,6 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 			<span class="k">return</span> <span class="n">stress_prin</span>
 
-
-
 		<span class="k">else</span><span class="p">:</span> <span class="c1"># use Peters&#39; algorithm for computing force chain propagation</span>
 			<span class="c1"># Section V. THE ALGORITHM (page 4)</span>
 			<span class="c1"># Step 1: filter out particles with less than the mean principal stress</span>
@@ -1824,7 +1813,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 			<span class="c1"># Step 2: filter out particles which are in contact with 1 or less &#39;highly stressed&#39; particles</span>
 			<span class="c1"># Construct an nns list</span>
-			<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axis</span><span class="p">]</span> 
+			<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axes</span><span class="p">]</span> 
 			<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 			<span class="n">radii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">radius</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 
@@ -1912,22 +1901,6 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 			<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 			<span class="k">return</span> <span class="n">chain</span><span class="p">,</span> <span class="n">stress_prin</span>
-
-	<span class="k">def</span> <span class="nf">findWithin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span> <span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Find all points within distance r of point(s) coords.</span>
-<span class="sd">		TODO: Support walls aligned arbitrarily in space &quot;&quot;&quot;</span>
-
-		<span class="c1">#indices = [item for i in indices for item in i]</span>
-		<span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
-
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
-			<span class="c1"># calculate distance along the z-axis (must take other axes into account)</span>
-			<span class="n">lengths</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-
-			<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-			<span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lengths</span> <span class="o">&lt;=</span> <span class="n">parts</span><span class="o">.</span><span class="n">radius</span><span class="p">)]</span>
-
-		<span class="k">return</span> <span class="bp">None</span>
 </pre></div>
 
   </div>
@@ -1938,45 +1911,9 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
           <h3>Ancestors (in MRO)</h3>
           <ul class="class_list">
           <li><a href="#PyGran.Analyzer.equilibrium.Neighbors">Neighbors</a></li>
-          <li>__builtin__.object</li>
+          <li><a href="/builtins.object.ext">builtins.object</a></li>
           </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.equilibrium.Neighbors.distances" class="name">var <span class="ident">distances</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Returns all neighbor pair-wise distance</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Analyzer.equilibrium.Neighbors.overlaps" class="name">var <span class="ident">overlaps</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Returns all overlapping distances and their indices in the form of an N x 3 numpy array
-where N is the number of particles. 1st column contains the distances, 2nd and 3rd colum the corresponding
-indices</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Analyzer.equilibrium.Neighbors.pairs" class="name">var <span class="ident">pairs</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Returns the pair indices for each overlap</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-          <h3>Methods</h3>
+          <h3>Static methods</h3>
             
   <div class="item">
     <div class="name def" id="PyGran.Analyzer.equilibrium.Neighbors.__init__">
@@ -1986,10 +1923,11 @@ indices</p></div>
 
     
   
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors.__init__', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium.Neighbors.__init__" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Particles</span><span class="p">,</span> <span class="n">material</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span> <span class="o">=</span> <span class="n">Particles</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 	<span class="bp">self</span><span class="o">.</span><span class="n">_tree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">)</span>
@@ -2035,19 +1973,20 @@ indices</p></div>
 
     
   
-    <div class="desc"><p>Returns the coordination number per particle. For binary mixtures
+    <div class="desc"><p>Computes the coordination number per particle. For binary mixtures
 the default coordinations numbers are returned as two cross coordination 
 number arrays (tuple). For auto (self) coordination numbers, specify type1
 and type2 accordingly.</p>
 <p>[type1]: which type to compute 1st coon for in a binay mixture
 [type2]:  which type to compute 2nd coon for in a binay mixture</p>
 <p>TODO: support multi-body entities for single component systems
-TODO: support tertiary systems</p></div>
+TODO: support tertiary systems </p>
+<p>Returns an array of coon for all particles of size natoms x ntypes</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors.coon', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium.Neighbors.coon" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">coon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Returns the coordination number per particle. For binary mixtures</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">coon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Computes the coordination number per particle. For binary mixtures</span>
 <span class="sd">	the default coordinations numbers are returned as two cross coordination </span>
 <span class="sd">	number arrays (tuple). For auto (self) coordination numbers, specify type1</span>
 <span class="sd">	and type2 accordingly.</span>
@@ -2055,6 +1994,7 @@ TODO: support tertiary systems</p></div>
 <span class="sd">	[type2]:  which type to compute 2nd coon for in a binay mixture</span>
 <span class="sd">	TODO: support multi-body entities for single component systems</span>
 <span class="sd">	TODO: support tertiary systems </span>
+<span class="sd">	Returns an array of coon for all particles of size natoms x ntypes</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	
 	<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary</span><span class="p">:</span>
@@ -2116,7 +2056,7 @@ TODO: support tertiary systems</p></div>
 				<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">partB</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partsB</span><span class="p">):</span>
 					<span class="n">tmpB</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">partB</span><span class="o">.</span><span class="n">mol</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">typeB</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c1"># mols are numbered from 1 ... N in LAMMPS</span>
 				<span class="n">typeB</span> <span class="o">=</span> <span class="n">tmpB</span>
-		<span class="k">return</span> <span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span>
+		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">typeA</span><span class="p">,</span> <span class="n">typeB</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">,</span> <span class="s1">&#39;mol&#39;</span><span class="p">):</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -2145,16 +2085,16 @@ TODO: support tertiary systems</p></div>
     
   
     <div class="desc"><p>Returns a non-overlapping Particles class from the given configuration </p>
-<p>@[percent]: filter all particles overlapping by a certain percentage
-@</p></div>
+<p>@[percent]: filter all particles overlapping by a certain percentage</p>
+<p>Returns a new Particles class</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors.filter', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium.Neighbors.filter" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Returns a non-overlapping Particles class from the given configuration </span>
 <span class="sd">	</span>
 <span class="sd">	@[percent]: filter all particles overlapping by a certain percentage</span>
-<span class="sd">	@</span>
+<span class="sd">	Returns a new Particles class</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">percent</span> <span class="o">/=</span> <span class="mf">100.0</span>
 	<span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
@@ -2180,40 +2120,8 @@ TODO: support tertiary systems</p></div>
   
             
   <div class="item">
-    <div class="name def" id="PyGran.Analyzer.equilibrium.Neighbors.findWithin">
-    <p>def <span class="ident">findWithin</span>(</p><p>self, coords, r)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Find all points within distance r of point(s) coords.
-TODO: Support walls aligned arbitrarily in space</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors.findWithin', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.equilibrium.Neighbors.findWithin" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">findWithin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span> <span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; Find all points within distance r of point(s) coords.</span>
-<span class="sd">	TODO: Support walls aligned arbitrarily in space &quot;&quot;&quot;</span>
-	<span class="c1">#indices = [item for i in indices for item in i]</span>
-	<span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
-		<span class="c1"># calculate distance along the z-axis (must take other axes into account)</span>
-		<span class="n">lengths</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-		<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
-		<span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lengths</span> <span class="o">&lt;=</span> <span class="n">parts</span><span class="o">.</span><span class="n">radius</span><span class="p">)]</span>
-	<span class="k">return</span> <span class="bp">None</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
     <div class="name def" id="PyGran.Analyzer.equilibrium.Neighbors.forceChain">
-    <p>def <span class="ident">forceChain</span>(</p><p>self, axis=(0, 2), alpha=0.7853981633974483, plot_stress=True, plot_parts=False, peters=True, threshold=1)</p>
+    <p>def <span class="ident">forceChain</span>(</p><p>self, axes=(0, 2), alpha=0.7853981633974483, plot_stress=True, plot_parts=False, peters=True, threshold=1)</p>
     </div>
     
 
@@ -2221,23 +2129,23 @@ TODO: Support walls aligned arbitrarily in space</p></div>
   
     <div class="desc"><p>Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
 'Characterization of force chains in granular material'.</p>
-<p>@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -&gt; (x,y)
-@ alpha: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.
+<p>@ [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -&gt; (x,y)
+@ [alpha]: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.
 Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of the paper cited above.</p></div>
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.equilibrium.Neighbors.forceChain', this);">Show source &equiv;</a></p>
   <div id="source-PyGran.Analyzer.equilibrium.Neighbors.forceChain" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">forceChain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">plot_stress</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">plot_parts</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peters</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):</span>
 <span class="sd">	&#39;Characterization of force chains in granular material&#39;.</span>
-<span class="sd">	@ axis: a tuple of size 2 that specifies the two axis to use for computing the force chain, e.g. axis=(0,1) -&gt; (x,y)</span>
-<span class="sd">	@ alpha: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
+<span class="sd">	@ [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -&gt; (x,y)</span>
+<span class="sd">	@ [alpha]: the angle (in radians) that controls the deviation of the force chain. A value of 0 means a perfectly linear chain.</span>
 <span class="sd">	Thus, alpha is a measure of the &#39;curvature&#39; of the force chain. See page 5 of the paper cited above.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">stress</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 	<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># 2 stress components + angle = 4 dims</span>
 	<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-	<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+	<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 	<span class="c1"># Compute net stresses on all particles</span>
 	<span class="k">for</span> <span class="n">contact</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overlaps</span><span class="p">:</span>
 		<span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">contact</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">contact</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -2267,7 +2175,7 @@ Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of th
 		<span class="n">indices</span>  <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">stress_norm</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">Particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 		<span class="n">coords</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Particles</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Particles</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
-		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+		<span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">coords</span><span class="p">[</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 		<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 		<span class="n">stress_norm</span> <span class="o">=</span> <span class="n">stress_norm</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 		<span class="n">stress_norm</span> <span class="o">/=</span> <span class="n">stress_norm</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.3</span>
@@ -2293,7 +2201,7 @@ Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of th
 		<span class="n">stress_norm</span> <span class="o">=</span> <span class="n">stress_norm</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 		<span class="c1"># Step 2: filter out particles which are in contact with 1 or less &#39;highly stressed&#39; particles</span>
 		<span class="c1"># Construct an nns list</span>
-		<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axis</span><span class="p">]</span> 
+		<span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">[</span><span class="n">indices</span><span class="p">,:][:,</span><span class="n">axes</span><span class="p">]</span> 
 		<span class="n">stress_prin</span> <span class="o">=</span> <span class="n">stress_prin</span><span class="p">[</span><span class="n">indices</span><span class="p">,:]</span>
 		<span class="n">radii</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Particles</span><span class="o">.</span><span class="n">radius</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
 		<span class="n">tree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
@@ -2366,6 +2274,42 @@ Thus, alpha is a measure of the 'curvature' of the force chain. See page 5 of th
 
   </div>
   
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="PyGran.Analyzer.equilibrium.Neighbors.distances" class="name">var <span class="ident">distances</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Returns all neighbor pair-wise distance</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Analyzer.equilibrium.Neighbors.overlaps" class="name">var <span class="ident">overlaps</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Returns all overlapping distances and their indices in the form of an N x 3 numpy array
+where N is the number of particles. 1st column contains the distances, 2nd and 3rd colum the corresponding
+indices</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="PyGran.Analyzer.equilibrium.Neighbors.pairs" class="name">var <span class="ident">pairs</span></p>
+            
+
+            
+  
+    <div class="desc"><p>Returns the pair indices for each overlap</p></div>
+  <div class="source_cont">
+</div>
+
+            </div>
       </div>
       </div>
 
