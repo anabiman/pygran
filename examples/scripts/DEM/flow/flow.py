@@ -7,7 +7,7 @@ Created on April 22, 2017
 # -*- coding: utf8 -*-
 
 from PyGran import Simulator, Visualizer
-from PyGran.Materials import organic, glass
+from PyGran.Params import organic, glass
 
 params = {
 	# Define the system

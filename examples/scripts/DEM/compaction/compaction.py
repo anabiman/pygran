@@ -1,5 +1,5 @@
 from PyGran import Simulator
-from PyGran.Materials import organic
+from PyGran.Params import organic
 
 # Create a dictionary of physical parameters
 params = {

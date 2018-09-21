@@ -7,8 +7,7 @@ Created on July 9, 2016
 # -*- coding: utf8 -*-
 
 from PyGran import Simulator, Analyzer, Visualizer
-from PyGran.Materials import organic
-
+from PyGran.Params import organic
 
 # Launch 4 simultaneous simulations, each different coef of rest
 nSim = 4

@@ -7,7 +7,7 @@ Created on March 3, 2018
 # -*- coding: utf8 -*-
 
 from PyGran import Simulator, Analyzer, Visualizer
-from PyGran.Materials import organic
+from PyGran.Params import organic
 
 def template_tablet(nspheres, radius, length):
 	""" This function creates a multi-sphere tablet (cylinder) of
