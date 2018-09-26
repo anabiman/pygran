@@ -42,9 +42,8 @@ class Model(object):
 
  	TODO: enable particle-particle experiments to be conducted.
 	"""
- 	def __init__(self, **params):
+	def __init__(self, **params):
 
-		self.viscous = True # be default, all contact models are visco-elstic unless implemented otherwise
 		self.params = params
 		self.params['nSS'] = 0
 		self.JKR = False # Assume JKR cohesion model is by default OFF
@@ -230,9 +229,8 @@ class Model(object):
 
 
 		# Compute effective radius for particle-wall intxn
-		self.radius = self.radius / 2.0
 		if hasattr(self,'density'):
-			self.mass = 4.0 * self.density * 4.0/3.0 * np.pi * self.radius**3.0
+			self.mass = self.density * 4.0/3.0 * np.pi * self.radius**3.0
 
 	def setupProps(self):
 		""" Creates class attributes for all material properties """
@@ -259,7 +257,7 @@ class Model(object):
 
 		kn = SD.springStiff(radius)
 
-		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)) / kn)
+		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)**2) / kn)
 
 	def displacement(self, dt=None):
 		""" Generator that computes (iteratively) the contact overlap as a function of time 
@@ -282,7 +280,9 @@ class Model(object):
 		inte.set_initial_value(y0, t0)
 
 		Tc = self.contactTime() * 2
-		dt = Tc / 1000
+
+		if not dt:	
+			dt = Tc / 1000
 
 		time, delta, force = [], [], []
 		self._contRadius = []
@@ -655,7 +655,6 @@ class ThorntonNing(Model):
 
 		super(ThorntonNing, self).__init__(**params)
 		self.JKR = True
-		self.viscous = False
 
 		if 'model-args' not in self.params:
 			self.params['model-args'] = ('gran', 'model hysteresis_coh/thorn', \
