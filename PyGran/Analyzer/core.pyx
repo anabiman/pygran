@@ -173,7 +173,9 @@ these properties. This class is iterable but NOT an iterator. """
 		return eval(type(self).__name__)(units=self._units, data=data)
 
 	def conversion(self, factors):
-		""" Convesion factors from S.I., micro, cgs, or nano, and vice versa """
+		""" Convesion factors from S.I., micro, cgs, or nano, and vice versa 
+
+		TODO: support all possible variables (is this possible???) """
 
 		for key in self.data.keys():
 
@@ -688,7 +690,7 @@ class Particles(SubSystem):
 		self.__init__(sel=None, units=self._units, fname=self._fname, **self.data)
 		self._constructAttributes()
 
-	def rog(self):
+	def computeROG(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
 		ROG = <\sqrt(\sum_i (r_i - rm)^2)> where rm is the mean position of all
 		particles, and <...> is the ensemble average. Alternatively, one can
@@ -706,13 +708,13 @@ class Particles(SubSystem):
 
 		return np.sqrt(rog/N)
 
-	def com(self):
+	def computeCOM(self):
 		""" Returns center of mass """
 		vol = 4.0/3.0 * np.pi * self.radius**3
 
 		return np.array([np.dot(self.x, vol), np.dot(self.y, vol), np.dot(self.z, vol)]) / vol.sum()
 
-	def gcom(self):
+	def computeGCOM(self):
 		""" Returns the geometric center of mass """
 		vol = 4.0/3.0 * np.pi * self.radius**3
 		r = len(vol)
@@ -734,7 +736,7 @@ class Particles(SubSystem):
 
 		return np.sqrt(r[-N:]).mean()
 
-	def rdf(self, dr = None, center = True, rMax=None):
+	def computeRDF(self, dr = None, center = True, rMax=None):
 		""" Computes the three-dimensional radial distribution function for a set of
 	    spherical particles contained in a cube with side length S.  This simple
 	    function finds reference particles such that a sphere of radius rMax drawn
@@ -823,7 +825,7 @@ class Particles(SubSystem):
 		# Number of particles in shell/total number of particles/volume of shell/number density
 		# shell volume = 4/3*pi(r_outer**3-r_inner**3)
 
-	def angleRepose(self):
+	def computeAngleRepose(self):
 		"""
 		Computes the angle of repos theta = arctan(h_max/L)
 		in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]
@@ -834,7 +836,7 @@ class Particles(SubSystem):
 
 		return np.arctan(z_max / dL) * 180.0 / np.pi
 		
-	def mass(self, tdensity):
+	def computeMass(self, tdensity):
 		""" Computes the mass of all particles 
 
 		@tdensity: true density of the powder
@@ -849,7 +851,7 @@ class Particles(SubSystem):
 		else:
 			return None
 
-	def intensitySegregation(self, resol=None):
+	def computeIntensitySegregation(self, resol=None):
 		""" Computes the intensity of segregation for binary mixture
 		as defined by Danckwerts:
 
@@ -894,7 +896,7 @@ class Particles(SubSystem):
 
 		return aStd**2 / (aMean * (1.0 - aMean)), indices_a, indices
 
-	def scaleSegregation(self, nTrials=1000, resol=None, Npts=50, maxDist=None):
+	def computeScaleSegregation(self, nTrials=1000, resol=None, Npts=50, maxDist=None):
 		""" Computes the correlation coefficient as defined by Danckwerts:
 		R(r) = a * b / std(a)**2
 
@@ -946,7 +948,7 @@ class Particles(SubSystem):
 
 		return corrfunc[np.invert(np.isnan(corrfunc))], distance[0:-1][np.invert(np.isnan(corrfunc))] * resol
 
-	def density(self, tdensity, shape = 'box', bounds=None):
+	def computeDensity(self, tdensity, shape = 'box', bounds=None):
 		"""
 		Computes the bulk density for a selection of particles from their *true* density.
 		The volume is determined approximately by constructing a box/cylinder/cone
@@ -957,9 +959,9 @@ class Particles(SubSystem):
 
 		"""
 		
-		return self.mass(tdensity).sum() / self.volume(shape)
+		return self.computeMass(tdensity).sum() / self.computeVolume(shape)
 
-	def densityLocal(self, bdensity, dr, axis):
+	def computeDensityLocal(self, bdensity, dr, axis):
 		"""" Computes a localized density at a series of discretized regions of thickness 'dr'
 		along an axis specified by the user """
 
@@ -989,7 +991,7 @@ class Particles(SubSystem):
 
 		return thick, odensity
 
-	def volume(self, shape = 'box'):
+	def computeVolume(self, shape = 'box'):
 		""" Computes the volume of a granular system based on a simple geometry 
 		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z"""
 
