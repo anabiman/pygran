@@ -77,7 +77,10 @@ class liggghts:
         print("Using " + library + " as a shared library for DEM computations")
     else:
       if not comm.Get_rank():
-        print("Make sure " + library + " is properly installed on your system")
+        if library:
+          print("Make sure " + library + " is properly installed on your system")
+        else:
+          print("No liggghts library supplied. Exiting ...")
       else:
         print('Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library))
       sys.exit()
