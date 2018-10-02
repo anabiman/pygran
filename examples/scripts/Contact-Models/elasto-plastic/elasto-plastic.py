@@ -17,16 +17,13 @@ pressure = arange(1, 6, 0.1) * cohesionless['youngsModulus'] * 0.01
 
 # Set particle radius to 100 microns
 cohesionless['radius'] = 1e-4
-cohesionless['coefficientRestitution'] = 0.5
 
 for yieldPress in pressure:
-
-	yeff = cohesionless['youngsModulus'] * 0.5 / (1. - cohesionless['poissonsRatio']**2)
 
 	cohesionless['yieldPress'] = yieldPress
 	model = cModel(material=cohesionless)
 
-	time, disp, force = model.displacement(dt=2.33322158839e-07)
+	time, disp, force = model.displacement()
 
 	deltav = disp[:,1]
 
@@ -42,9 +39,6 @@ COR_anal = sqrt(6. * sqrt(3.0) / 5.0) * sqrt(1.0 - (1.0/6.0) * (ratio)**2) * \
 
 fig = plt.figure(figsize=(16,18), dpi=80)
 
-#print(COR_anal * cohesionless['characteristicVelocity'], fabs(deltav[-4::]), deltav[0])
-
-#plt.plot( deltav / cohesionless['characteristicVelocity']  )
 plt.plot(pressure, COR, '-o')
 plt.plot(pressure, COR_anal)
 
