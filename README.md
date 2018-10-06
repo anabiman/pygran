@@ -31,7 +31,7 @@ PyGran also provides an interface for running DEM simulation with [LIGGGHTS](htt
 
 ```python
 from PyGran import Simulator
-from PyGran.Materials import stearicAcid, steel
+from PyGran.Params import stearicAcid, steel
 
 # Create a DEM parameter dictionary
 param = {
