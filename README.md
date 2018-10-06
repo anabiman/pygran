@@ -52,7 +52,7 @@ param = {
 # Instantiate a DEM class
 sim = Simulator.DEM(**param['model'])
 
-# Insert particles (by default in the entire simulation box) for species 1 (stearic acid)
+# Insert particles for species 1 (stearic acid)
 insert = sim.insert(species=1, value=1000) 
 
 # Evolve the system in time 
