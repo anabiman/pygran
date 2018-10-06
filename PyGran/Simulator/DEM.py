@@ -61,6 +61,9 @@ class DEM:
         with open(self._dir + '../.config', 'r+') as fp:
           self.library = fp.read().split('=')[-1]
 
+          # Kill line break is it exists
+          self.library = self.library.split('\n')[0]
+
           # Make sure the library exists; else, find it somewhere else
           if not os.path.isfile(self.library):
             self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
