@@ -57,12 +57,8 @@ from importlib import import_module
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
 
-  has_mpi4py_v2 = False
   try:
     from mpi4py import MPI
-    from mpi4py import __version__ as mpi4py_version
-    if int(mpi4py_version.split('.')[0]) >= 2:
-      has_mpi4py_v2 = True
   except:
     pass
 
@@ -85,7 +81,12 @@ class liggghts:
         print('Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library))
       sys.exit()
 
-    self.lib = ctypes.CDLL(library, ctypes.RTLD_GLOBAL)
+    try:
+      self.lib = ctypes.CDLL(library, ctypes.RTLD_GLOBAL)
+    except:
+      etype,value,tb = sys.exc_info()
+      traceback.print_exception(etype,value,tb)
+      raise RuntimeError("Could not load LIGGGHTS dynamic library")
 
     # if no ptr provided, create an instance of LIGGGHTS
     #   don't know how to pass an MPI communicator from PyPar
@@ -101,50 +102,22 @@ class liggghts:
       # need to adjust for type of MPI communicator object
       # allow for int (like MPICH) or void* (like OpenMPI)
 
-      if liggghts.has_mpi4py_v2 and comm != None:
-        if liggghts.MPI._sizeof(liggghts.MPI.Comm) == ctypes.sizeof(ctypes.c_int):
-          MPI_Comm = ctypes.c_int
-        else:
-          MPI_Comm = ctypes.c_void_p
-
         narg = 0
         cargs = 0
         if cmdargs:
           cmdargs.insert(0,"liggghts.py")
           narg = len(cmdargs)
-          cargs = (ctypes.c_char_p*narg)(*cmdargs)
-          #self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_char_p*narg, \
-                                           #MPI_Comm, ctypes.c_void_p()]
-        else:
-          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_int, \
-                                           MPI_Comm, ctypes.c_void_p()]
-
-        #self.lib.lammps_open.restype = None
-        self.opened = 1
-        self.lmp = ctypes.c_void_p()
-        comm_ptr = MPI._addressof(comm)
-        comm_val = MPI_Comm.from_address(comm_ptr)
-
-        self.lib.lammps_open(narg,cargs,comm_val, ctypes.byref(self.lmp))
-        
-      else:
-        self.opened = 1
-
-        if cmdargs:
-          cmdargs.insert(0,"liggghts.py")
-          narg = len(cmdargs)
-          cargs = (ctypes.c_char_p*narg)(*cmdargs)
-          
+          cargs = [st.encode('utf-8') for st in cmdargs]
+          cargs = (ctypes.c_char_p*narg)(*cargs)
           self.lmp = ctypes.c_void_p()
-          self.lib.lammps_open_no_mpi(narg,cargs, ctypes.byref(self.lmp))
+          self.lib.lammps_open_no_mpi(narg,cargs,ctypes.byref(self.lmp))
         else:
           self.lmp = ctypes.c_void_p()
-          self.lib.lammps_open_no_mpi(0,None, ctypes.fbyref(self.lmp))
-          # could use just this if LIGGGHTS lib interface supported it
-          # self.lmp = self.lib.lammps_open_no_mpi(0,None)
+          self.lib.lammps_open_no_mpi(0,None,ctypes.byref(self.lmp))
 
+        self.opened = True
     else:
-      self.opened = 0
+      self.opened = False
       # magic to convert ptr to ctypes ptr
       pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
       pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
@@ -166,7 +139,8 @@ class liggghts:
     self.lib.lammps_file(self.lmp,file)
 
   def command(self,cmd):
-    self.lib.lammps_command(self.lmp,cmd)
+    """ For python 3, I had to encode the string as an 8 character utf """
+    self.lib.lammps_command(self.lmp,cmd.encode('utf-8'))
 
   def extract_global(self,name,type):
     if type == 0:
@@ -338,12 +312,6 @@ class DEMPy:
     self.lmp.command('newton off') # turn off newton's 3rd law ~ should lead to better scalability
     self.lmp.command('communicate single vel yes') # have no idea what this does, but it's imp for ghost atoms
     self.lmp.command('processors * * *') # let LIGGGHTS handle DD
-
-    if not self.rank:
-      from sys import argv
-      scriptFile = argv[0]
-      logging.info('Backing up {} file'.format(scriptFile))
-      os.system('cp {}/../{} {}'.format(self.path, scriptFile, scriptFile.split('.')[0] + '-bk.py'))
 
   def get_natoms(self):
     return self.lmp.get_natoms()
@@ -613,7 +581,9 @@ class DEMPy:
     @ plane: x, y, or z plane for primitive walls
     @ peq: plane equation for primitive walls
 
-    This function can be called only ONCE for setting up all walls (restriction from LIGGGHTS)
+    This function can be called only ONCE for setting up all mesh walls (restriction from LIGGGHTS)
+
+    TODO: support additional keywords (shear, etc.) for primitive walls
     """
 
     gran = 'gran' # VERY HACKISH

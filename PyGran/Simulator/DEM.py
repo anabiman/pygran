@@ -32,6 +32,8 @@ from datetime import datetime
 import os, sys
 from PyGran.Tools import find
 from PyGran.Simulator import models
+import PyGran
+import shutil
 
 class DEM:
   """A *generic* class that handles communication for a DEM object independent of the engine used"""
@@ -128,7 +130,7 @@ class DEM:
         
         os.chdir(self.pargs['output'])
 
-        self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here      
+        self.dem = module.DEMPy(i, self.split, self.library, **self.pargs) # logging module imported here  
         break
 
     if not self.rank:
@@ -137,6 +139,7 @@ class DEM:
       logging = import_module(name='logging')
       logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
+      logging.info('Initializing simulation with PyGran version {}'.format(PyGran.__version__))
       logging.info("Initializing MPI for a total of {} procs".format(self.tProcs))
 
       if self.nSim > 1:
@@ -144,6 +147,13 @@ class DEM:
 
       if self.pProcs > 0:
         logging.info('Using {} cores per simulation'.format(self.pProcs))
+
+      from sys import argv
+      scriptFile = argv[0]
+
+      if scriptFile.endswith('.py'):
+          logging.info('Backing up {} file'.format(scriptFile))
+          shutil.copyfile('{}/../{}'.format(os.getcwd(), scriptFile), '{}'.format(scriptFile.split('.')[0] + '-bk.py'))
 
     # All I/O done ~ phew! Now initialize DEM
     # Import and setup all meshes as rigid walls
@@ -386,9 +396,15 @@ class DEM:
         self.dem.command(cmd)
         break
 
-  def __del__(self):
+  def close(self):
     """
     """
     # Dont call this since the user might be running multiple simulations in one script
     #MPI.Finalize()
     os.chdir('..')    
+
+  def __enter__(self):
+    return self
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    os.chdir('..')
