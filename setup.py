@@ -94,13 +94,11 @@ class LIGGGHTS(install):
     def run(self):
         self.do_pre_install_stuff()
 
-import PyGran
-
 setup(
     name = "PyGran",
-    version = PyGran.__version__,
+    version = 1.1,
     author = "Andrew Abi-Mansour",
-    author_email = "andrew.gaam@gmail.com",
+    author_email = "support@pygran.org",
     description = ("A DEM toolbox for rapid quantitative analysis of granular/powder systems"),
     license = "GNU v2",
     keywords = "Discrete Element Method, Granular Materials",
@@ -121,6 +119,6 @@ setup(
 
     cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
-    ext_modules=cythonize("PyGran/Analyzer/*.pyx"),
+    ext_modules=cythonize("PyGran/Analyzer/core.pyx"),
 	include_dirs=[numpy.get_include()]
 )
