@@ -1,5 +1,5 @@
 from PyGran import Simulator
-from PyGran.Materials import organic
+from PyGran.Params import organic
 
 xdim = 1e-3
 
@@ -54,7 +54,7 @@ params = {
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-    	sim = Simulator.DEM(**params)
+	sim = Simulator.DEM(**params)
 
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
