@@ -54,17 +54,15 @@ class DEM:
     self.model = str(pargs['model']).split("'")[1].split('.')[-1]
     self.pargs = pargs
     self.library = None
-    self._dir, _ = __file__.split('DEM.py')
+    self._dir, _ = __file__.split(__name__.split('PyGran.Simulator.')[-1] +'.py')
     
     # Check if .config files eixsts else create it
     # Only one process needs to do this
     if not self.rank:
       if os.path.isfile(self._dir + '../.config'):
         with open(self._dir + '../.config', 'r+') as fp:
-          self.library = fp.read().split('=')[-1]
-
-          # Kill line break is it exists
-          self.library = self.library.split('\n')[0]
+          self.library = fp.readline().split('=')[-1].rstrip()
+          self.pargs['__version__'] = float(fp.readline().split('=')[-1].rstrip())
 
           # Make sure the library exists; else, find it somewhere else
           if not os.path.isfile(self.library):
