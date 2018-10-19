@@ -34,8 +34,13 @@ from string import ascii_uppercase
 import glob
 import re, sys, os
 import collections
-import vtk
-from vtk.util.numpy_support import vtk_to_numpy
+
+try:
+	import vtk
+	from vtk.util.numpy_support import vtk_to_numpy
+except:
+	pass
+	
 from PyGran.Tools import convert
 from scipy.stats import binned_statistic
 import importlib
