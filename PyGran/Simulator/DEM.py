@@ -216,6 +216,11 @@ class DEM:
       if self.rank < self.pProcs * (i + 1):
         return self.dem.extract_compute(id,style,type)
 
+  def extract_fix(self,id,style,type,i=0,j=0):
+    for i in range(self.nSim):
+      if self.rank < self.pProcs * (i + 1):
+        return self.dem.extract_fix(id,style,type,i,j)
+
   def initialize(self):
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -308,12 +313,12 @@ class DEM:
         self.dem.printSetup()
         break
 
-  def dumpSetup(self, only_mesh=False, name=None):
+  def writeSetup(self, only_mesh=False, name=None):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        dumpID = self.dem.dumpSetup(only_mesh, name)
+        dumpID = self.dem.writeSetup(only_mesh, name)
 
         # Create or update links to the particle/mesh files (easily accessible to the user)
         if 'pfile' in self.lmp.pargs['traj']:
@@ -355,13 +360,12 @@ class DEM:
         self.dem.remove(name)
         break
 
-  def monitor(self, name, group, var, file):
+  def monitor(self, **args):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        self.dem.monitor(name, group, var, file)
-        break
+        return self.dem.monitor(**args)
 
   def plot(self, fname, xlabel, ylabel, output=None, xscale=None):
     """
@@ -371,12 +375,12 @@ class DEM:
         self.dem.plot(fname, xlabel, ylabel, output, xscale)
         break
 
-  def moveMesh(self, name, *args):
+  def moveMesh(self, name, **args):
     """
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        return self.dem.moveMesh(name, *args)
+        return self.dem.moveMesh(name, **args)
 
   def saveas(self, name, fname):
     """
@@ -396,9 +400,15 @@ class DEM:
 
   def close(self):
     """
+    Deletes allocated memory and changes directory back to cwd. 
     """
     # Dont call this since the user might be running multiple simulations in one script
     #MPI.Finalize()
+    for i in range(self.nSim):
+      if self.rank < self.pProcs * (i + 1):
+        self.dem.close()
+        break
+
     os.chdir('..')    
 
   def __enter__(self):

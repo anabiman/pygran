@@ -53,7 +53,7 @@ import os
 import glob
 import sys
 from importlib import import_module
-from PyGran.Tools import find
+from PyGran.Tools import find, dictToTuple
 
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
@@ -124,12 +124,8 @@ class liggghts:
       pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
       self.lmp = ctypes.c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
 
-  def __del__(self):
-    if hasattr(self, 'lmp') and self.opened: 
-      self.close()
-
   def close(self):
-    if self.opened: 
+    if hasattr(self, 'lmp') and self.opened: 
         self.lib.lammps_close(self.lmp)
         self.lmp = None
 
@@ -277,6 +273,7 @@ class DEMPy:
     self.nSS = len(self.pargs['species'])
     self.output = self.pargs['output']
     self._dir, _ = __file__.split(__name__.split('PyGran.Simulator.')[-1] +'.py')
+    self._monitor = [] # a list of tuples of (varname, filename) to monitor
 
     if '__version__' in pargs:
       self.__version__ = self.pargs['__version__']
@@ -286,7 +283,7 @@ class DEMPy:
 
       logging = import_module(name='logging')
 
-      logging.basicConfig(filename='dem.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
+      logging.basicConfig(filename='pygran.log', format='%(asctime)s:%(levelname)s: %(message)s', level=logging.DEBUG)
 
       logging.info("Working in {}".format(self.path))
       logging.info('Creating i/o directories')
@@ -347,6 +344,9 @@ class DEMPy:
 
   def extract_compute(self,id,style,type):
     return self.lmp.extract_compute(id,style,type)
+
+  def extract_fix(self,id,style,type,i=0,j=0):
+    return self.lmp.extract_fix(id,style,type,i,j)  
 
   def createParticles(self, type, style, *args):
     self.lmp.createParticles(type, style, *args)
@@ -545,11 +545,23 @@ class DEMPy:
 
     self.integrate(nsteps, dt)
 
+    # See if any variables were set to be monitered by the user
+    if self._monitor:
+      for vname, fname in self._monitor:
+        getattr(self, vname).append(np.loadtxt(fname))
+
     return name
 
-  def moveMesh(self, name, *args):
+  def moveMesh(self, name, **args):
+    """ Control how a mesh (specified by name) moves in time
+
+    @name: string specifying mesh ID/name
+    @args: keywords specific to LIGGGHTS's move/mesh command: https://www.cfdem.com/media/DEM/docu/fix_move_mesh.html
+    """
     
     randName = 'moveMesh' + str(np.random.randint(10**5,10**8))
+
+    args = dictToTuple(**args)
 
     self.lmp.command('fix {} all move/mesh mesh {} '.format(randName, name) + ('{} ' * len(args)).format(*args))
 
@@ -596,7 +608,6 @@ class DEMPy:
   def setupWall(self, wtype, species = None, plane = None, peq = None):
     """
     Creates a wall
-    @ name: name of the variable defining a wall or a mesh
     @ wtype: type of the wall (primitive or mesh)
     @ plane: x, y, or z plane for primitive walls
     @ peq: plane equation for primitive walls
@@ -676,7 +687,7 @@ class DEMPy:
         self.importMeshes()
 
         # Create new dump setups, leaving particle dumps intact
-        self.dumpSetup(only_mesh=True)
+        self.writeSetup(only_mesh=True)
 
         return 0
     
@@ -808,9 +819,9 @@ class DEMPy:
     # Write output to trajectory by default unless the user specifies otherwise
     if 'dump' in self.pargs:
       if self.pargs['dump'] == True:
-        self.dumpSetup()
+        self.writeSetup()
     else:
-      self.dumpSetup()
+      self.writeSetup()
 
   def setupIntegrate(self, itype=None, group=None):
     """
@@ -896,7 +907,7 @@ class DEMPy:
     self.lmp.command('thermo {}'.format(freq))
     self.lmp.command('thermo_modify norm no lost ignore')
 
-  def dumpSetup(self, only_mesh=False, name=None):
+  def writeSetup(self, only_mesh=False, name=None):
     """
     This creates dumps for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during
     the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.
@@ -970,6 +981,9 @@ class DEMPy:
     """
     Extracts atomic positions from a certian frame and adds it to coords
     """
+    if not self.rank:
+      logging.info('Extracting atomic poitions')
+
     # Extract coordinates from liggghts
     self.lmp.command('variable x atom x')
     x = Rxn.lmp.extract_variable("x", "group1", 1)
@@ -991,11 +1005,38 @@ class DEMPy:
 
     return coords
 
-  def monitor(self, name, group, var, file, species='all'):
+  def monitor(self, **args):
     """
+    Computes time-averaged quantities of a global vector.
+    @species:
+    @name:
+    @var:
+    @[nevery: 1 
+    @[nrepeat: 1
+    @[nfreq]: 1
+
+    returns the mean variable as a scalar
     """
-    self.lmp.command('compute {} {} {}'.format(var, species, name))
-    self.lmp.command('fix my{} {} ave/time 1 1 1 c_{} file {}'.format(var, group, var, file))
+    if 'nevery' not in args:
+      args['nevery'] = 1
+
+    if 'nrepeat' not in  args:
+      args['nrepeat'] = 1
+
+    if 'nfreq' not in args:
+      args['nfreq'] = 1
+
+    if 'name' not in args:
+      args['name'] = args['vars'] + '-' + str(np.random.randint(0, 1e8))
+
+    self.lmp.command('compute {name} {species} {var}'.format(**args))
+    self.lmp.command('fix my{name} {species} ave/time {nevery} {nrepeat} {nfreq} c_{name} file {file}'.format(**args))
+
+    setattr(self, 'my{name}'.format(**args), [])
+
+    self._monitor.append( ('my{name}'.format(**args), args['file']) )
+
+    return getattr(self, 'my{name}'.format(**args))
 
   def add_viscous(self, **args):
     """ Adds a viscous damping force: F = - gamma * v for each particle
