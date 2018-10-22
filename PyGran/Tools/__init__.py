@@ -33,7 +33,31 @@ conversion = {'si': {'distance': [1, 'm'], 'time': [1, 's'], 'mass': [1, 'kg']},
 			'nano': {'distance': [1e-9, 'nm'], 'time': [1, 's'], 'mass': [1e-12, 'ng']}
 			}
 
+
+def dictToTuple(**args):
+	""" Converts a dictionary (args) to a tuple 
+
+	e.g. if arg = {'key_1': value1, 'key_2': value2}
+	this function returns ('key_1', value1, 'key_2', value2)
+
+	"""
+	keys = args.keys()
+	vals = args.values()
+
+	tup = ()
+	for pair in zip(keys, vals):
+		tup = tup + pair
+
+	return tup
+
 def convert(unitso, unitsf):
+	""" Generic function that converts length/time/mass from one unit system to another
+
+	@unitso: dictionary unit system to convert from
+	@unitsf: dictionary unit system to convert to
+
+	returns the new unit system as a dictionary
+	"""
 
 	if unitso in conversion:
 		if unitsf in conversion:
@@ -48,16 +72,26 @@ def convert(unitso, unitsf):
 	else:
 		raise ValueError('Input unit system not supported: {}'.format(unitso))
 
-def find(name, path):
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
+def find(fname, path):
+	""" Finds a filename (fname) along the path `path' 
 
-    return None
+	@fname: string specifying filename
+	@path: string specifying the search path 
+
+	returns the absolute path of the fname (if found) as a string
+	"""
+	for root, dirs, files in os.walk(path):
+		if fname in files:
+			return os.path.join(root, fname)
+
+	return None
 
 def run(program):
 	""" Unix only: launches an executable program available in the PATH environment variable.
-	Returns 0 if successful and 1 otherwise. """
+	
+	@program: string specifying the executable to search for
+
+	returns 0 if successful and 1 otherwise. """
 	paths = os.environ['PATH']
 
 	for path in paths.split(':'):
