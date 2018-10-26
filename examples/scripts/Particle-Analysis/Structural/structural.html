@@ -11782,11 +11782,11 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Import PyGran + matplotlib modules</span>
-<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Analyzer</span>
+<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">analysis</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="c1"># Create a granular object from a LIGGGHTS dump file</span>
-<span class="n">Sys</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;traj*.dump&#39;</span><span class="p">)</span>
+<span class="n">Sys</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">System</span><span class="p">(</span><span class="n">Particles</span><span class="o">=</span><span class="s1">&#39;traj*.dump&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11899,7 +11899,7 @@ Resolution chosen is 3.94889564659
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Construct a class for nearest neighbor searching</span>
-<span class="n">Neigh</span> <span class="o">=</span> <span class="n">Analyzer</span><span class="o">.</span><span class="n">equilibrium</span><span class="o">.</span><span class="n">Neighbors</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">Particles</span><span class="p">)</span>
+<span class="n">Neigh</span> <span class="o">=</span> <span class="n">analysis</span><span class="o">.</span><span class="n">equilibrium</span><span class="o">.</span><span class="n">Neighbors</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">Particles</span><span class="p">)</span>
 
 <span class="c1"># Extract coordination number for all particles</span>
 <span class="n">coon</span> <span class="o">=</span> <span class="n">Neigh</span><span class="o">.</span><span class="n">coon</span><span class="p">()</span>

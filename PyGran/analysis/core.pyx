@@ -28,6 +28,7 @@ Created on July 10, 2016
 
 import numpy as np
 cimport numpy as np
+
 import types
 from random import choice
 from string import ascii_uppercase
@@ -41,7 +42,7 @@ try:
 except:
 	pass
 	
-from PyGran.Tools import convert
+from PyGran.tools import convert
 from scipy.stats import binned_statistic
 import importlib
 import numbers
@@ -59,11 +60,19 @@ these properties. This class is iterable but NOT an iterator. """
 
 			# copy constructor
 			# delete data if it exists
-			for key in self.__dict__.keys():
+			for key in list(self.__dict__.keys()):
 				delattr(self, key)
 
-			self.data = args[type(self).__name__].data
-			self._units = args[type(self).__name__].units
+			if hasattr(args[type(self).__name__], 'data'):
+				self.data = args[type(self).__name__].data
+			else:
+				raise IOError('data attribute not found in {} object'.format(type(self).__name__))
+
+			if hasattr(args[type(self).__name__], '_units'):
+				self._units = args[type(self).__name__]._units
+
+			if hasattr(args[type(self).__name__], '__module__'):
+				self.__module__ = args[type(self).__name__].__module__
 
 			self._constructAttributes()
 
@@ -81,6 +90,9 @@ these properties. This class is iterable but NOT an iterator. """
 
 			if 'fname' in args:
 				self._fname = args['fname']
+
+		if '__module__' in args:
+			self.__module__ = args['__module__']
 
 		# If data is already copied from Particles, do nothing
 		if not hasattr(self, 'data'):
@@ -153,13 +165,16 @@ these properties. This class is iterable but NOT an iterator. """
 	def __getitem__(self, sel):
 		""" SubSystem can be sliced with this function """
 
-		# Get the type of the class (not necessarily SubSystem for derived classes)
-		module = importlib.import_module(__name__)
+		if hasattr(self, '__module__'):
+			# Could not find cName, search for it in cwd (if it is user-defined)
+			module = importlib.import_module(self.__module__)
+		else:
+			# Get the type of the class (not necessarily SubSystem for derived classes)
+			module = importlib.import_module(__name__)
+			
 		cName = getattr(module, type(self).__name__)
 
-		obj = cName(sel=sel, units=self._units, data=self.data.copy())
-
-		return obj
+		return cName(sel=sel, units=self._units, data=self.data.copy())
 
 	def __and__(self, ):
 		""" Boolean logical operator on particles """
@@ -590,53 +605,49 @@ class Particles(SubSystem):
 		else:
 			sel = None
 
-		if 'Particles' in args:
-			self = args['Particles'] # do a hard copy here?
-		else:
-			# Python 3.X: just do super()
-			super(Particles, self).__init__(**args)
+		super(Particles, self).__init__(**args)
 
-			if not hasattr(self, '_fp'): # Make sure a file is already not open
-				if hasattr(self, '_fname'):
-					if self._fname:
-						self._ftype = self._fname.split('.')[-1]
+		if not hasattr(self, '_fp'): # Make sure a file is already not open
+			if hasattr(self, '_fname'):
+				if self._fname:
+					self._ftype = self._fname.split('.')[-1]
 
-						if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
+					if self._ftype == 'dump': # need a way to figure out this is a LIGGGHTS/LAMMPS file
 
-							if self._fname.split('.')[:-1][0].endswith('*'):
-								self._files = sorted(glob.glob(self._fname), key=numericalSort)
-								self._fp = open(self._files[0], 'r')
-							else:
-								self._fp = open(self._fname, 'r')
-
-							self._params = None
-
-							# Do some checking here on the traj extension to make sure
-							# it's supported
-							self._format = self._fname.split('.')[-1]
-
-							# Read 1st frame
-							self._readFile(0)
-
-						elif self._ftype == 'vtk':
-							if self._fname.split('.')[:-1][0].endswith('*'):
-								self._files = sorted(glob.glob(self._fname), key=numericalSort)
-
-								for filen in self._files:
-									if 'boundingBox' in filen:
-										self._files.remove(filen)
-
-								self._fp = open(self._files[0], 'r')
-							else:
-								self._fp = open(self._fname, 'r')
+						if self._fname.split('.')[:-1][0].endswith('*'):
+							self._files = sorted(glob.glob(self._fname), key=numericalSort)
+							self._fp = open(self._files[0], 'r')
 						else:
-							raise IOError('Input trajectory must be a valid LAMMPS/LIGGGHTS (dump) or vtk file.')
+							self._fp = open(self._fname, 'r')
 
-			self._constructAttributes(sel)
-			self.data['natoms'] = len(self)
+						self._params = None
 
-			# Make sure natoms is updated ~ DUH
-			self._constructAttributes()
+						# Do some checking here on the traj extension to make sure
+						# it's supported
+						self._format = self._fname.split('.')[-1]
+
+						# Read 1st frame
+						self._readFile(0)
+
+					elif self._ftype == 'vtk':
+						if self._fname.split('.')[:-1][0].endswith('*'):
+							self._files = sorted(glob.glob(self._fname), key=numericalSort)
+
+							for filen in self._files:
+								if 'boundingBox' in filen:
+									self._files.remove(filen)
+
+							self._fp = open(self._files[0], 'r')
+						else:
+							self._fp = open(self._fname, 'r')
+					else:
+						raise IOError('Input trajectory must be a valid LAMMPS/LIGGGHTS (dump) or vtk file.')
+
+		self._constructAttributes(sel)
+		self.data['natoms'] = len(self)
+
+		# Make sure natoms is updated ~ DUH
+		self._constructAttributes()
 
 		# see if multi-spheres are present
 		# TODO: support polydisperse multisphere
@@ -1289,8 +1300,7 @@ class Factory(object):
 	"""A factory for system class. It creates subclasses of SubSystems. Its only two methods
 	are static, thus no need to instantiate this object.
 
-	@Particles: filename (or list of filenames) for the particle trajectory
-	@Mesh: filename (or list of filenames) for the mesh trajectory
+	@SubSystem: filename (or list of filenames) for the subsystem trajectory
 	@[units](si): unit system can be either 'si' or 'micro'
 	"""
 
@@ -1299,8 +1309,13 @@ class Factory(object):
 		args_copy = args.copy()
 		obj = []
 
+		if 'module' in args:
+			module = args['module']
+		else:
+			module = None
+
 		for ss in args:
-			if(Factory._str_to_class(ss)):
+			if(Factory._str_to_class(ss, module=module)):
 
 				# Make sure a filename (str) was passed, else this could be an object instantiation
 				if isinstance(args[ss], str):
@@ -1308,20 +1323,24 @@ class Factory(object):
 					fname = args[ss]
 					del args_copy[ss]
 
-					obj.append([ss, Factory._str_to_class(ss)(fname=fname, **args_copy)])
+					obj.append([ss, Factory._str_to_class(ss, module=module)(fname=fname, **args_copy)])
 				else:
 					# We must be passing a SubSystem class to instantiate System
 					obj.append([ss, args[ss]])
 
 		return obj
 
-	def _str_to_class(str):
+	def _str_to_class(string, module=None):
 
 		# See if the object exists within the current module
 		try:
-			return getattr(sys.modules[__name__], str)
+			if module:
+				module = importlib.import_module(module)
+				return getattr(module, string)
+			else:
+				return getattr(sys.modules[__name__], string)
 		except:
-			pass
+			pass # string has no class definition
 
 		# see if the object exists within the running script
 		try:
@@ -1332,7 +1351,6 @@ class Factory(object):
 			return obj
 		except:
 			return None
-
 
 	def addprop(inst, name, method):
 
@@ -1353,16 +1371,20 @@ class Factory(object):
 
 class System(object):
 	"""A System contains all the information describing a DEM system.
-	A system always requires at least one trajectory file to read. A trajectory is a (time)
+	A meaningful system always requires at least one trajectory file to read. A trajectory is a (time)
 	series corresponding to the coordinates of all particles/meshes/objects in the system.
 	System handles the time frame and controls i/o operations. It contains one or more SubSystem
-	derivatives (e.g. 'Paticles', 'Mesh') which store all the particle and mesh attributes
+	derivatives (e.g. 'Particles', 'Mesh') which store all the particle and mesh attributes
 	read from the trajectory file (variables such as positions, momenta, angular velocities,
-		forces, stresses, radii, etc.).
+	forces, stresses, radii, etc.). Objects that can be created by this class must be of the 
+	'Particles' or 'Mesh' type. Multiple objects can be created by this class if a list of 
+	filenames are passed to its constructors.
 
-	@Particles: filename (or list of filenames) for the particle trajectory
-	@Mesh: filename (or list of filenames) for the mesh trajectory
+	@[Particles]: filename (or list of filenames) for the particle trajectory
+	@[Mesh]: filename (or list of filenames) for the mesh trajectory
 	@[units](si): unit system can be either 'si' or 'micro'
+	@[module]: for user-defined dervied SubSystems, 'module' must be a string that specifies the name of 
+	the module in which the user-defined class is defined.
 
 	How time stepping works: when looping over System (traj file), the frame is controlled only by System
 	through methods defined in a SubSystem sublass (read/write functions).
@@ -1480,10 +1502,6 @@ class System(object):
 		for ss in self.__dict__:
 			if hasattr(self.__dict__[ss], '_updateSystem'):
 				self.__dict__[ss]._updateSystem()
-
-	@property
-	def system(self):
-		return self
 
 def numericalSort(value):
 	""" A sorting function by numerical numbers for glob.glob """

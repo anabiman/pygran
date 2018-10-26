@@ -102,7 +102,7 @@ steel = {
 		'density': 8050
 		} 
 
-def LIGGGHTS(**material):
+def pygranToLIGGGHTS(**material):
 	""" Transform a PyGran material database into a LIGGGHTS material dictionary """
 
 	for key in material:

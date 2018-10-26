@@ -1,5 +1,5 @@
-from PyGran import Simulator
-from PyGran.Params import organic
+from PyGran import simulation
+from PyGran.params import organic
 
 # Create a dictionary of physical parameters
 params = {
@@ -23,17 +23,17 @@ params = {
 	# Import surface mesh
 	'mesh': {
 		'wallZ': {'file': 'mesh/square.stl', 'mtype': 'mesh/surface/stress', 'material': organic, \
-			'args': ('scale 1e-3','move 0 0 1e-3')}
+			'args': {'scale': 1e-3,'move': (0, 0, 1e-3)}}
 		},
 }
 
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-    	sim = Simulator.DEM(**params)
+	sim = simulation.DEM(**params)
 
 	# Setup a primitive wall along the xoy plane at z=0
-	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
+	sim.setupWall(species=1, wtype='primitive', plane='zplane', peq = 0.0)
 
 	# Insert 200 particles
 	insert = sim.insert(species=1, value=200, freq=params['nsteps']/3)
@@ -41,10 +41,10 @@ if __name__ == '__main__':
 	sim.remove(insert)
 
     	# Move wall at constant speed
-    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 -0.03'))
-    	sim.run(params['nsteps'] * 2, params['dt'])
-    	sim.remove(moveZ)
+	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, -0.03))
+	sim.run(params['nsteps'] * 2, params['dt'])
+	sim.remove(moveZ)
 
     	# Relax the system
-    	moveZ = sim.moveMesh('wallZ', *('linear', '0 0 0.01'))
-    	sim.run(params['nsteps'] * 2, params['dt'])
+	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, 0.01))
+	sim.run(params['nsteps'] * 2, params['dt'])

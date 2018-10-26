@@ -1,15 +1,16 @@
-from PyGran import Analyzer
+from PyGran import analysis
+import os
 
-class CoarseParticles(Analyzer.Particles):
+class CoarseParticles(analysis.Particles):
 	def __init__(self, **args):
-		super(CoarseParticles, self).__init__(**args)
+		super().__init__(**args)
 
 		if 'scale' in args and 'percent' in args:
 			self.scale(args['scale'], ('radius',))
-			CG = Analyzer.equilibrium.Neighbors(self).filter(percent=args['percent'])
+			CG = analysis.equilibrium.Neighbors(self).filter(percent=args['percent'])
 
 			self.__init__(CoarseParticles=CG)
 
 if __name__ == '__main__':
-	Traj = Analyzer.System(CoarseParticles='traj.dump', units='micro', scale=3, percent=25.0)
+	Traj = analysis.System(CoarseParticles='traj.dump', scale=3, percent=10.0, module='coarseGrained')
 	Traj.CoarseParticles.write('CG.dump')

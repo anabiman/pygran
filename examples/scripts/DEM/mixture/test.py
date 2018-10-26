@@ -29,21 +29,14 @@ params = {
 	'gravity': (9.81, 0, 0, -1),
 
 	# Stage runs
-	'stages': {'insertion': 1e8, 'run': 1e7, 'relax': 0e5},
-
-	# Meshes
-	'mesh': {
-		'wall': {'file': 'square.stl', 'mtype': 'mesh/surface/stress', 'material': stearicAcid, \
-			 'args': ('scale 2.5e-4', 'move 0 0 -8e-4')
-		},
-	},
+	'stages': {'insertion': 1e8}
 }
 
 # Create an instance of the DEM class
 sim = sim.DEM(**params)
 
 # Insert all particles throughout the sim box
-insert = sim.insert(species='all')
+insert = sim.insert(species=1, value=100)
 
 # Run the simulation
 sim.run(params['stages']['insertion'], params['dt'])
@@ -51,18 +44,4 @@ sim.run(params['stages']['insertion'], params['dt'])
 # Remove insertion
 sim.remove(insert)
 
-# Setup params for vibrating mesh
-freq = 40 * 2 * np.pi
-nTaps, period = 100, 1.0 / freq
-nSteps = period / (pDict['dt'])
-
-for i in range(nTaps):
-	moveMesh = sim.moveMesh('wall', *('viblin', 'axis 0 0 1', 'order 1', 'amplitude 12.5e-6', 'phase 0' , 'period {}'.format(period)))
-	sim.run(nSteps, params['dt'])
-
-	sim.remove(moveMesh)
-
-	# Relax the system if requested by the user
-	if params['relax']:
-		sim.run(nSteps, params['dt'])
-
+sim.run(params['stages']['insertion'], params['dt'])

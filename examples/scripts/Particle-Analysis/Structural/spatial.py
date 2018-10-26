@@ -1,8 +1,8 @@
-from PyGran import Analyzer
+from PyGran import analysis
 import matplotlib.pylab as plt
 
 # Create a granular object from a LIGGGHTS dump file
-Sys = Analyzer.System(Particles='/home/levnon/Desktop/flow/output/traj/traj*.dump', units='micro')
+Sys = analysis.System(Particles='/home/levnon/Desktop/flow/output/traj/traj*.dump', units='micro')
 
 # Go to last frame
 Sys.goto(-1)
@@ -15,7 +15,7 @@ plt.plot(r, g)
 plt.show()
 
 # Construct a class for nearest neighbor searching
-Neigh = Analyzer.equilibrium.Neighbors(Sys.Particles)
+Neigh = analysis.equilibrium.Neighbors(Sys.Particles)
 
 # Extract coordination number per particle
 coon = Neigh.coon

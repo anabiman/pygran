@@ -1,10 +1,10 @@
-import PyGran.Simulator as Si
-from PyGran.Params import steel
+import PyGran.simulation as sim
+from PyGran.params import steel
 import matplotlib.pylab as plt
 import numpy as np
 
 # Create a list of contact models to analyze
-models = [Si.models.SpringDashpot, Si.models.HertzMindlin]
+models = [sim.models.SpringDashpot, sim.models.HertzMindlin]
 
 # Set particle radius to 1 mm
 steel['radius'] = 1e-3

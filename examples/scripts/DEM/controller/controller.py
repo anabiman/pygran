@@ -1,5 +1,5 @@
-from PyGran import Simulator
-from PyGran.Params import organic
+from PyGran import simulation
+from PyGran.params import organic
 
 xdim = 1e-3
 
@@ -17,9 +17,9 @@ params = {
 
 	# Define the system
 	'boundary': ('p','f','f'), # fixed BCs
-	'box':  (-xdim, xdim, -2e-3, 2e-3, 0, 1e-2),
+	'box':  (-xdim, xdim, -xdim, xdim, 0, xdim*12),
 
-	'model': Simulator.models.HertzMindlin,
+	'model': simulation.models.HertzMindlin,
 
 	# Define component(s)
 	'species': ({'material': organic, 'radius': ('constant', 2e-4)},
@@ -42,11 +42,11 @@ params = {
 
 	# Import surface mesh
 	'mesh': {
-		'PID': {'file': 'mesh/wall-2D.stl', 'mtype': 'mesh/surface/stress/servo', 'material': PID, 'args': ('scale {}'.format(9.8e-4), 'move 0 0 {}'.format(6e-3), 'com 0 0 0', 'axis 0 0 -1', 'vel_max 10.0', 'ctrlPV force', 'target_val 5.0')},
-		'wallX1': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': ('scale {}'.format(1e-3),'rotate axis 0 1 0 angle 90', 'move 0 0 {}'.format(2e-3))}, 
-		'wallX2': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': ('scale {}'.format(1e-3),'rotate axis 0 1 0 angle -90', 'move 0 0 {}'.format(2e-3)) },
-		'wallY1': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': ('scale {}'.format(1e-3),'rotate axis 1 0 0 angle 90','rotate axis 0 1 0 angle 90', 'move 0 0 {}'.format(2e-3))}, 
-		'wallY2': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': ('scale {}'.format(1e-3),'rotate axis 1 0 0 angle -90', 'rotate axis 0 1 0 angle 90', 'move 0 0 {}'.format(2e-3))}, 
+		'PID': {'file': 'mesh/wall-2D.stl', 'mtype': 'mesh/surface/stress/servo', 'material': PID, 'args': {'scale':9.8e-4, 'move': (0, 0, 6e-3), 'com': (0, 0, 0), 'axis': (0, 0, -1), 'vel_max': 10.0, 'ctrlPV': 'force', 'target_val': 5.0}},
+		'wallX1': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': {'scale':1e-3, 'rotate': ('axis', 0, 1, 0, 'angle', 90), 'move': (0, 0, 2e-3)}}, 
+		'wallX2': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': {'scale':1e-3, 'rotate': ('axis', 0, 1, 0, 'angle', -90), 'move': (0, 0, 2e-3) }},
+		'wallY1': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': {'scale':1e-3, 'rotate': ('axis', 1, 0, 0, 'angle', 90, 'rotate', 'axis', 0, 1, 0, 'angle', 90), 'move': (0, 0, 2e-3)}},
+		'wallY2': {'file': 'mesh/wall-2D-side.stl', 'mtype': 'mesh/surface/stress', 'material': wall, 'args': {'scale':1e-3, 'rotate': ('axis', 1, 0, 0, 'angle', -90, 'rotate', 'axis', 0, 1, 0, 'angle', 90), 'move': (0, 0, 2e-3)}}
 		}
 }
 
@@ -54,13 +54,13 @@ params = {
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-	sim = Simulator.DEM(**params)
+	sim = simulation.DEM(**params)
 
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
 
 	# Insert particles by volume fraction
-	sim.insert(species=1, value=1.0, mech='volumefraction_region', region=('block', '-{} {} -{} {} 0 {}'.format(xdim, xdim, xdim, xdim, 8e-3)))
+	sim.insert(species=1, value=1.0, mech='volumefraction_region', region=('block', '-{} {} -{} {} 0 {}'.format(xdim, xdim, xdim, xdim, xdim*8)))
 
 	# Run the simulation
 	sim.run(params['run'], params['dt'])

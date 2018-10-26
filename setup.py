@@ -18,11 +18,23 @@ Created on July 9, 2016
 
 # -------------------------------------------------------------------------
 
-import os, sys, numpy, site
+import os, sys
 import subprocess
 from setuptools import setup, find_packages
-from Cython.Build import cythonize
+
+__version__ = 0.47
+
+try:
+	from Cython.Build import cythonize
+	import numpy
+	optimal_list = cythonize("PyGran/analysis/core.pyx")
+	include_dirs = [numpy.get_include()]
+except:
+	optimal_list = []
+	include_dirs = []
+
 from distutils.command.install import install
+
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -96,7 +108,7 @@ class LIGGGHTS(install):
 
 setup(
     name = "PyGran",
-    version = 1.1,
+    version = __version__,
     author = "Andrew Abi-Mansour",
     author_email = "support@pygran.org",
     description = ("A DEM toolbox for rapid quantitative analysis of granular/powder systems"),
@@ -106,19 +118,18 @@ setup(
     packages=find_packages(),
     package_dir={'PyGran': 'PyGran'},
     package_data={'': ['.config', 'GUI/Icons/*.png']},
-    install_requires=['numpy', 'scipy', 'pyvtk', 'pytools>=2011.2', 'cython', 'mpi4py'],
+    install_requires=['numpy', 'scipy', 'vtk', 'pytool', 'cython', 'mpi4py', 'pillow'],
     long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See https://andrew-abimansour.github.io/PyGran.',
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
 	"Programming Language :: Python :: 2.7",
-	"Programming Language :: Python :: 3"
+	"Programming Language :: Python :: 3.6"
     ],
-    download_url='http://andrew-abimansour.github.io/PyGran/release/PyGran-v1.0.zip',
 
     cmdclass={'build_liggghts': LIGGGHTS},
     zip_safe=False,
-    ext_modules=cythonize("PyGran/Analyzer/core.pyx"),
-	include_dirs=[numpy.get_include()]
+    ext_modules=optimal_list,
+    include_dirs=include_dirs
 )

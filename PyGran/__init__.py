@@ -20,14 +20,8 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from PyGran import Simulator, Tools, Analyzer
+from PyGran import simulation, analysis, tools
 import os
+from PyGran.tools import run
 
-try:
-	from PyGran import Visualizer
-except:
-	print("WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.")
-
-from PyGran.Tools import run
-
-__version__ = '1.0'
+__version__ = 1.1

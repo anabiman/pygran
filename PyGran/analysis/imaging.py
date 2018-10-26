@@ -108,7 +108,7 @@ def slice(Particles, zmin, zmax, axis, size=None, resol=None, output=None, imgSh
 	the image size unless 'size' is supplied by the user. The latter is useful when constructing
 	a 3D image of constant number of rows/columns.
 	
-	@Particles: a PyGran.Analyzer.core.SubSystem class
+	@Particles: a PyGran.analysis.core.SubSystem class
 	@zmin: minimum height/depth/width of the slice
 	@max: maximum height/depth/width of the slice
 	@axis: a str that sets the axis to slice the image across ('x', 'y', or 'z')

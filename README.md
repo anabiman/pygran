@@ -30,17 +30,17 @@ PyGran also provides an interface for running DEM simulation with [LIGGGHTS](htt
 <p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 
 ```python
-from PyGran import Simulator
-from PyGran.Params import stearicAcid, steel
+from PyGran import simulation
+from PyGran.params import stearicAcid, steel
 
 # Create a DEM parameter dictionary
 param = {
 
-	'model': Simulator.models.SpringDashpot,
+	'model': simulation.models.SpringDashpot,
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-	'species': ({'material': stearicAcid, 'radius': ('constant', 5e-5),}, 
+	'species': ({'material': stearicAcid, 'radius': 5e-5,}, 
 		),
 		
 	'gravity': (9.81, 0, 0, -1),
@@ -50,7 +50,7 @@ param = {
 }
 
 # Instantiate a DEM class
-sim = Simulator.DEM(**param['model'])
+sim = simulation.DEM(**param['model'])
 
 # Insert particles for species 1 (stearic acid)
 insert = sim.insert(species=1, value=1000) 
@@ -64,13 +64,13 @@ Using PyGran for doing post-analysis is also quite straight forward. Computing p
 <p style="text-align:center;"><img src="images/overlap-hist.png"></p>
 
 ```python
-from PyGran import Analyzer
+from PyGran import analysis
 
 # Instantiate a System class from a dump file
-Gran = Analyzer.System(Particles='granular.dump')
+Gran = analysis.System(Particles='granular.dump')
 
 # Instantiate a nearest-neighbors class
-NNS = Analyzer.Neighbors(Particles=Gran.Particles)
+NNS = analysis.Neighbors(Particles=Gran.Particles)
 overlaps = NNS.overlaps
 ```
 For more examples on using PyGran for running DEM simulation, check out the <a href="examples/examples.html">examples</a>.

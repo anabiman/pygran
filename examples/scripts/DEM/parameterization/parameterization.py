@@ -6,8 +6,8 @@ Created on July 9, 2016
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyGran import Simulator, Analyzer, Visualizer
-from PyGran.Params import organic
+from PyGran import simulation
+from PyGran.params import organic
 
 # Launch 4 simultaneous simulations, each different coef of rest
 nSim = 4
@@ -43,7 +43,7 @@ params = {
 if __name__ == '__main__':
 
 	# Create an instance of the DEM class
-        sim = Simulator.DEM(**params)
+	sim = simulation.DEM(**params)
 
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)

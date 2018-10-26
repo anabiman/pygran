@@ -6,8 +6,9 @@ Created on April 22, 2017
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyGran import Simulator, Visualizer
-from PyGran.Params import organic, glass
+from PyGran import simulation
+from PyGran.params import organic, glass
+import matplotlib.pylab as plt
 
 params = {
 	# Define the system
@@ -28,8 +29,8 @@ params = {
 
 	# Import hopper mesh
 	 'mesh': {
-		'hopper': {'file': 'mesh/silo.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': ('scale 1e-3',)},
-		'impeller': {'file': 'mesh/valve.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': ('move 0 0 1.0', 'scale 1e-3',)},
+		'hopper': {'file': 'mesh/silo.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': {'scale': 1e-3}},
+		'impeller': {'file': 'mesh/valve.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': {'move': (0, 0, 1), 'scale':1e-3}}
 	},
 
 	# Stage runs
@@ -37,10 +38,13 @@ params = {
 }
 
 # Create an instance of the DEM class
-sim = Simulator.DEM(**params)
+sim = simulation.DEM(**params)
 
 # Setup a stopper wall along the xoy plane
 stopper = sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
+
+# Monitor the time average ensemble kinetic energy
+ke = sim.monitor(var='ke', species='all', name='ensemble_ke', file='ke.dat', nevery=100, nfreq=1000, nrepeat=10)
 
 # Insert particles in a cubic region
 insert = sim.insert(species=1, region=('block', -5e-4, 5e-4, -5e-4, 5e-4, 2e-3, 3e-3), mech='volumefraction_region', value=1, freq=1e4)
@@ -48,7 +52,7 @@ sim.run(params['stages']['insertion'], params['dt'])
 sim.remove(insert)
 
 # Rotate the impeller
-rotImp = sim.moveMesh('impeller', 'rotate origin 0. 0. 0.', 'axis  0. 0. 1.', 'period 5e-2')
+rotImp = sim.moveMesh(name='impeller', rotate=('origin', 0, 0, 0), axis=(0, 0, 1), period=5e-2)
 
 # Blend the system
 sim.run(params['stages']['run'], params['dt'])

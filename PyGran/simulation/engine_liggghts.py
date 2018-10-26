@@ -53,7 +53,7 @@ import os
 import glob
 import sys
 from importlib import import_module
-from PyGran.Tools import find, dictToTuple
+from PyGran.tools import find, dictToTuple
 
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
@@ -272,7 +272,7 @@ class DEMPy:
     self.path = os.getcwd()
     self.nSS = len(self.pargs['species'])
     self.output = self.pargs['output']
-    self._dir, _ = __file__.split(__name__.split('PyGran.Simulator.')[-1] +'.py')
+    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] +'.py')
     self._monitor = [] # a list of tuples of (varname, filename) to monitor
 
     if '__version__' in pargs:
@@ -393,6 +393,10 @@ class DEMPy:
 
         if 'radius' in ss:
           radius = ss['radius']
+
+          if not isinstance(radius, tuple):
+            radius = ('constant', radius)
+
           self.lmp.command('fix {} '.format(randName) + 'group{}'.format(id) + ' particletemplate/{style} 15485867 volume_limit {vol_lim} atom_type {id} density constant {density} radius'.format(**ss) + (' {}' * len(radius)).format(*radius) \
           + (' {}' * len(args)).format(*args))
         else:
@@ -435,6 +439,7 @@ class DEMPy:
 
     # I think this is for creating tuples of lists, corresponding to many regions
     # This is prolly for inserting many species at the same time in different regions
+    # UPDATE: inserting multiple species not supported anyway in PyGran! ???
     if isinstance(region[1], tuple):
       targs = list(region[1])
       targs.insert(0, region[0])
@@ -463,6 +468,9 @@ class DEMPy:
 
       if 'args' not in ss:
         ss['args'] = ()
+      elif isinstance(ss['args'], dict):
+        ss['args'] = dictToTuple(**ss['args'])
+      # otherwise, ss['args'] must be a tuple of strings, or maybe just a string ... so leave it.
 
       if 'freq' not in ss:
         ss['freq'] = 'once'
@@ -582,24 +590,25 @@ class DEMPy:
             if name:
               if mesh == name:
                 self.pargs['mesh'][mesh]['import'] = True
-                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
                 wall = True
 
             elif 'import' in self.pargs['mesh'][mesh]:
               if self.pargs['mesh'][mesh]['import']:
-                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], *self.pargs['mesh'][mesh]['args'])  
+                self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
                 wall = True
               
       if wall:
         self.setupWall(wtype='mesh')
     
 
-  def importMesh(self, name, file, mtype, material, *args):
+  def importMesh(self, name, file, mtype, material, **args):
     """
     Imports a specific surface mesh requested by the user
     """
     fname = self.path + '/../' + file
-    
+    args = dictToTuple(**args)
+
     if not self.rank:
       logging.info('Importing mesh from {}'.format(fname))
 

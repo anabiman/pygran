@@ -30,8 +30,8 @@ from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
 import os, sys
-from PyGran.Tools import find
-from PyGran.Simulator import models
+from PyGran.tools import find
+from PyGran.simulation import models
 import PyGran
 import shutil
 
@@ -54,7 +54,7 @@ class DEM:
     self.model = str(pargs['model']).split("'")[1].split('.')[-1]
     self.pargs = pargs
     self.library = None
-    self._dir, _ = __file__.split(__name__.split('PyGran.Simulator.')[-1] +'.py')
+    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] +'.py')
     
     # Check if .config files eixsts else create it
     # Only one process needs to do this
@@ -112,7 +112,7 @@ class DEM:
 
         self.split = self.comm.Split(color=self.color, key=self.rank)
 
-        module = import_module('PyGran.Simulator.' + self.pargs['engine'])
+        module = import_module('PyGran.simulation.' + self.pargs['engine'])
         output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
         if not self.split.Get_rank():
@@ -168,10 +168,16 @@ class DEM:
 
     # Create links to the particle/mesh files (easily accessible to the user)
     if 'pfile' in self.pargs['traj']:
-      self.pfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['pfile']
+      if self.pargs['traj']['pfile']:
+        self.pfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['pfile']
+      else:
+        self.pfile = None
 
     if 'mfile' in self.pargs['traj']:
-      self.mfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['mfile']
+      if self.pargs['traj']['mfile']:
+        self.mfile = self.pargs['output'] + '/traj/' + self.pargs['traj']['mfile']
+      else:
+        self.mfile = None
 
   def scatter_atoms(self,name,type,count,data):
     for i in range(self.nSim):
@@ -283,13 +289,13 @@ class DEM:
         self.dem.importMeshes(name)
         break
 
-  def importMesh(self, name, file, mtype, *args):
+  def importMesh(self, name, file, mtype, **args):
     """
     Imports a mesh file (STL or VTK)
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
-        self.dem.importMesh(name, file, mtype, *args)
+        self.dem.importMesh(name, file, mtype, **args)
         break
 
   def setupWall(self, wtype, species = None, plane = None, peq = None):

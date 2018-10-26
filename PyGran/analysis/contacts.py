@@ -29,7 +29,7 @@ Created on March 10, 2017
 import numpy
 from scipy import spatial
 from scipy.linalg import norm
-from PyGran.Simulator.models import SpringDashpot
+from PyGran.simulation.models import SpringDashpot
 import matplotlib.pylab as plt
 
 class Neighbors(object):

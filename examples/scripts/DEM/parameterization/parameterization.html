@@ -11791,8 +11791,8 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Import PyGran.Analyzer and an organic powder (template)</span>
-<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Simulator</span>
-<span class="kn">from</span> <span class="nn">PyGran.Params</span> <span class="kn">import</span> <span class="n">organic</span>
+<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">simulation</span>
+<span class="kn">from</span> <span class="nn">PyGran.params</span> <span class="kn">import</span> <span class="n">organic</span>
 
 <span class="c1"># Launch 4 simultaneous simulations, each with a different coef of rest</span>
 <span class="n">nSim</span> <span class="o">=</span> <span class="mi">4</span>
@@ -11846,7 +11846,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Create an instance of the DEM class</span>
-<span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="o">.</span><span class="n">DEM</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">DEM</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
 <span class="c1"># Setup a primitive wall along the xoy plane at z=0</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">setupWall</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wtype</span><span class="o">=</span><span class="s1">&#39;primitive&#39;</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="s1">&#39;zplane&#39;</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>

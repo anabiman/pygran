@@ -32,7 +32,7 @@ Created on July 1, 2016
 import numpy as np
 from scipy.integrate import ode
 from scipy.optimize import fsolve
-from PyGran import Params
+from PyGran.params import pygranToLIGGGHTS 
 import math
 from mpi4py import MPI
 
@@ -134,7 +134,7 @@ class Model(object):
 					if isinstance(ss['radius'], list):
 						ss['radius'] = ss['radius'][rank]
 
-				ss['material'] = Params.LIGGGHTS(**ss['material'])
+				ss['material'] = pygranToLIGGGHTS(**ss['material'])
 
 				if 'style' not in ss:
 					ss['style'] = 'sphere'

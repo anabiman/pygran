@@ -40,12 +40,19 @@ def dictToTuple(**args):
 	e.g. if arg = {'key_1': value1, 'key_2': value2}
 	this function returns ('key_1', value1, 'key_2', value2)
 
+	if value1 is a tuple, it is broken into a string
+	e.g. if arg = {'key_1': (1,2,3)}
+	this function returns ('key_1', '1 2 3')
+
 	"""
+
 	keys = args.keys()
 	vals = args.values()
 
 	tup = ()
 	for pair in zip(keys, vals):
+		if isinstance(pair[1], tuple):
+			pair = (pair[0], ('{} ' * len(pair[1])).format(*pair[1]).strip())
 		tup = tup + pair
 
 	return tup
@@ -53,8 +60,8 @@ def dictToTuple(**args):
 def convert(unitso, unitsf):
 	""" Generic function that converts length/time/mass from one unit system to another
 
-	@unitso: dictionary unit system to convert from
-	@unitsf: dictionary unit system to convert to
+	@unitso: string specifying unit system to convert from
+	@unitsf: string specifying unit system to convert to
 
 	returns the new unit system as a dictionary
 	"""

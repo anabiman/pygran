@@ -29,8 +29,7 @@ Created on March 10, 2017
 import numpy
 from scipy import spatial
 from scipy.linalg import norm
-from PyGran.Simulator.models import SpringDashpot
-import matplotlib.pylab as plt
+from PyGran.simulation.models import SpringDashpot
 
 class Neighbors(object):
 	""" A dynamic class that contains all the particle-particle (and optionally particle-wall)
@@ -285,6 +284,8 @@ class Neighbors(object):
 
 		if not peters: # plot all particle stresses
 			
+			import matplotlib.pylab as plt # imported here to make sure PyGran works without matplotlib
+
 			indices  = numpy.where(stress_norm > 0)[0]
 			Particles = self._Particles[indices]
 

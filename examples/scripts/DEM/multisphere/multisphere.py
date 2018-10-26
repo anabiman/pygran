@@ -6,8 +6,8 @@ Created on March 3, 2018
 # !/usr/bin/python
 # -*- coding: utf8 -*-
 
-from PyGran import Simulator, Analyzer, Visualizer
-from PyGran.Params import organic
+from PyGran import simulation
+from PyGran.params import organic
 
 def template_tablet(nspheres, radius, length):
 	""" This function creates a multi-sphere tablet (cylinder) of
@@ -53,15 +53,15 @@ params = {
 
 	# Define mesh for rotating drum (trumbler)
 	'mesh': {
-              'tumbler': {'file': 'mesh/tumbler.stl', 'mtype': 'mesh/surface/stress', 'material': organic, 'args': ('scale 1e-3',)},
+              'tumbler': {'file': 'mesh/tumbler.stl', 'mtype': 'mesh/surface/stress', 'material': organic, 'args': {'scale': 1e-3}},
 	}
   }
 
 # Create an instance of the DEM class
-sim = Simulator.DEM(**params)
+sim = simulation.DEM(**params)
 
-# Insert particles
-insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args=('orientation random',))
+# Insert 800 particles in a cylindrical region
+insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args={'orientation': 'random'})
 
 # Add viscous force
 air_resistance = sim.add_viscous(species=1, gamma=0.1)
@@ -73,7 +73,7 @@ sim.run(params['stages']['insertion'], params['dt'])
 sim.remove(insert)
 
 # Rotate mesh along the xoz plane
-sim.moveMesh('tumbler', 'rotate origin 0 0 0', 'axis  0 1 0', 'period 5e-1')
+sim.moveMesh(name='tumbler', rotate=('origin', 0, 0, 0), axis=(0, 1, 0), period=5e-1)
 
 # Run rotation stage
 sim.run(params['stages']['rotation'], params['dt'])

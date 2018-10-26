@@ -1,5 +1,5 @@
-import PyGran.Simulator as Sim
-from PyGran.Params import cohesionless
+import PyGran.simulation as sim
+from PyGran.params import cohesionless
 from numpy import arange, fabs, array, sqrt
 import matplotlib.pylab as plt
 import matplotlib as mpl
@@ -8,7 +8,7 @@ import matplotlib as mpl
 mpl.rc('text', usetex = True)
 plt.rcParams.update({'font.size':18})
 
-cModel = Sim.models.ThorntonNing
+cModel = sim.models.ThorntonNing
 
 COR, yieldVel = [], []
 

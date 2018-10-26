@@ -21,8 +21,8 @@ Created on April 25, 2016
 
 # -------------------------------------------------------------------------
 
-from PyGran.Analyzer.core import *
+from PyGran.analysis.core import *
 
-from PyGran.Analyzer import dynamics
-from PyGran.Analyzer import equilibrium
-from PyGran.Analyzer import imaging
+from PyGran.analysis import dynamics
+from PyGran.analysis import equilibrium
+from PyGran.analysis import imaging

@@ -1,4 +1,4 @@
-from PyGran.Analyzer import System
+from PyGran.analysis import System
 from scipy.linalg import norm
 
 # Create a mesh trajectory file for the inlet & outlet files

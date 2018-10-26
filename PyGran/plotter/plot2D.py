@@ -83,7 +83,7 @@ def quiver(Particles, value=None, axes='xy', title=None, color='k', units='xy', 
 	"""
 	Plots a 2D field of arrows for a set of particles
 
-	@Particles: PyGran.Analyzer.SubSystem object
+	@Particles: PyGran.analysis.SubSystem object
 
 	@[value]: a string attribute such as 'v' (velocity), 'f' (force), 't' (torque), or ... any attribute contained in Particles.
 	or a tuple ('attr', array) with array being a list or numpy array of length natoms 
@@ -118,7 +118,7 @@ def pcolor(Particles, value, axes='xy', title=None, cmap='autumn', subplot=111, 
 	"""
 	Plots a 2D pcolor for a set of particles
 
-	@Particles: PyGran.Analyzer.SubSystem object
+	@Particles: PyGran.analysis.SubSystem object
 	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), or ... any attribute contained in Particles.
 	or a tuple ('attr', array) with array being a list or numpy array of length natoms
 

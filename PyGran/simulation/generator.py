@@ -22,7 +22,7 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from PyGran import Analyzer
+from PyGran import analysis
 import numpy
 from numpy import random
 import collections
@@ -57,12 +57,12 @@ def rand(natoms, radius, overlapping=True, factor=1.0):
 	
 	if not overlapping:
 
-		Particles = Analyzer.Particles(**data)
+		Particles = analysis.Particles(**data)
 		indices_tot = numpy.arange(len(Particles))
 
 		while(True):
 			
-			Neigh = Analyzer.Neighbors(Particles)
+			Neigh = analysis.Neighbors(Particles)
 		
 			if len(Neigh.overlaps):
 				indices = numpy.array(Neigh.overlaps[:,1:], 'int')
@@ -90,7 +90,7 @@ def rand(natoms, radius, overlapping=True, factor=1.0):
 				return Particles
 
 	else:
-		return Analyzer.Particles(**data)
+		return analysis.Particles(**data)
 
 def hcp(natoms, radius):
 	""" Generates a Hexagonal Close Packed structure
@@ -116,4 +116,4 @@ def hcp(natoms, radius):
 
 	data['radius'] = numpy.ones(natoms) * radius
 
-	return Analyzer.Particles(**data)
+	return analysis.Particles(**data)
