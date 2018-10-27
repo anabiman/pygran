@@ -22,7 +22,7 @@ import os, sys
 import subprocess
 from setuptools import setup, find_packages
 
-__version__ = 0.47
+__version__ = 1.1
 
 try:
 	from Cython.Build import cythonize
