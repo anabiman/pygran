@@ -8,7 +8,7 @@ params = {
 
 	# Define the system
 	'boundary': ('p','p','f'),
-	'box':  (-0.00025, 0.00025, -0.00025, 0.00025, 0, 0.002),
+	'box':  (-0.00025, 0.00025, -0.00025, 0.00025, 0, 0.0005),
 
 	# Define component(s)
 	'species': ({'material': stearicAcid, 'radius': ('constant', 25.00e-6)},
@@ -16,7 +16,7 @@ params = {
 		),
 
 	# Setup I/O
-	'traj': {'freq': 100000, 'pfile': 'traj.dump', 'mfile':'mesh-*.vtk'},
+	'traj': {'freq': 100000, 'pfile': 'traj.dump'},
 	'output': 'Binary',
 
 	# Write a restart file (restart.binary.*) every 5000 steps to 'restart' dir 
@@ -32,24 +32,27 @@ params = {
 	'stages': {'insertion': 1e8, 'run': 1e7, 'relax': 0e5},
 
 	# Meshes
-	'mesh': {
-		'wall': {'file': 'square.stl', 'mtype': 'mesh/surface/stress', 'material': stearicAcid, \
-			 'args': ('scale 2.5e-4', 'move 0 0 -8e-4')
-		},
-	},
+	#'mesh': {
+	#	'wall': {'file': 'square.stl', 'mtype': 'mesh/surface/stress', 'material': stearicAcid, \
+	#		 'args': {'scale': 2.5e-4, 'move': (0, 0, -8e-4)}
+	#	},
+	#},
 }
 
 # Create an instance of the DEM class
 sim = sim.DEM(**params)
 
 # Insert all particles throughout the sim box
-insert = sim.insert(species='all')
+for species in [1,2]:
+	insert = sim.insert(species, value=100)
+	sim.run(1, params['dt'])
+
+	# Remove insertion
+	sim.remove(insert)
 
 # Run the simulation
 sim.run(params['stages']['insertion'], params['dt'])
 
-# Remove insertion
-sim.remove(insert)
 
 # Setup params for vibrating mesh
 freq = 40 * 2 * np.pi
