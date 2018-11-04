@@ -1389,7 +1389,7 @@ class System(object):
 	How time stepping works: when looping over System (traj file), the frame is controlled only by System
 	through methods defined in a SubSystem sublass (read/write functions).
 
-	This class is an iterator but *NOT* iterable.
+	This class is an iterator.
 	"""
 
 	def __init__(self, **args):
@@ -1436,7 +1436,7 @@ class System(object):
 		# rewind if necessary (better than reading file backwards?)
 		if frame < self.frame and frame >= 0:
 			self.rewind()
-
+			self.goto(frame)
 		else:
 			for ss in self.__dict__:
 				if hasattr(self.__dict__[ss], '_goto'):
