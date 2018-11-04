@@ -20,7 +20,7 @@ Alternatively, you can clone the PyGran repsitory on github and run from the sou
 ```bash
 python setup.py install --user
 ```
-You can download <a href="examples/scripts/ubuntu.sh">here</a> a script (for Ubuntu 18.04 LTR) that compiles and installs LIGGGHTS-PUBLIC and PyGran from source code.
+You can download <a href="examples/scripts/ubuntu.sh">here</a> a script (for Ubuntu 18.04 LTS) that compiles and installs LIGGGHTS-PUBLIC and PyGran from source code.
 For more options and information on setting up PyGran, see chapter I in the manual.
 
 ## Basic Usage

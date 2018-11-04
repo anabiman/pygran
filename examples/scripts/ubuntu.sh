@@ -1,8 +1,8 @@
 # !/bin/sh
 
 
-#Created on July 10, 2016
-#author: Andrew Abi-Mansour
+# Created on November 1, 2018
+# @author: Andrew Abi-Mansour
 
 # -*- coding: utf8 -*-
 # -------------------------------------------------------------------------
@@ -34,6 +34,8 @@ sudo apt-get update && sudo apt-get install gcc libopenmpi-dev python3-setuptool
 echo "Installing PyGran dependencies ..."
 pip3 install numpy cython --user
 
+mkdir DEM_source_code && cd DEM_source_code
+
 echo "Cloning LIGGGHTS ..."
 git clone https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git
 
@@ -45,10 +47,13 @@ make -f Makefile.shlib auto
 echo "Downloading PyGran examples"
 cd ../..
 git clone https://github.com/Andrew-AbiMansour/PyGran.git
+cd PyGran
 python3 setup.py install --user
 cd examples/scripts/DEM/compaction/
 
 echo "Testing PyGran: running compaction problem"
 mpirun python3 compaction.py
 
+mv out-* ~/DEM-compaction-test
+cd ~/
 echo "Testing done! PyGran was successfully tested on your system."
