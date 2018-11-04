@@ -130,7 +130,8 @@ class liggghts:
         self.lmp = None
 
   def file(self,file):
-    self.lib.lammps_file(self.lmp,file)
+    """ For python 3, I had to encode the string as an 8 character utf """
+    self.lib.lammps_file(self.lmp,file.encode('utf-8'))
 
   def command(self,cmd):
     """ For python 3, I had to encode the string as an 8 character utf """
