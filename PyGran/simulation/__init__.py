@@ -24,7 +24,7 @@ Created on March 30, 2016
 
 from PyGran.simulation.dem import *
 from glob import glob as _glob
-from PyGran.simulation.models import *
+from PyGran.simulation.model_liggghts import *
 
 class _findEngines:
 	def __init__(self):
