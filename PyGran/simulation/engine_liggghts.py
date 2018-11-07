@@ -310,16 +310,25 @@ class DEMPy:
         self.lmp.command('hard_particles yes')
     else:
       # Get version from version_liggghts.txt. TODO: find a faster way to do this.
-      with open(find('version_liggghts.txt', '/'), 'r+') as fp:
-        major, minor, _ = fp.readline().rstrip().split('.')
-        self.__version__ = float(major + '.' + minor)
+      try:
+        version_txt = find('version_liggghts.txt', '/')
+        self.__liggghts__ = version_txt.split('version_liggghts.txt')[0]
 
-        # Write version to config file if it exists
+        with open(version_txt, 'r+') as fp:
+          major, minor, _ = fp.readline().rstrip().split('.')
+          self.__version__ = float(major + '.' + minor)
+      except:
         if not self.rank:
-          if os.path.isfile(self._dir + '../.config'):
-            with open(self._dir + '../.config', 'a+') as fp:
-              fp.write('\nversion={}'.format(self.__version__))
+          print('Could not find LIGGGHTS version. Proceeding ... ')
+        self.__version__ = 'unknown'
+        self.__liggghts__ = 'n/a'
 
+      # Write version + src dir to config file if it exists
+      if not self.rank:
+        if os.path.isfile(self._dir + '../.config'):
+          with open(self._dir + '../.config', 'a+') as fp:
+            fp.write('\nversion={}'.format(self.__version__))
+            fp.write('\nsrc={}'.format(self.__liggghts__))
       if self.__version__ >= 3.6:
         self.lmp.command('hard_particles yes')
 
