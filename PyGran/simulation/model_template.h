@@ -42,7 +42,7 @@
 
 #ifdef NORMAL_MODEL
 
-NORMAL_MODEL({name},{name_lower},0)
+NORMAL_MODEL({name},{name_lower},{number})
 
 #else
 
