@@ -117,7 +117,7 @@ setup(
     url = "https://github.com/Andrew-AbiMansour/PyGran",
     packages=find_packages(),
     package_dir={'PyGran': 'PyGran'},
-    package_data={'': ['.config', 'GUI/Icons/*.png', 'simulation/model.cpp']},
+    package_data={'': ['.config', 'GUI/Icons/*.png', 'simulation/model_template.h']},
     install_requires=['numpy', 'scipy', 'vtk', 'pytool', 'cython', 'mpi4py', 'pillow'],
     long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See https://andrew-abimansour.github.io/PyGran.',
     classifiers=[
