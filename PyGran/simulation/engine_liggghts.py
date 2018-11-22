@@ -1,43 +1,51 @@
 # !/usr/bin/python
-# -*- coding: utf8 -*-
-#
-# ----------------------------------------------------------------------
-#
-#   Python wrapper for LIGGGHTS library via ctypes
-#
-# ----------------------------------------------------------------------
-#
-#   Modified from  LAMMPS source code
-#   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
-#   http://lammps.sandia.gov, Sandia National Laboratories
-#   Steve Plimpton, sjplimp@sandia.gov
-#
-#   Copyright (2003) Sandia Corporation.  Under the terms of Contract
-#   DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-#   certain rights in this software.  This software is distributed under
-#   the GNU General Public License.
-#
-#   See the README file in the top-level LAMMPS directory.
-# -----------------------------------------------------------------------
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 2 of the License, or
-#   (at your option) any later version.
-
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# -------------------------------------------------------------------------
+#  -*- coding: utf8 -*-
 
 '''
-Created on March 30, 2016
-@author: Andrew Abi-Mansour
+  Created on March 30, 2016
+  @author: Andrew Abi-Mansour
+
+  This is the 
+   __________         ________                     
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+                                                      
+  DEM simulation and analysis toolkit
+  http://www.pygran.org, support@pygran.org
+
+  Core developer and main author:
+  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+  PyGran is open-source, distributed under the terms of the GNU Public
+  License, version 2 or later. It is distributed in the hope that it will
+  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+  received a copy of the GNU General Public License along with PyGran.
+  If not, see http://www.gnu.org/licenses . See also top-level README
+  and LICENSE files.
+
+ -------------------------------------------------------------------------
+
+  Python wrapper for LIGGGHTS library via ctypes. This file was modified from
+  the LAMMPS source code.
+
+  LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+  http://lammps.sandia.gov, Sandia National Laboratories
+  Steve Plimpton, sjplimp@sandia.gov
+
+  Copyright (2003) Sandia Corporation.  Under the terms of Contract
+  DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+  certain rights in this software.  This software is distributed under
+  the GNU General Public License.
+
+  See the README file in the top-level LAMMPS directory.
+ --------------------------------------------------------------------------
+
+
 '''
 
 import sys,traceback,types
@@ -1098,7 +1106,7 @@ class DEMPy:
         if output:
           plt.savefig(output)
       except:
-        raise("Unexpected error:", sys.exc_info()[0])
+        raise Exception("Unexpected error:", sys.exc_info()[0])
 
   def saveas(self, name, fname):
     """
@@ -1108,7 +1116,7 @@ class DEMPy:
       try:
         np.savetxt(fname, np.array(self.vars[name]))
       except:
-         raise("Unexpected error:", sys.exc_info()[0])
+         raise Exception("Unexpected error:", sys.exc_info()[0])
 
   def command(self, cmd):
     """
