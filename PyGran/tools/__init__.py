@@ -33,7 +33,6 @@ conversion = {'si': {'distance': [1, 'm'], 'time': [1, 's'], 'mass': [1, 'kg']},
 			'nano': {'distance': [1e-9, 'nm'], 'time': [1, 's'], 'mass': [1e-12, 'ng']}
 			}
 
-
 def dictToTuple(**args):
 	""" Converts a dictionary (args) to a tuple 
 

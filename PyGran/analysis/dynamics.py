@@ -63,3 +63,41 @@ class Temporal(object):
 		self.System.rewind()
 
 		return numpy.array(mass)
+
+
+	def wallCollision(self, **boundary):
+		"""
+		Computes the frequency of particle-wall collisions
+
+		@[xmin]: float defining the left-hand wall pependicular to the y-z plane
+		@[xmax]: float defining the right-hand wall pependicular to the y-z plane
+		@[ymin]: float defining the right-hand wall pependicular to the x-z plane
+		@[ymax]: float defining the right-hand wall pependicular to the x-z plane
+		@[zmin]: float defining the right-hand wall pependicular to the x-y plane
+		@[zmax]: float defining the right-hand wall pependicular to the x-y plane
+		"""
+
+		if not boundary:
+			raise ValueError("Bounding walls must be specified with xmin, xmax, ... zmax.")
+
+		collisions = 0
+
+		if 'xmin' in boundary:
+			collisions += len(self.System.Particles.x - self.System.radius <= boundary['xmin'])
+
+		if 'xmax' in boundary:
+			collisions += len(self.System.Particles.x - self.System.radius >= boundary['xmax'])
+
+		if 'ymin' in boundary:
+			collisions += len(self.System.Particles.y - self.System.radius <= boundary['ymin'])
+
+		if 'ymax' in boundary:
+			collisions += len(self.System.Particles.y - self.System.radius >= boundary['ymax'])
+
+		if 'zmin' in boundary:
+			collisions += len(self.System.Particles.z - self.System.radius <= boundary['zmin'])
+
+		if 'zmax' in boundary:
+			collisions += len(self.System.Particles.z - self.System.radius >= boundary['zmax'])
+
+		return collisions
