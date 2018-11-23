@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     actual_dirs = [pdir.split('/scripts/')[-1] for pdir in possible_dirs if os.path.isdir(pdir)]
 
-    print('Available types:demo')
+    print('Available types: demo')
     for dtype in actual_dirs:
       py_dirs = glob.glob(sdir + 'scripts/' + dtype + '/*')
       py_dirs = [py_dir.split(dtype + '/')[-1] for py_dir in py_dirs if os.path.isdir(py_dir)]
