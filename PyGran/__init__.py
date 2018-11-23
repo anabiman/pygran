@@ -24,4 +24,4 @@ from PyGran import simulation, analysis, tools
 import os
 from PyGran.tools import run
 
-__version__ = 1.1
+__version__ = 1.2
