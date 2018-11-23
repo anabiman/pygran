@@ -36,27 +36,33 @@ import sys, os
 from importlib import import_module
 import glob
 
+from mpi4py import MPI
+
+
 if __name__ == '__main__':
 
   sdir, _ = __file__.split(__name__.split('PyGran.demo.')[-1] +'.py')
 
   # in case you forgot how to use this ... run -h
   if sys.argv[1] == '-h' or sys.argv[1] == '--help':
-    possible_dirs = glob.glob(sdir + 'scripts/*')
-    actual_dirs = []
 
-    actual_dirs = [pdir.split('/scripts/')[-1] for pdir in possible_dirs if os.path.isdir(pdir)]
+    if not MPI.COMM_WORLD.Get_rank():
+      possible_dirs = glob.glob(sdir + 'scripts/*')
+      actual_dirs = []
 
-    print('Available types: demo')
-    for dtype in actual_dirs:
-      py_dirs = glob.glob(sdir + 'scripts/' + dtype + '/*')
-      py_dirs = [py_dir.split(dtype + '/')[-1] for py_dir in py_dirs if os.path.isdir(py_dir)]
-      print( '{}: '.format(dtype), ('{}, ' * len(py_dirs)).format(*py_dirs)[:-2] ) # get rid of the last comma
+      actual_dirs = [pdir.split('/scripts/')[-1] for pdir in possible_dirs if os.path.isdir(pdir)]
+
+      print('Available types: demo')
+      for dtype in actual_dirs:
+        py_dirs = glob.glob(sdir + 'scripts/' + dtype + '/*')
+        py_dirs = [py_dir.split(dtype + '/')[-1] for py_dir in py_dirs if os.path.isdir(py_dir)]
+        print( '{}: '.format(dtype), ('{}, ' * len(py_dirs)).format(*py_dirs)[:-2] ) # get rid of the last comma
 
     sys.exit()
 
   if len(sys.argv) != 3:
-    raise ValueError('PyGran.demo takes only 2 input arguments: type demo_name. See help (-h) option. ')
+    if not MPI.COMM_WORLD.Get_rank():
+      raise ValueError('PyGran.demo takes only 2 input arguments: type demo_name. See help (-h) option. ')
   else:
     try:
       demo = import_module('PyGran.demo.scripts.' + sys.argv[1] + '.' + sys.argv[2] + '.' + sys.argv[2])
@@ -70,4 +76,7 @@ if __name__ == '__main__':
       demo.run(**demo.params)
 
     except:
-      raise RuntimeError('{}.{} is not a valid PyGran demo'.format(*sys.argv[1:]))
+      if not MPI.COMM_WORLD.Get_rank():
+        raise RuntimeError('{}.{} is not a valid PyGran demo'.format(*sys.argv[1:]))
+
+  sys.exit()
