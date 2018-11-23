@@ -13116,7 +13116,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Uniaxial-confined-compression">Uniaxial confined compression<a class="anchor-link" href="#Uniaxial-confined-compression">&#182;</a></h1><p>This is a sample script that simulates the compaction of a powder using a PID controller. The system consists of the particles (spheres), 4 bounding walls defining a rectangular box, and a moving mesh (PID controller) along the z direction that is used to compress the powder at a pressure of 50 bar.</p>
+<h1 id="Uniaxial-confined-compression">Uniaxial confined compression<a class="anchor-link" href="#Uniaxial-confined-compression">&#182;</a></h1><p>This is a sample script that simulates the compaction of a powder using a PID controller. The system consists of the particles (spheres), 4 bounding walls defining a rectangular box, and a moving mesh (PID controller) along the z direction that is used to compress the powder at a pressure of 50 bar. Note that the behaviour of PID controllers is defined at the onset of a simulation, and there is no need to specifically call the 'move' method since the velocity of the mesh is set by the pressure it 'feels'.</p>
 <p>The input script and mesh files are found in the PyGran examples/scripts/controller directory.</p>
 
 </div>
@@ -13230,7 +13230,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create an instance of the DEM class</span>
-<span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="o">.</span><span class="n">DEM</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">DEM</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
 <span class="c1"># Setup a primitive wall along the xoy plane at z=0</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">setupWall</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">wtype</span><span class="o">=</span><span class="s1">&#39;primitive&#39;</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="s1">&#39;zplane&#39;</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span>
@@ -13276,7 +13276,12 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">video</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;movie/PID.mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;r+b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Play video</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">HTML</span>
+
+<span class="n">video</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;movie/PID.mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;r+b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 
     </div>
