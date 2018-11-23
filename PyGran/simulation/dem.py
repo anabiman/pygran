@@ -149,9 +149,12 @@ class DEM:
       from sys import argv
       scriptFile = argv[0]
 
-      if scriptFile.endswith('.py'):
-          logging.info('Backing up {} file'.format(scriptFile))
-          shutil.copyfile('{}/../{}'.format(os.getcwd(), scriptFile), '{}'.format(scriptFile.split('.')[0] + '-bk.py'))
+      if not scriptFile.endswith('__main__.py'): # user is importing their script as a module, dont back up:
+        if scriptFile.endswith('.py'):
+            logging.info('Backing up {} file'.format(scriptFile))
+            shutil.copyfile('{}/../{}'.format(os.getcwd(), scriptFile), '{}'.format(scriptFile.split('.')[0] + '-bk.py'))
+      else:
+        logging.info('Input script run as a module. Not backing up file')
 
     # All I/O done ~ phew! Now initialize DEM
     # Import and setup all meshes as rigid walls
