@@ -46,7 +46,7 @@ params = {
 	'gravity': (9.81, 0, 0, -1),
 
 	# Setup I/O
-	'traj': {'pfile': 'rotating.dump', 'mfile': 'particles*.vtk'},
+	'traj': {'pfile': 'rotating.dump', 'mfile': 'tumbler*.vtk'},
 
 	# Stage runs [optional]
          'stages': {'insertion': 1e6, 'rotation': 1e6},
@@ -57,23 +57,28 @@ params = {
 	}
   }
 
-# Create an instance of the DEM class
-sim = simulation.DEM(**params)
+def run(**params):
 
-# Insert 800 particles in a cylindrical region
-insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args={'orientation': 'random'})
+	# Create an instance of the DEM class
+	sim = simulation.DEM(**params)
 
-# Add viscous force
-air_resistance = sim.add_viscous(species=1, gamma=0.1)
+	# Insert 800 particles in a cylindrical region
+	insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args={'orientation': 'random'})
 
-# Run insertion stage
-sim.run(params['stages']['insertion'], params['dt'])
+	# Add viscous force
+	air_resistance = sim.add_viscous(species=1, gamma=0.1)
 
-# Delete insertion fix
-sim.remove(insert)
+	# Run insertion stage
+	sim.run(params['stages']['insertion'], params['dt'])
 
-# Rotate mesh along the xoz plane
-sim.moveMesh(name='tumbler', rotate=('origin', 0, 0, 0), axis=(0, 1, 0), period=5e-1)
+	# Delete insertion fix
+	sim.remove(insert)
 
-# Run rotation stage
-sim.run(params['stages']['rotation'], params['dt'])
+	# Rotate mesh along the xoz plane
+	sim.moveMesh(name='tumbler', rotate=('origin', 0, 0, 0), axis=(0, 1, 0), period=5e-1)
+
+	# Run rotation stage
+	sim.run(params['stages']['rotation'], params['dt'])
+
+if __name__ == '__main__':
+	run(**params)
