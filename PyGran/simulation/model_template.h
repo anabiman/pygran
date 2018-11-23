@@ -295,7 +295,7 @@ namespace ContactModels
       double kn = {stiffness}; //16./15.*sqrtval*(Yeff[itype][jtype])*pow(15.*meff*charVel*charVel/(16.*sqrtval*Yeff[itype][jtype]),0.2);
 
       double kt = kn;
-      if(ktToKn) kt *= 0.285714286; //2//7
+      if(ktToKn) kt *= {ktToKn}; //default = 2/7
       const double gamman= {viscosity}; //sqrt(4.*meff*kn*coeffRestLogChosen*coeffRestLogChosen/(coeffRestLogChosenSq+M_PI*M_PI));
       const double gammat = tangential_damping ? gamman : 0.0;
 
