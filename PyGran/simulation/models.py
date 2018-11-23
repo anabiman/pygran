@@ -47,7 +47,7 @@ import numpy as np
 from scipy.integrate import ode
 from scipy.optimize import fsolve
 from PyGran.params import pygranToLIGGGHTS 
-import math
+import math, os
 from mpi4py import MPI
 
 class Model(object):
@@ -93,6 +93,9 @@ class Model(object):
 				if 'file' in self.params['mesh'][mesh]:
 					self.params['species'] += ({'material':self.params['mesh'][mesh]['material']},)
 					self.params['nSS'] += 1
+
+					# Get absolute path filename
+					self.params['mesh'][mesh]['file'] = os.path.abspath(self.params['mesh'][mesh]['file'])
 
 					# By default all meshes are imported
 					if 'import' not in self.params['mesh'][mesh]:
