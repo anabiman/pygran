@@ -281,7 +281,7 @@ class DEMPy:
     self.path = os.getcwd()
     self.nSS = len(self.pargs['species'])
     self.output = self.pargs['output']
-    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] +'.py')
+    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] + '.py')
     self._monitor = [] # a list of tuples of (varname, filename) to monitor
 
     if '__version__' in pargs:
@@ -624,13 +624,12 @@ class DEMPy:
     """
     Imports a specific surface mesh requested by the user
     """
-    fname = self.path + '/../' + file
     args = dictToTuple(**args)
 
     if not self.rank:
-      logging.info('Importing mesh from {}'.format(fname))
+      logging.info('Importing mesh from {}'.format(file))
 
-    self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, fname, material) + ('{} ' * len(args)).format(*args))
+    self.lmp.command('fix {} all {} file {} type {} '.format(name, mtype, file, material) + ('{} ' * len(args)).format(*args))
 
   def setupWall(self, wtype, species = None, plane = None, peq = None):
     """
