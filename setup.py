@@ -72,15 +72,8 @@ NotShowIn=KDE""".format(dir)
 	os.system('chmod +x PyGran.desktop')
 	os.system('mv PyGran.desktop ~/.local/share/applications')
 
-class Test(install):
-    """ A class that performs basics tests on PyGran's simulator """
-
-    def run(self):
-        pass
-
-
-class LIGGGHTS(install):
-    """ A class that enables the compilation of LIGGGHTS-PUBLIC from github """
+class Track(install):
+    """ A derived class that enables the tracking of installation/compilation progress """
 
     def execute(self, cmd, cwd='.'):
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd, shell=True)
@@ -107,6 +100,19 @@ class LIGGGHTS(install):
         sys.stdout.write('\r %s%s %s' % (percents, '%', suffix))
         sys.stdout.flush()
 
+    def run(self):
+        self.do_pre_install_stuff()
+
+class Test(Track):
+    """ A class that runs all available tests in PyGran """
+
+    def do_pre_install_stuff(self):
+        interpret = 'python3' if sys.version_info[0] >= 3 else 'python'
+        self.execute( cmd='{} -m PyGran.demo --all'.format(interpret) )
+
+class LIGGGHTS(Track):
+    """ A class that enables the compilation of LIGGGHTS-PUBLIC from github """
+
     def do_pre_install_stuff(self):
         
         if os.path.exists('LIGGGHTS-PUBLIC'):
@@ -127,9 +133,6 @@ class LIGGGHTS(install):
 
         self.execute(cmd='make -f Makefile.shlib auto', cwd='LIGGGHTS-PUBLIC/src')
         sys.stdout.write('\nInstallation of LIGGGHTS-PUBLIC complete\n')
-
-    def run(self):
-        self.do_pre_install_stuff()
 
 example_files = []
 for pdir in glob.glob('PyGran/demo/scripts/*'):
@@ -159,7 +162,7 @@ setup(
 	"Programming Language :: Python :: 3.6"
     ],
 
-    cmdclass={'build_liggghts': LIGGGHTS, 'test': Test},
+    cmdclass={'build_liggghts': LIGGGHTS, 'run_tests': Test},
     zip_safe=False,
     ext_modules=optimal_list,
     include_dirs=include_dirs
