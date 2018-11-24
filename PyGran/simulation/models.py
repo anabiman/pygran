@@ -50,6 +50,22 @@ from PyGran.params import pygranToLIGGGHTS
 import math, os
 from mpi4py import MPI
 
+def template_tablet(nspheres, radius, length):
+	""" This function creates a multi-sphere tablet (cylinder) of
+	radius "radius" and height "length" constituting nspheres spheres.
+	This is used for multisphere simulations.
+	"""
+
+	delta = (2 * radius * nspheres - length) / (nspheres-1)
+	ms = ('nspheres {}'.format(nspheres), 'ntry 1000000 spheres')
+
+	for i in range(nspheres):
+		ms = ms + ((2 * radius - delta ) * i, 0, 0, radius,)
+
+	ms = ms + ('type 1',)
+
+	return ms
+
 class Model(object):
 	""" This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS)
  	or numerical experiments for a particle-wall collision.
@@ -140,21 +156,45 @@ class Model(object):
 		if 'species' in self.params:
 			for ss in self.params['species']:
 
+				if 'style' not in ss:
+					ss['style'] = 'wall'
 
-				# See if we're running PyGran in multi-mode
+				# See if we're running PyGran in multi-mode, them reduce lists to floats/ints
 				if self.params['nSim'] > 1:
-					rank = MPI.COMM_WORLD.Get_rank()
 
-					if isinstance(ss['material'], list):
-						ss['material'] = ss['material'][rank]
+					# Make sure this is not a wall
+					if ss['style'] is not 'wall':
 
-					if isinstance(ss['radius'], list):
-						ss['radius'] = ss['radius'][rank]
+						rank = MPI.COMM_WORLD.Get_rank()
+
+						if isinstance(ss['material'], list):
+							ss['material'] = ss['material'][rank]
+
+						if isinstance(ss['radius'], list):
+							ss['radius'] = ss['radius'][rank]
+
+						if ss['style'] is 'multisphere':
+
+							# user might have defined the length and nspheres or maybe just passed args
+							if 'length' in ss:
+								if isinstance(ss['length'], list):
+									ss['length'] = ss['length'][rank]
+							
+							if 'nspheres' in ss:
+								if isinstance(ss['nspheres'], list):
+									ss['nspheres'] = ss['nspheres'][rank]
+
+							if 'args' in ss:
+								if 'length' in ss or 'nspheres' in ss:
+									raise ValueError('args cannot be defined along with nspheres/length for multisphere.')
+								elif isinstance(ss['args'], list):
+									ss['args'] = ss['args'][rank]
 
 				ss['material'] = pygranToLIGGGHTS(**ss['material'])
 
-				if 'style' not in ss:
-					ss['style'] = 'sphere'
+				if ss['style'] is 'multisphere' and 'args' not in ss:
+					ss['args'] = template_tablet(ss['nspheres'], ss['radius'], ss['length'])
+					del ss['radius'], ss['length']
 
 			# Use 1st component to find all material params ~ hackish!!! 
 			ss = self.params['species'][0]
