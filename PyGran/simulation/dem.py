@@ -112,6 +112,9 @@ class DEM:
 
         self.split = self.comm.Split(color=self.color, key=self.rank)
 
+        # update rank locally for each comm
+        self.rank = self.split.Get_rank()
+
         module = import_module('PyGran.simulation.' + self.pargs['engine'])
         output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '{}'.format(i))
 
