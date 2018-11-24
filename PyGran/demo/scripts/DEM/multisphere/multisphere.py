@@ -9,22 +9,6 @@ Created on March 3, 2018
 from PyGran import simulation
 from PyGran.params import organic
 
-def template_tablet(nspheres, radius, length):
-	""" This function creates a multi-sphere tablet (cylinder) of
-	radius "radius" and height "length" constituting nspheres spheres.
-	"""
-
-	delta = (2 * radius * nspheres - length) / (nspheres-1)
-	ms = ('nspheres {}'.format(nspheres), 'ntry 1000000 spheres')
-
-	for i in range(nspheres):
-		ms = ms + ((2 * radius - delta ) * i, 0, 0, radius,)
-
-	ms = ms + ('type 1',)
-
-	return ms
-
-
 # Create a dictionary of physical parameters
 params = {
 
@@ -33,7 +17,7 @@ params = {
 	'box':  (-1, 1, -1 , 1, -1, 1), # simulation box size
 
 	# Define component(s)
-	'species': ({'material': organic, 'style':'multisphere', 'args': template_tablet(12, 2e-2, 1e-1)},
+	'species': ({'material': organic, 'style': 'multisphere', 'nspheres': 12, 'radius': 2e-2, 'length': 1e-1},
 				),
 
 	# Set skin distance to be 1/4 particle diameter 
@@ -46,7 +30,7 @@ params = {
 	'gravity': (9.81, 0, 0, -1),
 
 	# Setup I/O
-	'traj': {'pfile': 'rotating.dump', 'mfile': 'tumbler*.vtk'},
+	'traj': {'pfile': 'particles.dump', 'mfile': 'tumbler*.vtk'},
 
 	# Stage runs [optional]
          'stages': {'insertion': 1e6, 'rotation': 1e6},
@@ -63,7 +47,7 @@ def run(**params):
 	sim = simulation.DEM(**params)
 
 	# Insert 800 particles in a cylindrical region
-	insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args={'orientation': 'random'})
+	insert = sim.insert(species=1, value=1, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4)) #, args={'orientation': 'random'})
 
 	# Add viscous force
 	air_resistance = sim.add_viscous(species=1, gamma=0.1)
