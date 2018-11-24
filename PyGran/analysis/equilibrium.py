@@ -202,29 +202,33 @@ class Neighbors(object):
 		indices """
 		return self._overlaps
 
-	def filter(self, percent=None):
-		""" Returns a non-overlapping Particles class from the given configuration 
-		
-		@[percent]: filter all particles overlapping by a certain percentage
+	def filter(self, percent):
+		""" Returns a Particles object in which particles overlap no more than `percent' of their effective radius
+
+		@[percent]: filter all particles overlapping by a certain percentage.
 
 		Returns a new Particles class
 		"""
 
 		percent /= 100.0
 		indices = []
-		count = 0
 
 		Particles = self._Particles
+		indices = list(range(len(Particles)))
 
 		if percent:
-			for pair in self._pairs:
+			for count, pair in enumerate(self._pairs):
 				i, j = pair
+				reff = Particles.radius[i] * Particles.radius[j] / (Particles.radius[i] + Particles.radius[j])
 
-				if ( (Particles.radius[i] + Particles.radius[j] - self._distances[count]) <= percent * 0.5 * (Particles.radius[i] + Particles.radius[j]) ):
-					indices.append(i)
-					indices.append(j)
-				
-				count = count + 1
+				if (Particles.radius[i] + Particles.radius[j] - self._distances[count] > percent *  reff):
+
+					# this must be slow ..... gotta optimize this for large systems with high overlaps
+					if i in indices:
+						indices.remove(i)
+
+					if j in indices:
+						indices.remove(j)
 
 		indices = numpy.unique(indices)
 		indices = numpy.array(indices, dtype='int64')
