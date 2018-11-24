@@ -157,13 +157,13 @@ class Model(object):
 			for ss in self.params['species']:
 
 				if 'style' not in ss:
-					ss['style'] = 'wall'
+					ss['style'] = 'sphere' # treat walls as spheres
 
 				# See if we're running PyGran in multi-mode, them reduce lists to floats/ints
 				if self.params['nSim'] > 1:
 
 					# Make sure this is not a wall
-					if ss['style'] is not 'wall':
+					if 'radius' in ss:
 
 						rank = MPI.COMM_WORLD.Get_rank()
 
