@@ -24,7 +24,7 @@ params = {
 	'box':  (-0.001, 0.001, -0.001, 0.001, 0, 0.004), # simulation box size
 
 	# Define component(s)
-	'species': ({'material': materials, 'radius': ('constant', 2e-4)}, 
+	'species': ({'style': 'sphere', 'material': materials, 'radius': ('constant', 2e-4)}, 
 		),
 
 	# Timestep
