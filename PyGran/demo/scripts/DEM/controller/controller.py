@@ -50,9 +50,7 @@ params = {
 		}
 }
 
-
-if __name__ == '__main__':
-
+def run(**params):
 	# Create an instance of the DEM class
 	sim = simulation.DEM(**params)
 
@@ -64,3 +62,6 @@ if __name__ == '__main__':
 
 	# Run the simulation
 	sim.run(params['run'], params['dt'])
+
+if __name__ == '__main__':
+	run(**params)

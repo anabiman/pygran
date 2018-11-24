@@ -60,7 +60,7 @@ nTaps, period = 100, 1.0 / freq
 nSteps = period / (pDict['dt'])
 
 for i in range(nTaps):
-	moveMesh = sim.moveMesh('wall', *('viblin', 'axis 0 0 1', 'order 1', 'amplitude 12.5e-6', 'phase 0' , 'period {}'.format(period)))
+	moveMesh = sim.moveMesh(name='wall', viblin=('axis', 0, 0, 1), order=1, amplitude=12.5e-6, phase=0, period=period)
 	sim.run(nSteps, params['dt'])
 
 	sim.remove(moveMesh)

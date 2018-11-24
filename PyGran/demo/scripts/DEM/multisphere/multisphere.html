@@ -13124,40 +13124,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Stage-1-:-tablet-template-function">Stage 1 : tablet template function<a class="anchor-link" href="#Stage-1-:-tablet-template-function">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">template_tablet</span><span class="p">(</span><span class="n">nspheres</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; This function creates a multi-sphere tablet (cylinder) of</span>
-<span class="sd">	radius &quot;radius&quot; and height &quot;length&quot; constituting nspheres spheres.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-
-	<span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">nspheres</span> <span class="o">-</span> <span class="n">length</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nspheres</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-	<span class="n">ms</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;nspheres </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nspheres</span><span class="p">),</span> <span class="s1">&#39;ntry 1000000 spheres&#39;</span><span class="p">)</span>
-
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspheres</span><span class="p">):</span>
-		<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">-</span> <span class="n">delta</span> <span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="p">,)</span>
-
-	<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;type 1&#39;</span><span class="p">,)</span>
-
-	<span class="k">return</span> <span class="n">ms</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Stage-2:-data-structure-creation">Stage 2: data structure creation<a class="anchor-link" href="#Stage-2:-data-structure-creation">&#182;</a></h1><p>First, a python dictionary (params) defining the simulation parameters is created as shown below:</p>
+<h1 id="Stage-1:-data-structure-creation">Stage 1: data structure creation<a class="anchor-link" href="#Stage-1:-data-structure-creation">&#182;</a></h1><p>First, a python dictionary (params) defining the simulation parameters is created as shown below:</p>
 
 </div>
 </div>
@@ -13178,7 +13145,7 @@ div#notebook {
     <span class="s1">&#39;box&#39;</span><span class="p">:</span>  <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="c1"># simulation box size</span>
 
     <span class="c1"># Define component(s)</span>
-    <span class="s1">&#39;species&#39;</span><span class="p">:</span> <span class="p">({</span><span class="s1">&#39;material&#39;</span><span class="p">:</span> <span class="n">organic</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">:</span><span class="s1">&#39;multisphere&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">template_tablet</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">)},</span>
+    <span class="s1">&#39;species&#39;</span><span class="p">:</span> <span class="p">({</span><span class="s1">&#39;material&#39;</span><span class="p">:</span> <span class="n">organic</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">:</span> <span class="s1">&#39;multisphere&#39;</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">2e-2</span><span class="p">,</span> <span class="s1">&#39;nspheres&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="mf">1e-1</span><span class="p">},</span>
           <span class="p">),</span>
 
     <span class="c1"># Set skin distance to be 1/4 particle diameter</span>
@@ -13212,7 +13179,7 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Stage-3:-simulation">Stage 3: simulation<a class="anchor-link" href="#Stage-3:-simulation">&#182;</a></h1><p>The params dictionary is then used to create a PyGran.DEM class and run the simulation.</p>
+<h1 id="Stage-2:-simulation">Stage 2: simulation<a class="anchor-link" href="#Stage-2:-simulation">&#182;</a></h1><p>The params dictionary is then used to create a PyGran.DEM class and run the simulation.</p>
 
 </div>
 </div>
@@ -13263,6 +13230,10 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Play video</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="n">HTML</span>
+
 <span class="n">video</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;movie/tumbler.mp4&#39;</span><span class="p">,</span> <span class="s1">&#39;r+b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 </pre></div>
 

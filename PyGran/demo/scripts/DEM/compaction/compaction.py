@@ -27,7 +27,7 @@ params = {
 		},
 }
 
-if __name__ == '__main__':
+def run(**params):
 
 	# Create an instance of the DEM class
 	sim = simulation.DEM(**params)
@@ -40,11 +40,14 @@ if __name__ == '__main__':
 	sim.run(params['nsteps'], params['dt'])
 	sim.remove(insert)
 
-    	# Move wall at constant speed
+	# Move wall at constant speed
 	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, -0.03))
 	sim.run(params['nsteps'] * 2, params['dt'])
 	sim.remove(moveZ)
 
-    	# Relax the system
+	# Relax the system
 	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, 0.01))
 	sim.run(params['nsteps'] * 2, params['dt'])
+
+if __name__ == '__main__':
+	run(**params)

@@ -17,3 +17,5 @@ dist
 *.c
 PyGran.egg-info*
 *.ipynb
+PyGran/demo/scripts/DEM/multisphere/mesh/tumbler.stl
+LIGGGHTS-PUBLIC

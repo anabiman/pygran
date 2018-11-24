@@ -1,22 +1,35 @@
+#  -*- coding: utf8 -*-
+
 '''
-Created on July 11, 2016
-@author: Andrew Abi-Mansour
-'''
+  Created on July 11, 2016
+  @author: Andrew Abi-Mansour
 
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 2 of the License, or
-#   (at your option) any later version.
+  This is the 
+   __________         ________                     
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+                                                      
+  DEM simulation and analysis toolkit
+  http://www.pygran.org, support@pygran.org
 
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+  Core developer and main author:
+  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  PyGran is open-source, distributed under the terms of the GNU Public
+  License, version 2 or later. It is distributed in the hope that it will
+  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+  received a copy of the GNU General Public License along with PyGran.
+  If not, see http://www.gnu.org/licenses . See also top-level README
+  and LICENSE files.
 
-# -------------------------------------------------------------------------
+ -------------------------------------------------------------------------
+ '''
+
 import numpy
 
 class Temporal(object):
