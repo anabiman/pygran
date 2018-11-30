@@ -37,7 +37,7 @@
  --------------------------------------------------------------------------
 
 	TODO: Support 2-particle analysis by replacing mass radius, etc. with 
-	reduces mass, radius, etc. i.e. 1/m_ij = 1/m_i + 1/m_j
+	reduced mass, radius, etc. i.e. 1/m_ij = 1/m_i + 1/m_j
 
  --------------------------------------------------------------------------
 
@@ -157,38 +157,44 @@ class Model(object):
 			for ss in self.params['species']:
 
 				if 'style' not in ss:
-					ss['style'] = 'wall'
+					ss['style'] = 'sphere'
 
-				# See if we're running PyGran in multi-mode, them reduce lists to floats/ints
-				if self.params['nSim'] > 1:
+				# Use color splitting to map material properties to each sub comm
+				rank = MPI.COMM_WORLD.Get_rank()
+				tProcs = MPI.COMM_WORLD.Get_size()
 
-					# Make sure this is not a wall
-					if ss['style'] is not 'wall':
+				pProcs = tProcs // self.params['nSim']
 
-						rank = MPI.COMM_WORLD.Get_rank()
+				for i in range(self.params['nSim']):
+					if rank < pProcs * (i + 1):
+						color = i
+						break
+					else:
+						# In case of odd number of procs, place the one left on the last communicator
+						color = self.params['nSim']
 
-						if isinstance(ss['material'], list):
-							ss['material'] = ss['material'][rank]
+				if isinstance(ss['material'], list):
+					ss['material'] = ss['material'][color]
 
-						if isinstance(ss['radius'], list):
-							ss['radius'] = ss['radius'][rank]
+				if isinstance(ss['radius'], list):
+					ss['radius'] = ss['radius'][color]
 
-						if ss['style'] is 'multisphere':
+				if ss['style'] is 'multisphere':
 
-							# user might have defined the length and nspheres or maybe just passed args
-							if 'length' in ss:
-								if isinstance(ss['length'], list):
-									ss['length'] = ss['length'][rank]
-							
-							if 'nspheres' in ss:
-								if isinstance(ss['nspheres'], list):
-									ss['nspheres'] = ss['nspheres'][rank]
+					# user might have defined the length and nspheres or maybe just passed args
+					if 'length' in ss:
+						if isinstance(ss['length'], list):
+							ss['length'] = ss['length'][color]
+					
+					if 'nspheres' in ss:
+						if isinstance(ss['nspheres'], list):
+							ss['nspheres'] = ss['nspheres'][color]
 
-							if 'args' in ss:
-								if 'length' in ss or 'nspheres' in ss:
-									raise ValueError('args cannot be defined along with nspheres/length for multisphere.')
-								elif isinstance(ss['args'], list):
-									ss['args'] = ss['args'][rank]
+					if 'args' in ss:
+						if 'length' in ss or 'nspheres' in ss:
+							raise ValueError('args cannot be defined along with nspheres/length for multisphere.')
+						elif isinstance(ss['args'], list):
+							ss['args'] = ss['args'][color]
 
 				ss['material'] = pygranToLIGGGHTS(**ss['material'])
 
