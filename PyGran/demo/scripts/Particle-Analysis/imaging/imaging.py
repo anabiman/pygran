@@ -18,5 +18,5 @@ size = (512, 512)
 
 for i, z in enumerate(arange(0, Particles.z.max() + resol, resol)):
 	zmin, zmax = z, z + resol
-	output =  'output/poured{}.bmp'.format(i))
+	output =  'output/poured{}.bmp'.format(i)
 	Analyzer.imaging.slice(Particles, zmin, zmax, 'z', size, resol, output)
