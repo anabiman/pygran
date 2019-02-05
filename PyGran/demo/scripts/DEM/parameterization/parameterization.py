@@ -10,7 +10,7 @@ from PyGran import simulation
 from PyGran.params import organic
 
 # Launch 4 simultaneous simulations, each different coef of rest
-nSim = 4
+nSim = 2
 materials = [organic.copy() for i in range(nSim)]
 
 for i, mat in enumerate(materials):
