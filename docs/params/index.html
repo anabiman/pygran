@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>PyGran.Analyzer API documentation</title>
-    <meta name="description" content="Created on April 25, 2016
+    <title>PyGran.params API documentation</title>
+    <meta name="description" content="Created on July 18, 2016
 @author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1044,21 +1044,25 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#PyGran.Analyzer.ascii_uppercase">ascii_uppercase</a></li>
+    <li class="mono"><a href="#PyGran.params.cohesionless">cohesionless</a></li>
+    <li class="mono"><a href="#PyGran.params.cohesive">cohesive</a></li>
+    <li class="mono"><a href="#PyGran.params.glass">glass</a></li>
+    <li class="mono"><a href="#PyGran.params.organic">organic</a></li>
+    <li class="mono"><a href="#PyGran.params.stearicAcid">stearicAcid</a></li>
+    <li class="mono"><a href="#PyGran.params.steel">steel</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#PyGran.params.pygranToLIGGGHTS">pygranToLIGGGHTS</a></li>
   </ul>
 
     </li>
 
 
-
-    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
-      <ul>
-        <li class="mono"><a href="core.m.html">PyGran.Analyzer.core</a></li>
-        <li class="mono"><a href="dynamics.m.html">PyGran.Analyzer.dynamics</a></li>
-        <li class="mono"><a href="equilibrium.m.html">PyGran.Analyzer.equilibrium</a></li>
-        <li class="mono"><a href="imaging.m.html">PyGran.Analyzer.imaging</a></li>
-      </ul>
-    </li>
     </ul>
   </div>
 
@@ -1070,19 +1074,24 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">PyGran.Analyzer</span> module</h1>
-  <p>Created on April 25, 2016
+  <h1 class="title"><span class="name">PyGran.params</span> module</h1>
+  <p>Created on July 18, 2016
 @author: Andrew Abi-Mansour</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.params', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.params" class="source">
     <div class="codehilite"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Created on April 25, 2016</span>
+<span class="sd">Created on July 18, 2016</span>
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
 <span class="c1"># !/usr/bin/python</span>
-<span class="c1"># -*- coding: utf8 -*- </span>
+<span class="c1"># -*- coding: utf8 -*-</span>
+<span class="c1"># -------------------------------------------------------------------------</span>
+<span class="c1">#</span>
+<span class="c1">#   Python module for storing material properties</span>
+<span class="c1">#</span>
+<span class="c1"># --------------------------------------------------------------------------</span>
 <span class="c1">#</span>
 <span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
 <span class="c1">#   it under the terms of the GNU General Public License as published by</span>
@@ -1097,13 +1106,97 @@ table {
 <span class="c1">#   You should have received a copy of the GNU General Public License</span>
 <span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
+
 <span class="c1"># -------------------------------------------------------------------------</span>
 
-<span class="kn">from</span> <span class="nn">PyGran.Analyzer.core</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">glass</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">63e9</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.24</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">62e9</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">2500.0</span>
+		<span class="p">}</span>
 
-<span class="kn">from</span> <span class="nn">PyGran.Analyzer</span> <span class="kn">import</span> <span class="n">dynamics</span>
-<span class="kn">from</span> <span class="nn">PyGran.Analyzer</span> <span class="kn">import</span> <span class="n">equilibrium</span>
-<span class="kn">from</span> <span class="nn">PyGran.Analyzer</span> <span class="kn">import</span> <span class="n">imaging</span>
+<span class="n">stearicAcid</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">4.15e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.033</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span>
+		<span class="p">}</span>
+
+
+<span class="n">organic</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">1000.0</span>
+		<span class="p">}</span>
+
+<span class="n">cohesionless</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">1000.0</span>
+		<span class="p">}</span>
+
+<span class="n">cohesive</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e7</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">2e5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">1000.0</span>
+		<span class="p">}</span>
+
+<span class="n">steel</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">2e11</span><span class="p">,</span>
+		<span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+		<span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+		<span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+		<span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mi">8050</span>
+		<span class="p">}</span> 
+
+<span class="k">def</span> <span class="nf">pygranToLIGGGHTS</span><span class="p">(</span><span class="o">**</span><span class="n">material</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Transform a PyGran material database into a LIGGGHTS material dictionary &quot;&quot;&quot;</span>
+
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">material</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;cohesionEnergyDensity&#39;</span> \
+			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+
+	<span class="k">return</span> <span class="n">material</span>
 </pre></div>
 
   </div>
@@ -1113,7 +1206,47 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="PyGran.Analyzer.ascii_uppercase" class="name">var <span class="ident">ascii_uppercase</span></p>
+      <p id="PyGran.params.cohesionless" class="name">var <span class="ident">cohesionless</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.params.cohesive" class="name">var <span class="ident">cohesive</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.params.glass" class="name">var <span class="ident">glass</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.params.organic" class="name">var <span class="ident">organic</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.params.stearicAcid" class="name">var <span class="ident">stearicAcid</span></p>
+      
+  
+  <div class="source_cont">
+</div>
+
+      </div>
+      <div class="item">
+      <p id="PyGran.params.steel" class="name">var <span class="ident">steel</span></p>
       
   
   <div class="source_cont">
@@ -1121,41 +1254,42 @@ table {
 
       </div>
 
-
-
-    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
-      <div class="item">
-      <p class="name"><a href="core.m.html">PyGran.Analyzer.core</a></p>
+    <h2 class="section-title" id="header-functions">Functions</h2>
       
-  
-    <div class="desc"><p>Created on July 10, 2016
-@author: Andrew Abi-Mansour</p></div>
+  <div class="item">
+    <div class="name def" id="PyGran.params.pygranToLIGGGHTS">
+    <p>def <span class="ident">pygranToLIGGGHTS</span>(</p><p>**material)</p>
+    </div>
+    
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="dynamics.m.html">PyGran.Analyzer.dynamics</a></p>
-      
+    
   
-    <div class="desc"><p>Created on July 11, 2016
-@author: Andrew Abi-Mansour</p></div>
+    <div class="desc"><p>Transform a PyGran material database into a LIGGGHTS material dictionary</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.params.pygranToLIGGGHTS', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.params.pygranToLIGGGHTS" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">pygranToLIGGGHTS</span><span class="p">(</span><span class="o">**</span><span class="n">material</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; Transform a PyGran material database into a LIGGGHTS material dictionary &quot;&quot;&quot;</span>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="equilibrium.m.html">PyGran.Analyzer.equilibrium</a></p>
-      
+	<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">material</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;youngsModulus&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;poissonsRatio&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtype&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingFriction&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;cohesionEnergyDensity&#39;</span> \
+			<span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRestitution&#39;</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;peratomtypepair&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+		<span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span>
+			<span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;scalar&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">material</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+
+	<span class="k">return</span> <span class="n">material</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
   
-    <div class="desc"><p>Created on March 10, 2017
-@author: Andrew Abi-Mansour</p></div>
 
-      </div>
-      <div class="item">
-      <p class="name"><a href="imaging.m.html">PyGran.Analyzer.imaging</a></p>
-      
-  
-    <div class="desc"><p>Created on February 24, 2017
-@author: Andrew Abi-Mansour</p></div>
 
-      </div>
   </section>
 
     </article>

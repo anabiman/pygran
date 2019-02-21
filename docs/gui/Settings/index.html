@@ -3,9 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>PyGran.Analyzer.dynamics API documentation</title>
-    <meta name="description" content="Created on July 11, 2016
-@author: Andrew Abi-Mansour" />
+    <title>PyGran.gui.Settings API documentation</title>
+    <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -1043,22 +1042,12 @@ table {
     <ul id="index">
 
 
-    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
-      <ul>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.dynamics.Temporal">Temporal</a></span>
-        
-          
-  <ul>
-    <li class="mono"><a href="#PyGran.Analyzer.dynamics.Temporal.__init__">__init__</a></li>
-    <li class="mono"><a href="#PyGran.Analyzer.dynamics.Temporal.flow">flow</a></li>
-    <li class="mono"><a href="#PyGran.Analyzer.dynamics.Temporal.series">series</a></li>
-  </ul>
 
-        </li>
+    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
+      <ul>
+        <li class="mono"><a href="Language.m.html">PyGran.gui.Settings.Language</a></li>
       </ul>
     </li>
-
     </ul>
   </div>
 
@@ -1070,16 +1059,13 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">PyGran.Analyzer.dynamics</span> module</h1>
-  <p>Created on July 11, 2016
-@author: Andrew Abi-Mansour</p>
+  <h1 class="title"><span class="name">PyGran.gui.Settings</span> module</h1>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.dynamics', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.dynamics" class="source">
-    <div class="codehilite"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Created on July 11, 2016</span>
-<span class="sd">@author: Andrew Abi-Mansour</span>
-<span class="sd">&#39;&#39;&#39;</span>
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.gui.Settings', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.gui.Settings" class="source">
+    <div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># -*- coding: utf8 -*- </span>
 
 <span class="c1">#   This program is free software: you can redistribute it and/or modify</span>
 <span class="c1">#   it under the terms of the GNU General Public License as published by</span>
@@ -1093,54 +1079,8 @@ table {
 
 <span class="c1">#   You should have received a copy of the GNU General Public License</span>
 <span class="c1">#   along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
-
+<span class="c1">#</span>
 <span class="c1"># -------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-
-<span class="k">class</span> <span class="nc">Temporal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">System</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span> <span class="o">=</span> <span class="n">System</span>
-
-	<span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-		<span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-				<span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-		
-	<span class="k">def</span> <span class="nf">flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Computes flow rate</span>
-<span class="sd">		@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time</span>
-<span class="sd">		@[dt]: timestep in units of time, default 1.</span>
-
-<span class="sd">		TODO: Make it more efficient</span>
-<span class="sd">		&quot;&quot;&quot;</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="n">N0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span>
-		<span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span>
-
-		<span class="n">mass</span> <span class="o">=</span> <span class="p">[]</span>
-
-		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-
-		<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-			
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">:</span>
-
-				<span class="n">time</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
-				<span class="n">mass</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span> <span class="n">density</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span> <span class="o">-</span> <span class="n">N0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">time</span><span class="p">)</span> <span class="p">)</span>
-				
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1150,178 +1090,16 @@ table {
   <section id="section-items">
 
 
-    <h2 class="section-title" id="header-classes">Classes</h2>
-      
+
+    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p id="PyGran.Analyzer.dynamics.Temporal" class="name">class <span class="ident">Temporal</span></p>
+      <p class="name"><a href="Language.m.html">PyGran.gui.Settings.Language</a></p>
       
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.dynamics.Temporal', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.dynamics.Temporal" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Temporal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">System</span><span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span> <span class="o">=</span> <span class="n">System</span>
+    <div class="desc"><p>Created on Sep 8, 2016
+@author: Andrew Abi-Mansour</p></div>
 
-	<span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-		<span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-				<span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-		
-	<span class="k">def</span> <span class="nf">flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Computes flow rate</span>
-<span class="sd">		@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time</span>
-<span class="sd">		@[dt]: timestep in units of time, default 1.</span>
-
-<span class="sd">		TODO: Make it more efficient</span>
-<span class="sd">		&quot;&quot;&quot;</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="n">N0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span>
-		<span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span>
-
-		<span class="n">mass</span> <span class="o">=</span> <span class="p">[]</span>
-
-		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-
-		<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-			
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">:</span>
-
-				<span class="n">time</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
-				<span class="n">mass</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span> <span class="n">density</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span> <span class="o">-</span> <span class="n">N0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">time</span><span class="p">)</span> <span class="p">)</span>
-				
-		<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-
-		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.dynamics.Temporal">Temporal</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-          <h3>Static methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="PyGran.Analyzer.dynamics.Temporal.__init__">
-    <p>def <span class="ident">__init__</span>(</p><p>self, System)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.dynamics.Temporal.__init__', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.dynamics.Temporal.__init__" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">System</span><span class="p">):</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">System</span> <span class="o">=</span> <span class="n">System</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="PyGran.Analyzer.dynamics.Temporal.flow">
-    <p>def <span class="ident">flow</span>(</p><p>self, density=None, dt=1)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Computes flow rate
-@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time
-@[dt]: timestep in units of time, default 1.</p>
-<p>TODO: Make it more efficient</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.dynamics.Temporal.flow', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.dynamics.Temporal.flow" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Computes flow rate</span>
-<span class="sd">	@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time</span>
-<span class="sd">	@[dt]: timestep in units of time, default 1.</span>
-<span class="sd">	TODO: Make it more efficient</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-	<span class="n">N0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span>
-	<span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span>
-	<span class="n">mass</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-		
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span><span class="p">:</span>
-			<span class="n">time</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">timestep</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span> <span class="o">*</span> <span class="n">dt</span>
-			<span class="n">mass</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span> <span class="n">density</span> <span class="o">*</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">numpy</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">natoms</span> <span class="o">-</span> <span class="n">N0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">time</span><span class="p">)</span> <span class="p">)</span>
-			
-	<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-            
-  <div class="item">
-    <div class="name def" id="PyGran.Analyzer.dynamics.Temporal.series">
-    <p>def <span class="ident">series</span>(</p><p>self, attr)</p>
-    </div>
-    
-
-    
-  
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Analyzer.dynamics.Temporal.series', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Analyzer.dynamics.Temporal.series" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-	<span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-	<span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-			<span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
-	<span class="bp">self</span><span class="o">.</span><span class="n">System</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-	<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.dynamics.Temporal.System" class="name">var <span class="ident">System</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
       </div>
-      </div>
-
   </section>
 
     </article>

@@ -3,7 +3,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>PyGran.Simulator API documentation</title>
+    <title>PyGran.simulation API documentation</title>
     <meta name="description" content="Created on March 30, 2016
 @author: Andrew Abi-Mansour" />
 
@@ -1044,7 +1044,7 @@ table {
     <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
       
   <ul>
-    <li class="mono"><a href="#PyGran.Simulator.engines">engines</a></li>
+    <li class="mono"><a href="#PyGran.simulation.engines">engines</a></li>
   </ul>
 
     </li>
@@ -1053,9 +1053,10 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="DEM.m.html">PyGran.Simulator.DEM</a></li>
-        <li class="mono"><a href="engine_liggghts.m.html">PyGran.Simulator.engine_liggghts</a></li>
-        <li class="mono"><a href="models.m.html">PyGran.Simulator.models</a></li>
+        <li class="mono"><a href="dem.m.html">PyGran.simulation.dem</a></li>
+        <li class="mono"><a href="engine_liggghts.m.html">PyGran.simulation.engine_liggghts</a></li>
+        <li class="mono"><a href="model_liggghts.m.html">PyGran.simulation.model_liggghts</a></li>
+        <li class="mono"><a href="models.m.html">PyGran.simulation.models</a></li>
       </ul>
     </li>
     </ul>
@@ -1069,12 +1070,12 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">PyGran.Simulator</span> module</h1>
+  <h1 class="title"><span class="name">PyGran.simulation</span> module</h1>
   <p>Created on March 30, 2016
 @author: Andrew Abi-Mansour</p>
   
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.Simulator', this);">Show source &equiv;</a></p>
-  <div id="source-PyGran.Simulator" class="source">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.simulation', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.simulation" class="source">
     <div class="codehilite"><pre><span></span><span class="c1"># !/usr/bin/python</span>
 <span class="c1"># -*- coding: utf8 -*- </span>
 <span class="c1"># -----------------------------------------------------------------------</span>
@@ -1099,16 +1100,16 @@ table {
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">PyGran.Simulator.DEM</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyGran.simulation.dem</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span> <span class="k">as</span> <span class="n">_glob</span>
-<span class="kn">from</span> <span class="nn">PyGran.Simulator.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PyGran.simulation.model_liggghts</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="k">class</span> <span class="nc">_findEngines</span><span class="p">:</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="c1"># Any engine module *must* follow the naming convention: engine_foo.py</span>
 		<span class="c1"># If the engine is found, it will be linked via setattr to be imported</span>
-		<span class="c1"># in DEM.py as PyGran.Simulator.engine_foo. The engine is set by the user</span>
-		<span class="c1"># as DEM.Simulator.engines.foo</span>
+		<span class="c1"># in DEM.py as PyGran.simulation.engine_foo. The engine is set by the user</span>
+		<span class="c1"># as DEM.simulation.engines.foo</span>
 
 		<span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;__init__.py&#39;</span><span class="p">)</span>
 		<span class="n">pyFiles</span> <span class="o">=</span> <span class="n">_glob</span><span class="p">(</span><span class="n">_dir</span> <span class="o">+</span> <span class="s1">&#39;*.py&#39;</span><span class="p">)</span>
@@ -1130,7 +1131,7 @@ table {
   <section id="section-items">
     <h2 class="section-title" id="header-variables">Module variables</h2>
       <div class="item">
-      <p id="PyGran.Simulator.engines" class="name">var <span class="ident">engines</span></p>
+      <p id="PyGran.simulation.engines" class="name">var <span class="ident">engines</span></p>
       
   
   <div class="source_cont">
@@ -1142,7 +1143,7 @@ table {
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="DEM.m.html">PyGran.Simulator.DEM</a></p>
+      <p class="name"><a href="dem.m.html">PyGran.simulation.dem</a></p>
       
   
     <div class="desc"><p>Created on April 25, 2016
@@ -1150,19 +1151,45 @@ table {
 
       </div>
       <div class="item">
-      <p class="name"><a href="engine_liggghts.m.html">PyGran.Simulator.engine_liggghts</a></p>
+      <p class="name"><a href="engine_liggghts.m.html">PyGran.simulation.engine_liggghts</a></p>
       
   
     <div class="desc"><p>Created on March 30, 2016
-@author: Andrew Abi-Mansour</p></div>
+ @author: Andrew Abi-Mansour</p>
+<p>This is the 
+  <strong><em>_</em></strong><strong><em>         </em></strong><strong>_</strong>                   <br />
+ ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+ ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+ ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+ ██╔═══╝   ╚██╔╝ ...</p></div>
 
       </div>
       <div class="item">
-      <p class="name"><a href="models.m.html">PyGran.Simulator.models</a></p>
+      <p class="name"><a href="model_liggghts.m.html">PyGran.simulation.model_liggghts</a></p>
       
   
     <div class="desc"><p>Created on July 1, 2016
-@author: Andrew Abi-Mansour</p></div>
+       @author: Andrew Abi-Mansour</p>
+<div class="codehilite"><pre><span></span>   This is the 
+    __________         ________                     
+   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝██...
+</pre></div></div>
+
+      </div>
+      <div class="item">
+      <p class="name"><a href="models.m.html">PyGran.simulation.models</a></p>
+      
+  
+    <div class="desc"><p>Created on July 1, 2016
+       @author: Andrew Abi-Mansour</p>
+<div class="codehilite"><pre><span></span>   This is the 
+    __________         ________                     
+   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝██...
+</pre></div></div>
 
       </div>
   </section>

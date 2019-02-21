@@ -1046,11 +1046,11 @@ table {
 
     <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono"><a href="Analyzer/index.html">PyGran.Analyzer</a></li>
-        <li class="mono"><a href="GUI/index.html">PyGran.GUI</a></li>
-        <li class="mono"><a href="Materials/index.html">PyGran.Materials</a></li>
-        <li class="mono"><a href="Simulator/index.html">PyGran.Simulator</a></li>
-        <li class="mono"><a href="Tools/index.html">PyGran.Tools</a></li>
+        <li class="mono"><a href="analysis/index.html">PyGran.analysis</a></li>
+        <li class="mono"><a href="gui/index.html">PyGran.gui</a></li>
+        <li class="mono"><a href="params/index.html">PyGran.params</a></li>
+        <li class="mono"><a href="simulation/index.html">PyGran.simulation</a></li>
+        <li class="mono"><a href="tools/index.html">PyGran.tools</a></li>
       </ul>
     </li>
     </ul>
@@ -1092,17 +1092,11 @@ table {
 <span class="sd">@author: Andrew Abi-Mansour</span>
 <span class="sd">&#39;&#39;&#39;</span>
 
-<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Simulator</span><span class="p">,</span> <span class="n">Tools</span><span class="p">,</span> <span class="n">Analyzer</span>
+<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">simulation</span><span class="p">,</span> <span class="n">analysis</span><span class="p">,</span> <span class="n">tools</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">PyGran.tools</span> <span class="kn">import</span> <span class="n">run</span>
 
-<span class="k">try</span><span class="p">:</span>
-	<span class="kn">from</span> <span class="nn">PyGran</span> <span class="kn">import</span> <span class="n">Visualizer</span>
-<span class="k">except</span><span class="p">:</span>
-	<span class="k">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Visualization not supported. Make sure wxwidgets and vtk libraries are properly installed on this system.&quot;</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">PyGran.Tools</span> <span class="kn">import</span> <span class="n">run</span>
-
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="mf">1.2</span>
 </pre></div>
 
   </div>
@@ -1115,7 +1109,7 @@ table {
 
     <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p class="name"><a href="Analyzer/index.html">PyGran.Analyzer</a></p>
+      <p class="name"><a href="analysis/index.html">PyGran.analysis</a></p>
       
   
     <div class="desc"><p>Created on April 25, 2016
@@ -1123,7 +1117,7 @@ table {
 
       </div>
       <div class="item">
-      <p class="name"><a href="GUI/index.html">PyGran.GUI</a></p>
+      <p class="name"><a href="gui/index.html">PyGran.gui</a></p>
       
   
     <div class="desc"><p>Created on Sep 11, 2013
@@ -1131,7 +1125,7 @@ table {
 
       </div>
       <div class="item">
-      <p class="name"><a href="Materials/index.html">PyGran.Materials</a></p>
+      <p class="name"><a href="params/index.html">PyGran.params</a></p>
       
   
     <div class="desc"><p>Created on July 18, 2016
@@ -1139,7 +1133,7 @@ table {
 
       </div>
       <div class="item">
-      <p class="name"><a href="Simulator/index.html">PyGran.Simulator</a></p>
+      <p class="name"><a href="simulation/index.html">PyGran.simulation</a></p>
       
   
     <div class="desc"><p>Created on March 30, 2016
@@ -1147,7 +1141,7 @@ table {
 
       </div>
       <div class="item">
-      <p class="name"><a href="Tools/index.html">PyGran.Tools</a></p>
+      <p class="name"><a href="tools/index.html">PyGran.tools</a></p>
       
   
     <div class="desc"><p>Created on April 25, 2016

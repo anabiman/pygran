@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>PyGran.Analyzer.core API documentation</title>
-    <meta name="description" content="Created on July 10, 2016
+    <title>PyGran.gui API documentation</title>
+    <meta name="description" content="Created on Sep 11, 2013
 @author: Andrew Abi-Mansour" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
@@ -1041,48 +1041,14 @@ table {
   <div id="sidebar">
     <h1>Index</h1>
     <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#PyGran.Analyzer.core.ascii_uppercase">ascii_uppercase</a></li>
-  </ul>
 
-    </li>
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#PyGran.Analyzer.core.numericalSort">numericalSort</a></li>
-    <li class="mono"><a href="#PyGran.Analyzer.core.select">select</a></li>
-  </ul>
 
-    </li>
-
-    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+    <li class="set"><h3><a href="#header-submodules">Sub-modules</a></h3>
       <ul>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.core.Factory">Factory</a></span>
-        
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.core.Mesh">Mesh</a></span>
-        
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.core.Particles">Particles</a></span>
-        
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></span>
-        
-        </li>
-        <li class="mono">
-        <span class="class_name"><a href="#PyGran.Analyzer.core.System">System</a></span>
-        
-        </li>
+        <li class="mono"><a href="Settings/index.html">PyGran.gui.Settings</a></li>
       </ul>
     </li>
-
     </ul>
   </div>
 
@@ -1094,235 +1060,46 @@ table {
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">PyGran.Analyzer.core</span> module</h1>
-  <p>Created on July 10, 2016
+  <h1 class="title"><span class="name">PyGran.gui</span> module</h1>
+  <p>Created on Sep 11, 2013
 @author: Andrew Abi-Mansour</p>
   
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-PyGran.gui', this);">Show source &equiv;</a></p>
+  <div id="source-PyGran.gui" class="source">
+    <div class="codehilite"><pre><span></span><span class="err">!</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span>
+ <span class="o">-*-</span> <span class="n">coding</span><span class="p">:</span> <span class="n">utf8</span> <span class="o">-*-</span> 
+   <span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="p">:</span> <span class="n">you</span> <span class="n">can</span> <span class="n">redistribute</span> <span class="n">it</span> <span class="ow">and</span><span class="o">/</span><span class="ow">or</span> <span class="n">modify</span>
+   <span class="n">it</span> <span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span> <span class="k">as</span> <span class="n">published</span> <span class="n">by</span>
+   <span class="n">the</span> <span class="n">Free</span> <span class="n">Software</span> <span class="n">Foundation</span><span class="p">,</span> <span class="n">either</span> <span class="n">version</span> <span class="mi">2</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span><span class="p">,</span> <span class="ow">or</span>
+   <span class="p">(</span><span class="n">at</span> <span class="n">your</span> <span class="n">option</span><span class="p">)</span> <span class="nb">any</span> <span class="n">later</span> <span class="n">version</span><span class="o">.</span>
+   <span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">distributed</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">hope</span> <span class="n">that</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">useful</span><span class="p">,</span>
+   <span class="n">but</span> <span class="n">WITHOUT</span> <span class="n">ANY</span> <span class="n">WARRANTY</span><span class="p">;</span> <span class="n">without</span> <span class="n">even</span> <span class="n">the</span> <span class="n">implied</span> <span class="n">warranty</span> <span class="n">of</span>
+   <span class="n">MERCHANTABILITY</span> <span class="ow">or</span> <span class="n">FITNESS</span> <span class="n">FOR</span> <span class="n">A</span> <span class="n">PARTICULAR</span> <span class="n">PURPOSE</span><span class="o">.</span>  <span class="n">See</span> <span class="n">the</span>
+   <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="o">.</span>
+   <span class="n">You</span> <span class="n">should</span> <span class="n">have</span> <span class="n">received</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span>
+   <span class="n">along</span> <span class="k">with</span> <span class="n">this</span> <span class="n">program</span><span class="o">.</span>  <span class="n">If</span> <span class="ow">not</span><span class="p">,</span> <span class="n">see</span> <span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">gnu</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">licenses</span><span class="o">/&gt;.</span>
+ <span class="o">-------------------------------------------------------------------------</span>
+<span class="s1">&#39;&#39;</span>
+<span class="n">reated</span> <span class="n">on</span> <span class="n">Sep</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">2013</span>
+<span class="n">author</span><span class="p">:</span> <span class="n">Andrew</span> <span class="n">Abi</span><span class="o">-</span><span class="n">Mansour</span>
+<span class="s1">&#39;&#39;</span>
+</pre></div>
+
+  </div>
 
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
+
+
+
+    <h2 class="section-title" id="header-submodules">Sub-modules</h2>
       <div class="item">
-      <p id="PyGran.Analyzer.core.ascii_uppercase" class="name">var <span class="ident">ascii_uppercase</span></p>
+      <p class="name"><a href="Settings/index.html">PyGran.gui.Settings</a></p>
       
   
-  <div class="source_cont">
-</div>
 
       </div>
-
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="PyGran.Analyzer.core.numericalSort">
-    <p>def <span class="ident">numericalSort</span>(</p><p>...)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>A sorting function by numerical numbers for glob.glob</p></div>
-  <div class="source_cont">
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="PyGran.Analyzer.core.select">
-    <p>def <span class="ident">select</span>(</p><p>...)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Create a selection of particles based on a subsystem defined by region
-@ region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax). If undefined, all particles are considered.</p></div>
-  <div class="source_cont">
-</div>
-
-  </div>
-  
-
-    <h2 class="section-title" id="header-classes">Classes</h2>
-      
-      <div class="item">
-      <p id="PyGran.Analyzer.core.Factory" class="name">class <span class="ident">Factory</span></p>
-      
-  
-    <div class="desc"><p>A factory for system class. It creates subclasses of SubSystems. Its only two methods
-are static, thus no need to instantiate this object.</p>
-<p>@Particles: filename (or list of filenames) for the particle trajectory
-@Mesh: filename (or list of filenames) for the mesh trajectory
-@<a href="si">units</a>: unit system can be either 'si' or 'micro'</p></div>
-  <div class="source_cont">
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.core.Factory">Factory</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="PyGran.Analyzer.core.Mesh" class="name">class <span class="ident">Mesh</span></p>
-      
-  
-    <div class="desc"><p>The Mesh class stores a list of meshes and their associated attributes / methods.
-This class is iterable but NOT an iterator.</p></div>
-  <div class="source_cont">
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.core.Mesh">Mesh</a></li>
-          <li><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.core.Mesh.keys" class="name">var <span class="ident">keys</span></p>
-            
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></code>.<code><a href="#PyGran.Analyzer.core.SubSystem.keys">keys</a></code>
-    </p>
-
-            
-  
-    <div class="desc inherited"><p>Returns all stored attribute keynames</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="PyGran.Analyzer.core.Particles" class="name">class <span class="ident">Particles</span></p>
-      
-  
-    <div class="desc"><p>The Particle class stores all particle properties and the methods that operate on
-these properties. This class is iterable but NOT an iterator.</p></div>
-  <div class="source_cont">
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.core.Particles">Particles</a></li>
-          <li><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.core.Particles.keys" class="name">var <span class="ident">keys</span></p>
-            
-    <p class="inheritance">
-     <strong>Inheritance:</strong>
-       <code><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></code>.<code><a href="#PyGran.Analyzer.core.SubSystem.keys">keys</a></code>
-    </p>
-
-            
-  
-    <div class="desc inherited"><p>Returns all stored attribute keynames</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="PyGran.Analyzer.core.SubSystem" class="name">class <span class="ident">SubSystem</span></p>
-      
-  
-    <div class="desc"><p>The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on these properties. This class is iterable but NOT an iterator.</p></div>
-  <div class="source_cont">
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.core.SubSystem">SubSystem</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.core.SubSystem.keys" class="name">var <span class="ident">keys</span></p>
-            
-
-            
-  
-    <div class="desc"><p>Returns all stored attribute keynames</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-      </div>
-      </div>
-      
-      <div class="item">
-      <p id="PyGran.Analyzer.core.System" class="name">class <span class="ident">System</span></p>
-      
-  
-    <div class="desc"><p>A System contains all the information describing a DEM system.
-A system always requires at least one trajectory file to read. A trajectory is a (time)
-series corresponding to the coordinates of all particles/meshes/objects in the system.
-System handles the time frame and controls i/o operations. It contains one or more SubSystem
-derivatives (e.g. 'Paticles', 'Mesh') which store all the particle and mesh attributes
-read from the trajectory file (variables such as positions, momenta, angular velocities,
-        forces, stresses, radii, etc.).</p>
-<p>@Particles: filename (or list of filenames) for the particle trajectory
-@Mesh: filename (or list of filenames) for the mesh trajectory
-@<a href="si">units</a>: unit system can be either 'si' or 'micro'</p>
-<p>How time stepping works: when looping over System (traj file), the frame is controlled only by System
-through methods defined in a SubSystem sublass (read/write functions).</p>
-<p>This class is an iterator but <em>NOT</em> iterable.</p></div>
-  <div class="source_cont">
-</div>
-
-
-      <div class="class">
-          <h3>Ancestors (in MRO)</h3>
-          <ul class="class_list">
-          <li><a href="#PyGran.Analyzer.core.System">System</a></li>
-          <li><a href="/builtins.object.ext">builtins.object</a></li>
-          </ul>
-          <h3>Instance variables</h3>
-            <div class="item">
-            <p id="PyGran.Analyzer.core.System.keys" class="name">var <span class="ident">keys</span></p>
-            
-
-            
-  
-    <div class="desc"><p>returns the key objects found in the trajctory files</p></div>
-  <div class="source_cont">
-</div>
-
-            </div>
-            <div class="item">
-            <p id="PyGran.Analyzer.core.System.system" class="name">var <span class="ident">system</span></p>
-            
-
-            
-  
-  <div class="source_cont">
-</div>
-
-            </div>
-      </div>
-      </div>
-
   </section>
 
     </article>
