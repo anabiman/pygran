@@ -20,13 +20,13 @@ Alternatively, you can clone the PyGran repsitory on github and run from the sou
 ```bash
 python setup.py install --user
 ```
-You can download <a href="examples/scripts/ubuntu.sh">here</a> a script (for Ubuntu 18.04 LTR) that compiles and installs LIGGGHTS-PUBLIC (v3.8) and PyGran from source code.
+You can download <a href="examples/scripts/ubuntu.sh">here</a> a script (for Ubuntu 18.04 LTS) that compiles and installs LIGGGHTS-PUBLIC and PyGran from source code.
 For more options and information on setting up PyGran, see chapter I in the manual.
 
 ## Basic Usage
 ### Running DEM simulation with LIGGGHTS
 
-PyGran also provides an interface for running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code). This is achieved by importing the <i>Simulator</i> module as shown in the script below for simulating granular flow in a hopper.
+PyGran also provides an interface for running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code). This is achieved by importing the <i>simulation</i> module as shown in the script below for simulating granular flow in a hopper.
 
 <p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 
@@ -53,7 +53,7 @@ param = {
 # Instantiate a DEM class
 sim = simulation.DEM(**param['model'])
 
-# Insert particles for species 1 (stearic acid)
+# Insert 1000 particles for species 1 (stearic acid)
 insert = sim.insert(species=1, value=1000) 
 
 # Evolve the system in time 
