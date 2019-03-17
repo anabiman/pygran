@@ -1,33 +1,42 @@
 '''
-Created on July 10, 2016
-@author: Andrew Abi-Mansour
-'''
+  Created on July 10, 2016
+  @author: Andrew Abi-Mansour
 
-# !/usr/bin/python
-# -*- coding: utf8 -*-
-# -------------------------------------------------------------------------
-#
-#   Python module for creating the basic DEM (Granular) object for analysis
-#
-# --------------------------------------------------------------------------
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 2 of the License, or
-#   (at your option) any later version.
+  This is the 
+   __________         ________                     
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+													  
+  DEM simulation and analysis toolkit
+  http://www.pygran.org, support@pygran.org
 
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+  Core developer and main author:
+  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  PyGran is open-source, distributed under the terms of the GNU Public
+  License, version 2 or later. It is distributed in the hope that it will
+  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+  received a copy of the GNU General Public License along with PyGran.
+  If not, see http://www.gnu.org/licenses . See also top-level README
+  and LICENSE files.
 
-# -------------------------------------------------------------------------
+ ---------------------------------------------------------------------------------
+  Python module that provides the fundamental classes used in the analysis module
+ ---------------------------------------------------------------------------------
+
+ '''
 
 import numpy as np
-cimport numpy as np
+
+try:
+	cimport numpy as np # for Cython
+except:
+	pass
 
 import types
 from random import choice
@@ -386,36 +395,46 @@ these properties. This class is iterable but NOT an iterator. """
 
 		self._constructAttributes()
 
-	def translate(self, value, attr):
-		""" Translates all ss elements by a float or int 'value'
+	def translate(self, value, attr=('x','y','z')):
+		""" Translates all ss elements by a tuple of integers or floats
 
+		@value: tuple of float or int by which to translate the system
 		@[attr]: tuple of attributes to translate system by (positions by default)
 		"""
+
+		if len(value) != len(attr):
+			raise ValueError('The length of values must be equal to that of attributes.')
+
 		for i, at in enumerate(attr):
 			if at in self.data:
 
-				if type(self.data[at]) is np.ndarray:
+				if isinstance(self.data[at], np.ndarray):
 					self.data[at].flags.writeable = True
 
 				self.data[at] += value[i]
 
-				if type(self.data[at]) is np.ndarray:
+				if isinstance(self.data[at], np.ndarray):
 					self.data[at].flags.writeable = False
 
 		self._constructAttributes()
 
-	def perturb(self, percent, attr=('x','y','z')):
-		""" Adds white noise to all ss elements by a certain 'percent'
+	def noise(self, sigma, attr=('x','y','z')):
+		""" Adds white noise of standard deviation `sigma' to all elements with attribute `attr'.
 
+		@sigma: standard deviation of the Gaussian (white) noise
 		@[attr]: attribute to perturb (positions by default)
 		"""
+
+		if sigma < 0:
+			raise ValueError('Standard deviation must be positive.')
+
 		for at in attr:
 			if at in self.data:
 
 				if type(self.data[at]) is np.ndarray:
 					self.data[at].flags.writeable = True
 
-					self.data[at] += percent * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
+					self.data[at] += sigma * (1.0 - 2.0 * np.random.rand(len(self.data[at])))
 
 					self.data[at].flags.writeable = True
 
@@ -754,27 +773,27 @@ class Particles(SubSystem):
 
 	def computeRDF(self, dr = None, center = True, rMax=None):
 		""" Computes the three-dimensional radial distribution function for a set of
-	    spherical particles contained in a cube with side length S.  This simple
-	    function finds reference particles such that a sphere of radius rMax drawn
-	    around the particle will fit entirely within the cube, eliminating the need
-	    to compensate for edge effects.  If no such particles exist, an error is
-	    returned.  Try a smaller rMax...or write some code to handle edge effects! ;)
+		spherical particles contained in a cube with side length S.  This simple
+		function finds reference particles such that a sphere of radius rMax drawn
+		around the particle will fit entirely within the cube, eliminating the need
+		to compensate for edge effects.  If no such particles exist, an error is
+		returned.  Try a smaller rMax...or write some code to handle edge effects! ;)
 
-	    Arguments:
+		Arguments:
 
-	        S               length of each side of the cube in space
-	        rMax            outer diameter of largest spherical shell
-	        dr              increment for increasing radius of spherical shell
-	    Implicit arguments:
-	    	x               an array of x positions of centers of particles
-	        y               an array of y positions of centers of particles
-	        z               an array of z positions of centers of particles
+			S               length of each side of the cube in space
+			rMax            outer diameter of largest spherical shell
+			dr              increment for increasing radius of spherical shell
+		Implicit arguments:
+			x               an array of x positions of centers of particles
+			y               an array of y positions of centers of particles
+			z               an array of z positions of centers of particles
 
-	    Returns a tuple: (g, radii, interior_indices)
-	        g(r)            a numpy array containing the correlation function g(r)
-	        radii           a numpy array containing the radii of the
-	                        spherical shells used to compute g(r)
-	        reference_indices   indices of reference particles
+		Returns a tuple: (g, radii, interior_indices)
+			g(r)            a numpy array containing the correlation function g(r)
+			radii           a numpy array containing the radii of the
+							spherical shells used to compute g(r)
+			reference_indices   indices of reference particles
 		"""
 
 		if not (self.natoms > 0):
