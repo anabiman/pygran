@@ -93,14 +93,14 @@ def register(**args):
 	PI: constant (3.14 ...)
 
 	e.g. register(name='my_model',
-				  stiffness = '6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)',
-				  viscosity = 'sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))')
+		stiffness = '6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)',
+		viscosity = 'sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))')
 
 		produces a template header file for the spring-dashpot model called 'my_model'.
 
 	"""
 
-	# Make sure everything is done on a single core
+	# Make sure everything is done on the master processor
 	try:
 		rank = MPI.COMM_WORLD.Get_rank()
 	except:
