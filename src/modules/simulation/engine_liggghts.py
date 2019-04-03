@@ -61,7 +61,7 @@ import os
 import glob
 import sys
 from importlib import import_module
-from PyGran.tools import find, dictToTuple
+from PyGran.modules.tools import find, dictToTuple
 
 class liggghts:
   # detect if Python is using version of mpi4py that can pass a communicator
@@ -281,7 +281,7 @@ class DEMPy:
     self.path = os.getcwd()
     self.nSS = len(self.pargs['species'])
     self.output = self.pargs['output']
-    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] + '.py')
+    self._dir,_ = os.path.abspath(__file__).split(os.path.basename(__file__))
     self._monitor = [] # a list of tuples of (varname, filename) to monitor
 
     if '__version__' in pargs:
@@ -317,7 +317,8 @@ class DEMPy:
       if self.__version__ >= 3.6:
         self.lmp.command('hard_particles yes')
     else:
-      # Get version from version_liggghts.txt. TODO: find a faster way to do this.
+      # Get version from version_liggghts.txt. TODO: find a faster way to do this
+      # by reading version from stdout, and move this to tools!
       try:
         version_txt = find('version_liggghts.txt', '/')
         self.__liggghts__ = version_txt.split('version_liggghts.txt')[0]
@@ -335,8 +336,8 @@ class DEMPy:
       if not self.rank:
         if os.path.isfile(self._dir + '../.config'):
           with open(self._dir + '../.config', 'a+') as fp:
-            fp.write('\nversion={}'.format(self.__version__))
             fp.write('\nsrc={}'.format(self.__liggghts__))
+            fp.write('\nversion={}'.format(self.__version__))
       if self.__version__ >= 3.6:
         self.lmp.command('hard_particles yes')
 

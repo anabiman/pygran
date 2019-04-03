@@ -76,7 +76,6 @@ if __name__ == '__main__':
       demo.run(**demo.params)
 
     except:
-      if not MPI.COMM_WORLD.Get_rank():
-        raise RuntimeError('{}.{} is not a valid PyGran demo'.format(*sys.argv[1:]))
+      raise
 
   sys.exit()

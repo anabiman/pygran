@@ -26,7 +26,7 @@
   and LICENSE files.
   '''
 
-from . import modules
+from .modules import *
 from . import demo
 
 __version__ = 1.2

@@ -20,4 +20,4 @@ Created on March 30, 2016
 @author: Andrew Abi-Mansour
 '''
 
-from . import simulation, analysis, tools
+from . import simulation, analysis, tools, params

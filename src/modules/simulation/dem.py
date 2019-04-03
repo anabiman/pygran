@@ -30,9 +30,10 @@ from mpi4py import MPI
 from importlib import import_module
 from datetime import datetime
 import os, sys
-from PyGran.modules.tools import find
+from PyGran.modules.tools import find, _setConfig
 from . import models
 import shutil
+import PyGran
 
 class DEM:
   """A *generic* class that handles communication for a DEM object independent of the engine used"""
@@ -53,33 +54,18 @@ class DEM:
     self.model = str(pargs['model']).split("'")[1].split('.')[-1]
     self.pargs = pargs
     self.library = None
-    self._dir, _ = __file__.split(__name__.split('PyGran.simulation.')[-1] +'.py')
+    self._dir,_ = os.path.abspath(__file__).split(os.path.basename(__file__))
     
     # Check if .config files eixsts else create it
     # Only one process needs to do this
     if not self.rank:
-      if os.path.isfile(self._dir + '../.config'):
-        with open(self._dir + '../.config', 'r+') as fp:
-          self.library = fp.readline().split('=')[-1].rstrip()
-          self.pargs['__version__'] = float(fp.readline().split('=')[-1].rstrip())
+      self.library, src, version = _setConfig(wdir=self._dir, engine=self.pargs['engine'].split('engine_')[1])
 
-          # Make sure the library exists; else, find it somewhere else
-          if not os.path.isfile(self.library):
-            self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
-            fp.seek(0,0)
-            fp.write('library=' + self.library)
-            print('WARNING: Could not find user-specified library. Will use {} instead ...'.format(self.library))
-      else:
-        with open(self._dir + '../.config', 'w') as fp:
-          self.library = find('lib' + self.pargs['engine'].split('engine_')[1] + '.so', '/')
+      if version:
+        self.pargs['__version__'] = version
 
-          if self.library:
-            print('WARNING: No config file found. Creating one for {}'.format(self.library))
-            fp.write('library=' + self.library)
-          else:
-            print('No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(self.pargs['engine'].split('engine_')[1]))
-            print('PyGran looked for ' + 'lib' + self.pargs['engine'].split('engine_')[1] + '.so' + '. If the file exists, make sure it can be executed by the user.')
-            sys.exit()
+      if src:
+        self.pargs['liggghts_src'] = src
 
       for slave in range(1,self.tProcs):
           self.comm.send(self.library, dest=slave, tag=0)
@@ -124,7 +110,7 @@ class DEM:
     # update rank locally for each comm
     self.rank = self.split.Get_rank()
 
-    module = import_module('PyGran.simulation.' + self.pargs['engine'])
+    module = import_module('PyGran.modules.simulation.' + self.pargs['engine'])
     output = self.pargs['output'] if self.nSim == 1 else (self.pargs['output'] + '-multi-mode-' + str(self.color))
 
     if not self.split.Get_rank():

@@ -110,3 +110,73 @@ def run(program):
 
 	print('Could not find {} in {}'.format(program, paths))
 	return 1
+
+def _setLIGGGHTS(path, version=None):
+	""" Write libliggghts path to .config file 
+
+	@[version]: a set of numbers &/or characters indicating the version of the library, e.g. 1.5a
+	"""
+
+	wdir, _ = os.path.abspath(__file__).split(os.path.basename(__file__))
+
+	with open(wdir + '../.config', 'w') as fp:
+
+		fp.seek(0,0)
+		fp.write('library=' + path)
+
+		if version:
+			fp.write('version=' + version)
+
+def _findEngines(engine):
+	""" Searches for and lists all available libraries for a specific engine """
+
+	engines = [os.path.join(root, engine) for root, dirs, files in os.walk('/') if engine in files]
+	
+	if engines:
+		print('Engine(s) found:')
+		for engine in engines:
+			print(engine)
+	else:
+		print('No engines found.')
+
+	return engines
+
+def _setConfig(wdir, engine):
+	""" Reads/writes libliggghts to .config file """
+
+	src, __version__ = None, None
+	file = wdir + '../.config'
+
+	if os.path.isfile(file):
+
+		if os.stat(file).st_size: # file not empty
+
+			with open(wdir + '../.config', 'r+') as fp: # r+ is for reading and writing
+				for line in fp.readlines():
+					if 'library=' in line:
+						library = line.split('=')[-1].rstrip()
+					elif 'src' in line:
+						src = line.split('=')[-1].rstrip()
+					elif 'version' in line:
+						__version__ = float(line.split('=')[-1].rstrip())
+
+			# Make sure the library exists; else, find it somewhere else
+			if not os.path.isfile(library):
+				library = find('lib' + engine+ '.so', '/')
+				_setLIGGGHTS(library)
+				print('WARNING: Could not find user-specified library. Will use {} instead ...'.format(library))
+
+			return library, src, __version__
+
+	with open(wdir + '../.config', 'w') as fp:
+		library = find('lib' + engine + '.so', '/')
+
+		if library:
+			print('No config file found. Creating one for {} in {}'.format(library, os.path.abspath(file)))
+			_setLIGGGHTS(library)
+		else:
+			print('No installation of {} was found. Make sure your selected DEM engine is properly installed first.'.format(engine))
+			print('PyGran looked for ' + 'lib' + engine + '.so' + '. If the file exists, make sure it can be executed by the user.')
+			sys.exit()
+
+	return library, src, __version__

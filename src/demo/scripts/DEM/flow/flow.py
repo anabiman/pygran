@@ -7,7 +7,7 @@ Created on April 22, 2017
 # -*- coding: utf8 -*-
 
 from PyGran import simulation
-from PyGran.params import organic, glass
+from PyGran.modules.params import organic, glass
 import matplotlib.pylab as plt
 
 params = {
