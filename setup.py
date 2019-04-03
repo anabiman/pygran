@@ -31,7 +31,7 @@
  -------------------------------------------------------------------------
 
  '''
-import os, sys
+import os, sys, shutil
 import subprocess
 from setuptools import setup, find_packages
 import glob, shutil, re
@@ -111,13 +111,6 @@ class Track(install):
     def run(self):
         self.do_pre_install_stuff()
 
-class Test(Track):
-    """ A class that runs all available tests in PyGran """
-
-    def do_pre_install_stuff(self):
-        interpret = 'python3' if sys.version_info[0] >= 3 else 'python'
-        self.execute( cmd='{} -m PyGran.demo --all'.format(interpret) )
-
 class LIGGGHTS(Track):
     """ A class that enables the compilation of LIGGGHTS-PUBLIC from github """
 
@@ -146,13 +139,11 @@ class Clean(clean):
 
   def run(self):
     for ddir in ['build', 'dist', 'PyGran.egg-info']: 
-      if os.isdir(ddir):
-        os.rmtree(ddir)
+      if os.path.isdir(ddir):
+        print('Deleting ' + os.path.abspath(ddir))
+        shutil.rmtree(ddir)
 
-example_files = []
-for pdir in glob.glob('PyGran/demo/scripts/*'):
-    for psdir in glob.glob(pdir+'/*'):
-        example_files.append(psdir + '/*.py') #re.sub('/scripts', '', pyfile))
+    super().run()
 
 setup(
     name = "PyGran",
@@ -176,7 +167,7 @@ setup(
 	"Programming Language :: Python :: 3.6"
     ],
 
-    cmdclass={'build_liggghts': LIGGGHTS, 'run_tests': Test, 'clean': Clean},
+    cmdclass={'build_liggghts': LIGGGHTS, 'clean': Clean},
     zip_safe=False,
     ext_modules=optimal_list,
     include_dirs=include_dirs
