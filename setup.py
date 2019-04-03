@@ -31,25 +31,33 @@
  -------------------------------------------------------------------------
 
  '''
-
 import os, sys
 import subprocess
 from setuptools import setup, find_packages
 import glob, shutil, re
-
-__version__ = 1.2
+from distutils.command.install import install
+from distutils.command.clean import clean
 
 try:
 	from Cython.Build import cythonize
 	import numpy
-	optimal_list = cythonize("PyGran/analysis/core.pyx")
+	optimal_list = cythonize("src/analysis/core.pyx")
 	include_dirs = [numpy.get_include()]
 except:
 	optimal_list = []
 	include_dirs = []
 
-from distutils.command.install import install
+__version__ = None
 
+with open('src/__init__.py') as fp:
+  for line in fp.readlines():
+    if line.find('__version__') >= 0:
+      __version__ =  line[line.find('__version__'):].split('=')[-1].strip()
+      break
+
+if not __version__:
+  print('PyGran version could not be detected. Something is wrong with the src code.')
+  sys.exit()
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -134,6 +142,13 @@ class LIGGGHTS(Track):
         self.execute(cmd='make -f Makefile.shlib auto', cwd='LIGGGHTS-PUBLIC/src')
         sys.stdout.write('\nInstallation of LIGGGHTS-PUBLIC complete\n')
 
+class Clean(clean):
+
+  def run(self):
+    for ddir in ['build', 'dist', 'PyGran.egg-info']: 
+      if os.isdir(ddir):
+        os.rmtree(ddir)
+
 example_files = []
 for pdir in glob.glob('PyGran/demo/scripts/*'):
     for psdir in glob.glob(pdir+'/*'):
@@ -148,9 +163,8 @@ setup(
     license = "GNU v2",
     keywords = "Discrete Element Method, Granular Materials",
     url = "https://github.com/Andrew-AbiMansour/PyGran",
-    packages=find_packages(),
-    package_dir={'PyGran': 'PyGran'},
-    package_data={'simulation': ['model_template.h'], 'gui': ['Icons/*.png'], 'demo': ['*']},
+    packages=list(map(lambda string: string.replace('src', 'PyGran'), find_packages())),
+    package_dir={'PyGran': 'src'},
     include_package_data=True,
     install_requires=['numpy', 'scipy', 'vtk', 'pytool', 'cython', 'mpi4py', 'pillow'],
     long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See https://andrew-abimansour.github.io/PyGran.',
@@ -162,7 +176,7 @@ setup(
 	"Programming Language :: Python :: 3.6"
     ],
 
-    cmdclass={'build_liggghts': LIGGGHTS, 'run_tests': Test},
+    cmdclass={'build_liggghts': LIGGGHTS, 'run_tests': Test, 'clean': Clean},
     zip_safe=False,
     ext_modules=optimal_list,
     include_dirs=include_dirs
