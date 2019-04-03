@@ -81,7 +81,7 @@ NotShowIn=KDE""".format(dir)
 	os.system('mv PyGran.desktop ~/.local/share/applications')
 
 class Track(install):
-    """ A derived class that enables the tracking of installation/compilation progress """
+    """ An install class that enables the tracking of installation/compilation progress """
 
     def execute(self, cmd, cwd='.'):
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd, shell=True)
@@ -110,6 +110,10 @@ class Track(install):
 
     def run(self):
         self.do_pre_install_stuff()
+        super.run()
+
+    def do_pre_install_stuff(self):
+      raise NotImplementedError
 
 class LIGGGHTS(Track):
     """ A class that enables the compilation of LIGGGHTS-PUBLIC from github """
@@ -117,23 +121,26 @@ class LIGGGHTS(Track):
     def do_pre_install_stuff(self):
         
         if os.path.exists('LIGGGHTS-PUBLIC'):
+            print('Deleting ' + 'LIGGGHTS-PUBLIC')
             shutil.rmtree('LIGGGHTS-PUBLIC')
 
-        self.execute(cmd='git clone https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git')
+        self.spawn(cmd=['git', 'clone', 'https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git'])
         
         files = glob.glob('LIGGGHTS-PUBLIC/src/*.cpp')
 
         count = 0
-        self.execute(cmd='make clean-all', cwd='LIGGGHTS-PUBLIC/src')
+        os.chdir('LIGGGHTS-PUBLIC/src')
+        self.spawn(cmd=['make', 'clean-all'])
 
         print('Compiling LIGGGHTS as a shared library\n')
 
-        for path in self.execute(cmd='make auto', cwd='LIGGGHTS-PUBLIC/src'):
+        for path in self.execute(cmd='make auto'):
             count +=1
             self.print_progress(count, prefix = 'Progress:', suffix = 'Complete', total = len(files) * 2.05)
 
-        self.execute(cmd='make -f Makefile.shlib auto', cwd='LIGGGHTS-PUBLIC/src')
+        self.spawn(cmd=['make', '-f', 'Makefile.shlib', 'auto'])
         sys.stdout.write('\nInstallation of LIGGGHTS-PUBLIC complete\n')
+        os.chdir('../..')
 
 class Clean(clean):
 
