@@ -1,5 +1,5 @@
 from PyGran import simulation
-from PyGran.params import organic
+from PyGran.modules.params import organic
 
 xdim = 1e-3
 

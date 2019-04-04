@@ -2,7 +2,7 @@ from PyGran import analysis
 import matplotlib.pylab as plt
 
 # Create a granular object from a LIGGGHTS dump file
-Sys = analysis.System(Particles='/home/levnon/Desktop/flow/output/traj/traj*.dump', units='micro')
+Sys = analysis.System(Particles='traj*.dump', units='micro')
 
 # Go to last frame
 Sys.goto(-1)

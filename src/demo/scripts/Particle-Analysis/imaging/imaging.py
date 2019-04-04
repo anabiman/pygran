@@ -1,9 +1,9 @@
 import scipy.spatial
-from PyGran import Analyzer
+from PyGran import analysis
 from numpy import arange, array
 import os
 
-Gran = Analyzer.System(Particles='traj.dump')
+Gran = analysis.System(Particles='traj.dump')
 
 # Go to last frame
 Gran.goto(-1)
@@ -19,4 +19,4 @@ size = (512, 512)
 for i, z in enumerate(arange(0, Particles.z.max() + resol, resol)):
 	zmin, zmax = z, z + resol
 	output =  'output/poured{}.bmp'.format(i)
-	Analyzer.imaging.slice(Particles, zmin, zmax, 'z', size, resol, output)
+	analysis.imaging.slice(Particles, zmin, zmax, 'z', size, resol, output)

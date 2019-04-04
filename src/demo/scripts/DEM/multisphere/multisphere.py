@@ -7,7 +7,7 @@ Created on March 3, 2018
 # -*- coding: utf8 -*-
 
 from PyGran import simulation
-from PyGran.params import organic
+from PyGran.modules.params import organic
 
 # Create a dictionary of physical parameters
 params = {

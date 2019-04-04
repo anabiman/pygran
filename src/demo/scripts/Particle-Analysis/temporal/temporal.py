@@ -1,9 +1,9 @@
-from PyGran import Analyzer
+from PyGran import analysis
 import matplotlib.pylab as plt
 from numpy import array
 
 # Create a PyGran System from a dump file (default si units)
-System = Analyzer.System(Particles='/home/levnon/Desktop/flow/output/traj/traj*.dump')
+System = analysis.System(Particles='traj*.dump')
 
 # Timestep used in simulation (s)
 dt = 1e-6

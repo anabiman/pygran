@@ -11816,14 +11816,14 @@ div#notebook {
 <span class="n">Particles</span> <span class="o">=</span> <span class="n">Sys</span><span class="o">.</span><span class="n">Particles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <span class="c1"># The length of Particles is the number of particles contained in this class</span>
-<span class="k">print</span> <span class="s2">&quot;Number of particles stored = &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Particles</span><span class="p">)</span>
+<span class="k">print(</span><span class="s2">&quot;Number of particles stored = &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Particles</span><span class="p">))</span>
 
 <span class="n">nparts</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="c1"># Looping over Particles yields a Particles class of length 1</span>
 <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">Particles</span><span class="p">:</span>
     <span class="n">nparts</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
     
-<span class="k">print</span> <span class="s2">&quot;Number of particles calculated = &quot;</span><span class="p">,</span> <span class="n">nparts</span>
+<span class="k">print(</span><span class="s2">&quot;Number of particles calculated = &quot;</span><span class="p">,</span> <span class="n">nparts)</span>
 </pre></div>
 
 </div>
@@ -11856,7 +11856,7 @@ Number of particles calculated =  2053
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Print all attributes stored in Particles</span>
-<span class="k">print</span> <span class="n">Particles</span><span class="o">.</span><span class="n">keys</span>
+<span class="k">print(</span><span class="n">Particles</span><span class="o">.</span><span class="n">keys)</span>
 </pre></div>
 
 </div>
@@ -11899,17 +11899,17 @@ Number of particles calculated =  2053
 <div class=" highlight hl-ipython2"><pre><span class="c1"># Slice Particles into a new class containing the 1st 10 particles</span>
 <span class="n">Slice</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
 
-<span class="k">print</span> <span class="s2">&quot;number of particles in 1st slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">)</span>
+<span class="k">print(</span><span class="s2">&quot;number of particles in 1st slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">))</span>
 
 <span class="c1"># Slice Particles into a new class containing particles 1, 2, and 10</span>
 <span class="n">Slice</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">10</span><span class="p">]]</span>
 
-<span class="k">print</span> <span class="s2">&quot;number of particles in 2nd slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">)</span>
+<span class="k">print(</span><span class="s2">&quot;number of particles in 2nd slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">))</span>
 
 <span class="c1"># Slice Particles into a new class containing the 1st 10 particles and the last 10 particles</span>
 <span class="n">Slice</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="n">Particles</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">:]</span>
 
-<span class="k">print</span> <span class="s2">&quot;number of particles in 3rd slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">)</span>
+<span class="k">print(</span><span class="s2">&quot;number of particles in 3rd slice is&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Slice</span><span class="p">))</span>
 
 <span class="c1"># More sophisticated slicing can be done with 1 or boolean expressions. For example:</span>
 

@@ -1,52 +1,59 @@
-import PyGran.simulation as sim
-from PyGran.params import cohesionless
+from PyGran import simulation as sim
+from PyGran.modules.params import cohesionless
 from numpy import arange, fabs, array, sqrt
 import matplotlib.pylab as plt
 import matplotlib as mpl
 
-# Setup matplotlib params
-mpl.rc('text', usetex = True)
-plt.rcParams.update({'font.size':18})
+def run():
 
-cModel = sim.models.ThorntonNing
+	# Setup matplotlib params
+	mpl.rc('text', usetex = True)
+	plt.rcParams.update({'font.size':18})
 
-COR, yieldVel = [], []
+	cModel = sim.models.ThorntonNing
 
-# Create a yield pressure array to study
-pressure = arange(1, 6, 0.1) * cohesionless['youngsModulus'] * 0.01
+	COR, yieldVel = [], []
 
-# Set particle radius to 100 microns
-cohesionless['radius'] = 1e-4
+	# Create a yield pressure array to study
+	pressure = arange(1, 6, 0.1) * cohesionless['youngsModulus'] * 0.01
 
-for yieldPress in pressure:
+	# Set particle radius to 100 microns
+	cohesionless['radius'] = 1e-4
 
-	cohesionless['yieldPress'] = yieldPress
-	model = cModel(material=cohesionless)
+	for yieldPress in pressure:
 
-	time, disp, force = model.displacement()
+		cohesionless['yieldPress'] = yieldPress
+		model = cModel(material=cohesionless)
 
-	deltav = disp[:,1]
+		time, disp, force = model.displacement()
 
-	COR.append(fabs(deltav[-1] / cohesionless['characteristicVelocity']))
-	yieldVel.append( model.yieldVel / cohesionless['characteristicVelocity'] )
+		deltav = disp[:,1]
 
-ratio = array(yieldVel)
-ratio[ratio > 1] = 1
+		COR.append(fabs(deltav[-1] / cohesionless['characteristicVelocity']))
+		yieldVel.append( model.yieldVel / cohesionless['characteristicVelocity'] )
 
-COR_anal = sqrt(6. * sqrt(3.0) / 5.0) * sqrt(1.0 - (1.0/6.0) * (ratio)**2) * \
-    (ratio / (ratio + 2 * sqrt( 6.0/5.0 - (1.0/5.0) * ratio**2 ) ) )**(0.25)
+	ratio = array(yieldVel)
+	ratio[ratio > 1] = 1
+
+	COR_anal = sqrt(6. * sqrt(3.0) / 5.0) * sqrt(1.0 - (1.0/6.0) * (ratio)**2) * \
+	    (ratio / (ratio + 2 * sqrt( 6.0/5.0 - (1.0/5.0) * ratio**2 ) ) )**(0.25)
 
 
-fig = plt.figure(figsize=(16,18), dpi=80)
+	fig = plt.figure()
 
-plt.plot(pressure, COR, '-o')
-plt.plot(pressure, COR_anal)
+	plt.plot(pressure, COR, '-o')
+	plt.plot(pressure, COR_anal)
 
-plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-plt.xlabel('Yield Pressure (MPa)')
-plt.ylabel('Coefficient of Restitution')
-plt.grid(linestyle=':')
-plt.legend(['Numerical', 'Analytical'])
-plt.show()
+	plt.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+	plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+	plt.xlabel('Yield Pressure (MPa)')
+	plt.ylabel('Coefficient of Restitution')
+	plt.grid(linestyle=':')
+	plt.legend(['Numerical', 'Analytical'])
+	plt.show()
+
+
+if __name__ == '__main__':
+
+	run()
 
