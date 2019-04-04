@@ -7,10 +7,10 @@ Created on July 9, 2016
 # -*- coding: utf8 -*-
 
 from PyGran import simulation
-from PyGran.params import organic
+from PyGran.modules.params import organic
 
 # Launch 4 simultaneous simulations, each different coef of rest
-nSim = 2
+nSim = 4
 materials = [organic.copy() for i in range(nSim)]
 
 for i, mat in enumerate(materials):
@@ -40,7 +40,7 @@ params = {
 	'nSim': nSim
 }
 
-if __name__ == '__main__':
+def run(**params):
 
 	# Create an instance of the DEM class
 	sim = simulation.DEM(**params)
@@ -55,3 +55,7 @@ if __name__ == '__main__':
 
 	# Relax the system
 	sim.run(params['nsteps'], params['dt'])
+
+if __name__ == '__main__':
+        run(**params)
+
