@@ -1,6 +1,6 @@
 # Welcome to the PyGran webpage!
 
-PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran supports Python 3.X and is fully backward compatible with Python 2.2 and later versions.
+PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran is written in Python 3.X and is fully backwards compatible with Python 2.2 and later versions.
 
 The main features of PyGran:
 
@@ -11,7 +11,7 @@ The main features of PyGran:
 - Quick and easy plotting of DEM data with matplotlib
 - Support for high-performance computing with MPI
 
-Please consider citing the following paper if your find PyGran useful in your research: 
+**Please consider citing the following paper if your find PyGran useful in your research:**
 
 [![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
 
