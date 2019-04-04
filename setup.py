@@ -157,7 +157,7 @@ setup(
     version = __version__,
     author = "Andrew Abi-Mansour",
     author_email = "support@pygran.org",
-    description = ("A DEM toolbox for rapid quantitative analysis of granular/powder systems"),
+    description = ("A DEM toolkit for rapid quantitative analysis of granular/powder systems"),
     license = "GNU v2",
     keywords = "Discrete Element Method, Granular Materials",
     url = "https://github.com/Andrew-AbiMansour/PyGran",
