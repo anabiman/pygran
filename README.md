@@ -49,7 +49,7 @@ PyGran also provides an interface for running DEM simulation with [LIGGGHTS](htt
 
 ```python
 from PyGran import simulation
-from PyGran.params import stearicAcid, steel
+from PyGran import params
 
 # Create a DEM parameter dictionary
 param = {
@@ -58,13 +58,13 @@ param = {
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-	'species': ({'material': stearicAcid, 'radius': 5e-5,}, 
+	'species': ({'material': params.stearicAcid, 'radius': 5e-5,}, 
 		),
 		
 	'gravity': (9.81, 0, 0, -1),
 
 	'mesh': { 'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface', \
-		'material': steel}, },
+		'material': params.steel}, },
 }
 
 # Instantiate a DEM class
