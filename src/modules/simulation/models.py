@@ -14,25 +14,25 @@
 	██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
 	██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
 	╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-	                                                           
-    DEM simulation and analysis toolkit
-    http://www.pygran.org, support@pygran.org
+															   
+	DEM simulation and analysis toolkit
+	http://www.pygran.org, support@pygran.org
 
-    Core developer and main author:
-    Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+	Core developer and main author:
+	Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
-    PyGran is open-source, distributed under the terms of the GNU Public
-    License, version 2 or later. It is distributed in the hope that it will
-    be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-    received a copy of the GNU General Public License along with PyGran.
-    If not, see http://www.gnu.org/licenses . See also top-level README
-    and LICENSE files.
+	PyGran is open-source, distributed under the terms of the GNU Public
+	License, version 2 or later. It is distributed in the hope that it will
+	be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+	received a copy of the GNU General Public License along with PyGran.
+	If not, see http://www.gnu.org/licenses . See also top-level README
+	and LICENSE files.
 
  --------------------------------------------------------------------------
 
-    This file serves as a module for analyzing contact models for numerical 
-    simulation and LIGGGHTS DEM simulation.
+	This file serves as a module for analyzing contact models for numerical 
+	simulation and LIGGGHTS DEM simulation.
 
  --------------------------------------------------------------------------
 
@@ -68,9 +68,9 @@ def template_tablet(nspheres, radius, length):
 
 class Model(object):
 	""" This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS)
- 	or numerical experiments for a particle-wall collision.
+	or numerical experiments for a particle-wall collision.
 
- 	TODO: enable particle-particle experiments to be conducted.
+	TODO: enable particle-particle experiments to be conducted.
 	"""
 	def __init__(self, **params):
 
@@ -145,7 +145,7 @@ class Model(object):
 		if 'read_data' not in self.params:
 			self.params['read_data'] = False
 
-        # Compute mean material properties
+		# Compute mean material properties
 		self.materials = {}
 
 		# For analysis ~ do we even need this?
@@ -162,33 +162,47 @@ class Model(object):
 				# See if we're running PyGran in multi-mode, them reduce lists to floats/ints
 				if self.params['nSim'] > 1:
 
+					# Make sure total number of colors <= total number of cores
+					if self.params['nSim'] > MPI.COMM_WORLD.Get_size():
+						raise ValueError('Total number of simulations cannot exceed the number of allocated cores.')
+
+					rank = MPI.COMM_WORLD.Get_rank()
+
+					# Get color of each rank
+					pProcs = MPI.COMM_WORLD.Get_size() // self.params['nSim']
+					for i in range(self.params['nSim']):
+						if rank < pProcs * (i + 1):
+							self.color = i
+							break
+						else:
+							# In case of odd number of procs, place the one left on the last communicator 
+							self.color = self.params['nSim']
+
 					# Make sure this is not a wall
 					if 'radius' in ss:
 
-						rank = MPI.COMM_WORLD.Get_rank()
-
 						if isinstance(ss['material'], list):
-							ss['material'] = ss['material'][rank]
+							ss['material'] = ss['material'][self.color]
 
 						if isinstance(ss['radius'], list):
-							ss['radius'] = ss['radius'][rank]
+							ss['radius'] = ss['radius'][self.color]
 
 						if ss['style'] is 'multisphere':
 
 							# user might have defined the length and nspheres or maybe just passed args
 							if 'length' in ss:
 								if isinstance(ss['length'], list):
-									ss['length'] = ss['length'][rank]
+									ss['length'] = ss['length'][self.color]
 							
 							if 'nspheres' in ss:
 								if isinstance(ss['nspheres'], list):
-									ss['nspheres'] = ss['nspheres'][rank]
+									ss['nspheres'] = ss['nspheres'][self.color]
 
 							if 'args' in ss:
 								if 'length' in ss or 'nspheres' in ss:
 									raise ValueError('args cannot be defined along with nspheres/length for multisphere.')
 								elif isinstance(ss['args'], list):
-									ss['args'] = ss['args'][rank]
+									ss['args'] = ss['args'][self.color]
 
 				ss['material'] = pygranToLIGGGHTS(**ss['material'])
 
@@ -252,13 +266,13 @@ class Model(object):
 					ms = True
 
 		traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
-               'args': ('id', 'type', 'x', 'y', 'z', 'radius', \
-               'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+			   'args': ('id', 'type', 'x', 'y', 'z', 'radius', \
+			   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
 
 		if ms:
 			traj = {'sel': 'all', 'freq': 1000, 'dir': 'traj', 'style': 'custom', 'pfile': 'traj.dump', \
-                   'args': ('id', 'mol', 'type', 'x', 'y', 'z', 'radius', \
-                   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
+				   'args': ('id', 'mol', 'type', 'x', 'y', 'z', 'radius', \
+				   'vx', 'vy', 'vz', 'fx', 'fy', 'fz')}
 
 		if 'style' not in self.params:
 				self.params['style'] = 'sphere'
