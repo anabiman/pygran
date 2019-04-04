@@ -68,12 +68,16 @@ if __name__ == '__main__':
       demo = import_module('PyGran.demo.scripts.' + sys.argv[1] + '.' + sys.argv[2] + '.' + sys.argv[2])
 
       # see if demo contains a mesh file; adjust its location if so
-      if 'mesh' in demo.params:
-        for key in demo.params['mesh']:
-          demo.params['mesh'][key]['file'] = sdir + '/scripts/' + sys.argv[1] + '/' + sys.argv[2] + '/' + demo.params['mesh'][key]['file']
+      if hasattr(demo, 'params'):
+        if 'mesh' in demo.params:
+          for key in demo.params['mesh']:
+            demo.params['mesh'][key]['file'] = sdir + '/scripts/' + sys.argv[1] + '/' + sys.argv[2] + '/' + demo.params['mesh'][key]['file']
 
-      # now run the demo~!
-      demo.run(**demo.params)
+        # now run the demo~!
+        demo.run(**demo.params)
+
+      else: # we're just running a simple script (no DEM sim)
+        demo.run()
 
     except:
       raise
