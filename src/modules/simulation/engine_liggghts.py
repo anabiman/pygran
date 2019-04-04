@@ -72,23 +72,20 @@ class liggghts:
     pass
 
   # create instance of LIGGGHTS
-  def __init__(self, library=None, style = 'spherical', dim = 3, units = 'si', path=None, cmdargs=[], ptr=None, comm=None):
-
-    if not comm:
-      comm = MPI.COMM_WORLD
+  def __init__(self, library=None, style='spherical', dim=3, units='si', path=None, cmdargs=[], comm=None, ptr=None):
+    # What is ptr used for?
 
     if library:
       if not comm.Get_rank():
         print("Using " + library + " as a shared library for DEM computations")
     else:
       if not comm.Get_rank():
-        if library:
-          print("Make sure " + library + " is properly installed on your system")
-        else:
-          print("No liggghts library supplied. Exiting ...")
-      else:
-        print('Catastrophic FAILURE: library {} detected by one processor but not found by another'.format(library))
+        print('No library supplies.')
+      
       sys.exit()
+
+    if not comm:
+      comm = MPI.COMM_WORLD
 
     try:
       self.lib = ctypes.CDLL(library, ctypes.RTLD_GLOBAL)
@@ -106,6 +103,11 @@ class liggghts:
     #   ptr is the desired instance of LIGGGHTS
     #   just convert it to ctypes ptr and store in self.lmp
 
+    if MPI._sizeof(MPI.Comm) == ctypes.sizeof(ctypes.c_int):
+      MPI_Comm = ctypes.c_int
+    else:
+      MPI_Comm = ctypes.c_void_p
+
     if not ptr:
       # with mpi4py v2, can pass MPI communicator to LIGGGHTS
       # need to adjust for type of MPI communicator object
@@ -113,24 +115,42 @@ class liggghts:
 
         narg = 0
         cargs = 0
+
         if cmdargs:
-          cmdargs.insert(0,"liggghts.py")
+          cmdargs.insert(0, "liggghts.py")
           narg = len(cmdargs)
-          cargs = [st.encode('utf-8') for st in cmdargs]
-          cargs = (ctypes.c_char_p*narg)(*cargs)
-          self.lmp = ctypes.c_void_p()
-          self.lib.lammps_open_no_mpi(narg,cargs,ctypes.byref(self.lmp))
+          for i in range(narg):
+            if isinstance(cmdargs[i], str):
+              cmdargs[i] = cmdargs[i].encode()
+
+          cargs = (ctypes.c_char_p*narg)(*cmdargs)
+          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_char_p*narg, \
+                                           MPI_Comm, ctypes.c_void_p()]
         else:
-          self.lmp = ctypes.c_void_p()
-          self.lib.lammps_open_no_mpi(0,None,ctypes.byref(self.lmp))
+          self.lib.lammps_open.argtypes = [ctypes.c_int, ctypes.c_int, \
+                                           MPI_Comm, ctypes.c_void_p()]
+
+        self.lib.lammps_open.restype = None
+        self.opened = 1
+        self.lmp = ctypes.c_void_p()
+        comm_ptr = MPI._addressof(comm)
+        comm_val = MPI_Comm.from_address(comm_ptr)
+        self.lib.lammps_open(narg,cargs,comm_val,ctypes.byref(self.lmp))
 
         self.opened = True
     else:
       self.opened = False
-      # magic to convert ptr to ctypes ptr
-      pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
-      pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
-      self.lmp = ctypes.c_void_p(pythonapi.PyCObject_AsVoidPtr(ptr))
+
+      if sys.version_info >= (3, 0):
+        # Python 3 (uses PyCapsule API)
+        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
+        self.lmp = ctypes.c_void_p(ctypes.pythonapi.PyCapsule_GetPointer(ptr, None))
+      else:
+        # Python 2 (uses PyCObject API)
+        ctypes.pythonapi.PyCObject_AsVoidPtr.restype = ctypes.c_void_p
+        ctypes.pythonapi.PyCObject_AsVoidPtr.argtypes = [ctypes.py_object]
+        self.lmp = ctypes.c_void_p(ctypes.pythonapi.PyCObject_AsVoidPtr(ptr))
 
   def close(self):
     if hasattr(self, 'lmp') and self.opened: 
