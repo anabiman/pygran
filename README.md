@@ -11,6 +11,22 @@ The main features of PyGran:
 - Quick and easy plotting of DEM data with matplotlib
 - Support for high-performance computing with MPI
 
+Please consider citing the following paper if your find PyGran useful in your research: 
+[![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
+
+```
+@article{aam2019pygran,
+  title={PyGran: An object-oriented library for DEM simulation and analysis},
+  author={Abi-Mansour, Andrew},
+  journal={SoftwareX},
+  volume={9},
+  pages={168--174},
+  year={2019},
+  publisher={Elsevier},
+  doi={10.1016/j.softx.2019.01.016}
+}
+```
+
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
 ```bash
