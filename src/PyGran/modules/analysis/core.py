@@ -59,6 +59,7 @@ these properties. This class is iterable but NOT an iterator. """
 
 		self._units = 'si'
 		self._fname = None
+		self._args = args
 
 		if type(self).__name__ in args:
 
@@ -116,12 +117,19 @@ these properties. This class is iterable but NOT an iterator. """
 		"""A meta function for returning dynamic class attributes treated as lists (for easy slicing)
 		and return as numpy arrays for numerical computations / manipulations"""
 
-		if type(self.data[key]) is np.ndarray:
+		if isinstance(self.data[key], np.ndarray):
 			self.data[key].flags.writeable = False
 
 		return self.data[key]
 
-	def _constructAttributes(self, sel=None):
+	def _resetSubSystem(self):
+		""" Mainly used by System for rewinding traj back to frame 0 """
+
+		self._constructAttributes()
+
+		return 0
+
+	def _constructAttributes(self, sel=None, mesh=False):
 		""" Constructs dynamic functions (getters) for all keys found in the trajectory """
 
 		for key in self.data.keys():
@@ -132,12 +140,12 @@ these properties. This class is iterable but NOT an iterator. """
 			if isinstance(self.data[key], np.ndarray):
 
 				if sel is not None:
-					if type(self.data[key]) is np.ndarray:
+					if isinstance(self.data[key], np.ndarray):
 						self.data[key].flags.writeable = True
 					
 					self.data[key] = self.data[key][sel]
 
-					if type(self.data[key]) is np.ndarray:
+					if isinstance(self.data[key], np.ndarray):
 						self.data[key].flags.writeable = False
 
 		# Checks if the trajectory file supports reduction in key getters
@@ -152,8 +160,18 @@ these properties. This class is iterable but NOT an iterator. """
 			# lambda function, thus, permanently updating the SubSystem class, or update the attributes
 			# of this particular instance of SubSystem, which is the approach adopted here.
 
+			if mesh:
+				if '.' in key:
+					obj, newkey = key.split('.')
+					if not hasattr(self, obj):
+						setattr(self, obj, lambda: None)
+
+					setattr(getattr(self, obj), newkey, self._metaget(key))
+
 			setattr(self, key, self._metaget(key))
+			
 			#Factory.addprop(self, key, lambda x: self.data[key])
+			#Why do we need this?
 
 		self.units(self._units)
 
@@ -161,7 +179,7 @@ these properties. This class is iterable but NOT an iterator. """
 
 		if hasattr(self, name):
 			# Make sure variable is not internal
-			if not name.startswith('_'):
+			if not name.startswith('_') and not callable(value):
 				raise Exception("{} property is read-only".format(name))
 
 		self.__dict__[name] = value
@@ -456,7 +474,7 @@ class Mesh(SubSystem):
 	def __init__(self, fname, **args):
 
 		if 'avgCellData' not in args:
-			args['avgCellData'] = True
+			args['avgCellData'] = False
 
 		if 'vtk_type' in args:
 			self._vtk = args['vtk_type']
@@ -476,7 +494,7 @@ class Mesh(SubSystem):
 			except:
 				self._reader = vtk.vtkUnstructuredGridReader()			
 
-		super(Mesh, self).__init__(fname=fname)
+		super(Mesh, self).__init__(fname=fname, **args)
 
 		# Assert mesh input filname is VTK
 		if not hasattr(self, '_mesh'):
@@ -554,11 +572,13 @@ class Mesh(SubSystem):
 		while True:
 			key = self._output.GetCellData().GetArrayName(index)
 			if key:
-				self.data[key] = vtk_to_numpy(self._output.GetCellData().GetArray(key))
+
+				newkey = 'cells.' + key
+				self.data[newkey] = vtk_to_numpy(self._output.GetCellData().GetArray(key))
 
 				if args['avgCellData']:
-					self.data[key] = (self.data['CellArea'] * self.data[key].T).T.sum(axis=0) / self.data['CellArea'].sum()
-
+					if 'CellArea' in self.data:
+						self.data[newkey] = (self.data['CellArea'] * self.data[newkey].T).T.sum(axis=0) / self.data['CellArea'].sum()
 				index += 1
 			else:
 				break
@@ -567,17 +587,24 @@ class Mesh(SubSystem):
 		while True:
 			key = self._output.GetPointData().GetArrayName(index)
 			if key:
-				self.data[key] = vtk_to_numpy(self._output.GetPointData().GetArray(key))
+				newkey = 'points.' + key
+				self.data[newkey] = vtk_to_numpy(self._output.GetPointData().GetArray(key))
 				index += 1
 			else:
 				break
 
-		self._constructAttributes()
+		self._constructAttributes(mesh=True)
 		
 	def _updateSystem(self):
 		""" Class function for updating the state of a Mesh """
 		# Must make sure fname is passed in case we're looping over a trajectory
-		self.__init__(mesh=self._mesh, units=self._units, vtk_type=self._vtk, fname=self._fname)
+		self._args['mesh'] = self._mesh
+		self._args['units'] = self._units
+		self._args['vtk_type'] = self._vtk
+		self._args['fname'] = self._fname
+
+		self.__init__(**self._args) # it's imp to pass args so that any subsystem-specific args are
+		# passed along to the next frame (e.g. vtk_type, etc.)
 		self._constructAttributes()
 
 	def nCells(self):
@@ -594,19 +621,31 @@ class Mesh(SubSystem):
 			else:
 				if frame == iframe:
 					pass
-				else:
-					if frame == -1:
-						frame = len(self._fname) - 1
+				elif frame == -1:
+					frame = len(self._fname) - 1
 
-					self._mesh = self._fname[frame]
+				self._mesh = self._fname[frame]
 
 		return frame
 
 	def _readFile(self, frame):
 		""" Reads a mesh file """
-		self._mesh = self._fname[frame]
+
+		if 'skip' in self._args:
+			skip = self._args['skip']
+		else:
+			skip = 0
+
+		self._mesh = self._fname[frame + frame * skip]
 
 		return frame + 1
+
+	def _resetSubSystem(self):
+
+		self.__init__(**self._args) 
+		super(Mesh, self)._resetSubSystem()
+
+		return 0
 
 	def __del__(self):
 
@@ -723,6 +762,13 @@ class Particles(SubSystem):
 		# (soft copy)
 		self.__init__(sel=None, units=self._units, fname=self._fname, **self.data)
 		self._constructAttributes()
+
+	def _resetSubSystem(self):
+
+		self.__init__(**self._args) 
+		super(Particles, self)._resetSubSystem()
+
+		return 0
 
 	def computeROG(self):
 		""" Computes the radius of gyration (ROG) for an N-particle system:
@@ -1096,7 +1142,7 @@ class Particles(SubSystem):
 				return self._goto(tmp, 1)
 
 			else:
-					raise NameError('Cannot find frame {} in current trajectory'.format(frame))
+				raise NameError('Cannot find frame {} in current trajectory'.format(frame))
 
 		else: # no need to find the input frame, just select the right file if available
 
@@ -1219,7 +1265,15 @@ class Particles(SubSystem):
 				fp.write('\n')
 
 	def _readFile(self, frame):
-		""" Read a particle trajectory file """
+		""" Read a particle trajectory file 
+
+		TODO: Support skip for single dump file
+		"""
+
+		if 'skip' in self._args:
+			skip = self._args['skip']
+		else:
+			skip = 0
 
 		# We are opening the traj file for the 1st time
 		if not hasattr(self, '_fp'):
@@ -1232,8 +1286,8 @@ class Particles(SubSystem):
 			else:
 				self._singleFile = True
 
-		if self._singleFile:
-			if self._ftype == 'dump':
+		if self._singleFile: # must support skip
+			if self._ftype == 'dump': 
 				ts = self._readDumpFile()
 				self.data['timestep'] = ts
 				self._constructAttributes()
@@ -1248,7 +1302,7 @@ class Particles(SubSystem):
 					raise StopIteration
 
 				self._fp.close()
-				self._fname = self._files[frame]
+				self._fname = self._files[frame + skip * frame]
 				self._fp = open(self._fname, 'r')
 				ts = self._readDumpFile()
 				self._constructAttributes()
@@ -1259,7 +1313,7 @@ class Particles(SubSystem):
 					raise StopIteration
 
 				self._fp.close()
-				self._fname = self._files[frame]
+				self._fname = self._files[frame + skip * frame]
 
 				self._reader = vtk.vtkPolyDataReader()
 
@@ -1339,24 +1393,30 @@ class Factory(object):
 				# make sure selected class definition exists, otherwise, this had better be a list
 				raise ValueError('System takes only keywords of objects that are defined. Class type {} not found.'.format(ss))
 
-			if isinstance(args[ss], list): # we need to create a list of objects
+			if isinstance(args[ss], list) or isinstance(args[ss], tuple): # we need to create a list of objects
+
+				objs = []
 
 				for item in args[ss]:
+
 					if isinstance(item, tuple): # we must pass additional args
 
 						try:
 							obj_fname, obj_args = item
 						except:
 							raise ValueError('SubSystem arguments must be passed as a dictionary, i.e. System(SubSystem=[(path1, arg1), ...]) ')
-
-						obj.append([ss, sclass(fname=obj_fname, **obj_args)])
+						else:
+							objs.append(sclass(fname=obj_fname, **obj_args))
 
 					elif isinstance(item, str):
-						obj.append([ss, sclass(fname=item)])
+						objs.append(sclass(fname=item))
 					elif isinstance(item, sclass):
-						obj.append([ss, item])
+						objs.append(item)
 					else:
 						raise ValueError('Incorrect keyarg supplied to System: {} when creating {} SubSystem'.format(item, ss))
+
+				if objs:
+					obj.append([ss, objs])
 
 			elif isinstance(args[ss], str):
 
@@ -1385,17 +1445,7 @@ class Factory(object):
 			else:
 				return getattr(sys.modules[__name__], string)
 		except:
-			pass # string has no class definition in the current module
-
-		# see if the object exists within the running script
-		try:
-			sys.path.append(os.getcwd()) # append running script path to sys
-			user_mod = __import__(sys.argv[0].split('.py')[0])
-			obj = getattr(user_mod, str)
-			setattr(sys.modules[__name__], obj.__name__, obj)
-			return obj
-		except:
-			return None
+			pass # string has no class definition in the specified module
 
 	def addprop(inst, name, method):
 
@@ -1452,6 +1502,7 @@ class System(object):
 			self.units('si')
 
 	def __iter__(self):
+		self.rewind()
 		return self
 
 	def units(self, units=None):
@@ -1477,15 +1528,35 @@ class System(object):
 		# nothing to do
 		if frame == self.frame:
 			return 0
+		else:
+			newFrame = None
 
 		# rewind if necessary (better than reading file backwards?)
-		if frame < self.frame and frame >= 0:
+		if frame < self.frame and frame > 0:
 			self.rewind()
 			self.goto(frame)
+		elif frame == 0: # rewind
+			for ss in self.__dict__:
+				if isinstance(self.__dict__[ss], list):
+					for item in self.__dict__[ss]:
+						if hasattr(item, '_resetSubSystem'):
+							self.frame  = item._resetSubSystem()
+
+				elif hasattr(self.__dict__[ss], '_resetSubSystem'):
+					self.frame  = self.__dict__[ss]._resetSubSystem()
+
 		else:
 			for ss in self.__dict__:
-				if hasattr(self.__dict__[ss], '_goto'):
-					self.frame = self.__dict__[ss]._goto(frame, self.frame)
+				if isinstance(self.__dict__[ss], list):
+					for item in self.__dict__[ss]:
+						if hasattr(item, '_goto'):
+							newFrame = item._goto(self.frame, frame)
+
+				elif hasattr(self.__dict__[ss], '_goto'):
+					newFrame = self.__dict__[ss]._goto(self.frame, frame)
+
+			if newFrame:
+				self.frame = newFrame
 
 			# Rewind already updates the system, so we call _updateSystem only if
 			# the frame is moving forward
@@ -1515,7 +1586,7 @@ class System(object):
 	def rewind(self):
 		"""Read trajectory from the beginning"""
 
-		self.__init__(**self.args)
+		self.goto(0)
 
 	def __next__(self):
 		"""Forward one step to next frame when using the next builtin function."""
@@ -1527,22 +1598,23 @@ class System(object):
 
 		try:
 			for ss in self.__dict__:
-				if isinstance(ss, list):
-					if 'module' in self.args:
-						module = self.args['module']
-					else:
-						module = None
 
-					for obj in ss:
-						# Make sure this is a list of defined SubSystems
-						if Factory._str_to_class(obj, module):
+				if 'module' in self.args:
+					module = self.args['module']
+				else:
+					module = None
+
+				if Factory._str_to_class(ss, module):
+					if isinstance(self.__dict__[ss], list):
+
+						for obj in self.__dict__[ss]:
 							if hasattr(obj, '_readFile'):
-								self._readFile(self.frame + 1)
+								obj._readFile(self.frame + 1)
 								update_frame = True
 
-				elif hasattr(self.__dict__[ss], '_readFile'):
-					self.__dict__[ss]._readFile(self.frame + 1)
-					update_frame = True
+					elif hasattr(self.__dict__[ss], '_readFile'):
+						self.__dict__[ss]._readFile(self.frame + 1)
+						update_frame = True
 		except:
 			self.rewind()
 			raise StopIteration
@@ -1561,21 +1633,22 @@ class System(object):
 		a frame change. """
 
 		# A generic way of invoking _updateSystem
+
+		if 'module' in self.args:
+			module = self.args['module']
+		else:
+			module = None
+
 		for ss in self.__dict__:
-			if isinstance(ss, list):
-				if 'module' in self.args:
-					module = self.args['module']
-				else:
-					module = None
+			if Factory._str_to_class(ss, module): # Make sure the obj exists
+				if isinstance(self.__dict__[ss], list):
+					for obj in self.__dict__[ss]:
+						# Make sure this is a list of defined SubSystems
+						if hasattr(obj, '_updateSystem'):
+							obj._updateSystem()
 
-				for obj in ss:
-					# Make sure this is a list of defined SubSystems
-					if Factory._str_to_class(obj, module):
-						if hasattr(obj, '_readFile'):
-							self._updateSystem()
-
-			elif hasattr(self.__dict__[ss], '_updateSystem'):
-				self.__dict__[ss]._updateSystem()
+				elif hasattr(self.__dict__[ss], '_updateSystem'):
+					self.__dict__[ss]._updateSystem()
 
 def numericalSort(value):
 	""" A sorting function by numerical numbers for glob.glob """
