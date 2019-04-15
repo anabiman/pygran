@@ -1570,7 +1570,12 @@ class System(object):
 
 		while forward:
 			for ss in self.__dict__: 
-				if hasattr(self.__dict__[ss], '_constructAttributes'):
+				if isinstance(self.__dict__[ss], list):
+					for item in self.__dict__[ss]:
+						if hasattr(item, '_constructAttributes'):
+							if len(item):
+								forward = False
+				elif hasattr(self.__dict__[ss], '_constructAttributes'):
 					if len(self.__dict__[ss]):
 						forward = False
 
@@ -1578,7 +1583,6 @@ class System(object):
 				break
 			else:
 				self.frame = self.next()
-
 	@property
 	def keys(self):
 		""" returns the key objects found in the trajctory files """
