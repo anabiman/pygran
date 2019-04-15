@@ -580,6 +580,10 @@ class Mesh(SubSystem):
 				if args['avgCellData']:
 					if 'CellArea' in self.data:
 						self.data[newkey] = (self.data['CellArea'] * self.data[newkey].T).T.sum(axis=0) / self.data['CellArea'].sum()
+
+					elif 'CellVol' in self.data:
+						self.data[newkey] = (self.data['CellVol'] * self.data[newkey].T).T.sum(axis=0) / self.data['CellVol'].sum()
+						
 				index += 1
 			else:
 				break

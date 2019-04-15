@@ -566,6 +566,9 @@ class Mesh(SubSystem):
 						# Shoelace  algorithm for computing areas of polygons
 						self.data['CellArea'][i] = 0.5 * np.abs( np.dot(np_pts[i][:,indices[0]] ,np.roll(np_pts[i][:,indices[1]],1)) - np.dot(np_pts[i][:,indices[1]],np.roll( np_pts[i][:,indices[0]],1)) )
 
+					elif 'CellVol' in self.data:
+						self.data[newkey] = (self.data['CellVol'] * self.data[newkey].T).T.sum(axis=0) / self.data['CellVol'].sum()
+						
 				self.data['CellsPos'] = np_pts
 
 		index = 0
