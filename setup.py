@@ -63,7 +63,7 @@ if not __version__:
 def read(fname):
 		return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-def link(dir):
+def link(wdir):
 	txt="""[Desktop Entry]
 Version=1.0
 Type=Application
@@ -73,7 +73,7 @@ Exec=python -m PyGran
 Icon={}/Gran.png
 Terminal=false
 MimeType=image/x-foo
-NotShowIn=KDE""".format(dir)
+NotShowIn=KDE""".format(wdir)
 
 	with open('PyGran.desktop', 'w') as fp:
 		fp.write(txt)
@@ -165,7 +165,7 @@ setup(
 		packages=find_packages('src'),
 		package_dir={'PyGran': 'src/PyGran'},
 		include_package_data=True,
-		install_requires=['numpy', 'scipy', 'vtk', 'mpi4py'],
+		install_requires=['numpy', 'scipy', 'Pillow', 'vtk', 'mpi4py'],
 		long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See http://www.pygran.org.',
 		classifiers=[
 				"Development Status :: 4 - Beta",
