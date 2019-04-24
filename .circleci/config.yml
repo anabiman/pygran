@@ -14,7 +14,7 @@ jobs:
       - run:
          name: install openmpi
          command: |
-            sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin
+            sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin vtk6 libvtk6-dev
 
       - run:
           name: compile LIGGGHTS

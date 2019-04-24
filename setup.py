@@ -111,7 +111,6 @@ class Track(install):
 
 		def run(self):
 				self.do_pre_install_stuff()
-				super.run()
 
 		def do_pre_install_stuff(self):
 			raise NotImplementedError
