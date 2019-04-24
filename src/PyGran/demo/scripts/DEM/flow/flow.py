@@ -8,7 +8,6 @@ Created on April 22, 2017
 
 from PyGran import simulation
 from PyGran.modules.params import organic, glass
-import matplotlib.pylab as plt
 
 params = {
 	# Define the system
