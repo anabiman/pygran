@@ -1,0 +1,32 @@
+version: 2
+jobs:
+  build:
+
+    docker:
+      - image: circleci/python:3.7.1
+
+    working_directory: ~/repo
+
+    steps:
+
+      - checkout # checkout src code to working dir
+
+      - run:
+          name: compile LIGGGHTS
+          command: |
+            python3 setup.py build_liggghts
+
+      - run:
+          name: install PyGran
+          command: |
+            pip3 install --upgrade pip --user
+            pip3 install . --user
+
+      - run:
+          name: run tests
+          command: |
+            cd ..
+            python3 -m PyGran.demo DEM flow
+
+      - store_test_results:
+          path: test-results
