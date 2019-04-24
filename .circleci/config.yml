@@ -12,6 +12,11 @@ jobs:
       - checkout # checkout src code to working dir
 
       - run:
+         name: install openmpi
+         command: |
+            sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin
+
+      - run:
           name: compile LIGGGHTS
           command: |
             python3 setup.py build_liggghts
