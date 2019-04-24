@@ -23,7 +23,10 @@ Created on February 24, 2017
 
 
 from numbers import Number
-from PIL import Image
+try:
+	from PIL import Image
+except:
+	pass
 import glob, os
 from numpy import random, array, linspace, sqrt, fabs
 import numpy as np
