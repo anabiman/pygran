@@ -1,5 +1,3 @@
-[![Build Status](https://circleci.com/gh/Andrew-AbiMansour/PyGran.svg?branch=master)](https://circleci.com/gh/Andrew-AbiMansour/PyGran)
-
 # Welcome to the PyGran webpage!
 
 PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran is written in Python 3.X and is fully backwards compatible with Python 2.2 and later versions.

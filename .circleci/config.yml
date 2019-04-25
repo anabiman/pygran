@@ -19,6 +19,7 @@ jobs:
       - run:
           name: compile LIGGGHTS
           command: |
+            git checkout develop
             python3 setup.py build_liggghts
 
       - run:
