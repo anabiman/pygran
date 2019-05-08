@@ -1586,7 +1586,6 @@ class System(object):
 				break
 			else:
 				self.frame = self.next()
-
 	@property
 	def keys(self):
 		""" returns the key objects found in the trajctory files """

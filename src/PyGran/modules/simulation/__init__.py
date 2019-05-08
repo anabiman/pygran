@@ -1,3 +1,8 @@
+'''
+Created on March 30, 2016
+@author: Andrew Abi-Mansour
+'''
+
 # !/usr/bin/python
 # -*- coding: utf8 -*- 
 # -----------------------------------------------------------------------
@@ -16,11 +21,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # -------------------------------------------------------------------------
-
-'''
-Created on March 30, 2016
-@author: Andrew Abi-Mansour
-'''
 
 from .dem import *
 from glob import glob as _glob

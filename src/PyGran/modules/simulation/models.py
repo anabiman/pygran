@@ -714,6 +714,54 @@ class HertzMindlin(Model):
 
 		return self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
 
+	def displacementAnalytical(self, dt = None):
+		""" Computes the displacement based on the analytical solution for
+		a spring-dashpot model.
+
+		[dt]: timestep. By default, the timestep is 1% of the contact time.
+
+		Returns numpy arrays: time, displacement, and force of size N, Nx2, and N,
+		respectively, where N is the total number of steps taken by the integrator.
+		The displacement array stores the overlap in its 1st column and the overlap
+		velocity (time derivative) in its 2nd column. 
+
+		TODO: take cohesion (SJKR) into account
+		"""
+
+		rest = self.coefficientRestitution
+		poiss = self.poissonsRatio
+		yMod = self.youngsModulus
+		radius = self.radius
+		mass = self.mass
+
+		if dt is None:
+			dt = 0.01 * self.contactTime()
+
+		v0 = self.characteristicVelocity
+		kn = self.springStiff()
+		cn = self.dissCoef()
+
+		time = np.arange(int(self.contactTime() / dt)) * dt
+		const = np.sqrt(kn / mass - 0.25 * (cn / mass)**2.0)
+		phase = 0
+
+		delta = v0 / const * np.exp(0.5 * cn * time / mass) * np.sin(const * time + phase)
+		deltav = 0.5 * cn / mass * delta + v0 * np.cos(const * time + phase) * np.exp(0.5 * cn * time / mass)
+
+		# Correct the spring-dashpot soln based on Ref []
+		diam = radius * 2
+		delta = (5.0/4.0)**(2.0/5.0) * delta / 
+
+		force = self.normalForce(delta, deltav)
+
+		if hasattr(self, 'limitForce'):
+			if self.limitForce:
+				delta = delta[force >= 0]
+				deltav = deltav[force >= 0]
+				time = time[force >= 0]
+				force = force[force >= 0]
+
+		return time, np.array([delta, deltav]).T, force
 
 class ThorntonNing(Model):
 	"""
