@@ -1,4 +1,4 @@
-theme: jekyll-theme-architect
+theme: jekyll-theme-minimal
 
 title: PyGran
 description: Python toolkit for DEM simulation & analysis
