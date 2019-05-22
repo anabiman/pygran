@@ -164,7 +164,8 @@ setup(
 		packages=find_packages('src'),
 		package_dir={'PyGran': 'src/PyGran'},
 		include_package_data=True,
-		install_requires=['numpy', 'scipy', 'Pillow'],
+		install_requires=['numpy', 'scipy'],
+		extras_require={'vtk': 'vtk', 'mpi4py': 'mpi4py', 'Pillow': 'Pillow'},
 		long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See http://www.pygran.org.',
 		classifiers=[
 				"Development Status :: 4 - Beta",
