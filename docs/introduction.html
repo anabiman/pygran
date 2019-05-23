@@ -22,7 +22,7 @@
 
   
 
-  <link rel="stylesheet" href="_static/css/main.css" type="text/css" />
+  <link rel="stylesheet" href="static/css/main.css" type="text/css" />
 
   
         <link rel="index" title="Index"
@@ -72,6 +72,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">Bibliography</a></li>
 </ul>
 
         
@@ -110,7 +111,7 @@
 <h1>What is PyGran?<a class="headerlink" href="#what-is-pygran" title="Permalink to this headline">¶</a></h1>
 <p><em>PyGran</em> is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of <em>PyGran</em>  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing <em>PyGran</em>  for Unix systems, this manual focuses on 2 core modules (<a class="reference internal" href="#fig-pygran"><span class="std std-numref">Fig. 1</span></a>) in <em>PyGran</em> : <code class="docutils literal notranslate"><span class="pre">simulation</span></code> which provides <code class="docutils literal notranslate"><span class="pre">engines</span></code> for running DEM simulation and enables analysis of contact mechanical models, and <code class="docutils literal notranslate"><span class="pre">analysis</span></code> which contains methods and modules for processing DEM data. <em>PyGran</em>  is released under the GNU General Public License (<a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a>), and its code base is available from <a class="reference external" href="https://www.github.com/Andrew-AbiMansour/PyGran">github</a>.</p>
 <div class="align-center figure" id="id7">
-<span id="fig-pygran"></span><a class="reference internal image-reference" href="_images/PyGran-design.png"><img alt="PyGran modules" src="_images/PyGran-design.png" style="width: 450px; height: 220px;" /></a>
+<span id="fig-pygran"></span><a class="reference internal image-reference" href="images/PyGran-design.png"><img alt="PyGran modules" src="images/PyGran-design.png" style="width: 450px; height: 220px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules and submodules that can be imported from a Python input script.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
 </div>
 <div class="section" id="brief-summary-of-dem">
@@ -121,13 +122,13 @@
 <p>The true mass density of the particles is <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(F_{ij}\)</span> is the surface contact force between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors (summed over <span class="math notranslate nohighlight">\(j\)</span>), <span class="math notranslate nohighlight">\(F_{b_i}\)</span> is a body force acting on particle <span class="math notranslate nohighlight">\(i\)</span> (such as gravity, i.e. <span class="math notranslate nohighlight">\(F_{b_i} = \rho V_i g\)</span>), and <span class="math notranslate nohighlight">\(T_{ij}\)</span> is the torque between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors that is limited by the static friction coefficient <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <p>DEM simulation involves the numerical solution of Eqs. (1) by decomposing the space the particles occupy into a grid of connected nearest-neighbor lists that enable fast and efficient computation of inter-particle surface forces. For every discrete timestep, all forces acting on each particle are computed, and the particle positions are updated based on the discretized form of Eqs. (1).</p>
 <div class="align-center figure" id="id8">
-<span id="fig-dem"></span><a class="reference internal image-reference" href="_images/DEM.png"><img alt="DEM cycle" src="_images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
+<span id="fig-dem"></span><a class="reference internal image-reference" href="images/DEM.png"><img alt="DEM cycle" src="images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
 </div>
-<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <a class="reference internal" href="index.html#poschel2005computational" id="id1">[PoschelS05]</a>.</p>
-<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <a class="reference internal" href="index.html#kruggel2008study" id="id2">[KERWS08]</a>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
+<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <a class="reference internal" href="references.html#poschel2005computational" id="id1">[PoschelS05]</a>.</p>
+<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <a class="reference internal" href="references.html#kruggel2008study" id="id2">[KERWS08]</a>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
 <div class="align-center figure" id="id9">
-<span id="fig-multisphere"></span><a class="reference internal image-reference" href="_images/multisphere.png"><img alt="Multisphere particle" src="_images/multisphere.png" style="width: 300px; height: 150px;" /></a>
+<span id="fig-multisphere"></span><a class="reference internal image-reference" href="images/multisphere.png"><img alt="Multisphere particle" src="images/multisphere.png" style="width: 300px; height: 150px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
 </div>
 </div>
@@ -149,7 +150,7 @@
 </div>
 <div class="section" id="optional-packages">
 <h4>Optional packages<a class="headerlink" href="#optional-packages" title="Permalink to this headline">¶</a></h4>
-<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <a class="reference internal" href="index.html#kloss2011liggghts" id="id3">[KG11]</a> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
+<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <a class="reference internal" href="references.html#kloss2011liggghts" id="id3">[KG11]</a> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
 <blockquote>
 <div><p><a class="reference external" href="https://github.com/cython/cython">Cython</a>: for improved performance in <code class="docutils literal notranslate"><span class="pre">analysis.core</span></code> module</p>
 <p><a class="reference external" href="https://github.com/mpi4py/mpi4py">mpi4py</a>: for running DEM simulation in parallel with MPI</p>
@@ -276,17 +277,17 @@
             HAS_SOURCE:  true
         };
     </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/language_data.js"></script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+      <script type="text/javascript" src="static/language_data.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
   
   
-    <script type="text/javascript" src="_static/js/theme.js"></script>
+    <script type="text/javascript" src="static/js/theme.js"></script>
   
 
   
