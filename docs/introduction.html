@@ -236,6 +236,39 @@
 </div>
 <p>The command above will clone the <em>LIGGGHTS-PUBLIC</em> repository and compile the code as a shared library (<code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>) in <code class="docutils literal notranslate"><span class="pre">LIGGGHTS-PUBLIC/src</span></code>. This requires <em>git</em>, <em>gcc</em>, and an MPI installation available on the system.</p>
 </div>
+<div class="section" id="installation-example-ubuntu-18-04-lts">
+<h3>Installation example: ubuntu 18.04 (LTS)<a class="headerlink" href="#installation-example-ubuntu-18-04-lts" title="Permalink to this headline">¶</a></h3>
+<p>The section below demonsrates a fresh local installation of PyGran &amp; LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove <code class="docutils literal notranslate"><span class="pre">--user</span></code> from the commands and use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> instead.</p>
+<p>First, fire up a terminal in order to update the system and install all dependencies via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gcc</span> <span class="n">libopenmpi</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span> <span class="n">ipython3</span> <span class="n">git</span> <span class="n">python3</span><span class="o">-</span><span class="n">matplotlib</span> <span class="n">libvtk6</span><span class="o">-</span><span class="n">dev</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>Let’s now clone the PyGran  source code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Andrew</span><span class="o">-</span><span class="n">AbiMansour</span><span class="o">/</span><span class="n">PyGran</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">PyGran</span>
+</pre></div>
+</div>
+<p>Let’s locally install PyGran dependencies with pip3:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="n">extra</span><span class="p">]</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>In order to compile LIGGGHTS, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_liggghts</span>
+</pre></div>
+</div>
+<p>This will clone the <em>LIGGGHTS-PUBLIC</em> repository and compile the code as a shared object. The process takes a few minutes to finish. Once this is done, we can finally install PyGran:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">.</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-pygran">
+<h3>Testing PyGran<a class="headerlink" href="#testing-pygran" title="Permalink to this headline">¶</a></h3>
+<p>Let’s run a simple compaction problem in order to make sure everything works fine. Open a terminal and run from anywhere:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mpirun</span> <span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">PyGran</span><span class="o">.</span><span class="n">demo</span> <span class="n">DEM</span> <span class="n">flow</span>
+</pre></div>
+</div>
+<p>The mpirun command above should take about 1-5 mins to finish, depending on the core clock cycle and how many cores are available on the system. If successful, this command should create an output directory (‘out-SpringDashpot-date-of-creation’) which contains the trajectory and restart files stored in ‘traj’ and ‘restart’ directories, respectively.</p>
+</div>
 </div>
 </div>
 

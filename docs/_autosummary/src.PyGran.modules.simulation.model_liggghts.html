@@ -107,6 +107,56 @@
             
   <div class="section" id="src-pygran-modules-simulation-model-liggghts">
 <h1>src.PyGran.modules.simulation.model_liggghts<a class="headerlink" href="#src-pygran-modules-simulation-model-liggghts" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<blockquote>
+<div><p>This file is a module for creating contact models for LIGGGHTS on the fly.</p>
+</div></blockquote>
+<hr class="docutils" />
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="src.PyGran.modules.simulation.model_liggghts._find_number_models">
+<code class="descclassname">src.PyGran.modules.simulation.model_liggghts.</code><code class="descname">_find_number_models</code><span class="sig-paren">(</span><em>src_dir</em>, <em>mtype='normal'</em><span class="sig-paren">)</span><a class="headerlink" href="#src.PyGran.modules.simulation.model_liggghts._find_number_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the total number of contact models available in the liggghts src dir</p>
+<p>&#64;src_dir: directory to search the contact model header files in
+&#64;[mtype]: ‘normal’ (default) or ‘tangential’ contact models to search for</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.PyGran.modules.simulation.model_liggghts.register">
+<code class="descclassname">src.PyGran.modules.simulation.model_liggghts.</code><code class="descname">register</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="headerlink" href="#src.PyGran.modules.simulation.model_liggghts.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a c++ header file for a contact model and compiles it during runtime.</p>
+<p>&#64;stiffness: analytical form (str) of the stiffness = force / deltan
+&#64;viscosity: analytical form (str) of the viscosity term (force = viscosity * vn).</p>
+<p>Material parameters that can be used:
+Yeff: effective Young’s modulus
+Geff: effective Shear modulus
+meff: effective mass
+reff: effective radius
+charVel: characteristic impact velocity
+restLog: log of the coefficient of restitution
+deltan: normal displacement
+vn: velocity of the normal displacement
+kn: stiffness
+PI: constant (3.14 …)</p>
+<dl>
+<dt>e.g. register(name=’my_model’,</dt><dd><p>stiffness = ‘6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)’,
+viscosity = ‘sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))’)</p>
+<p>produces a template header file for the spring-dashpot model called ‘my_model’.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 

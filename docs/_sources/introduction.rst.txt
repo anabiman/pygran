@@ -154,3 +154,47 @@ Compiling LIGGGHTS
     python setup.py build_liggghts
 
 The command above will clone the *LIGGGHTS-PUBLIC* repository and compile the code as a shared library (``libliggghts.so``) in ``LIGGGHTS-PUBLIC/src``. This requires *git*, *gcc*, and an MPI installation available on the system.
+
+Installation example: ubuntu 18.04 (LTS)
+****************************************
+The section below demonsrates a fresh local installation of PyGran & LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove ``--user`` from the commands and use ``sudo`` instead.
+
+First, fire up a terminal in order to update the system and install all dependencies via::
+
+    sudo apt-get update && sudo apt-get install gcc libopenmpi-dev python3-setuptools python3-pip ipython3 git python3-matplotlib libvtk6-dev -y
+
+Let's now clone the PyGran  source code::
+
+    git clone https://github.com/Andrew-AbiMansour/PyGran.git
+    cd PyGran
+
+Let's locally install PyGran dependencies with pip3::
+
+    pip3 install -e .[extra] --user
+
+In order to compile LIGGGHTS, run::
+
+    python3 setup.py build_liggghts
+
+This will clone the *LIGGGHTS-PUBLIC* repository and compile the code as a shared object. The process takes a few minutes to finish. Once this is done, we can finally install PyGran::
+
+    pip3 install . --user
+
+Testing PyGran
+**************
+Let's run a simple compaction problem in order to make sure everything works fine. Open a terminal and run from anywhere::
+
+    mpirun python3 -m PyGran.demo DEM flow
+
+The mpirun command above should take about 1-5 mins to finish, depending on the core clock cycle and how many cores are available on the system. If successful, this command should create an output directory ('out-SpringDashpot-date-of-creation') which contains the trajectory and restart files stored in 'traj' and 'restart' directories, respectively.
+
+
+
+
+
+
+
+
+
+
+
