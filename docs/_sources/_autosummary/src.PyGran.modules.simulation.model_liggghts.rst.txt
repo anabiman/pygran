@@ -1,0 +1,22 @@
+src.PyGran.modules.simulation.model\_liggghts
+=============================================
+
+.. automodule:: src.PyGran.modules.simulation.model_liggghts
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      register
+   
+   
+
+   
+   
+   
+
+   
+   
+   

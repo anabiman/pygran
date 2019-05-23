@@ -1,0 +1,32 @@
+**********
+Simulation
+**********
+The `simulation <https://github.com/Andrew-AbiMansour/PyGran/tree/master/src/PyGran/modules/simulation>`_ module in *PyGran* enables users to run DEM simulation using external N-body solvers for large systems, or PyGran's numerical solver for investigating contact models. A convenient way for users to define materials in *PyGran* as input for DEM simulation is via Python dictionaries provided in the `params <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/modules/params>`_ module. For instance, properties of stearic acid (in S.I. units) shown below are available in the `params <https://github.com/Andrew-AbiMansour/PyGran/tree/master/src/PyGran/modules/params>`_ module:: 
+
+    stearicAcid = {
+            'youngsModulus': 4.15e7,
+            'poissonsRatio': 0.25,
+            'coefficientFriction': 0.5,
+            'coefficientRollingFriction': 0.0,
+            'cohesionEnergyDensity': 0.033,
+            'coefficientRestitution': 0.9,
+            'coefficientRollingViscousDamping': 0.1,
+            'yieldPress': 2.2e6,
+            'characteristicVelocity': 0.1,
+            'density': 997.164
+            }
+
+This dictionary can then be used for running simulation or performing analysis. The `simulation.models <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/modules/simulation/models.py>`_ module contains classes for contact mechanical models that can be used to run a DEM simulation with *LIGGGHTS*, or investigating numerical aspects of particle-wall collisions as shown in the next section.
+
+Numerical analysis
+##################
+
+Contact mechanical models
+*************************
+``simulation.models.model`` is the basic class from which contact models are derived. This class contains methods that are overwritten by a sublcass that implements a specific contact model. The 3 contact models avaiable are:
+
+-   ``SpringDashpot`` :cite:`cundall1979discrete`
+-   ``HertzMindlin``
+-   ``ThorntonNing`` :cite:`thornton1998theoretical`
+
+In the next section, it is demonstrated how these models can be used to perform simple numerical experiments.
