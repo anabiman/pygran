@@ -37,8 +37,7 @@ Alternatively, you can clone the PyGran repsitory on github and run from the sou
 ```bash
 python setup.py install --user
 ```
-You can download <a href="examples/scripts/ubuntu.sh">here</a> a script (for Ubuntu 18.04 LTS) that compiles and installs LIGGGHTS-PUBLIC and PyGran from source code.
-For more options and information on setting up PyGran, see chapter I in the manual.
+For more options and information on setting up PyGran on Ubuntu 18.04 (LTS), see the [installation](docs/introduction.html#installation-example-ubuntu-18-04-lts) page.
 
 ## Basic Usage
 ### Running DEM simulation with LIGGGHTS
