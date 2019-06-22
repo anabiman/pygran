@@ -9,7 +9,6 @@ log.*
 *.py~
 *.pyc~
 out*
-*.pdf
 build
 PyDEM.egg-info
 dist
@@ -20,3 +19,4 @@ PyGran.egg-info*
 PyGran/demo/scripts/DEM/multisphere/mesh/tumbler.stl
 LIGGGHTS-PUBLIC
 _docs
+_manual
