@@ -1,29 +1,32 @@
-# !/usr/bin/python
-# -*- coding: utf8 -*- 
-# -----------------------------------------------------------------------
-#
-#   Python interface for running DEM simulations
-#
-# -----------------------------------------------------------------------
-#
-#   This program is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 2 of the License, or
-#   (at your option) any later version.
-
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
-
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# -------------------------------------------------------------------------
-
 '''
+Python interface for running DEM engines
+
 Created on April 25, 2016
-@author: Andrew Abi-Mansour
+
+Author: Andrew Abi-Mansour
+
+This is the::
+
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
+
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 '''
 
 from mpi4py import MPI
@@ -36,15 +39,22 @@ import shutil
 import PyGran
 
 class DEM:
-  """A *generic* class that handles communication for a DEM object independent of the engine used"""
+  """A generic class that handles communication for a DEM object in a way that
+  is independent of the engine used"""
 
   def __init__(self, **pargs):
-    """ Initializes COMM and partition proccesors based on user input """
+    """ Upon instantiation, this object initializes an MPI communicator and 
+    partitions proccesors based on user input
+
+    :param model: contact mechanical model (default SpringDashpot)
+    :type model: model
+     """
 
     # Instantiate contact model and store it in pargs
     if 'model' not in pargs:
       pargs['model'] = models.SpringDashpot
 
+    # Overwrite pargs from the contact model's params
     pargs = pargs['model'](**pargs).params
 
     self.comm = MPI.COMM_WORLD
@@ -240,11 +250,18 @@ class DEM:
           self.dem.velocity(*args)
           break
 
-  def add_viscous(self, **args):
-    """ Adds a viscous damping force: F = - gamma * v for each particle
-    @species = 1,2, ... or all
-    @gamma: real number (viscosity coefficient)
-    @[scale]: tuple (species, ratio) to scale gamma with
+  def addViscous(self, **args):
+    """ Adds a viscous damping force :math:`F` proportional
+    to each particle's velocity :math:`v`:
+    
+    :math:`F = - \\gamma v`
+
+    :param species: species index (0, 1, ...)
+    :type species: int
+    :param gamma: viscosity coefficient (:math:`\\gamma`)
+    :type gamma: positive float
+    :param scale: (species, ratio) tuple to scale gamma with
+    :type scale: tuple
     """
     for i in range(self.nSim):
         if self.rank < self.pProcs * (i + 1):
@@ -293,6 +310,9 @@ class DEM:
   def importMesh(self, name, file, mtype, **args):
     """
     Imports a mesh file (STL or VTK)
+
+    
+
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -301,11 +321,22 @@ class DEM:
 
   def setupWall(self, wtype, species = None, plane = None, peq = None):
     """
-    Creates a wall
-    @ name: name of the variable defining a wall or a mesh
-    @ wtype: type of the wall (primitive or mesh)
-    @ plane: x, y, or z plane for primitive walls
-    @ peq: plane equation for primitive walls
+    Creates a primitive (virtual) or surface (mesh) wall
+
+    :param wtype: type of the wall (primitive or mesh)
+    :type wtype: string
+    :param species: species type or primitive (virtual) walls
+    :type species: int
+    :param plane: x, y, or z plane for primitive (virtual) walls
+    :type plane: string
+    :param peq: plane equation for primitive (virtual) walls
+    :type peq: float
+    :return: wall name
+    :rtype: string
+
+    :Example:
+      primitiveWall = setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
+
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -369,6 +400,7 @@ class DEM:
 
   def monitor(self, **args):
     """
+    Monitor a variable
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):

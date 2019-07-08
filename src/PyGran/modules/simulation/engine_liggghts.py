@@ -1,37 +1,34 @@
-# !/usr/bin/python
-#  -*- coding: utf8 -*-
-
 '''
-  Created on March 30, 2016
-  @author: Andrew Abi-Mansour
+Python wrapper for LIGGGHTS library via ctypes
 
-  This is the 
-   __________         ________                     
+Created on March 30, 2016
+
+Author: Andrew Abi-Mansour
+
+This is the::
+
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
   ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
   ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
   ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                      
-  DEM simulation and analysis toolkit
-  http://www.pygran.org, support@pygran.org
 
-  Core developer and main author:
-  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
 
-  PyGran is open-source, distributed under the terms of the GNU Public
-  License, version 2 or later. It is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-  received a copy of the GNU General Public License along with PyGran.
-  If not, see http://www.gnu.org/licenses . See also top-level README
-  and LICENSE files.
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
- -------------------------------------------------------------------------
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 
-  Python wrapper for LIGGGHTS library via ctypes. This file was modified from
-  the LAMMPS source code.
+**This file was modified from the LAMMPS source code.
 
   LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
   http://lammps.sandia.gov, Sandia National Laboratories
@@ -42,9 +39,7 @@
   certain rights in this software.  This software is distributed under
   the GNU General Public License.
 
-  See the README file in the top-level LAMMPS directory.
- --------------------------------------------------------------------------
-
+  See the README file in the top-level LAMMPS directory. **
 
 '''
 
@@ -620,7 +615,7 @@ class DEMPy:
     @mtype: mesh type
     @args: additional args
     """
-    wall = False
+    wallIsMesh = False
 
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
@@ -630,14 +625,14 @@ class DEMPy:
               if mesh == name:
                 self.pargs['mesh'][mesh]['import'] = True
                 self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
-                wall = True
+                wallIsMesh = True
 
             elif 'import' in self.pargs['mesh'][mesh]:
               if self.pargs['mesh'][mesh]['import']:
                 self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
-                wall = True
+                wallIsMesh = True
               
-      if wall:
+      if wallIsMesh:
         self.setupWall(wtype='mesh')
     
 
@@ -688,7 +683,6 @@ class DEMPy:
     modelExtra = tuple(modelExtra)
 
     # Can we take model args into account for walls???
-
     if wtype == 'mesh':
       meshName = tuple([mname for mname in self.pargs['mesh'].keys() if 'file' in self.pargs['mesh'][mname]])
       nMeshes = len(meshName)
@@ -1085,11 +1079,18 @@ class DEMPy:
 
     return getattr(self, 'my{name}'.format(**args))
 
-  def add_viscous(self, **args):
-    """ Adds a viscous damping force: F = - gamma * v for each particle
-    @species = 1,2, ... or all
-    @gamma: real number (viscosity coefficient)
-    @[scale]: tuple (species, ratio) to scale gamma with
+  def addViscous(self, **args):
+    """ Adds a viscous damping force :math:`F` proportional
+    to each particle's velocity :math:`v`:
+    
+    :math:`F = - \\gamma v`
+
+    :param species: species index (0, 1, ...)
+    :type species: int
+    :param gamma: viscosity coefficient (:math:`\\gamma`)
+    :type gamma: positive float
+    :param scale: (species, ratio) tuple to scale gamma with
+    :type scale: tuple
     """
     if 'scale' not in args:
       args['scale'] = (args['species'], 1)
