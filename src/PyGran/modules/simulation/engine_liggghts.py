@@ -1030,7 +1030,7 @@ class DEMPy:
           # see if we have many meshes to dump if the name of one mfile is supplied by the user
           for mesh in self.pargs['mesh'].keys():
             if 'file' in self.pargs['mesh'][mesh]:
-              if self.pargs['mesh'][mesh]['importname']:
+              if self.pargs['mesh'][mesh]['import']:
                 name += mesh + ' '
 
           if len(name):
