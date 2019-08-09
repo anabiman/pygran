@@ -1,45 +1,41 @@
-
-# !/usr/bin/python
-#  -*- coding: utf8 -*-
-
 '''
-	Created on July 1, 2016
-	@author: Andrew Abi-Mansour
+A module that provides contact models for running numerical experiments or DEM simulation
 
-	This is the 
-	 __________         ________                     
-	██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
-	██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
-	██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
-	██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
-	██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
-	╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-															   
-	DEM simulation and analysis toolkit
-	http://www.pygran.org, support@pygran.org
+Created on July 1, 2016
 
-	Core developer and main author:
-	Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+Author: Andrew Abi-Mansour
 
-	PyGran is open-source, distributed under the terms of the GNU Public
-	License, version 2 or later. It is distributed in the hope that it will
-	be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-	received a copy of the GNU General Public License along with PyGran.
-	If not, see http://www.gnu.org/licenses . See also top-level README
-	and LICENSE files.
+This is the::
 
- --------------------------------------------------------------------------
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
-	This file serves as a module for analyzing contact models for numerical 
-	simulation and LIGGGHTS DEM simulation.
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
 
- --------------------------------------------------------------------------
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
-	TODO: Support 2-particle analysis by replacing mass radius, etc. with 
-	reduces mass, radius, etc. i.e. 1/m_ij = 1/m_i + 1/m_j
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 
- --------------------------------------------------------------------------
+.. warning::
+   Only particle-wall collisions are supported
+
+.. todo::
+  Support 2-particle analysis by replacing mass, radius, etc. with 
+  reduced mass, radius, etc. i.e. :math:`1/m_{ij} = 1/m_i + 1/m_j`
+
+
 
 '''
 
@@ -52,8 +48,18 @@ from mpi4py import MPI
 
 def template_tablet(nspheres, radius, length):
 	""" This function creates a multi-sphere tablet (cylinder) of
-	radius "radius" and height "length" constituting nspheres spheres.
+	radius "radius" and height "length" constituting "nspheres" spheres.
 	This is used for multisphere simulations.
+
+	:param nspheres: number of spheres each tablet consists of
+	:type nspheres: int
+	:param radius: particle radius
+	:type radius: float
+	:param length: length of the tablet
+	:type length: float
+
+	:return: DEM representation of the tablet
+	:rtype: tuple
 	"""
 
 	delta = (2 * radius * nspheres - length) / (nspheres-1)
@@ -67,10 +73,39 @@ def template_tablet(nspheres, radius, length):
 	return ms
 
 class Model(object):
-	""" This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS)
-	or numerical experiments for a particle-wall collision.
+	""" This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS) or numerical experiments for simulating particle-wall collisions.
 
-	TODO: enable particle-particle experiments to be conducted.
+    :param mesh: a dictionary that defines all meshes and their properties
+    :type mesh: dict
+
+    :param box: simulation box size boundaries (xmin, xmax, ymin, ymax, zmin, zmax)
+    :type box: tuple
+
+    :param restart: specify restart options via (freq=int, dirname=str, filename=str, restart=bool, frame=int)
+    :type restart: tuple
+
+    :param nSim: number of concurrent simulations to run (default 1)
+    :type nSim: int
+	
+    :param units: unit system (default 'si'). See `here <https://www.cfdem.com/media/DEM/docu/units.html>`_ for available options.
+    :type units: str
+
+    :param comm: MPI communicator (default COMM_WORLD)
+    :type comm: MPI Intracomm
+    
+    :param rank: processor rank
+    :type rank: int
+    
+    :param debug: set debug mode on (default False)
+    :type debug: bool
+    
+    :param engine: DEM engine (default 'engine_liggghts') 
+    :type engine: str
+    
+    :param species: defines the number and properties of all species
+    :type species: tuple
+
+    .. todo:: Support particle-particle collisions
 	"""
 	def __init__(self, **params):
 
@@ -127,8 +162,7 @@ class Model(object):
 		if 'units' not in self.params:
 			self.params['units'] = 'si'
 
-		if 'dim' not in self.params:
-			self.params['dim'] = 3
+		self.params['dim'] = len(self.params['box']) / 2
 
 		if 'nns_type' not in self.params:
 			self.params['nns_type'] = 'bin'
@@ -311,7 +345,9 @@ class Model(object):
 	def contactTime(self):
 		""" Computes the characteristic collision time assuming for a spring dashpot model 
 
-		Returns the contact time (float) """
+		:return: the contact time
+		:rtype: float
+		"""
 
 		if not hasattr(self, 'coefficientRestitution'):
 			rest = 0.9
@@ -331,12 +367,14 @@ class Model(object):
 		return np.sqrt(mass * (np.pi**2.0 + np.log(rest)**2) / kn)
 
 	def displacement(self, dt=None):
-		""" Generator that computes (iteratively) the contact overlap as a function of time 
+		""" Generator that computes (iteratively) the overlap distance (displacement) as a function of time 
 
-		[dt]: timestep used by the ODE integrator, by default it is 0.1% of contact duration
-		Returns time, delta, force as numpy arrays.
+		:param dt: timestep used by the ODE integrator, by default it is 0.1% of contact duration
+		:type dt: float
+		:return: time, displacement, and force as numpy arrays
+		:rtype: tuple
 
-		TODO: enable the user control the timestep / resolution.
+		.. todo:: Enable the user control the timestep resolution (number of timesteps).
 		"""
 
 		if not hasattr(self, 'characteristicVelocity'):
@@ -403,11 +441,26 @@ class Model(object):
 
 	@property
 	def contactRadius(self):
-		""" Returns the contact radius as a numpy array """
+		""" Returns the contact radius.
+
+		:return: contact radius
+		:rtype: numpy array
+
+		.. note:: This function is *not* useful since self._contRadius is not updated anywhere.
+
+		"""
 		return np.array(self._contRadius)
 
 	def _contactRadius(self, delta, radius):
-		""" Returns the contact radius based on Hertzian or JKR models"""
+		""" Internal function that computes the contact radius for Hertzian and JKR models
+
+		:param delta: normal displacement
+		:type delta: float
+		:param radius: effective radius
+		:type radius: float
+		:return: contact radius
+		:rtype: float
+		"""
 
 		if self.JKR:
 			if hasattr(self, 'cohesionEnergyDensity'):
@@ -500,9 +553,10 @@ class SpringDashpot(Model):
 	"""
 	A class that implements the linear spring model for granular materials
 
-	@material: python dictionary that specifies the material properties
-	@limitForce: boolean variable that turns on a limitation on the force,
-	preventing it from becoming attractive at the end of a contact.
+	:param material: a python dictionary that specifies the material properties
+	:type material: dict
+	:param limitForce: turns on a limitation on the force, preventing it from becoming attractive at the end of a contact
+	:type limitForce: bool
 	"""
 
 	def __init__(self, **params):
@@ -522,7 +576,13 @@ class SpringDashpot(Model):
 			self.limitForce = self.params['limitForce']
 
 	def springStiff(self, delta = None):
-		""" Computes the spring constant kn for F = - kn * delta
+		""" Computes the spring constant (:math:`k_n`) for the normal force :math:`F_n = k_n \delta_n`.
+
+		:param delta: normal displacement (:math:`\delta_n`)
+		:type delta: float
+		:return: spring stiffness (:math:`k_n`)
+		:rtype: float
+
 		"""
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -537,7 +597,11 @@ class SpringDashpot(Model):
 			* v0 **2.0 / (16.0 * np.sqrt(radius) * yMod))**(1.0/5.0)
 
 	def dissCoef(self):
+		""" Computes the normal dissipative coefficient (:math:`c_n`) for the dissipative force :math:`F_d = - c_n \dot{\delta_n}`
 
+		:return: dissipative coefficient (:math:`c_n`) 
+		:rtype: float
+		"""
 		rest = self.coefficientRestitution
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -553,10 +617,18 @@ class SpringDashpot(Model):
 		return loge * np.sqrt(4.0 * mass * kn / (np.pi**2.0 + loge**2.0))
 
 	def dissForce(self, delta, deltav):
-		""" Returns the dissipative (viscous) force : Fd = - cn * deltav
-		where cn is the dissipative coefficient.
+		""" Returns the dissipative (viscous) force: :math:`F_d = - c_n \dot{\delta_n}`
+		where :math:`c_n` is the dissipative coefficient.
 
-		Returns a numpy array of length(deltav). """
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+
+		:return: dissipative force :math:`F_d`
+		:rtype: float
+
+		"""
 
 		return self.dissCoef() * deltav
 
@@ -564,14 +636,13 @@ class SpringDashpot(Model):
 		""" Computes the displacement based on the analytical solution for
 		a spring-dashpot model.
 
-		[dt]: timestep. By default, the timestep is 1% of the contact time.
+		:param dt: timestep. By default, the timestep is 1% of the contact time.
+		:type dt: float
 
-		Returns numpy arrays: time, displacement, and force of size N, Nx2, and N,
-		respectively, where N is the total number of steps taken by the integrator.
-		The displacement array stores the overlap in its 1st column and the overlap
-		velocity (time derivative) in its 2nd column. 
+		:return: time, displacement, and force arrays of size :math:`N`, :math:`N` by 2, and :math:`N`, respectively, where :math:`N` is the total number of steps taken by the integrator. The displacement array stores the overlap in its 1st column and the overlap velocity (time derivative) in its 2nd column. 
+		:rtype: tuple
 
-		TODO: take cohesion (SJKR) into account
+		.. todo:: Take cohesion (simplified JKR) into account
 		"""
 
 		rest = self.coefficientRestitution
@@ -606,7 +677,13 @@ class SpringDashpot(Model):
 		return time, np.array([delta, deltav]).T, force
 
 	def elasticForce(self, delta):
-		""" Returns the elastic force based on Hooke's law: Fn = kn * delta """
+		""" Returns the elastic force based on Hooke's law: :math:`F_n = k_n \delta_n` 
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: elastic contact force
+		:rtype: float
+		"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -618,13 +695,27 @@ class SpringDashpot(Model):
 		return kn * delta
 
 	def cohesiveForce(self, delta):
-		""" Returns the cohesive force (SJKR) """
+		""" Returns the cohesive force :math:`F_c` (for the SJKR model) 
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: cohesvie force
+		:rtype: float
+		"""
 		radius = self.radius
 
 		return self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
 
 	def normalForce(self, delta, deltav):
-		""" Returns the total normal force """
+		""" Returns the total normal force :math:`F_n + F_d + F_c`
+
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+		:return: total normal force
+		:rtype: float
+		"""
 
 		force = self.elasticForce(delta) - self.dissForce(delta, deltav)
 		radius = self.radius
@@ -659,8 +750,13 @@ class HertzMindlin(Model):
 			self.limitForce = self.params['limitForce']
 
 	def springStiff(self, delta):
-		""" Computes the spring constant kn for
-			F = - kn * delta
+		""" Computes the spring constant :math:`k_n` for `F_n = k_n \delta_n^{3/2}`
+		
+		:param delta: normal displacement
+		:type delta: float
+		:return: stiffness (:math:`k_n`)
+		:rtype: float
+
 		"""
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -672,14 +768,26 @@ class HertzMindlin(Model):
 		return 4.0 / 3.0 * yEff * contRadius
 
 	def elasticForce(self, delta):
-		""" Returns the Hertzian elastic force"""
+		""" Returns the Hertzian elastic force :math:`F_n = k_n \delta_n^{3/2}`
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: elastic normal force
+		:rtype: float
+		"""
 
 		force = self.springStiff(delta) * delta
 		
 		return force
 
 	def dissCoef(self, delta):
-		""" Returns the dissipative force coefficient """
+		""" Returns the dissipative force coefficient 
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: coefficient for dissipative (viscous) normal force
+		:rtype: float
+		"""
 		rest = self.coefficientRestitution
 		yMod = self.youngsModulus
 		poiss = self.poissonsRatio
@@ -694,11 +802,29 @@ class HertzMindlin(Model):
 					np.sqrt(mass * 2 * yEff * contRadius)
 
 	def dissForce(self, delta, deltav):
-		""" Returns the dissipative force """
+		""" Returns the dissipative force
+
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+
+		:return: dissipative force
+		:rtype: float
+		 """
 		return self.dissCoef(delta) * deltav
 
 	def normalForce(self, delta, deltav):
-		""" Returns the total normal force """
+		""" Returns the total normal force :math:`F_n + F_d + F_c`
+
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+
+		:return: total normal force
+		:rtype: float
+		"""
 
 		force = self.elasticForce(delta) - self.dissForce(delta, deltav)
 		radius = self.radius
@@ -709,17 +835,20 @@ class HertzMindlin(Model):
 		return force
 
 	def cohesiveForce(self, delta):
-		""" Returns the cohesive force (SJKR) """
+		""" Returns the cohesive force for the simplified JKR model
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: cohesive force
+		:rtype: float
+		"""
 		radius = self.radius
 
 		return self.cohesionEnergyDensity * 2.0 * np.pi * delta * 2.0 * radius
 
-
 class ThorntonNing(Model):
 	"""
-	A basic class that implements the Thornton elasto-plastic model based on the publicationL
-	'A theoretical model for the stick/bounce behaviour of adhesive, elastic-plastic spheres', Powder
-	Tech, 99 (1998), 154-162
+	A basic class that implements the Thornton elasto-plastic model based on :cite:`thornton1998theoretical`. 
 	"""
 
 	def __init__(self, **params):
@@ -743,7 +872,11 @@ class ThorntonNing(Model):
 			self.noCheck = False
 
 	def computeYieldRadius(self):
-		""" Computes the contact radius at the yield point based on Eq. (65) in Thornton-Ning's paper """
+		""" Computes the contact radius at the yield point based on Eq. (65) in :cite:`thornton1998theoretical` 
+
+		return: yielding contact radius
+		rtype: float
+		"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -773,8 +906,13 @@ class ThorntonNing(Model):
 		return contRadius
 
 	def springStiff(self, delta):
-		""" Computes the spring constant kn for
-			F = - kn * delta
+		""" Computes the spring constant :math:`k_n` for `F_n = k_n \delta_n^{3/2}`
+		
+		:param delta: normal displacement
+		:type delta: float
+		:return: stiffness (:math:`k_n`)
+		:rtype: float
+
 		"""
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -785,7 +923,13 @@ class ThorntonNing(Model):
 		return 4.0 / 3.0 * yEff * self._contactRadius(delta, self.radius)
 
 	def elasticForce(self, delta):
-		""" Returns the Hertzian-like elastic force"""
+		""" Returns the Hertzian-like elastic force
+
+		:param delta: normal displacement
+		:type delta: float
+		:return: elastic normal force
+		:rtype: float
+		"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -848,7 +992,15 @@ class ThorntonNing(Model):
 			return force
 
 	def dissForce(self, delta, deltav = None):
-		""" Computes the piece-wise defined elastic force based on Thornton's model """
+		""" Computes the piece-wise defined elastic force 
+
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+		:return: dissipative force
+		:rtype: float
+		"""
 			
 		py = self.yieldPress
 
@@ -863,7 +1015,16 @@ class ThorntonNing(Model):
 			return 0
 
 	def normalForce(self, delta, deltav):
-		""" Returns the total normal force """
+		""" Returns the total normal force
+
+		:param delta: normal displacement
+		:type delta: float
+		:param deltav: time derivative of the normal displacement
+		:type deltav: float
+		:return: total normal force
+		:rtype: float
+
+		 """
 
 		force = self.elasticForce(delta) + self.dissForce(delta, deltav)
 
@@ -873,7 +1034,13 @@ class ThorntonNing(Model):
 		return force
 
 	def cohesiveForce(self, delta=None):
-		""" Returns the JKR cohesive force """
+		""" Returns the JKR cohesive force
+
+		:param delta: useless variable kept here for syntax consistency
+		:type delta: None
+		:return: cohesive force
+		:rtype: float
+		"""
 
 		poiss = self.poissonsRatio
 		yMod = self.youngsModulus
@@ -892,7 +1059,11 @@ class ThorntonNing(Model):
 
 	@property
 	def yieldVel(self):
-		""" Returns the minimum velocity required for a colliding particle to undergo plastic deformation """
+		""" Returns the minimum velocity required for a colliding particle to undergo plastic deformation
+
+		:return: yielding velocity
+		:rtype: float
+		"""
 
 		poiss = self.poissonsRatio
 		yEff = 0.5 * self.youngsModulus / (1. - poiss**2)

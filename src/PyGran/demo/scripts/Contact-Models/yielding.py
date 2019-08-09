@@ -1,3 +1,28 @@
+'''
+  This is the 
+   __________         ________                     
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+                                                      
+  DEM simulation and analysis toolkit
+  http://www.pygran.org, support@pygran.org
+
+  Core developer and main author:
+  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+  PyGran is open-source, distributed under the terms of the GNU Public
+  License, version 2 or later. It is distributed in the hope that it will
+  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+  received a copy of the GNU General Public License along with PyGran.
+  If not, see http://www.gnu.org/licenses . See also top-level README
+  and LICENSE files.
+ '''
+
 from PyGran import Analyzer
 from PyGran.Materials import stearicAcid
 from numpy import pi, sqrt, array
@@ -9,30 +34,30 @@ stearicAcid['yieldPress'] = 2.2e6
 
 def checkYieldNum(reff, **material):
 	""" Solves numerically the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
-        based on Thornton's elasto-plastic cohesive model:
+		based on Thornton's elasto-plastic cohesive model:
 
-        b = py * pi * reff / (2 * YoungEff)
-        c = reff * sqrt(gamma * pi / (2 * YoungEff))
+		b = py * pi * reff / (2 * YoungEff)
+		c = reff * sqrt(gamma * pi / (2 * YoungEff))
 
-        @reff: effective radius
-        @py: yielding pressure
-        @YoungEff: Young's effective modulus
-        @gamma: cohesion energy density
-        """
+		@reff: effective radius
+		@py: yielding pressure
+		@YoungEff: Young's effective modulus
+		@gamma: cohesion energy density
+	"""
 
 	# Extract material params from supplied database
-        py = material['yieldPress']
-        poiss = material['poissonsRatio']
-        gamma = material['cohesionEnergyDensity']
-        Young = material['youngsModulus']
-        YoungEff = Young * 0.5 / (1.0  - poiss)
+	py = material['yieldPress']
+	poiss = material['poissonsRatio']
+	gamma = material['cohesionEnergyDensity']
+	Young = material['youngsModulus']
+	YoungEff = Young * 0.5 / (1.0  - poiss)
 
 	def eq(x, *args):
 
-        	py, gamma, YoungEff = args
+		py, gamma, YoungEff = args
 
 		b = py * pi * reff / (2 * YoungEff)
-        	c = reff * sqrt(gamma * pi / (2 * YoungEff))
+		c = reff * sqrt(gamma * pi / (2 * YoungEff))
 
 		return x**3 - b * x - c
 
@@ -78,7 +103,7 @@ def checkYield(reff, **material):
 	return ay*ay/reff - sqrt(2. * pi * gamma * ay / YoungEff)
 
 
-System = Analyzer.System('/run/media/abimanso/Disk-2/Papers/DEM-XRCT/Sim-Data/Stearic-acid/Tapping/traj/traj-tapping.dump')
+System = Analyzer.System('traj-tapping.dump')
 data = []
 
 for ts in System:
@@ -107,11 +132,8 @@ for ts in System:
 
 		if delta >= deltay: 
 			ny += 1
-
-		#print deltay, delta
 		
 	data.append([ts, ny])	
-	print ts
 
 data = array(data)
 #plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))

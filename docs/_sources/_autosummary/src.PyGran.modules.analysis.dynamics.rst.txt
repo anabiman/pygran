@@ -1,0 +1,8 @@
+dynamics
+========
+
+.. automodule:: modules.analysis.dynamics
+
+   :members:   
+   :show-inheritance:
+   

@@ -1,50 +1,45 @@
-# !/usr/bin/python
-#  -*- coding: utf8 -*-
-
 '''
-  Created on March 30, 2016
-  @author: Andrew Abi-Mansour
+Python wrapper for LIGGGHTS library via ctypes
 
-  This is the 
-   __________         ________                     
+Created on March 30, 2016
+
+Author: Andrew Abi-Mansour
+
+This is the::
+
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
   ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
   ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
   ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                      
-  DEM simulation and analysis toolkit
-  http://www.pygran.org, support@pygran.org
 
-  Core developer and main author:
-  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
 
-  PyGran is open-source, distributed under the terms of the GNU Public
-  License, version 2 or later. It is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-  received a copy of the GNU General Public License along with PyGran.
-  If not, see http://www.gnu.org/licenses . See also top-level README
-  and LICENSE files.
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
- -------------------------------------------------------------------------
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 
-  Python wrapper for LIGGGHTS library via ctypes. This file was modified from
-  the LAMMPS source code.
+This file was modified from the LAMMPS source code.
 
-  LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
-  http://lammps.sandia.gov, Sandia National Laboratories
-  Steve Plimpton, sjplimp@sandia.gov
+LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+http://lammps.sandia.gov, Sandia National Laboratories
+Steve Plimpton, sjplimp@sandia.gov
 
-  Copyright (2003) Sandia Corporation.  Under the terms of Contract
-  DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-  certain rights in this software.  This software is distributed under
-  the GNU General Public License.
+Copyright (2003) Sandia Corporation.  Under the terms of Contract
+DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+certain rights in this software.  This software is distributed under
+the GNU General Public License.
 
-  See the README file in the top-level LAMMPS directory.
- --------------------------------------------------------------------------
-
+See the README file in the top-level LAMMPS directory.
 
 '''
 
@@ -64,8 +59,20 @@ from importlib import import_module
 from PyGran.modules.tools import find, dictToTuple
 
 class liggghts:
-  # detect if Python is using version of mpi4py that can pass a communicator
+  """
+  A class that provides API-like access to LIGGGHTS-PUBLIC
 
+  :param library: full path to the LIGGGHTS-PUBLIC module (.so file)
+  :type library: str
+  :param style: particle type ('spherical' by default)
+  :type style: str
+  :param dim: simulation box dimension (default 3)
+  :type dim: int
+  :param units: unit system (default 'si'). See `here <https://www.cfdem.com/media/DEM/docu/units.html>`_ for available options.
+  :type units: str
+  """
+  
+  # detect if Python is using version of mpi4py that can pass a communicator
   try:
     from mpi4py import MPI
   except:
@@ -158,11 +165,25 @@ class liggghts:
         self.lmp = None
 
   def file(self,file):
-    """ For python 3, I had to encode the string as an 8 character utf """
+    """ Function for loading LIGGGHTS input file scripts. 
+
+    :param file: input filename
+    :type file: str
+
+    .. note:: For python 3, "file" is encoded as an 8 character utf 
+
+    """
     self.lib.lammps_file(self.lmp,file.encode('utf-8'))
 
   def command(self,cmd):
-    """ For python 3, I had to encode the string as an 8 character utf """
+    """ Function for executing a LIGGGHTS command
+
+    :param cmd: input LIGGGHTS command
+    :type cmd: str
+
+    .. note:: For python 3, "cmd" is encoded as an 8 character utf 
+
+    """
     self.lib.lammps_command(self.lmp,cmd.encode('utf-8'))
 
   def extract_global(self,name,type):
@@ -620,7 +641,7 @@ class DEMPy:
     @mtype: mesh type
     @args: additional args
     """
-    wall = False
+    wallIsMesh = False
 
     if 'mesh' in self.pargs:
       for mesh in self.pargs['mesh'].keys():
@@ -630,14 +651,14 @@ class DEMPy:
               if mesh == name:
                 self.pargs['mesh'][mesh]['import'] = True
                 self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
-                wall = True
+                wallIsMesh = True
 
             elif 'import' in self.pargs['mesh'][mesh]:
               if self.pargs['mesh'][mesh]['import']:
                 self.importMesh(mesh, self.pargs['mesh'][mesh]['file'], self.pargs['mesh'][mesh]['mtype'], self.pargs['mesh'][mesh]['id'], **self.pargs['mesh'][mesh]['args'])  
-                wall = True
+                wallIsMesh = True
               
-      if wall:
+      if wallIsMesh:
         self.setupWall(wtype='mesh')
     
 
@@ -688,7 +709,6 @@ class DEMPy:
     modelExtra = tuple(modelExtra)
 
     # Can we take model args into account for walls???
-
     if wtype == 'mesh':
       meshName = tuple([mname for mname in self.pargs['mesh'].keys() if 'file' in self.pargs['mesh'][mname]])
       nMeshes = len(meshName)
@@ -813,6 +833,11 @@ class DEMPy:
   def velocity(self, *args):
     """
     Assigns velocity to selected particles.
+    :param args: group-ID style args keyword value
+    :type args: tuple
+
+    :note: See `link <https://www.cfdem.com/media/DEM/docu/velocity.html>`_ 
+           for info on keywords and their associated values.
     """
     self.lmp.command('velocity' + (' {}' * len(args)).format(*args))
 
@@ -1002,10 +1027,10 @@ class DEMPy:
         if self.pargs['traj']['mfile']:
           name = ''
 
-          # see if we have many meshes to dump if the name of one mfile supplied by the user
+          # see if we have many meshes to dump if the name of one mfile is supplied by the user
           for mesh in self.pargs['mesh'].keys():
             if 'file' in self.pargs['mesh'][mesh]:
-              if self.pargs['mesh'][mesh]['import']:
+              if self.pargs['mesh'][mesh]['importname']:
                 name += mesh + ' '
 
           if len(name):
@@ -1085,11 +1110,18 @@ class DEMPy:
 
     return getattr(self, 'my{name}'.format(**args))
 
-  def add_viscous(self, **args):
-    """ Adds a viscous damping force: F = - gamma * v for each particle
-    @species = 1,2, ... or all
-    @gamma: real number (viscosity coefficient)
-    @[scale]: tuple (species, ratio) to scale gamma with
+  def addViscous(self, **args):
+    """ Adds a viscous damping force :math:`F` proportional
+    to each particle's velocity :math:`v`:
+    
+    :math:`F = - \\gamma v`
+
+    :param species: species index (0, 1, ...)
+    :type species: int
+    :param gamma: viscosity coefficient (:math:`\\gamma`)
+    :type gamma: positive float
+    :param scale: (species, ratio) tuple to scale gamma with
+    :type scale: tuple
     """
     if 'scale' not in args:
       args['scale'] = (args['species'], 1)

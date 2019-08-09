@@ -39,13 +39,9 @@
 
         <aside id="sidebar">
           {% if site.show_downloads %}
-            <a href="install/main.html" class="button">
+            <a href="docs/introduction.html#installation" class="button">
               <small>Browse</small>
               Installation
-            </a>
-            <a href="docs/manual-v1.1.pdf" class="button">
-              <small>Download</small>
-              Manual (v1.1)
             </a>
             <a href="src/PyGran/demo/examples.html" class="button">
               <small>Browse</small>
@@ -63,7 +59,7 @@
           {% endif %}
 
           {% if site.github.is_project_page %}
-	    <p>Build status: <a href="https://circleci.com/gh/Andrew-AbiMansour/PyGran"><img src="https://circleci.com/gh/Andrew-AbiMansour/PyGran.svg?branch=develop"></a></p>
+	    <p><a href="https://circleci.com/gh/Andrew-AbiMansour/PyGran"><img src="https://circleci.com/gh/Andrew-AbiMansour/PyGran.svg?branch=develop"></a></p>
             <p class="repo-owner"><a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a> is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>.</p>
           {% endif %}
 

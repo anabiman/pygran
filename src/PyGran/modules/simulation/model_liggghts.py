@@ -1,40 +1,32 @@
-
-# !/usr/bin/python
-#  -*- coding: utf8 -*-
-
 '''
-	Created on July 1, 2016
-	@author: Andrew Abi-Mansour
+A module for creating contact models on the fly for LIGGGHTS
 
-	This is the 
-	 __________         ________                     
-	██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
-	██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
-	██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
-	██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
-	██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
-	╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-	                                                    
-    DEM simulation and analysis toolkit
-    http://www.pygran.org, support@pygran.org
+Created on July 1, 2016
 
-    Core developer and main author:
-    Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+Author: Andrew Abi-Mansour
 
-    PyGran is open-source, distributed under the terms of the GNU Public
-    License, version 2 or later. It is distributed in the hope that it will
-    be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-    of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-    received a copy of the GNU General Public License along with PyGran.
-    If not, see http://www.gnu.org/licenses . See also top-level README
-    and LICENSE files.
+This is the::
 
- -------------------------------------------------------------------------
+  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
-    This file is a module for creating contact models for LIGGGHTS on the fly.
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
 
- --------------------------------------------------------------------------
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
 
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 '''
 
 from PyGran.modules.tools import find

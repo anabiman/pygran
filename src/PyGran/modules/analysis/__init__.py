@@ -26,3 +26,4 @@ from .core import *
 from . import dynamics
 from . import equilibrium
 from . import imaging
+from . import core

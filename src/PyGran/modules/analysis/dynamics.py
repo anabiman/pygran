@@ -1,42 +1,51 @@
-#  -*- coding: utf8 -*-
-
 '''
-  Created on July 11, 2016
-  @author: Andrew Abi-Mansour
+This module provides classes for time-dependent analysis
 
-  This is the 
-   __________         ________                     
-  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
-  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
-  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
-  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
-  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
-  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                      
-  DEM simulation and analysis toolkit
-  http://www.pygran.org, support@pygran.org
+Created on July 11, 2016
 
-  Core developer and main author:
-  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+Author: Andrew Abi-Mansour
 
-  PyGran is open-source, distributed under the terms of the GNU Public
-  License, version 2 or later. It is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-  received a copy of the GNU General Public License along with PyGran.
-  If not, see http://www.gnu.org/licenses . See also top-level README
-  and LICENSE files.
+This is the::
 
- -------------------------------------------------------------------------
- '''
+	██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+	██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+	██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+	██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+	██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+	╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
+
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
+'''
 
 import numpy
 
 class Temporal(object):
+	""" A generic class that enables time-dependent analysis of DEM data """
+
 	def __init__(self, System):
 		self.System = System
 
 	def series(self, attr):
+		"""
+		Extracts a time series for a supplied *attr* stored in self.System
+
+		:param attr: attribute to extract time series for
+		:type attr: string
+		:return: time series
+		:rtype: numpy array of dimensions nframes x dim_attr
+		"""
 		out = []
 		self.System.rewind()
 
@@ -50,11 +59,17 @@ class Temporal(object):
 		
 	def flow(self, density=None, dt=1):
 		"""
-		Computes flow rate
-		@[density]: true mass density. When supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time
-		@[dt]: timestep in units of time, default 1.
+		Computes flow rate. When *density* is supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time.
 
-		TODO: Make it more efficient
+		:param density: true mass density
+		:type density: float 
+		:param dt: timestep in units of time, default 1.
+		:type dt: float
+		:return: flow rate
+		:rtype: 1D numpy array
+
+		.. todo:: 
+			Make this routine more efficient
 		"""
 
 		self.System.rewind()
@@ -82,12 +97,22 @@ class Temporal(object):
 		"""
 		Computes the frequency of particle-wall collisions
 
-		@[xmin]: float defining the left-hand wall pependicular to the y-z plane
-		@[xmax]: float defining the right-hand wall pependicular to the y-z plane
-		@[ymin]: float defining the right-hand wall pependicular to the x-z plane
-		@[ymax]: float defining the right-hand wall pependicular to the x-z plane
-		@[zmin]: float defining the right-hand wall pependicular to the x-y plane
-		@[zmax]: float defining the right-hand wall pependicular to the x-y plane
+		:param xmin: bound that specifies the left-hand wall pependicular to the y-z plane
+		:type xmin: float
+		:param xmax: bound that specifies the right-hand wall pependicular to the y-z plane
+		:type xmax: float
+		:param ymin: bound that specifies the right-hand wall pependicular to the x-z plane
+		:type ymin: float
+		:param ymax: bound that specifies the right-hand wall pependicular to the x-z plane
+		:type ymax: float
+		:param zmin: bound that specifies the right-hand wall pependicular to the x-y plane
+		:type zmin: float
+		:param zmax: bound that specifies the right-hand wall pependicular to the x-y plane
+		:type zmax: float
+		:return: wall collision frequency
+		:rtype: float
+
+		.. note:: This routines supports only 3D systems
 		"""
 
 		if not boundary:

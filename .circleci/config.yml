@@ -25,6 +25,7 @@ jobs:
           name: install PyGran
           command: |
             pip3 install --upgrade pip --user
+            pip3 install -e .[extra] --user
             pip3 install . --user
 
       - run:

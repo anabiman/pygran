@@ -1,0 +1,23 @@
+modules.simulation.generator
+============================
+
+.. automodule:: modules.simulation.generator
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      hcp
+      rand
+   
+   
+
+   
+   
+   
+
+   
+   
+   

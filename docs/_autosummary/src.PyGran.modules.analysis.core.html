@@ -1,0 +1,703 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>core &mdash; PyGran 1.2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../static/css/main.css" type="text/css" />
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PyGran 1.2.0 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#submodules">Submodules</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>core</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_autosummary/src.PyGran.modules.analysis.core.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="module-modules.analysis.core">
+<span id="core"></span><h1>core<a class="headerlink" href="#module-modules.analysis.core" title="Permalink to this headline">¶</a></h1>
+<p>A module that provides the fundamental classes used in the analysis module</p>
+<p>Created on July 10, 2016</p>
+<p>Author: Andrew Abi-Mansour</p>
+<p>This is the:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+</pre></div>
+</div>
+<p>DEM simulation and analysis toolkit
+<a class="reference external" href="http://www.pygran.org">http://www.pygran.org</a>, <a class="reference external" href="mailto:support&#37;&#52;&#48;pygran&#46;org">support<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>Core developer and main author:
+Andrew Abi-Mansour, <a class="reference external" href="mailto:andrew&#46;abi&#46;mansour&#37;&#52;&#48;pygran&#46;org">andrew<span>&#46;</span>abi<span>&#46;</span>mansour<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
+and LICENSE files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">members</dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">show-inheritance</dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+<dl class="class">
+<dt id="modules.analysis.core.SubSystem">
+<em class="property">class </em><code class="descclassname">modules.analysis.core.</code><code class="descname">SubSystem</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on these properties. This class is iterable but NOT an iterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>units</strong> (<em>string</em>) – unit system</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="modules.analysis.core.SubSystem.keys">
+<code class="descname">keys</code><a class="headerlink" href="#modules.analysis.core.SubSystem.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all stored attribute keynames</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem._metaget">
+<code class="descname">_metaget</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem._metaget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem._metaget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A meta function for returning dynamic class attributes treated as lists (for easy slicing)
+and return as numpy arrays for numerical computations / manipulations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem._resetSubSystem">
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mainly used by System for rewinding traj back to frame 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem._constructAttributes">
+<code class="descname">_constructAttributes</code><span class="sig-paren">(</span><em>sel=None</em>, <em>mesh=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem._constructAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem._constructAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs dynamic functions (getters) for all keys found in the trajectory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a hard copy of the SubSystem</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.conversion">
+<code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
+<p>TODO: support all possible variables (is this possible???)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.units">
+<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales all ss elements by a float or int ‘value’</p>
+<p>&#64;[attr]: attribute to scale (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates all ss elements by a tuple of integers or floats</p>
+<p>&#64;value: tuple of float or int by which to translate the system
+&#64;[attr]: tuple of attributes to translate system by (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.SubSystem.noise">
+<code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#SubSystem.noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.SubSystem.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds white noise of standard deviation <a href="#id1"><span class="problematic" id="id2">`</span></a>sigma’ to all elements with attribute <a href="#id3"><span class="problematic" id="id4">`</span></a>attr’.</p>
+<p>&#64;sigma: standard deviation of the Gaussian (white) noise
+&#64;[attr]: attribute to perturb (positions by default)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.analysis.core.Mesh">
+<em class="property">class </em><code class="descclassname">modules.analysis.core.</code><code class="descname">Mesh</code><span class="sig-paren">(</span><em>fname</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Mesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modules.analysis.core.SubSystem" title="modules.analysis.core.SubSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">modules.analysis.core.SubSystem</span></code></a></p>
+<p>The Mesh class stores a list of meshes and their associated attributes / methods.
+This class is iterable but NOT an iterator.</p>
+<p>&#64;fname: mesh filename</p>
+<dl class="method">
+<dt id="modules.analysis.core.Mesh._updateSystem">
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Mesh._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Mesh._updateSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class function for updating the state of a Mesh</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh._readFile">
+<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Mesh._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Mesh._readFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a mesh file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh._resetSubSystem">
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Mesh._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Mesh._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mainly used by System for rewinding traj back to frame 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh._constructAttributes">
+<code class="descname">_constructAttributes</code><span class="sig-paren">(</span><em>sel=None</em>, <em>mesh=False</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh._constructAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs dynamic functions (getters) for all keys found in the trajectory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh._metaget">
+<code class="descname">_metaget</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh._metaget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A meta function for returning dynamic class attributes treated as lists (for easy slicing)
+and return as numpy arrays for numerical computations / manipulations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.conversion">
+<code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
+<p>TODO: support all possible variables (is this possible???)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a hard copy of the SubSystem</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="modules.analysis.core.Mesh.keys">
+<code class="descname">keys</code><a class="headerlink" href="#modules.analysis.core.Mesh.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all stored attribute keynames</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.noise">
+<code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds white noise of standard deviation <a href="#id5"><span class="problematic" id="id6">`</span></a>sigma’ to all elements with attribute <a href="#id7"><span class="problematic" id="id8">`</span></a>attr’.</p>
+<p>&#64;sigma: standard deviation of the Gaussian (white) noise
+&#64;[attr]: attribute to perturb (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales all ss elements by a float or int ‘value’</p>
+<p>&#64;[attr]: attribute to scale (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates all ss elements by a tuple of integers or floats</p>
+<p>&#64;value: tuple of float or int by which to translate the system
+&#64;[attr]: tuple of attributes to translate system by (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Mesh.units">
+<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Mesh.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.analysis.core.Particles">
+<em class="property">class </em><code class="descclassname">modules.analysis.core.</code><code class="descname">Particles</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#modules.analysis.core.SubSystem" title="modules.analysis.core.SubSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">modules.analysis.core.SubSystem</span></code></a></p>
+<p>The Particle class stores all particle properties and the methods that operate on
+these properties. This class is iterable but NOT an iterator.</p>
+<dl class="method">
+<dt id="modules.analysis.core.Particles._updateSystem">
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._updateSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class function for updating the state of Particles</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._resetSubSystem">
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mainly used by System for rewinding traj back to frame 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeROG">
+<code class="descname">computeROG</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeROG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeROG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the radius of gyration (ROG) for an N-particle system:
+ROG = &lt;sqrt(sum_i (r_i - rm)^2)&gt; where rm is the mean position of all
+particles, and &lt;…&gt; is the ensemble average. Alternatively, one can
+compute ROG as sum_i &lt;r_i^T r_i&gt; - rm ^T rm</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeCOM">
+<code class="descname">computeCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeCOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns center of mass</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeGCOM">
+<code class="descname">computeGCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeGCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeGCOM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the geometric center of mass</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeRadius">
+<code class="descname">computeRadius</code><span class="sig-paren">(</span><em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeRadius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the maximum radius of an N-particle (spherical) system
+by sorting the radial components and returning the average of the sqrt
+of the radius of the first N max data points.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeRDF">
+<code class="descname">computeRDF</code><span class="sig-paren">(</span><em>dr=None</em>, <em>center=True</em>, <em>rMax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeRDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the three-dimensional radial distribution function for a set of
+spherical particles contained in a cube with side length S.  This simple
+function finds reference particles such that a sphere of radius rMax drawn
+around the particle will fit entirely within the cube, eliminating the need
+to compensate for edge effects.  If no such particles exist, an error is
+returned.  Try a smaller rMax…or write some code to handle edge effects! ;)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>length of each side of the cube in space</strong> (<em>S</em>) – </p></li>
+<li><p><strong>outer diameter of largest spherical shell</strong> (<em>rMax</em>) – </p></li>
+<li><p><strong>increment for increasing radius of spherical shell</strong> (<em>dr</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl>
+<dt>Implicit arguments:</dt><dd><p>x               an array of x positions of centers of particles
+y               an array of y positions of centers of particles
+z               an array of z positions of centers of particles</p>
+</dd>
+<dt>Returns a tuple: (g, radii, interior_indices)</dt><dd><p>g(r)            a numpy array containing the correlation function g(r)
+radii           a numpy array containing the radii of the</p>
+<blockquote>
+<div><p>spherical shells used to compute g(r)</p>
+</div></blockquote>
+<p>reference_indices   indices of reference particles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeAngleRepose">
+<code class="descname">computeAngleRepose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeAngleRepose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeAngleRepose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the angle of repos theta = arctan(h_max/L)
+in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeMass">
+<code class="descname">computeMass</code><span class="sig-paren">(</span><em>tdensity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeMass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mass of all particles</p>
+<p>&#64;tdensity: true density of the powder
+returns the summation of the mass of all particles</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeIntensitySegregation">
+<code class="descname">computeIntensitySegregation</code><span class="sig-paren">(</span><em>resol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeIntensitySegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeIntensitySegregation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the intensity of segregation for binary mixture
+as defined by Danckwerts:</p>
+<p>I = sigma_a**2 / (mean_a (1 - mean_a))</p>
+<p>&#64;[resol]: bin size for grid construction (default 3 * diameter)
+returns scalar intensity</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeScaleSegregation">
+<code class="descname">computeScaleSegregation</code><span class="sig-paren">(</span><em>nTrials=1000</em>, <em>resol=None</em>, <em>Npts=50</em>, <em>maxDist=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeScaleSegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeScaleSegregation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the correlation coefficient as defined by Danckwerts:
+R(r) = a * b / std(a)**2</p>
+<p>This is done via a Monte Carlo simulation.</p>
+<p>&#64;[resol]: bin size for grid construction (default min radius)
+&#64;[nTrials]: number of Monte Carlo trials (sample size)
+&#64;[Npts]: number of bins for histogram construction
+&#64;[maxDist]: maximum distance (in units of grid size) to sample</p>
+<p>Returns the coefficient of correlation R(r) and separation distance (r)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeDensity">
+<code class="descname">computeDensity</code><span class="sig-paren">(</span><em>tdensity</em>, <em>shape='box'</em>, <em>bounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeDensity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the bulk density for a selection of particles from their <em>true</em> density.
+The volume is determined approximately by constructing a box/cylinder/cone
+embedding the particles. Particles are assumed to be spherical in shape.</p>
+<p>&#64;tdensity: true powder density
+&#64;[shape]: box, cylinder-x, cylinder-y, or cylinder-z</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeDensityLocal">
+<code class="descname">computeDensityLocal</code><span class="sig-paren">(</span><em>bdensity</em>, <em>dr</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeDensityLocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeDensityLocal" title="Permalink to this definition">¶</a></dt>
+<dd><p>” Computes a localized density at a series of discretized regions of thickness ‘dr’
+along an axis specified by the user</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.computeVolume">
+<code class="descname">computeVolume</code><span class="sig-paren">(</span><em>shape='box'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.computeVolume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.computeVolume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the volume of a granular system based on a simple geometry
+&#64;[shape]: box, cylinder-x, cylinder-y, or cylinder-z</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._goto">
+<code class="descname">_goto</code><span class="sig-paren">(</span><em>iframe</em>, <em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._goto" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function assumes we’re reading a non-const N trajectory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._readDumpFile">
+<code class="descname">_readDumpFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._readDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._readDumpFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a single dump file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a single output file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._writeDumpFile">
+<code class="descname">_writeDumpFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._writeDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._writeDumpFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a single dump file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._readFile">
+<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Particles._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Particles._readFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a particle trajectory file</p>
+<p>TODO: Support skip for single dump file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._constructAttributes">
+<code class="descname">_constructAttributes</code><span class="sig-paren">(</span><em>sel=None</em>, <em>mesh=False</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles._constructAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs dynamic functions (getters) for all keys found in the trajectory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles._metaget">
+<code class="descname">_metaget</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles._metaget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A meta function for returning dynamic class attributes treated as lists (for easy slicing)
+and return as numpy arrays for numerical computations / manipulations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.conversion">
+<code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
+<p>TODO: support all possible variables (is this possible???)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a hard copy of the SubSystem</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="modules.analysis.core.Particles.keys">
+<code class="descname">keys</code><a class="headerlink" href="#modules.analysis.core.Particles.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all stored attribute keynames</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.noise">
+<code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds white noise of standard deviation <a href="#id9"><span class="problematic" id="id10">`</span></a>sigma’ to all elements with attribute <a href="#id11"><span class="problematic" id="id12">`</span></a>attr’.</p>
+<p>&#64;sigma: standard deviation of the Gaussian (white) noise
+&#64;[attr]: attribute to perturb (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.scale">
+<code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales all ss elements by a float or int ‘value’</p>
+<p>&#64;[attr]: attribute to scale (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.translate">
+<code class="descname">translate</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translates all ss elements by a tuple of integers or floats</p>
+<p>&#64;value: tuple of float or int by which to translate the system
+&#64;[attr]: tuple of attributes to translate system by (positions by default)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.Particles.units">
+<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="headerlink" href="#modules.analysis.core.Particles.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.analysis.core.Factory">
+<em class="property">class </em><code class="descclassname">modules.analysis.core.</code><code class="descname">Factory</code><a class="reference internal" href="../_modules/modules/analysis/core.html#Factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A factory for system class. It creates subclasses of SubSystems. Its only two methods
+are static, thus no need to instantiate this class.</p>
+<p>&#64;SubSystem: filename (or list of filenames) for the subsystem trajectory
+&#64;[units](si): unit system can be either ‘si’ or ‘micro’</p>
+<dl class="staticmethod">
+<dt id="modules.analysis.core.Factory.factory">
+<em class="property">static </em><code class="descname">factory</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#Factory.factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.Factory.factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of Subsystems</p>
+<p>System(Obj1=[(value11, args11), (value12, args12), … (value1N, args1N)], …)</p>
+<p>args11, args12, etc. are dictionaries of keywords args for objects of type obj1.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="modules.analysis.core.System">
+<em class="property">class </em><code class="descclassname">modules.analysis.core.</code><code class="descname">System</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A System contains all the information describing a DEM system.
+A meaningful system always requires at least one trajectory file to read. A trajectory is a (time)
+series corresponding to the coordinates of all particles/meshes/objects in the system.
+System handles the time frame and controls i/o operations. It contains one or more SubSystem
+derivatives (e.g. ‘Particles’, ‘Mesh’) which store all the particle and mesh attributes
+read from the trajectory file (variables such as positions, momenta, angular velocities,
+forces, stresses, radii, etc.). Objects that can be created by this class must be of the
+‘Particles’ or ‘Mesh’ type. Multiple objects can be created by this class if a list of
+filenames are passed to its constructors.</p>
+<p>&#64;[Particles]: filename (or list of filenames) for the particle trajectory
+&#64;[Mesh]: filename (or list of filenames) for the mesh trajectory
+&#64;[units](si): unit system can be either ‘si’ or ‘micro’
+&#64;[module]: for user-defined dervied SubSystems, ‘module’ must be a string that specifies the name of
+the module in which the user-defined class is defined.</p>
+<p>How time stepping works: when looping over System (traj file), the frame is controlled only by System
+through methods defined in a SubSystem sublass (read/write functions).</p>
+<p>This class is an iterator.</p>
+<dl class="method">
+<dt id="modules.analysis.core.System.units">
+<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change unit system to units ore return units if None
+units:  si, micro, cgs, or nano</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.System.goto">
+<code class="descname">goto</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System.goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System.goto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Go to a specific frame in the trajectory. If frame is -1
+then this function will read the last frame</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.System.skip">
+<code class="descname">skip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System.skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System.skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Skips all empty frames i.e. moves the trajectory to the 1st frame containing
+non-zero elements</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="modules.analysis.core.System.keys">
+<code class="descname">keys</code><a class="headerlink" href="#modules.analysis.core.System.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the key objects found in the trajctory files</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.System.rewind">
+<code class="descname">rewind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System.rewind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System.rewind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read trajectory from the beginning</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.System.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method updates the system attributes!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="modules.analysis.core.System._updateSystem">
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#System._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.System._updateSystem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure the system is aware of any update in its attributes caused by
+a frame change.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.analysis.core.numericalSort">
+<code class="descclassname">modules.analysis.core.</code><code class="descname">numericalSort</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#numericalSort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.numericalSort" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sorting function by numerical numbers for glob.glob</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="modules.analysis.core.select">
+<code class="descclassname">modules.analysis.core.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data</em>, <em>*region</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/modules/analysis/core.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modules.analysis.core.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a selection of particles based on a subsystem defined by region
+&#64; region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax). If undefined, all particles are considered.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2019 PyGran is a <b>connectical</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="../static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

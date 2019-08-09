@@ -1,0 +1,7 @@
+core
+====
+
+.. automodule:: modules.analysis.core
+
+   :members:   
+   :show-inheritance:
