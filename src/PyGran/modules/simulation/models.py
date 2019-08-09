@@ -162,7 +162,7 @@ class Model(object):
 		if 'units' not in self.params:
 			self.params['units'] = 'si'
 
-		self.params['dim'] = len(self.params['box']) / 2
+		self.params['dim'] = int(len(self.params['box']) / 2)
 
 		if 'nns_type' not in self.params:
 			self.params['nns_type'] = 'bin'
