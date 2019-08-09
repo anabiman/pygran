@@ -190,7 +190,7 @@ class DEM:
       else:
         self.mfile = None
 
-  def scatter_atoms(self,name,type,count,data):
+  def scatter_atoms(self,name, type, count, data):
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
         return self.dem.scatter_atoms(name,type,count,data)
@@ -245,10 +245,19 @@ class DEM:
         break
   
   def velocity(self, *args):
-      for i in range(self.nSim):
-        if self.rank < self.pProcs * (i + 1):
-          self.dem.velocity(*args)
-          break
+    """ Assigns velocity to selected particles.
+
+    :param args: group-ID style args keyword value
+    :type args: tuple
+
+    :note: See `link <https://www.cfdem.com/media/DEM/docu/velocity.html>`_ 
+           for info on keywords and their associated values.
+    """
+
+    for i in range(self.nSim):
+      if self.rank < self.pProcs * (i + 1):
+        self.dem.velocity(*args)
+        break
 
   def addViscous(self, **args):
     """ Adds a viscous damping force :math:`F` proportional
@@ -278,6 +287,7 @@ class DEM:
         return self.dem.run(nsteps, dt, itype)
         
   def setupParticles(self):
+    """ Internal function used to create particles in LIGGGHTS """
 
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -286,7 +296,7 @@ class DEM:
 
   def createProperty(self, name, *args):
     """
-    Material and interaction properties required
+    Internal function used to create material and interaction properties
     """
 
     for i in range(self.nSim):
@@ -300,7 +310,13 @@ class DEM:
   def importMeshes(self, name=None):
     """
     An internal function that is called during DEM initialization for importing meshes.
-    This function imports all meshes and sets them up as walls. Can import only one mesh specified by the 'name' keyword.
+    Unless `name` is supplied, this function by default imports all meshes and sets 
+    them up as walls.
+
+    :param name: mesh name
+    :type name: str
+
+    :note: Can import only one mesh specified by the `name` keyword.
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -311,8 +327,17 @@ class DEM:
     """
     Imports a mesh file (STL or VTK)
 
-    
+    :param name: define mesh name
+    :type name: str
+    :param file: mesh file pathname
+    :type file: str
+    :param mtype: mesh type (mesh/surface, mesh/surface/stress/deform, etc.)
+    :type mtype: str
+    :param args: mesh_keywords
+    :type args: dict 
 
+    :note: see `link <https://www.cfdem.com/media/DEM/docu/fix_mesh_surface.html>`_ 
+           for further info on `mtype` and `args`.
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -344,7 +369,8 @@ class DEM:
 
   def printSetup(self):
     """
-    Specify which variables to write to file, and their format
+    Updates the print setup used to set which variables to write to file, 
+    and their format.
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -353,6 +379,16 @@ class DEM:
 
   def writeSetup(self, only_mesh=False, name=None):
     """
+    This creates dump files for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during
+    the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.
+
+    :param only_mesh: controls if the particle dump is updated
+    :type only_mesh: bool
+    :param name: name of the particle dump
+    :type name: str
+    :return: mesh dump ID(s)
+    :rtype: str or list(str)
+
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -367,22 +403,30 @@ class DEM:
 
         return dumpID
 
-  def setupIntegrate(self, name, itype='nve/sphere', group='all'):
+  def setupIntegrate(self, itype='nve/sphere', group='all'):
     """
-    Specify how Newton's eqs are integrated in time. 
-    @ name: name of the fixed simulation ensemble applied to all atoms
-    @ dt: timestep
-    @ ensemble: ensemble type (nvt, nve, or npt)
-    @ args: tuple args for npt or nvt simulations
+    Controls how Newton's eqs are integrated in time. 
+
+    :param itype: integrator type ('nve/sphere' or 'multisphere')
+    :type itype: str
+    :param group: particle group ID to apply the integration for
+    :type group: str
+
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
         self.dem.setupIntegrate(name, itype, group)
         break
 
-  def integrate(self, steps, dt, itype=None):
+  def integrate(self, steps, dt):
     """
-    Run simulation in time
+    Advance system in time.
+
+    :param steps: number of steps
+    :type steps: int
+    :param dt: timestep
+    :type dt: float
+
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -391,7 +435,10 @@ class DEM:
 
   def remove(self, name):
     """
-    Delete variable/object
+    Delete variable/object by name.
+
+    :param name: name of variable/object to unfix
+    :type name: str
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -400,7 +447,7 @@ class DEM:
 
   def monitor(self, **args):
     """
-    Monitor a variable
+    Not yet documented
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -408,6 +455,7 @@ class DEM:
 
   def plot(self, fname, xlabel, ylabel, output=None, xscale=None):
     """
+    Not yet documented
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -416,6 +464,7 @@ class DEM:
 
   def moveMesh(self, name, **args):
     """
+    Not yet documented
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -423,6 +472,7 @@ class DEM:
 
   def saveas(self, name, fname):
     """
+    Not yet documented
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -431,6 +481,10 @@ class DEM:
 
   def command(self, cmd):
     """
+    Pass a command to DEM engine.
+
+    :param cmd: command specific to the DEM engine
+    :type cmd: str
     """
     for i in range(self.nSim):
       if self.rank < self.pProcs * (i + 1):
@@ -439,7 +493,7 @@ class DEM:
 
   def close(self):
     """
-    Deletes allocated memory and changes directory back to cwd. 
+    Internal function that frees allocated memory and changes directory back to current working directory. 
     """
     # Dont call this since the user might be running multiple simulations in one script
     #MPI.Finalize()

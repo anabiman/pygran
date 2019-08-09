@@ -1,32 +1,32 @@
-# !/usr/bin/python
-# -*- coding: utf8 -*- 
-
 '''
-Created on March 30, 2016
-@author: Andrew Abi-Mansour
+A set of routines for generating particle configurations
 
-  This is the 
-   __________         ________                     
+Created on March 30, 2016
+
+Author: Andrew Abi-Mansour
+
+This is the::
+
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
   ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
   ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
   ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                      
-  DEM simulation and analysis toolkit
-  http://www.pygran.org, support@pygran.org
 
-  Core developer and main author:
-  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
 
-  PyGran is open-source, distributed under the terms of the GNU Public
-  License, version 2 or later. It is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-  received a copy of the GNU General Public License along with PyGran.
-  If not, see http://www.gnu.org/licenses . See also top-level README
-  and LICENSE files.
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
 '''
 
 from PyGran import analysis
@@ -37,12 +37,16 @@ import collections
 def rand(natoms, radius, overlapping=True, factor=1.0):
 	""" Creates a set of randomly placed non-overlapping particles 
 
-	@natoms: number of particles to create
-	@radius: a float or array (of size Natoms)
-	@[overlapping]: boolean variable which ensures all particles are allowed to overlap or natoms
-	@[factor]: float to scale noise (w.r.t particle radius) by when correcting for overlapping particles
-
-	Returns a Particles object.
+	:param natoms: number of particles to create
+	:type natoms: int
+	:param radius: particle radius
+	:type radius: float or array of length natoms
+	:param overlapping:  ensures all particles are allowed to overlap or not
+	:type overlapping: bool
+	:param factor: number to scale noise with (w.r.t particle radius) when correcting for overlapping particles
+	:type factor: float
+	:returns: a new Particles object
+	:rtype: Particles
 	"""
 
 	scale = 2.0 * natoms**(1.0/3)
@@ -100,10 +104,12 @@ def rand(natoms, radius, overlapping=True, factor=1.0):
 def hcp(natoms, radius):
 	""" Generates a Hexagonal Close Packed structure
 		
-	@natoms: number of particles to create
-	@radius: a float or array (of size Natoms)
-
-	Returns a Particles object.
+	:param natoms: number of particles to create
+	:type natoms: int
+	:param radius: particle radius
+	:type radius: float or array of length natoms
+	:returns: a new Particles object
+	:rtype: Particles
 	"""
 	data = collections.OrderedDict()
 	N = int(natoms**(1/3.0))

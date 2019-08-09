@@ -1,35 +1,33 @@
 '''
-  Created on July 10, 2016
-  @author: Andrew Abi-Mansour
+A module that provides the fundamental classes used in the analysis module
 
-  This is the 
-   __________         ________                     
-  ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
-  ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
-  ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
-  ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
-  ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
-  ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-													  
-  DEM simulation and analysis toolkit
-  http://www.pygran.org, support@pygran.org
+Created on July 10, 2016
 
-  Core developer and main author:
-  Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+Author: Andrew Abi-Mansour
 
-  PyGran is open-source, distributed under the terms of the GNU Public
-  License, version 2 or later. It is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
-  received a copy of the GNU General Public License along with PyGran.
-  If not, see http://www.gnu.org/licenses . See also top-level README
-  and LICENSE files.
+This is the::
 
- ---------------------------------------------------------------------------------
-  Python module that provides the fundamental classes used in the analysis module
- ---------------------------------------------------------------------------------
+	██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+	██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+	██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+	██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+	██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+	╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
- '''
+DEM simulation and analysis toolkit
+http://www.pygran.org, support@pygran.org
+
+Core developer and main author:
+Andrew Abi-Mansour, andrew.abi.mansour@pygran.org
+
+PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see http://www.gnu.org/licenses . See also top-level README
+and LICENSE files.
+'''
 
 import numpy as np
 
@@ -53,7 +51,13 @@ import numbers
 
 class SubSystem(object):
 	""" The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \
-these properties. This class is iterable but NOT an iterator. """
+these properties. This class is iterable but NOT an iterator. 
+
+	:param units: unit system
+	:type units: string 
+
+	.. note: see `link <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/modules/tools/__init__.py>`_ for available unit systems
+	"""
 
 	def __init__(self, **args):
 

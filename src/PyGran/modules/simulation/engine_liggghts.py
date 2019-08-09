@@ -28,18 +28,18 @@ received a copy of the GNU General Public License along with PyGran.
 If not, see http://www.gnu.org/licenses . See also top-level README
 and LICENSE files.
 
-**This file was modified from the LAMMPS source code.
+This file was modified from the LAMMPS source code.
 
-  LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
-  http://lammps.sandia.gov, Sandia National Laboratories
-  Steve Plimpton, sjplimp@sandia.gov
+LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+http://lammps.sandia.gov, Sandia National Laboratories
+Steve Plimpton, sjplimp@sandia.gov
 
-  Copyright (2003) Sandia Corporation.  Under the terms of Contract
-  DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
-  certain rights in this software.  This software is distributed under
-  the GNU General Public License.
+Copyright (2003) Sandia Corporation.  Under the terms of Contract
+DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+certain rights in this software.  This software is distributed under
+the GNU General Public License.
 
-  See the README file in the top-level LAMMPS directory. **
+See the README file in the top-level LAMMPS directory.
 
 '''
 
@@ -59,8 +59,20 @@ from importlib import import_module
 from PyGran.modules.tools import find, dictToTuple
 
 class liggghts:
-  # detect if Python is using version of mpi4py that can pass a communicator
+  """
+  A class that provides API-like access to LIGGGHTS-PUBLIC
 
+  :param library: full path to the LIGGGHTS-PUBLIC module (.so file)
+  :type library: str
+  :param style: particle type ('spherical' by default)
+  :type style: str
+  :param dim: simulation box dimension (default 3)
+  :type dim: int
+  :param units: unit system (default 'si'). See `here <https://www.cfdem.com/media/DEM/docu/units.html>`_ for available options.
+  :type units: str
+  """
+  
+  # detect if Python is using version of mpi4py that can pass a communicator
   try:
     from mpi4py import MPI
   except:
@@ -153,11 +165,25 @@ class liggghts:
         self.lmp = None
 
   def file(self,file):
-    """ For python 3, I had to encode the string as an 8 character utf """
+    """ Function for loading LIGGGHTS input file scripts. 
+
+    :param file: input filename
+    :type file: str
+
+    .. note:: For python 3, "file" is encoded as an 8 character utf 
+
+    """
     self.lib.lammps_file(self.lmp,file.encode('utf-8'))
 
   def command(self,cmd):
-    """ For python 3, I had to encode the string as an 8 character utf """
+    """ Function for executing a LIGGGHTS command
+
+    :param cmd: input LIGGGHTS command
+    :type cmd: str
+
+    .. note:: For python 3, "cmd" is encoded as an 8 character utf 
+
+    """
     self.lib.lammps_command(self.lmp,cmd.encode('utf-8'))
 
   def extract_global(self,name,type):
@@ -807,6 +833,11 @@ class DEMPy:
   def velocity(self, *args):
     """
     Assigns velocity to selected particles.
+    :param args: group-ID style args keyword value
+    :type args: tuple
+
+    :note: See `link <https://www.cfdem.com/media/DEM/docu/velocity.html>`_ 
+           for info on keywords and their associated values.
     """
     self.lmp.command('velocity' + (' {}' * len(args)).format(*args))
 
@@ -996,10 +1027,10 @@ class DEMPy:
         if self.pargs['traj']['mfile']:
           name = ''
 
-          # see if we have many meshes to dump if the name of one mfile supplied by the user
+          # see if we have many meshes to dump if the name of one mfile is supplied by the user
           for mesh in self.pargs['mesh'].keys():
             if 'file' in self.pargs['mesh'][mesh]:
-              if self.pargs['mesh'][mesh]['import']:
+              if self.pargs['mesh'][mesh]['importname']:
                 name += mesh + ' '
 
           if len(name):
