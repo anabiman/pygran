@@ -1,22 +1,8 @@
-src.PyGran.modules.analysis.dynamics
-====================================
+dynamics
+========
 
-.. automodule:: src.PyGran.modules.analysis.dynamics
+.. automodule:: modules.analysis.dynamics
 
-   
-   
-   
-
-   
-   
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      Temporal
-   
-   
-
-   
-   
+   :members:   
+   :show-inheritance:
    

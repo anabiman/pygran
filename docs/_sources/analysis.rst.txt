@@ -1,4 +1,11 @@
 ********
 Analysis
 ********
-To be done ...
+
+Submodules
+~~~~~~~~~~~
+.. autosummary::
+   :toctree: _autosummary
+
+   modules.analysis.dynamics
+   modules.analysis.core

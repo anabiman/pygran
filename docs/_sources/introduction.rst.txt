@@ -1,18 +1,17 @@
 ***************
 What is PyGran?
 ***************
-*PyGran* is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of *PyGran*  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing *PyGran*  for Unix systems, this manual focuses on 2 core modules (:numref:`fig_pygran`) in *PyGran* : ``simulation`` which provides ``engines`` for running DEM simulation and enables analysis of contact mechanical models, and ``analysis`` which contains methods and modules for processing DEM data. *PyGran*  is released under the GNU General Public License (`GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_), and its code base is available from `github <https://www.github.com/Andrew-AbiMansour/PyGran>`_.
+*PyGran* is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of *PyGran*  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing *PyGran*  for Unix systems, this manual focuses on 2 core modules (:numref:`fig_pygran`) in *PyGran* : ``simulation`` which provides ``engines`` for running DEM simulation and enables analysis of contact mechanical models, and ``analysis`` which contains methods and submodules for processing DEM data. *PyGran*  is released under the GNU General Public License (`GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_), and its code base is available from `github <https://www.github.com/Andrew-AbiMansour/PyGran>`_.
 
 .. _fig_pygran:
 .. figure:: images/PyGran-design.png
-    :width: 450px
+    :scale: 100%
     :align: center
-    :height: 220px
     :alt: PyGran modules
     :figclass: align-center
 
 
-    A diagram that shows the hierarchical structure of *PyGran* in terms of its core modules and submodules that can be imported from a Python input script.
+    A diagram that shows the hierarchical structure of *PyGran* in terms of its core modules that can be imported from a Python script.
 
 Brief summary of DEM
 ####################
@@ -127,8 +126,10 @@ An experimental version of the code can be downloaded from `github <https://andr
 
 *PyGran* can then be installed following the steps outlined previously.
 
+.. _configureliggghtslabel:
+
 Configuration with *LIGGGHTS*
-*********************************
+*****************************
 *PyGran* has been tested with `LIGGGHTS-PUBLIC <https://www.cfdem.com/download-liggghtsr-public>`_ versions 3.4, 3.7, and 3.8. For running DEM simulation with *LIGGGHTS*, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which *PyGran* will attempt to find. By default, *PyGran* searches for any available installation of ``libliggghts.so`` and writes its path name to the 1st line in ``PyGran/modules/.config``. *PyGran* will also attempt to find the *LIGGGHTS* version and source path, and write each to the 2nd and 3rd lines, respectively, in the .config file. Alternatively, in case multiple versions are installed on the system or if the library filename is not ``libliggghts.so``, users can specify the name of the shared object and optionally its source code path and version via::
 
     import PyGran
@@ -157,7 +158,7 @@ The command above will clone the *LIGGGHTS-PUBLIC* repository and compile the co
 
 Installation example: ubuntu 18.04 (LTS)
 ****************************************
-The section below demonsrates a fresh local installation of PyGran & LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove ``--user`` from the commands and use ``sudo`` instead.
+The section below covers a fresh local installation of PyGran & LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove ``--user`` from the commands and use ``sudo`` instead.
 
 First, fire up a terminal in order to update the system and install all dependencies via::
 

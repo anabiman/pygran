@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>What is PyGran? &mdash; PyGran 1.2 documentation</title>
+  <title>What is PyGran? &mdash; PyGran 1.2.0 documentation</title>
   
 
   
@@ -28,7 +28,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PyGran 1.2 documentation" href="index.html"/>
+    <link rel="top" title="PyGran 1.2.0 documentation" href="index.html"/>
         <link rel="next" title="Simulation" href="simulation.html"/>
         <link rel="prev" title="PyGran’s documentation" href="index.html"/> 
 
@@ -68,11 +68,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#introduction">Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#dem-simulation">DEM simulation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 
         
@@ -109,24 +114,26 @@
             
   <div class="section" id="what-is-pygran">
 <h1>What is PyGran?<a class="headerlink" href="#what-is-pygran" title="Permalink to this headline">¶</a></h1>
-<p><em>PyGran</em> is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of <em>PyGran</em>  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing <em>PyGran</em>  for Unix systems, this manual focuses on 2 core modules (<a class="reference internal" href="#fig-pygran"><span class="std std-numref">Fig. 1</span></a>) in <em>PyGran</em> : <code class="docutils literal notranslate"><span class="pre">simulation</span></code> which provides <code class="docutils literal notranslate"><span class="pre">engines</span></code> for running DEM simulation and enables analysis of contact mechanical models, and <code class="docutils literal notranslate"><span class="pre">analysis</span></code> which contains methods and modules for processing DEM data. <em>PyGran</em>  is released under the GNU General Public License (<a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a>), and its code base is available from <a class="reference external" href="https://www.github.com/Andrew-AbiMansour/PyGran">github</a>.</p>
+<p><em>PyGran</em> is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of <em>PyGran</em>  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing <em>PyGran</em>  for Unix systems, this manual focuses on 2 core modules (<a class="reference internal" href="#fig-pygran"><span class="std std-numref">Fig. 1</span></a>) in <em>PyGran</em> : <code class="docutils literal notranslate"><span class="pre">simulation</span></code> which provides <code class="docutils literal notranslate"><span class="pre">engines</span></code> for running DEM simulation and enables analysis of contact mechanical models, and <code class="docutils literal notranslate"><span class="pre">analysis</span></code> which contains methods and submodules for processing DEM data. <em>PyGran</em>  is released under the GNU General Public License (<a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a>), and its code base is available from <a class="reference external" href="https://www.github.com/Andrew-AbiMansour/PyGran">github</a>.</p>
 <div class="align-center figure" id="id7">
-<span id="fig-pygran"></span><a class="reference internal image-reference" href="images/PyGran-design.png"><img alt="PyGran modules" src="images/PyGran-design.png" style="width: 450px; height: 220px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules and submodules that can be imported from a Python input script.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+<span id="fig-pygran"></span><a class="reference internal image-reference" href="images/PyGran-design.png"><img alt="PyGran modules" src="images/PyGran-design.png" style="width: 502.0px; height: 292.0px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules that can be imported from a Python script.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
 </div>
 <div class="section" id="brief-summary-of-dem">
 <h2>Brief summary of DEM<a class="headerlink" href="#brief-summary-of-dem" title="Permalink to this headline">¶</a></h2>
-<p>The Discrete Element Method (DEM) is the application of Newtonian mechanics to a set of interacting particles that are usually assumed to be spherical in shape. For a spherical particle <span class="math notranslate nohighlight">\(i\)</span> that undergoes translation and rotation and of moment of inertia <span class="math notranslate nohighlight">\(I_i\)</span> and volume <span class="math notranslate nohighlight">\(V_i\)</span>, its dynamical equations are</p>
-<div class="math notranslate nohighlight" id="equation-introduction-0">
-<span class="eqno">(1)<a class="headerlink" href="#equation-introduction-0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}\rho V_i a_i &amp;= \sum_j F_{ij} + F_{b_i},\\I_i \alpha_i &amp;= \sum_j T_{ij}.\end{aligned}\end{align} \]</div>
-<p>The true mass density of the particles is <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(F_{ij}\)</span> is the surface contact force between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors (summed over <span class="math notranslate nohighlight">\(j\)</span>), <span class="math notranslate nohighlight">\(F_{b_i}\)</span> is a body force acting on particle <span class="math notranslate nohighlight">\(i\)</span> (such as gravity, i.e. <span class="math notranslate nohighlight">\(F_{b_i} = \rho V_i g\)</span>), and <span class="math notranslate nohighlight">\(T_{ij}\)</span> is the torque between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors that is limited by the static friction coefficient <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
+<p>The Discrete Element Method (DEM) is the application of Newtonian mechanics to a set of interacting particles that are usually assumed to be spherical in shape. For a spherical particle <img class="math" src="images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> that undergoes translation and rotation and of moment of inertia <img class="math" src="images/math/2c3a512fd065bfed82d9ec72f9c4746eb3e7753f.png" alt="I_i"/> and volume <img class="math" src="images/math/630177bb65034b45f58ce4d25f664d7b35189906.png" alt="V_i"/>, its dynamical equations are</p>
+<div class="math" id="equation-introduction-0">
+<p><span class="eqno">(1)<a class="headerlink" href="#equation-introduction-0" title="Permalink to this equation">¶</a></span><img src="images/math/ed1d634e24b8ad4917cb31deb3e829f3a4a57625.png" alt="\rho V_i a_i &amp;= \sum_j F_{ij} + F_{b_i},
+
+I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
+</div><p>The true mass density of the particles is <img class="math" src="images/math/9a51ab9a0b521705e1e8762fac6bdd6f11771758.png" alt="\rho"/>, <img class="math" src="images/math/9635e18362a5b53f807bda72096d5e99ed3a98ec.png" alt="F_{ij}"/> is the surface contact force between particle <img class="math" src="images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> and its neighbors (summed over <img class="math" src="images/math/6b21e0b0899a0d2879d3b8019087fa630bab4ea2.png" alt="j"/>), <img class="math" src="images/math/51c485265bd0a6eaaf2edd954f5b3f45f51b7cfe.png" alt="F_{b_i}"/> is a body force acting on particle <img class="math" src="images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> (such as gravity, i.e. <img class="math" src="images/math/5cc58ec5e678162121f3bc1db4652c979fac08f1.png" alt="F_{b_i} = \rho V_i g"/>), and <img class="math" src="images/math/5f3ad41c9d6d642536693f29fc41021f56f5f823.png" alt="T_{ij}"/> is the torque between particle <img class="math" src="images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> and its neighbors that is limited by the static friction coefficient <img class="math" src="images/math/d79e8a2c7ce54906c2b25549da38bdbe02cf40d6.png" alt="\mu"/>.</p>
 <p>DEM simulation involves the numerical solution of Eqs. (1) by decomposing the space the particles occupy into a grid of connected nearest-neighbor lists that enable fast and efficient computation of inter-particle surface forces. For every discrete timestep, all forces acting on each particle are computed, and the particle positions are updated based on the discretized form of Eqs. (1).</p>
 <div class="align-center figure" id="id8">
 <span id="fig-dem"></span><a class="reference internal image-reference" href="images/DEM.png"><img alt="DEM cycle" src="images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
 </div>
-<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <a class="reference internal" href="references.html#poschel2005computational" id="id1">[PoschelS05]</a>.</p>
-<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <a class="reference internal" href="references.html#kruggel2008study" id="id2">[KERWS08]</a>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
+<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <span>[poschel2005computational]</span>.</p>
+<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <span>[kruggel2008study]</span>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
 <div class="align-center figure" id="id9">
 <span id="fig-multisphere"></span><a class="reference internal image-reference" href="images/multisphere.png"><img alt="Multisphere particle" src="images/multisphere.png" style="width: 300px; height: 150px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
@@ -150,7 +157,7 @@
 </div>
 <div class="section" id="optional-packages">
 <h4>Optional packages<a class="headerlink" href="#optional-packages" title="Permalink to this headline">¶</a></h4>
-<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <a class="reference internal" href="references.html#kloss2011liggghts" id="id3">[KG11]</a> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
+<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <span>[kloss2011liggghts]</span> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
 <blockquote>
 <div><p><a class="reference external" href="https://github.com/cython/cython">Cython</a>: for improved performance in <code class="docutils literal notranslate"><span class="pre">analysis.core</span></code> module</p>
 <p><a class="reference external" href="https://github.com/mpi4py/mpi4py">mpi4py</a>: for running DEM simulation in parallel with MPI</p>
@@ -209,7 +216,7 @@
 <p><em>PyGran</em> can then be installed following the steps outlined previously.</p>
 </div>
 <div class="section" id="configuration-with-liggghts">
-<h3>Configuration with <em>LIGGGHTS</em><a class="headerlink" href="#configuration-with-liggghts" title="Permalink to this headline">¶</a></h3>
+<span id="configureliggghtslabel"></span><h3>Configuration with <em>LIGGGHTS</em><a class="headerlink" href="#configuration-with-liggghts" title="Permalink to this headline">¶</a></h3>
 <p><em>PyGran</em> has been tested with <a class="reference external" href="https://www.cfdem.com/download-liggghtsr-public">LIGGGHTS-PUBLIC</a> versions 3.4, 3.7, and 3.8. For running DEM simulation with <em>LIGGGHTS</em>, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which <em>PyGran</em> will attempt to find. By default, <em>PyGran</em> searches for any available installation of <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code> and writes its path name to the 1st line in <code class="docutils literal notranslate"><span class="pre">PyGran/modules/.config</span></code>. <em>PyGran</em> will also attempt to find the <em>LIGGGHTS</em> version and source path, and write each to the 2nd and 3rd lines, respectively, in the .config file. Alternatively, in case multiple versions are installed on the system or if the library filename is not <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>, users can specify the name of the shared object and optionally its source code path and version via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran</span>
 
@@ -238,7 +245,7 @@
 </div>
 <div class="section" id="installation-example-ubuntu-18-04-lts">
 <h3>Installation example: ubuntu 18.04 (LTS)<a class="headerlink" href="#installation-example-ubuntu-18-04-lts" title="Permalink to this headline">¶</a></h3>
-<p>The section below demonsrates a fresh local installation of PyGran &amp; LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove <code class="docutils literal notranslate"><span class="pre">--user</span></code> from the commands and use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> instead.</p>
+<p>The section below covers a fresh local installation of PyGran &amp; LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove <code class="docutils literal notranslate"><span class="pre">--user</span></code> from the commands and use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> instead.</p>
 <p>First, fire up a terminal in order to update the system and install all dependencies via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gcc</span> <span class="n">libopenmpi</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span> <span class="n">ipython3</span> <span class="n">git</span> <span class="n">python3</span><span class="o">-</span><span class="n">matplotlib</span> <span class="n">libvtk6</span><span class="o">-</span><span class="n">dev</span> <span class="o">-</span><span class="n">y</span>
 </pre></div>
@@ -304,7 +311,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.2',
+            VERSION:'1.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
@@ -314,7 +321,6 @@
       <script type="text/javascript" src="static/underscore.js"></script>
       <script type="text/javascript" src="static/doctools.js"></script>
       <script type="text/javascript" src="static/language_data.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
