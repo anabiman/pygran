@@ -30,4 +30,4 @@ from .modules import *
 from . import demo
 from .modules.tools import configure
 
-__version__ = 1.2
+__version__ = '1.2.0'
