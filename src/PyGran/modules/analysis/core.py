@@ -435,7 +435,7 @@ these properties. This class is iterable but NOT an iterator.
 		self._constructAttributes()
 
 	def noise(self, sigma, attr=('x','y','z')):
-		""" Adds white noise of standard deviation `sigma' to all elements with attribute `attr'.
+		""" Adds white noise of standard deviation `sigma' to all elements with attribute 'attr'.
 
 		@sigma: standard deviation of the Gaussian (white) noise
 		@[attr]: attribute to perturb (positions by default)
@@ -1399,7 +1399,7 @@ class Factory(object):
 
 			if not sclass:
 				# make sure selected class definition exists, otherwise, this had better be a list
-				raise ValueError('System takes only keywords of objects that are defined. Class type {} not found.'.format(ss))
+				raise ValueError('System takes only keywords of classes that are defined. Class type {} not found.'.format(args[ss]))
 
 			if isinstance(args[ss], list) or isinstance(args[ss], tuple): # we need to create a list of objects
 
