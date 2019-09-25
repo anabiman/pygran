@@ -64,10 +64,13 @@ class liggghts:
 
   :param library: full path to the LIGGGHTS-PUBLIC module (.so file)
   :type library: str
+
   :param style: particle type ('spherical' by default)
   :type style: str
+
   :param dim: simulation box dimension (default 3)
   :type dim: int
+
   :param units: unit system (default 'si'). See `here <https://www.cfdem.com/media/DEM/docu/units.html>`_ for available options.
   :type units: str
   """
@@ -300,16 +303,43 @@ class liggghts:
     self.lib.lammps_scatter_atoms(self.lmp, name, type, count, data)
 
 class DEMPy:
-  """A class that implements a python interface for DEM computations"""
-  # TODO: This class should be generic (not specific to liggghts), must
-  # handle all I/O, garbage collection, etc. and then moved to DEM.py
+  """A class that implements a python interface for DEM computations
+
+  :param units: unit system (default 'si'). See `ref <https://www.cfdem.com/media/DEM/docu/units.html>`_.
+  :type units: str
+
+  :param style: particle type ('spherical' by default)
+  :type style: str
+
+  :param split: MPI communicator
+  :type comm: MPI Intracomm
+
+  :param species: defines the number and properties of all species
+  :type species: tuple
+
+  :param output: output dir name
+  :type output: str
+
+  :param print: specify which variables to print to stdout: (freq, 'varName1', 'varName2', ...). Default is (10**4, 'time', 'dt', 'atoms').
+  :type print: tuple
+
+  :param library: full path to the LIGGGHTS-PUBLIC module (.so file)
+  :type library: str
+
+  :param dim: simulation box dimension (2 or 3)
+  :type dim: int
+
+  :param restart: specify restart options via (freq=int, dirname=str, filename=str, restart=bool, frame=int)
+  :type restart: tuple
+
+  :param boundary: setup boundary conditions (see `ref <https://www.cfdem.com/media/DEM/docu/boundary.html>`_), e.g. ('p', 'p', 'p') -> periodic boundaries in 3D.
+  :type boundary: tuple
+
+  .. todo:: This class should be generic (not specific to liggghts), must handle all I/O, garbage collection, etc. and then moved to DEM.py
+  """
 
   def __init__(self, split, library, style, **pargs):
-    """ Initialize some settings and specifications
-    @ units: unit system (si, cgs, etc.)
-    @ dim: dimensions of the problem (2 or 3)
-    # style: granular, atom, or ...
-    """
+    """ Initialize some settings and specifications """
 
     if 'print' not in pargs:
       pargs['print'] = (10**4, 'time', 'dt', 'atoms')
@@ -412,10 +442,7 @@ class DEMPy:
     self.lmp.createParticles(type, style, *args)
 
   def createDomain(self):
-    """ Define the domain of the simulation
-    @ nsys: number of subsystems
-    @ pos: 6 x 1 tuple that defines the boundaries of the box
-    """
+    """ Define the domain of the simulation """
     if not self.rank:
       logging.info('Creating domain')
 
@@ -427,8 +454,7 @@ class DEMPy:
     self.lmp.command('create_box {} domain'.format(self.pargs['nSS']))
 
   def setupParticles(self):
-    """ Setup particle for insertion if requested by the user
-    """
+    """ Setup particle for insertion if requested by the user """
 
     for ss in self.pargs['species']:
 
@@ -476,10 +502,18 @@ class DEMPy:
     """
     This function inserts particles, and assigns particle velocities if requested by the user. If species is 'all',
     all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.
+    For available region shapes, see `ref <https://www.cfdem.com/media/DEM/docu/region.html>`_. The default region is
+    the whole system.
 
-    region: tuple of the form ('shape', (xmin, xmax, ymin, ymax, zmin, zmax)) or ('shape', xmin, xmax, ymin, ymax, zmin, zmax)
+    :param species: species id ('all', or 1, 2, ... )
+    :type param: int or str
 
-    TODO: support insertion of all or multiple species at the same time for multiple regions. 
+    :param value:
+
+    :param region: define region via ('shape', (xmin, xmax, ymin, ymax, zmin, zmax)) or ('shape', xmin, xmax, ymin, ymax, zmin, zmax)
+    :type region: tuple
+
+    .. todo:: Support insertion of all or multiple species at the same time for multiple regions. 
     """
     if not self.pddName:
       print('Probability distribution not set for particle insertion. Exiting ...')
