@@ -48,6 +48,8 @@ class DEM:
 
     :param model: contact mechanical model (default SpringDashpot)
     :type model: model
+
+    .. todo:: Provide a description of each arg in pargs
      """
 
     # Instantiate contact model and store it in pargs
