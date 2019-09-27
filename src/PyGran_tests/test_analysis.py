@@ -1,9 +1,12 @@
 # Import the analysis module from PyGran
 from PyGran import analysis
+import sys
+
+traj_name = sys.argv[1]
 
 # Create a System object from a LIGGGHTS dump file. They keyword 'Particles' is mandatory, since it instructs 
 # System to create an object of type 'Particles' which can be assessed from the instantiated System object.
-Sys = analysis.System(Particles='system.dump')
+Sys = analysis.System(Particles=traj_name)
 
 # Create a reference to Sys.Particles
 Particles = Sys.Particles
@@ -13,7 +16,7 @@ Particles = Sys.Particles
 Particles = Sys.Particles.copy()
 
 # The length of Particles is the number of particles contained in this class
-assert len(Particles) == 
+assert len(Particles) == ?
 
 nparts = 0
 # Looping over Particles yields a Particles class of length 1
