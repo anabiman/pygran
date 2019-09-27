@@ -36,7 +36,7 @@ from setuptools import setup, find_packages
 import glob, shutil, re
 from distutils.command.install import install
 from distutils.command.clean import clean
-from src import __version__
+from src import __version__, __author__
 
 try:
 	from Cython.Build import cythonize
@@ -143,8 +143,8 @@ class Clean(clean):
 setup(
 		name = "PyGran",
 		version = __version__,
-		author = "Andrew Abi-Mansour",
-		author_email = "support@pygran.org",
+		author = __author__,
+		author_email = __email__,
 		description = ("A DEM toolkit for rapid quantitative analysis of granular/powder systems"),
 		license = "GNU v2",
 		keywords = "Discrete Element Method, Granular Materials",
