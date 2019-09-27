@@ -1,3 +1,5 @@
 global-include *.pyx
-include src/PyGran/modules/simulation/model_template.h src/PyGran/modules/gui/Icons/*.png
+include src/PyGran/simulation/model_template.h src/PyGran/gui/Icons/*.png
 recursive-include src/PyGran *.stl *.html *.py *.so
+recursive-include src/PyGran_tests *.stl *.html *.py *.so
+
