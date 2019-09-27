@@ -35,8 +35,6 @@ and LICENSE files.
   Support 2-particle analysis by replacing mass, radius, etc. with 
   reduced mass, radius, etc. i.e. :math:`1/m_{ij} = 1/m_i + 1/m_j`
 
-
-
 '''
 
 import numpy as np
