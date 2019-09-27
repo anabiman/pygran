@@ -29,7 +29,11 @@ If not, see http://www.gnu.org/licenses . See also top-level README
 and LICENSE files.
 '''
 
-from mpi4py import MPI
+try:
+  from mpi4py import MPI
+except:
+  MPI = None
+
 from importlib import import_module
 from datetime import datetime
 import os, sys
@@ -63,9 +67,15 @@ class DEM:
     # Overwrite pargs from the contact model's params
     pargs = pargs['model'](**pargs).params
 
-    self.comm = MPI.COMM_WORLD
-    self.rank = self.comm.Get_rank()
-    self.tProcs = self.comm.Get_size()
+    if MPI:
+      self.comm = MPI.COMM_WORLD
+      self.rank = self.comm.Get_rank()
+      self.tProcs = self.comm.Get_size()
+    else:
+      self.comm = None
+      self.rank = 0
+      self.tProcs = 0
+
     self.nSim = pargs['nSim']
     self.model = str(pargs['model']).split("'")[1].split('.')[-1]
     self.pargs = pargs
