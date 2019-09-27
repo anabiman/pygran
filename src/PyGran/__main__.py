@@ -1,5 +1,5 @@
 '''
-  Created on July 9, 2016
+  Created on April 12, 2016
   @author: Andrew Abi-Mansour
 
   This is the 
@@ -24,11 +24,19 @@
   received a copy of the GNU General Public License along with PyGran.
   If not, see http://www.gnu.org/licenses . See also top-level README
   and LICENSE files.
-  '''
+'''
 
-__author__ = "Andrew Abi-Mansour"
-__version__ = '1.2.0'
-__email__ = 'support@pygran.org'
 
-from .tools import configure
-from . import simulation, analysis, tools, params
+import GUI.windows as windows
+import wx
+import GUI.Settings.Language as Lang
+
+if __name__ == '__main__':
+
+        app = wx.App(redirect=False)
+
+        win = windows.DerivedWindow(parent=None,name=Lang.__SofName__, title=Lang.__SofName__)
+        win.Show()
+
+        app.MainLoop()
+
