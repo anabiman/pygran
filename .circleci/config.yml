@@ -22,6 +22,12 @@ jobs:
             sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin vtk6 libvtk6-dev
 
       - run:
+          name: install PyGran deps
+          command: |
+            pip3 install --upgrade pip --user
+            pip3 install -e .[extra] --user
+
+      - run:
           name: compile LIGGGHTS
           command: |
             python3 setup.py build_liggghts
@@ -29,15 +35,13 @@ jobs:
       - run:
           name: install PyGran
           command: |
-            pip3 install --upgrade pip --user
-            pip3 install -e .[extra] --user
             pip3 install . --user
 
       - run:
           name: run tests
           command: |
             cd ..
-            python3 -m PyGran.demo DEM flow
+            mpirun -n 2 python3 -m PyGran.demo DEM flow
 
       - store_test_results:
           path: test-results
