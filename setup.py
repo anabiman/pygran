@@ -1,4 +1,3 @@
-#  -*- coding: utf8 -*-
 '''
 	Created on July 9, 2016
 	@author: Andrew Abi-Mansour
@@ -37,6 +36,7 @@ from setuptools import setup, find_packages
 import glob, shutil, re
 from distutils.command.install import install
 from distutils.command.clean import clean
+from src.PyGran._version import __version__
 
 try:
 	from Cython.Build import cythonize
@@ -47,18 +47,6 @@ except:
 	print('Could not cythonize. Make sure Cython is properly installed.')
 	optimal_list = []
 	include_dirs = []
-
-__version__ = None
-
-with open('src/PyGran/__init__.py') as fp:
-	for line in fp.readlines():
-		if line.find('__version__') >= 0:
-			__version__ =  line[line.find('__version__'):].split('=')[-1].strip()
-			break
-
-if not __version__:
-	print('PyGran version could not be detected. Something is wrong with the src code.')
-	sys.exit()
 
 def read(fname):
 		return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -162,10 +150,10 @@ setup(
 		keywords = "Discrete Element Method, Granular Materials",
 		url = "https://github.com/Andrew-AbiMansour/PyGran",
 		packages=find_packages('src'),
-		package_dir={'PyGran': 'src/PyGran'},
+		package_dir={'PyGran': 'src/PyGran', 'PyGran_tests': 'src/PyGran_tests'},
 		include_package_data=True,
 		install_requires=['numpy', 'scipy'],
-		extras_require={'extra': ['vtk', 'mpi4py', 'Pillow']},
+		extras_require={'extra': ['vtk', 'mpi4py', 'Pillow', 'pytest']},
 		long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See http://www.pygran.org.',
 		classifiers=[
 				"Development Status :: 4 - Beta",
