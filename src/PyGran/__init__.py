@@ -26,8 +26,6 @@
   and LICENSE files.
   '''
 
-from .modules import *
-from . import demo
-from .modules.tools import configure
-
-__version__ = '1.2.0'
+from .tools import configure
+from . import simulation, analysis, tools, params
+from ._version import __version__
