@@ -15,7 +15,10 @@ params = {
 	'species': ({'material': organic, 'radius': ('constant', 5e-5)},),
 
 	# Setup I/O params
-	'traj': {'freq':1000, 'style': 'custom/vtk', 'pfile': 'traj*.vtk', 'mfile': 'mesh*.vtk'},
+	'traj': {'freq':1000, 'style': 'custom/vtk', 'pfile': 'particles*.vtk', 'mfile': 'mesh*.vtk'},
+
+	# Output dir name
+	'output': 'DEM_flow',
 
 	# Define computational parameters
 	'dt': 1e-6,
