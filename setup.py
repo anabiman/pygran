@@ -36,7 +36,7 @@ from setuptools import setup, find_packages
 import glob, shutil, re
 from distutils.command.install import install
 from distutils.command.clean import clean
-from src.PyGran._version import __version__
+from src import __version__
 
 try:
 	from Cython.Build import cythonize
