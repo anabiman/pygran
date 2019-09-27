@@ -26,6 +26,8 @@
   and LICENSE files.
   '''
 
+__author__ = "Andrew Abi-Mansour"
+__version__ = '1.2.0'
+
 from .tools import configure
 from . import simulation, analysis, tools, params
-from ._version import __version__
