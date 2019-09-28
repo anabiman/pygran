@@ -150,7 +150,7 @@ setup(
 		keywords = "Discrete Element Method, Granular Materials",
 		url = "https://github.com/Andrew-AbiMansour/PyGran",
 		packages=find_packages('src'),
-		package_dir={'PyGran': 'src/PyGran', 'PyGran_tests': 'src/PyGran_tests'},
+		package_dir={'PyGran': 'src/PyGran'},
 		include_package_data=True,
 		install_requires=['numpy', 'scipy'],
 		extras_require={'extra': ['vtk', 'mpi4py', 'Pillow', 'pytest']},
