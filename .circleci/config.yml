@@ -40,8 +40,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            cd ..
-            mpirun -n 2 python3 -m PyGran.demo DEM flow
+            mpirun -n 2 python3 -m tests DEM flow
 
       - store_test_results:
           path: test-results
