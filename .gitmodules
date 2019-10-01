@@ -4,3 +4,6 @@
 [submodule "src/PyGran/analysis"]
 	path = src/PyGran/analysis
 	url = ssh://github.com-andrew-abimansour/Andrew-AbiMansour/PyGran.analysis.git
+[submodule "src/PyGran/simulation"]
+	path = src/PyGran/simulation
+	url = ssh://github.com-andrew-abimansour/Andrew-AbiMansour/PyGran.simulation.git
