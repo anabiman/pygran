@@ -1,9 +1,9 @@
 [submodule "src/PyGran/params"]
 	path = src/PyGran/params
-	url = ssh://github.com-andrew-abimansour/Andrew-AbiMansour/PyGran.params.git
+	url = https://www.github.com/Andrew-AbiMansour/PyGran.params.git
 [submodule "src/PyGran/analysis"]
 	path = src/PyGran/analysis
-	url = ssh://github.com-andrew-abimansour/Andrew-AbiMansour/PyGran.analysis.git
+	url = https://github.com/Andrew-AbiMansour/PyGran.analysis.git
 [submodule "src/PyGran/simulation"]
 	path = src/PyGran/simulation
-	url = ssh://github.com-andrew-abimansour/Andrew-AbiMansour/PyGran.simulation.git
+	url = https://github.com/Andrew-AbiMansour/PyGran.simulation.git
