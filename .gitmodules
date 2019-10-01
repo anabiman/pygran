@@ -1,0 +1,3 @@
+[submodule "src/PyGran/params"]
+	path = src/PyGran/params
+	url = https://github.com/Andrew-AbiMansour/PyGran.params
