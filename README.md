@@ -1,6 +1,6 @@
 # Welcome to the PyGran webpage!
 
-PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran is written in Python 3.X and is fully backwards compatible with Python 2.2 and later versions.
+PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. PyGran is written in Python 3.X and is fully backwards compatible with Python 2.7 and later versions.
 
 The main features of PyGran:
 
@@ -11,7 +11,13 @@ The main features of PyGran:
 - Quick and easy plotting of DEM data with matplotlib
 - Support for high-performance computing with MPI
 
-**Please consider citing the following paper if your find PyGran useful in your research:**
+The core modules in PyGran are:
+
+- [simulation](https://github.com/Andrew-AbiMansour/PyGran.simulation): provides APIs for running DEM simulation
+- [analysis](https://github.com/Andrew-AbiMansour/PyGran.analysis): provides methods and algorithms for post-processing DEM data
+- [params](https://github.com/Andrew-AbiMansour/PyGran.params): defines material properties
+
+**If your find PyGran useful in your research, please consider citing the following paper:**
 
 [![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
 
@@ -32,10 +38,6 @@ The main features of PyGran:
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
 ```bash
 pip install PyGran --user
-```
-Alternatively, you can clone the PyGran repsitory on github and run from the source code directory:
-```bash
-python setup.py install --user
 ```
 For more options and information on setting up PyGran on Ubuntu 18.04 (LTS), see the [installation](docs/introduction.html#installation-example-ubuntu-18-04-lts) page.
 
@@ -90,4 +92,4 @@ Gran = analysis.System(Particles='granular.dump')
 NNS = analysis.Neighbors(Particles=Gran.Particles)
 overlaps = NNS.overlaps
 ```
-For more examples on using PyGran for running DEM simulation, check out the <a href="PyGran/demo/examples.html">examples</a>.
+For more examples on using PyGran for running DEM simulation, check out the <a href="PyGran/demo/examples.html">examples</a> page.
