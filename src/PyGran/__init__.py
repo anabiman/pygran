@@ -1,8 +1,8 @@
 '''
   Created on July 9, 2016
-  @author: Andrew Abi-Mansour
+  Author: Andrew Abi-Mansour
 
-  This is the 
+  This is the::
 
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
@@ -26,12 +26,5 @@
   and LICENSE files.
   '''
 
-__author__ = "Andrew Abi-Mansour"
-__version__ = '1.2.0'
-__email__ = 'support@pygran.org'
-
-try:
-	from .tools import configure
-	from . import simulation, analysis, tools, params
-except:
-	pass
+from .tools import configure
+from . import simulation, analysis, tools, params
