@@ -35,7 +35,16 @@ from setuptools import setup, find_packages
 import glob, shutil, re
 from distutils.command.install import install
 from distutils.command.clean import clean
-from src.PyGran import __version__, __author__, __email__
+
+# Extract metadata from simulation._version
+with open(os.path.join('simulation', '_version.py'), 'r') as fp:
+        for line in fp.readlines():
+                if '__version__' in line:
+                        __version__ = line.split('=')[-1].strip().strip("''")
+                elif '__email__' in line:
+                        __email__ = line.split('=')[-1].strip().strip("''")
+                elif '__author__' in line:
+                        __author__ = line.split('=')[-1].strip().strip("''")
 
 try:
 	from Cython.Build import cythonize
