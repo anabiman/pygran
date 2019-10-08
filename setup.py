@@ -37,7 +37,7 @@ from distutils.command.install import install
 from distutils.command.clean import clean
 
 # Extract metadata from simulation._version
-with open(os.path.join('simulation', '_version.py'), 'r') as fp:
+with open(os.path.join('src', 'PyGran', '_version.py'), 'r') as fp:
         for line in fp.readlines():
                 if '__version__' in line:
                         __version__ = line.split('=')[-1].strip().strip("''")
@@ -140,7 +140,7 @@ setup(
 	keywords = "Discrete Element Method, Granular Materials",
 	url = "https://github.com/Andrew-AbiMansour/PyGran",
 	packages=find_packages('src'),
-	package_dir={'PyGran': 'src/PyGran'},
+	package_dir={'PyGran': os.path.join('src','PyGran')},
 	include_package_data=True,
 	install_requires=['numpy', 'scipy'],
 	extras_require={'extra': ['vtk', 'mpi4py', 'Pillow', 'pytest']},
