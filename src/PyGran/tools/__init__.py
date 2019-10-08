@@ -138,7 +138,7 @@ def _findEngines(engine):
 	""" Searches for and lists all available libraries for a specific engine """
 
 	engines = [os.path.join(root, engine) for root, dirs, files in os.walk('/') if engine in files]
-	
+
 	if engines:
 		print('Engine(s) found:')
 		for engine in engines:
@@ -151,7 +151,7 @@ def _findEngines(engine):
 def _setConfig(wdir, engine):
 	""" Reads/writes libliggghts to .config file """
 
-	src, __version__ = None, None
+	library, src, __version__ = None, None, None
 	file = wdir + '../.config'
 
 	if os.path.isfile(file):
