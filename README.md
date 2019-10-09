@@ -58,7 +58,7 @@ param = {
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
-	'species': ({'material': params.stearicAcid, 'radius': 5e-5,}, 
+	'species': ({'material': params.stearicAcid, 'radius': ('constant', 5e-5)}, 
 		),
 		
 	'gravity': (9.81, 0, 0, -1),
