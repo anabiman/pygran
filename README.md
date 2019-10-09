@@ -55,7 +55,6 @@ from PyGran import params
 # Create a DEM parameter dictionary
 param = {
 
-	'model': simulation.models.SpringDashpot,
 	'boundary': ('f','f','f'),
 	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
 
@@ -69,13 +68,13 @@ param = {
 }
 
 # Instantiate a DEM class
-sim = simulation.DEM(**param['model'])
+sim = simulation.DEM(**param)
 
 # Insert 1000 particles for species 1 (stearic acid)
 insert = sim.insert(species=1, value=1000) 
 
 # Evolve the system in time 
-sim.run(nsteps=1e6, dt=1e-6)
+sim.run(nsteps=1e6, dt=1e-7)
 ```
 ### Post-processing DEM output data
 Using PyGran for doing post-analysis is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
