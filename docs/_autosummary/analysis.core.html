@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>analysis.core &mdash; PyGran 1.2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../static/css/main.css" type="text/css" />
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PyGran 1.2.0 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>analysis.core</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_autosummary/analysis.core.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="module-analysis.core">
+<span id="analysis-core"></span><h1>analysis.core<a class="headerlink" href="#module-analysis.core" title="Permalink to this headline">¶</a></h1>
+<p>A module that provides the fundamental classes used in the analysis module</p>
+<p>Created on July 10, 2016</p>
+<p>Author: Andrew Abi-Mansour</p>
+<p>This is the:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+</pre></div>
+</div>
+<p>DEM simulation and analysis toolkit
+<a class="reference external" href="http://www.pygran.org">http://www.pygran.org</a>, <a class="reference external" href="mailto:support&#37;&#52;&#48;pygran&#46;org">support<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>Core developer and main author:
+Andrew Abi-Mansour, <a class="reference external" href="mailto:andrew&#46;abi&#46;mansour&#37;&#52;&#48;pygran&#46;org">andrew<span>&#46;</span>abi<span>&#46;</span>mansour<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
+and LICENSE files.</p>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">numericalSort</span></code>(value)</p></td>
+<td><p>A sorting function by numerical numbers for glob.glob</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code>(data, *region)</p></td>
+<td><p>Create a selection of particles based on a subsystem defined by region &#64; region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax).</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Factory</span></code></p></td>
+<td><p>A factory for system class.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mesh</span></code>(fname, **args)</p></td>
+<td><p>The Mesh class stores a list of meshes and their associated attributes / methods.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Particles</span></code>(**args)</p></td>
+<td><p>The Particle class stores all particle properties and the methods that operate on these properties.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubSystem</span></code>(**args)</p></td>
+<td><p>The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on these properties.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">System</span></code>(**args)</p></td>
+<td><p>A System contains all the information describing a DEM system.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2019 PyGran is a <b>connectical</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="../static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

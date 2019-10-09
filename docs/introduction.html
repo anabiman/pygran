@@ -76,8 +76,11 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">Bibliography</a></li>
 </ul>
 
         
@@ -132,8 +135,8 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 <span id="fig-dem"></span><a class="reference internal image-reference" href="images/DEM.png"><img alt="DEM cycle" src="images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
 </div>
-<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <span>[poschel2005computational]</span>.</p>
-<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <span>[kruggel2008study]</span>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
+<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <a class="reference internal" href="references.html#poschel2005computational" id="id1">[PoschelS05]</a>.</p>
+<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <a class="reference internal" href="references.html#kruggel2008study" id="id2">[KERWS08]</a>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
 <div class="align-center figure" id="id9">
 <span id="fig-multisphere"></span><a class="reference internal image-reference" href="images/multisphere.png"><img alt="Multisphere particle" src="images/multisphere.png" style="width: 300px; height: 150px;" /></a>
 <p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
@@ -157,7 +160,7 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 </div>
 <div class="section" id="optional-packages">
 <h4>Optional packages<a class="headerlink" href="#optional-packages" title="Permalink to this headline">¶</a></h4>
-<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <span>[kloss2011liggghts]</span> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
+<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <a class="reference internal" href="references.html#kloss2011liggghts" id="id3">[KG11]</a> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
 <blockquote>
 <div><p><a class="reference external" href="https://github.com/cython/cython">Cython</a>: for improved performance in <code class="docutils literal notranslate"><span class="pre">analysis.core</span></code> module</p>
 <p><a class="reference external" href="https://github.com/mpi4py/mpi4py">mpi4py</a>: for running DEM simulation in parallel with MPI</p>
@@ -197,7 +200,12 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 </pre></div>
 </div>
 <p>Alternatively, one can download the source code as a tar ball (or zip file) from <a class="reference external" href="https://www.github.com">github</a>, and then manually extract the files.
-<em>PyGran</em> uses Python’s <cite>setuptools</cite> to check for and/or download dependencies. For building <em>PyGran</em>, run from the <code class="docutils literal notranslate"><span class="pre">PyGran</span></code> directory:</p>
+<em>PyGran</em> uses Python’s <cite>setuptools</cite> to check for and/or download dependencies. As of version 1.2.0, <em>PyGran</em> uses a submodular design. In order to clone all the core submodules, you must run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">submodule</span> <span class="n">init</span>
+<span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span>
+</pre></div>
+</div>
+<p>You can now use pip to install <em>PyGran</em> or for strictly building the package, run from the <code class="docutils literal notranslate"><span class="pre">PyGran</span></code> directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build</span>
 </pre></div>
 </div>
@@ -270,11 +278,16 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 </div>
 <div class="section" id="testing-pygran">
 <h3>Testing PyGran<a class="headerlink" href="#testing-pygran" title="Permalink to this headline">¶</a></h3>
-<p>Let’s run a simple compaction problem in order to make sure everything works fine. Open a terminal and run from anywhere:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mpirun</span> <span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">PyGran</span><span class="o">.</span><span class="n">demo</span> <span class="n">DEM</span> <span class="n">flow</span>
+<p>Let’s run a simple flow problem in order to make sure everything works fine. Open a terminal and run from the source dir:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">tests</span> <span class="n">DEM</span> <span class="n">flow</span>
 </pre></div>
 </div>
-<p>The mpirun command above should take about 1-5 mins to finish, depending on the core clock cycle and how many cores are available on the system. If successful, this command should create an output directory (‘out-SpringDashpot-date-of-creation’) which contains the trajectory and restart files stored in ‘traj’ and ‘restart’ directories, respectively.</p>
+<p>The process should take about 1-5 mins to finish, depending on the core clock cycle. If successful, this command should create an output directory (‘DEM_flow’) which contains the trajectory and restart files stored in ‘traj’ and ‘restart’ directories, respectively.</p>
+<p>In order to test the analysis module, run from the source dir:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">tests</span><span class="o">/</span><span class="n">scripts</span><span class="o">/</span><span class="n">Particle</span><span class="o">-</span><span class="n">Analysis</span><span class="o">/</span><span class="n">basics</span><span class="o">/</span><span class="n">basics</span><span class="o">.</span><span class="n">py</span> <span class="s2">&quot;DEM_flow/traj/particles*.dump&quot;</span>
+</pre></div>
+</div>
+<p>The process should take few seconds to execute.</p>
 </div>
 </div>
 </div>
