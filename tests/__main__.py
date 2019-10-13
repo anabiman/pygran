@@ -1,9 +1,8 @@
-#  -*- coding: utf8 -*-
 '''
   Created on November 22, 2018
   @author: Andrew Abi-Mansour
 
-  This is the 
+  This is the::
    __________         ________                     
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
