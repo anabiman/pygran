@@ -162,8 +162,14 @@ and LICENSE files.</p>
 <dt id="simulation.PyGranSim.model_liggghts.register">
 <code class="descclassname">simulation.PyGranSim.model_liggghts.</code><code class="descname">register</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/model_liggghts.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.model_liggghts.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a c++ header file for a contact model and compiles it during runtime.</p>
-<p>&#64;stiffness: analytical form (str) of the stiffness = force / deltan
-&#64;viscosity: analytical form (str) of the viscosity term (force = viscosity * vn).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stiffness</strong> (<em>str</em>) – analytical form of the stiffness = force / deltan</p></li>
+<li><p><strong>viscosity</strong> (<em>str</em>) – analytical form of the viscosity term (force = viscosity * vn).</p></li>
+</ul>
+</dd>
+</dl>
 <p>Material parameters that can be used:
 Yeff: effective Young’s modulus
 Geff: effective Shear modulus
@@ -175,8 +181,10 @@ deltan: normal displacement
 vn: velocity of the normal displacement
 kn: stiffness
 PI: constant (3.14 …)</p>
-<dl>
-<dt>e.g. register(name=’my_model’,</dt><dd><p>stiffness = ‘6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)’,
+<dl class="field-list">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p>register(name=’my_model’,
+stiffness = ‘6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)’,
 viscosity = ‘sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))’)</p>
 <p>produces a template header file for the spring-dashpot model called ‘my_model’.</p>
 </dd>

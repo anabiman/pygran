@@ -188,7 +188,7 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 <div class="section" id="stable-source-code">
 <h3>Stable source code<a class="headerlink" href="#stable-source-code" title="Permalink to this headline">¶</a></h3>
 <p>Even though <em>git</em> is not required to install or run <em>PyGran</em>, its availability makes it easier and convenient to download the latest version of the source code via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="n">Andrew</span><span class="o">-</span><span class="n">AbiMansour</span><span class="o">/</span><span class="n">PyGran</span><span class="o">.</span><span class="n">git</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Andrew</span><span class="o">-</span><span class="n">AbiMansour</span><span class="o">/</span><span class="n">PyGran</span>
 </pre></div>
 </div>
 <p>This clones the repository to a directory called <cite>PyGran</cite>:</p>
@@ -225,7 +225,7 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 </div>
 <div class="section" id="configuration-with-liggghts">
 <span id="configureliggghtslabel"></span><h3>Configuration with <em>LIGGGHTS</em><a class="headerlink" href="#configuration-with-liggghts" title="Permalink to this headline">¶</a></h3>
-<p><em>PyGran</em> has been tested with <a class="reference external" href="https://www.cfdem.com/download-liggghtsr-public">LIGGGHTS-PUBLIC</a> versions 3.4, 3.7, and 3.8. For running DEM simulation with <em>LIGGGHTS</em>, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which <em>PyGran</em> will attempt to find. By default, <em>PyGran</em> searches for any available installation of <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code> and writes its path name to the 1st line in <code class="docutils literal notranslate"><span class="pre">PyGran/modules/.config</span></code>. <em>PyGran</em> will also attempt to find the <em>LIGGGHTS</em> version and source path, and write each to the 2nd and 3rd lines, respectively, in the .config file. Alternatively, in case multiple versions are installed on the system or if the library filename is not <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>, users can specify the name of the shared object and optionally its source code path and version via:</p>
+<p><em>PyGran</em> has been tested with <a class="reference external" href="https://www.cfdem.com/download-liggghtsr-public">LIGGGHTS-PUBLIC</a> versions 3.4, 3.7, and 3.8. For running DEM simulation with <em>LIGGGHTS</em>, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which <em>PyGran</em> will attempt to find. By default, <em>PyGran</em> searches for any available installation of <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code> and writes its path name to the 1st line in <code class="docutils literal notranslate"><span class="pre">~/.config/PyGran/liggghts.ini</span></code>. <em>PyGran</em> will also attempt to find the <em>LIGGGHTS</em> version and source path, and write each to the 2nd and 3rd lines, respectively, in the .ini file. Alternatively, in case multiple versions are installed on the system or if the library filename is not <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>, users can specify the name of the shared object and optionally its source code path and version via:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran</span>
 
 <span class="n">PyGran</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>
@@ -235,13 +235,13 @@ I_i \alpha_i &amp;= \sum_j T_{ij}."/></p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This produces a <code class="docutils literal notranslate"><span class="pre">.config</span></code> file for <em>LIGGGHTS</em> v3.8 shown below:</p>
+<p>This produces a <code class="docutils literal notranslate"><span class="pre">~/.config/PyGran/liggghts.ini</span></code> file for <em>LIGGGHTS</em> v3.8 shown below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">library</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">custom_libliggghts</span><span class="o">.</span><span class="n">so</span>
 <span class="n">src</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">LIGGGHTS</span><span class="o">-</span><span class="mf">3.8</span><span class="o">.</span><span class="mi">0</span><span class="o">/</span><span class="n">src</span>
 <span class="n">version</span><span class="o">=</span><span class="mf">3.8</span><span class="o">.</span><span class="mi">0</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">.config</span></code> file is not found, <em>PyGran</em> will create one.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">config.ini</span></code> file is not found, <em>PyGran</em> will create one.</p>
 </div>
 <div class="section" id="compiling-liggghts">
 <h3>Compiling LIGGGHTS<a class="headerlink" href="#compiling-liggghts" title="Permalink to this headline">¶</a></h3>

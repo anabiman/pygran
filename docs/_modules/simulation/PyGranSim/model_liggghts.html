@@ -186,8 +186,11 @@
 <div class="viewcode-block" id="register"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.model_liggghts.html#simulation.PyGranSim.model_liggghts.register">[docs]</a><span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; Generates a c++ header file for a contact model and compiles it during runtime.</span>
 
-<span class="sd">	@stiffness: analytical form (str) of the stiffness = force / deltan</span>
-<span class="sd">	@viscosity: analytical form (str) of the viscosity term (force = viscosity * vn).</span>
+<span class="sd">	:param stiffness: analytical form of the stiffness = force / deltan</span>
+<span class="sd">	:type stiffness: str</span>
+
+<span class="sd">	:param viscosity: analytical form of the viscosity term (force = viscosity * vn).</span>
+<span class="sd">	:type viscosity: str</span>
 
 <span class="sd">	Material parameters that can be used:</span>
 <span class="sd">	Yeff: effective Young&#39;s modulus</span>
@@ -201,12 +204,11 @@
 <span class="sd">	kn: stiffness</span>
 <span class="sd">	PI: constant (3.14 ...)</span>
 
-<span class="sd">	e.g. register(name=&#39;my_model&#39;,</span>
-<span class="sd">		stiffness = &#39;6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)&#39;,</span>
-<span class="sd">		viscosity = &#39;sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))&#39;)</span>
+<span class="sd">	:example: register(name=&#39;my_model&#39;,</span>
+<span class="sd">		  stiffness = &#39;6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)&#39;,</span>
+<span class="sd">		  viscosity = &#39;sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))&#39;)</span>
 
-<span class="sd">		produces a template header file for the spring-dashpot model called &#39;my_model&#39;.</span>
-
+<span class="sd">		  produces a template header file for the spring-dashpot model called &#39;my_model&#39;.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="c1"># Make sure everything is done on the master processor</span>
@@ -236,11 +238,12 @@
 		<span class="k">if</span> <span class="s1">&#39;mtype&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="n">args</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;normal&#39;</span>
 
-		<span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;PyGranSim.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span>
+		<span class="n">_configdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s1">&#39;.config&#39;</span><span class="p">,</span> <span class="s1">&#39;PyGran&#39;</span><span class="p">)</span>
+		<span class="n">liggghts_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_configdir</span><span class="p">,</span> <span class="s1">&#39;liggghts.ini&#39;</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="s1">&#39;src_dir&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">_dir</span> <span class="o">+</span> <span class="s1">&#39;../.config&#39;</span><span class="p">):</span>
-				<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_dir</span> <span class="o">+</span> <span class="s1">&#39;../.config&#39;</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">liggghts_ini</span><span class="p">):</span>
+				<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">liggghts_ini</span><span class="p">,</span> <span class="s1">&#39;r+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 					<span class="n">fp</span><span class="o">.</span><span class="n">readline</span><span class="p">();</span> <span class="n">fp</span><span class="o">.</span><span class="n">readline</span><span class="p">();</span>
 					<span class="n">args</span><span class="p">[</span><span class="s1">&#39;src_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
 			<span class="k">else</span><span class="p">:</span>
@@ -248,12 +251,15 @@
 
 		<span class="c1"># find contact model number</span>
 		<span class="n">nModels</span> <span class="o">=</span> <span class="n">_find_number_models</span><span class="p">(</span><span class="n">mtype</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;mtype&#39;</span><span class="p">],</span> <span class="n">src_dir</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;src_dir&#39;</span><span class="p">])</span>
+		<span class="n">nContactModels</span> <span class="o">=</span> <span class="mi">100</span>
 
-		<span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span> <span class="c1"># more than 100 contact models? WTF! TODO: Make this better automated</span>
+		<span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nContactModels</span><span class="p">):</span> <span class="c1"># more than 100 contact models? WTF! TODO: Make this better automated</span>
 			<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nModels</span><span class="p">:</span>
 				<span class="n">args</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">number</span>
 				<span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">nModels</span><span class="p">)</span>
 				<span class="k">break</span>
+
+		<span class="n">_dir</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="vm">__file__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;PyGranSim.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span><span class="s1">&#39;.py&#39;</span><span class="p">)</span>
 
 		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_dir</span> <span class="o">+</span> <span class="s1">&#39;model_template.h&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 			<span class="n">lines</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
