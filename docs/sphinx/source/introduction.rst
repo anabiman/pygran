@@ -97,7 +97,7 @@ Stable source code
 ******************
 Even though *git* is not required to install or run *PyGran*, its availability makes it easier and convenient to download the latest version of the source code via::
 
-    git clone git@github.com:Andrew-AbiMansour/PyGran.git
+    git clone https://github.com/Andrew-AbiMansour/PyGran
 
 This clones the repository to a directory called `PyGran`::
 
@@ -135,7 +135,7 @@ An experimental version of the code can be downloaded from `github <https://andr
 
 Configuration with *LIGGGHTS*
 *****************************
-*PyGran* has been tested with `LIGGGHTS-PUBLIC <https://www.cfdem.com/download-liggghtsr-public>`_ versions 3.4, 3.7, and 3.8. For running DEM simulation with *LIGGGHTS*, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which *PyGran* will attempt to find. By default, *PyGran* searches for any available installation of ``libliggghts.so`` and writes its path name to the 1st line in ``PyGran/modules/.config``. *PyGran* will also attempt to find the *LIGGGHTS* version and source path, and write each to the 2nd and 3rd lines, respectively, in the .config file. Alternatively, in case multiple versions are installed on the system or if the library filename is not ``libliggghts.so``, users can specify the name of the shared object and optionally its source code path and version via::
+*PyGran* has been tested with `LIGGGHTS-PUBLIC <https://www.cfdem.com/download-liggghtsr-public>`_ versions 3.4, 3.7, and 3.8. For running DEM simulation with *LIGGGHTS*, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which *PyGran* will attempt to find. By default, *PyGran* searches for any available installation of ``libliggghts.so`` and writes its path name to the 1st line in ``~/.config/PyGran/liggghts.ini``. *PyGran* will also attempt to find the *LIGGGHTS* version and source path, and write each to the 2nd and 3rd lines, respectively, in the .ini file. Alternatively, in case multiple versions are installed on the system or if the library filename is not ``libliggghts.so``, users can specify the name of the shared object and optionally its source code path and version via::
 
     import PyGran
 
@@ -145,13 +145,13 @@ Configuration with *LIGGGHTS*
         src='/path/to/LIGGGHTS-3.8.0/src'
     )
 
-This produces a ``.config`` file for *LIGGGHTS* v3.8 shown below::
+This produces a ``~/.config/PyGran/liggghts.ini`` file for *LIGGGHTS* v3.8 shown below::
 
     library=/home/user/.local/lib/custom_libliggghts.so
     src=/path/to/LIGGGHTS-3.8.0/src
     version=3.8.0
 
-If ``.config`` file is not found, *PyGran* will create one.
+If ``config.ini`` file is not found, *PyGran* will create one.
 
 Compiling LIGGGHTS
 ******************
