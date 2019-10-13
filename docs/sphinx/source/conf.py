@@ -14,7 +14,7 @@ import os
 import sys
 import sphinx_drove_theme 
 
-sys.path.insert(0, os.path.abspath('../../src/PyGran'))
+sys.path.insert(0, os.path.abspath('../../../src/PyGran'))
 
 
 # -- Project information -----------------------------------------------------
