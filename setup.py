@@ -49,7 +49,7 @@ with open(os.path.join('src', 'PyGran', '_version.py'), 'r') as fp:
 try:
 	from Cython.Build import cythonize
 	import numpy
-	optimal_list = cythonize("src/PyGran/modules/analysis/core.pyx")
+	optimal_list = cythonize("src/PyGran/analysis/PyGranAnalysis/core.pyx", compiler_directives={'language_level' : sys.version_info[0]})
 	include_dirs = [numpy.get_include()]
 except:
 	print('Could not cythonize. Make sure Cython is properly installed.')
