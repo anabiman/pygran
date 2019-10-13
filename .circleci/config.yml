@@ -42,7 +42,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            mpirun -n 2 python3 -m tests DEM flow
+            python3 -m tests DEM flow
             python3 tests/scripts/Particle-Analysis/basics/basics.py "DEM_flow/traj/particles*.dump"
             mkdir test-results
 
