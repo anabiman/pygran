@@ -79,3 +79,5 @@ Particles.translate(('z',), (-Particles.z.min(),))
 
 # Particles can be written as a new dump file, which by default is appended to an existing file.
 Particles.write('translated_system.dump')
+
+print("Test completed successfully")
