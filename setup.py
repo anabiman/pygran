@@ -32,7 +32,7 @@ and LICENSE files.
 import os, sys, shutil
 import subprocess
 from setuptools import setup, find_packages
-import glob, shutil, re
+import glob, shutil
 from distutils.command.install import install
 from distutils.command.clean import clean
 
