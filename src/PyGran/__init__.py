@@ -26,5 +26,5 @@
   and LICENSE files.
   '''
 
-from .tools import configure
-from . import simulation, analysis, tools, params
+from . import simulation, analysis, params
+from .simulation.PyGranSim.tools import configure
