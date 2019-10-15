@@ -26,7 +26,6 @@ jobs:
       - run:
           name: install PyGran deps
           command: |
-            pip3 install --upgrade pip --user
             pip3 install -e .[extra] --user
 
       - run:
