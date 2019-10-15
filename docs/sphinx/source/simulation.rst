@@ -102,10 +102,10 @@ Examples
 
  .. code-block:: python
 
-      import PyGran.Simulator as Sim
+      import PyGran.simulation as sim
       from numpy import arange, fabs
 
-      cModel = Sim.models.ThorntonNing
+      Model = sim.models.ThorntonNing
 
       # Define material properties
       powderX = {
@@ -124,9 +124,9 @@ Examples
       for yieldPress in pressure:
 
             powderX['yieldPress'] = yieldPress
-            model = cModel(material=powderX)
+            Cmodel = Model(material=powderX)
 
-            time, disp, force = model.displacement()
+            time, disp, force = Cmodel.displacement()
             deltav = disp[:,1]
 
             COR.append(fabs(deltav[-1] / deltav[0]))
