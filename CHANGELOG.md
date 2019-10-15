@@ -16,7 +16,6 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - Renamed Simulator, Analyzer, and Material modules to simulation, analysis, and params, respectively.
 - Fixed bug in the contact duraction computation of the numerical solver in the simulation module.
 
-
 ## [1.2.0]
 ### Added
 - New `configure' function for specifying which LIGGGHTS version to use
@@ -37,3 +36,4 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - Fixed bug in SSMP mode when the slave processors did not produce any output 
 - Fixed bug with user-created scripts importing themselves (leading to double execution)
 - Renamed method `add_viscous' to `addViscous' in engine_liggghts and dem modules
+- DEM engine config files are stored in ~/.config/engine_name.ini
