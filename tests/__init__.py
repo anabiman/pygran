@@ -1,16 +1,16 @@
 '''
   Created on April 02, 2019
-  @author: Andrew Abi-Mansour
+  Author: Andrew Abi-Mansour
 
-  This is the 
-   __________         ________                     
+  This is the::
+
   ██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
   ██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
   ██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
   ██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
   ██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
   ╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
-                                                      
+
   DEM simulation and analysis toolkit
   http://www.pygran.org, support@pygran.org
 

@@ -15,30 +15,19 @@ Particles = Sys.Particles
 # created instead:
 Particles = Sys.Particles.copy()
 
-# The length of Particles is the number of particles contained in this class
-assert len(Particles) == ?
-
 nparts = 0
 # Looping over Particles yields a Particles class of length 1
 for part in Particles:
     nparts += len(part)
-    
-print("Number of particles calculated = ", nparts)
 
 # Slice Particles into a new class containing the 1st 10 particles
 Slice = Particles[:10]
 
-print("number of particles in 1st slice is", len(Slice))
-
 # Slice Particles into a new class containing particles 1, 2, and 10
 Slice = Particles[[1,2,10]]
 
-print("number of particles in 2nd slice is", len(Slice))
-
 # Slice Particles into a new class containing the 1st 10 particles and the last 10 particles
 Slice = Particles[:10] + Particles[-10:]
-
-print("number of particles in 3rd slice is", len(Slice))
 
 # More sophisticated slicing can be done with 1 or boolean expressions. For example:
 
