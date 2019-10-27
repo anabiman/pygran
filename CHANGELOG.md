@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [1.1.0]
 ### Added
 
@@ -23,6 +22,7 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - Cell and point attributes are exposed separately via: Mesh.points.attr and Mesh.cells.attr
 - New version navigation
 - Online documentation based on Sphinx
+- Pytest scripts for validation
 
 ### Removed
 - Manual in pdf format
@@ -37,3 +37,4 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - Fixed bug with user-created scripts importing themselves (leading to double execution)
 - Renamed method `add_viscous' to `addViscous' in engine_liggghts and dem modules
 - DEM engine config files are stored in ~/.config/engine_name.ini
+- System method 'units' applies to all frames and not just the currently loaded frame
