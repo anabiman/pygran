@@ -24,7 +24,7 @@
   received a copy of the GNU General Public License along with PyGran.
   If not, see http://www.gnu.org/licenses . See also top-level README
   and LICENSE files.
-  '''
+'''
 
 from . import simulation, analysis, params
 from .simulation.PyGranSim.tools import configure
