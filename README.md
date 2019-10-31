@@ -19,7 +19,7 @@ The core modules in PyGran are:
 
 **If your find PyGran useful in your research, please consider citing the following paper:**
 
-[![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1021%2Facs.jctc.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
+[![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1016%2Fels.jsoftx.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
 
 ```
 @article{aam2019pygran,
