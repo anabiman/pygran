@@ -148,13 +148,13 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span>
 
-<div class="viewcode-block" id="Temporal"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal">[docs]</a><span class="k">class</span> <span class="nc">Temporal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Temporal"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal">[docs]</a><span class="k">class</span> <span class="nc">Temporal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; A generic class that enables time-dependent analysis of DEM data &quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">System</span><span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">System</span> <span class="o">=</span> <span class="n">System</span>
 
-<div class="viewcode-block" id="Temporal.series"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.series">[docs]</a>	<span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+<div class="viewcode-block" id="Temporal.series"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.series">[docs]</a>	<span class="k">def</span> <span class="nf">series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Extracts a time series for a supplied *attr* stored in self.System</span>
 
@@ -174,7 +174,7 @@
 
 		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 		
-<div class="viewcode-block" id="Temporal.flow"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.flow">[docs]</a>	<span class="k">def</span> <span class="nf">flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Temporal.flow"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.flow">[docs]</a>	<span class="k">def</span> <span class="nf">flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Computes flow rate. When *density* is supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time.</span>
 
@@ -210,7 +210,7 @@
 		<span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Temporal.wallCollision"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.wallCollision">[docs]</a>	<span class="k">def</span> <span class="nf">wallCollision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">boundary</span><span class="p">):</span>
+<div class="viewcode-block" id="Temporal.wallCollision"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.dynamics.html#analysis.PyGranAnalysis.dynamics.Temporal.wallCollision">[docs]</a>	<span class="k">def</span> <span class="nf">wallCollision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">boundary</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Computes the frequency of particle-wall collisions</span>
 

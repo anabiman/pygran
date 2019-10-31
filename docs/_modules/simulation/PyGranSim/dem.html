@@ -165,7 +165,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DEM&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="DEM"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM">[docs]</a><span class="k">class</span> <span class="nc">DEM</span><span class="p">:</span>
+<div class="viewcode-block" id="DEM"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM">[docs]</a><span class="k">class</span> <span class="nc">DEM</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;A generic class that handles communication for a DEM object in a way that</span>
 <span class="sd">  is independent of the engine used&quot;&quot;&quot;</span>
 
@@ -385,7 +385,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
         <span class="k">break</span>
   
-<div class="viewcode-block" id="DEM.velocity"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.velocity">[docs]</a>  <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.velocity"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.velocity">[docs]</a>  <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Assigns velocity to selected particles.</span>
 
 <span class="sd">    :param args: group-ID style args keyword value</span>
@@ -400,7 +400,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">velocity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.addViscous"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.addViscous">[docs]</a>  <span class="k">def</span> <span class="nf">addViscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.addViscous"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.addViscous">[docs]</a>  <span class="k">def</span> <span class="nf">addViscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Adds a viscous damping force :math:`F` proportional</span>
 <span class="sd">    to each particle&#39;s velocity :math:`v`:</span>
 <span class="sd">    </span>
@@ -427,7 +427,7 @@
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span>
         
-<div class="viewcode-block" id="DEM.setupParticles"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupParticles">[docs]</a>  <span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.setupParticles"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupParticles">[docs]</a>  <span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Internal function used to create particles in LIGGGHTS &quot;&quot;&quot;</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nSim</span><span class="p">):</span>
@@ -435,7 +435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">setupParticles</span><span class="p">()</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.createProperty"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.createProperty">[docs]</a>  <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.createProperty"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.createProperty">[docs]</a>  <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Internal function used to create material and interaction properties</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -448,7 +448,7 @@
           <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">createProperty</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.importMeshes"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.importMeshes">[docs]</a>  <span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.importMeshes"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.importMeshes">[docs]</a>  <span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An internal function that is called during DEM initialization for importing meshes.</span>
 <span class="sd">    Unless `name` is supplied, this function by default imports all meshes and sets </span>
@@ -464,7 +464,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">importMeshes</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.importMesh"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.importMesh">[docs]</a>  <span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.importMesh"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.importMesh">[docs]</a>  <span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Imports a mesh file (STL or VTK)</span>
 
@@ -485,7 +485,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">importMesh</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.setupWall"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupWall">[docs]</a>  <span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.setupWall"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupWall">[docs]</a>  <span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a primitive (virtual) or surface (mesh) wall</span>
 
@@ -508,7 +508,7 @@
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">setupWall</span><span class="p">(</span><span class="n">wtype</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">peq</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEM.printSetup"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.printSetup">[docs]</a>  <span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.printSetup"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.printSetup">[docs]</a>  <span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Updates the print setup used to set which variables to write to file, </span>
 <span class="sd">    and their format.</span>
@@ -518,7 +518,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">printSetup</span><span class="p">()</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.writeSetup"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.writeSetup">[docs]</a>  <span class="k">def</span> <span class="nf">writeSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.writeSetup"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.writeSetup">[docs]</a>  <span class="k">def</span> <span class="nf">writeSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This creates dump files for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during</span>
 <span class="sd">    the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.</span>
@@ -544,7 +544,7 @@
 
         <span class="k">return</span> <span class="n">dumpID</span></div>
 
-<div class="viewcode-block" id="DEM.setupIntegrate"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupIntegrate">[docs]</a>  <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.setupIntegrate"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.setupIntegrate">[docs]</a>  <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="s1">&#39;nve/sphere&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Controls how Newton&#39;s eqs are integrated in time. </span>
 
@@ -559,7 +559,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">setupIntegrate</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">itype</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.integrate"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.integrate">[docs]</a>  <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.integrate"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.integrate">[docs]</a>  <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Advance system in time.</span>
 
@@ -574,7 +574,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">itype</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.remove"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.remove">[docs]</a>  <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.remove"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.remove">[docs]</a>  <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Delete variable/object by name.</span>
 
@@ -586,7 +586,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.monitor"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.monitor">[docs]</a>  <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.monitor"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.monitor">[docs]</a>  <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Not yet documented</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -594,7 +594,7 @@
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEM.plot"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.plot">[docs]</a>  <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.plot"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.plot">[docs]</a>  <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Not yet documented</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -603,7 +603,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">xscale</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.moveMesh"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.moveMesh">[docs]</a>  <span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.moveMesh"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.moveMesh">[docs]</a>  <span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Not yet documented</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -611,7 +611,7 @@
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">pProcs</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">moveMesh</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEM.saveas"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.saveas">[docs]</a>  <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.saveas"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.saveas">[docs]</a>  <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Not yet documented</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -620,7 +620,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">saveas</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.command"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.command"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pass a command to DEM engine.</span>
 
@@ -632,7 +632,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dem</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">break</span></div>
 
-<div class="viewcode-block" id="DEM.close"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.close">[docs]</a>  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEM.close"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.dem.html#simulation.PyGranSim.dem.DEM.close">[docs]</a>  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Internal function that frees allocated memory and changes directory back to current working directory. </span>
 <span class="sd">    &quot;&quot;&quot;</span>

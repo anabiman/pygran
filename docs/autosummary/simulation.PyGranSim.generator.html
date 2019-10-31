@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>analysis.PyGranAnalysis.dynamics &mdash; PyGran 1.2.0 documentation</title>
+  <title>simulation.PyGranSim.generator &mdash; PyGran 1.2.0 documentation</title>
   
 
   
@@ -102,10 +102,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>analysis.PyGranAnalysis.dynamics</li>
+    <li>simulation.PyGranSim.generator</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/_autosummary/analysis.PyGranAnalysis.dynamics.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/autosummary/simulation.PyGranSim.generator.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -113,10 +113,10 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="module-analysis.PyGranAnalysis.dynamics">
-<span id="analysis-pygrananalysis-dynamics"></span><h1>analysis.PyGranAnalysis.dynamics<a class="headerlink" href="#module-analysis.PyGranAnalysis.dynamics" title="Permalink to this headline">¶</a></h1>
-<p>This module provides classes for time-dependent analysis.</p>
-<p>Created on July 11, 2016</p>
+  <div class="section" id="module-simulation.PyGranSim.generator">
+<span id="simulation-pygransim-generator"></span><h1>simulation.PyGranSim.generator<a class="headerlink" href="#module-simulation.PyGranSim.generator" title="Permalink to this headline">¶</a></h1>
+<p>A set of routines for generating particle configurations</p>
+<p>Created on March 30, 2016</p>
 <p>Author: Andrew Abi-Mansour</p>
 <p>This is the:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
@@ -138,92 +138,61 @@ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
 received a copy of the GNU General Public License along with PyGran.
 If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
 and LICENSE files.</p>
-<p class="rubric">Classes</p>
+<p class="rubric">Functions</p>
 <table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.dynamics.Temporal" title="analysis.PyGranAnalysis.dynamics.Temporal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Temporal</span></code></a>(System)</p></td>
-<td><p>A generic class that enables time-dependent analysis of DEM data</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.generator.hcp" title="simulation.PyGranSim.generator.hcp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hcp</span></code></a>(natoms, radius)</p></td>
+<td><p>Generates a Hexagonal Close Packed structure</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#simulation.PyGranSim.generator.rand" title="simulation.PyGranSim.generator.rand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rand</span></code></a>(natoms, radius[, overlapping, factor])</p></td>
+<td><p>Creates a set of randomly placed non-overlapping particles</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="class">
-<dt id="analysis.PyGranAnalysis.dynamics.Temporal">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.dynamics.</code><code class="descname">Temporal</code><span class="sig-paren">(</span><em>System</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A generic class that enables time-dependent analysis of DEM data</p>
-<dl class="method">
-<dt id="analysis.PyGranAnalysis.dynamics.Temporal.series">
-<code class="descname">series</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.series" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extracts a time series for a supplied <em>attr</em> stored in self.System</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>attr</strong> (<em>string</em>) – attribute to extract time series for</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>time series</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy array of dimensions nframes x dim_attr</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="analysis.PyGranAnalysis.dynamics.Temporal.flow">
-<code class="descname">flow</code><span class="sig-paren">(</span><em>density=None</em>, <em>dt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.flow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes flow rate. When <em>density</em> is supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time.</p>
+<dl class="function">
+<dt id="simulation.PyGranSim.generator.rand">
+<code class="descclassname">simulation.PyGranSim.generator.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>natoms</em>, <em>radius</em>, <em>overlapping=True</em>, <em>factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/generator.html#rand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.generator.rand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a set of randomly placed non-overlapping particles</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>density</strong> (<em>float</em>) – true mass density</p></li>
-<li><p><strong>dt</strong> (<em>float</em>) – timestep in units of time, default 1.</p></li>
+<li><p><strong>natoms</strong> (<em>int</em>) – number of particles to create</p></li>
+<li><p><strong>radius</strong> (<em>float</em><em> or </em><em>array of length natoms</em>) – particle radius</p></li>
+<li><p><strong>overlapping</strong> (<em>bool</em>) – ensures all particles are allowed to overlap or not</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – number to scale noise with (w.r.t particle radius) when correcting for overlapping particles</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>flow rate</p>
+<dd class="field-even"><p>a new Particles object</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>1D numpy array</p>
+<dd class="field-odd"><p><a class="reference internal" href="analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles" title="analysis.PyGranAnalysis.core.Particles">Particles</a></p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-0">
-<p class="admonition-title">Todo</p>
-<p>Make this routine more efficient</p>
-</div>
 </dd></dl>
 
-<dl class="method">
-<dt id="analysis.PyGranAnalysis.dynamics.Temporal.wallCollision">
-<code class="descname">wallCollision</code><span class="sig-paren">(</span><em>**boundary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.wallCollision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.wallCollision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the frequency of particle-wall collisions</p>
+<dl class="function">
+<dt id="simulation.PyGranSim.generator.hcp">
+<code class="descclassname">simulation.PyGranSim.generator.</code><code class="descname">hcp</code><span class="sig-paren">(</span><em>natoms</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/generator.html#hcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.generator.hcp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a Hexagonal Close Packed structure</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xmin</strong> (<em>float</em>) – bound that specifies the left-hand wall pependicular to the y-z plane</p></li>
-<li><p><strong>xmax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the y-z plane</p></li>
-<li><p><strong>ymin</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-z plane</p></li>
-<li><p><strong>ymax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-z plane</p></li>
-<li><p><strong>zmin</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-y plane</p></li>
-<li><p><strong>zmax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-y plane</p></li>
+<li><p><strong>natoms</strong> (<em>int</em>) – number of particles to create</p></li>
+<li><p><strong>radius</strong> (<em>float</em><em> or </em><em>array of length natoms</em>) – particle radius</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>wall collision frequency</p>
+<dd class="field-even"><p>a new Particles object</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><a class="reference internal" href="analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles" title="analysis.PyGranAnalysis.core.Particles">Particles</a></p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This routines supports only 3D systems</p>
-</div>
-</dd></dl>
-
 </dd></dl>
 
 </div>

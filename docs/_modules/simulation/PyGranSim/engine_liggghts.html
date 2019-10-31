@@ -170,7 +170,7 @@
 <span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">dictToTuple</span>
 
-<div class="viewcode-block" id="liggghts"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts">[docs]</a><span class="k">class</span> <span class="nc">liggghts</span><span class="p">:</span>
+<div class="viewcode-block" id="liggghts"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts">[docs]</a><span class="k">class</span> <span class="nc">liggghts</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  A class that provides API-like access to LIGGGHTS-PUBLIC</span>
 
@@ -279,7 +279,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">lammps_close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="liggghts.file"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts.file">[docs]</a>  <span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
+<div class="viewcode-block" id="liggghts.file"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts.file">[docs]</a>  <span class="k">def</span> <span class="nf">file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Function for loading LIGGGHTS input file scripts. </span>
 
 <span class="sd">    :param file: input filename</span>
@@ -290,7 +290,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">lammps_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="p">,</span><span class="n">file</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="liggghts.command"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="liggghts.command"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.liggghts.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cmd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Function for executing a LIGGGHTS command</span>
 
 <span class="sd">    :param cmd: input LIGGGHTS command</span>
@@ -414,7 +414,7 @@
   <span class="k">def</span> <span class="nf">scatter_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">count</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">lammps_scatter_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy">[docs]</a><span class="k">class</span> <span class="nc">DEMPy</span><span class="p">:</span>
+<div class="viewcode-block" id="DEMPy"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy">[docs]</a><span class="k">class</span> <span class="nc">DEMPy</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;A class that implements a python interface for DEM computations</span>
 
 <span class="sd">  :param units: unit system (default &#39;si&#39;). See `ref &lt;https://www.cfdem.com/media/DEM/docu/units.html&gt;`_.</span>
@@ -551,7 +551,7 @@
   <span class="k">def</span> <span class="nf">extract_fix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">id</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">extract_fix</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">style</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  
 
-<div class="viewcode-block" id="DEMPy.createDomain"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createDomain">[docs]</a>  <span class="k">def</span> <span class="nf">createDomain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.createDomain"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createDomain">[docs]</a>  <span class="k">def</span> <span class="nf">createDomain</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Define the domain of the simulation &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
       <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Creating domain&#39;</span><span class="p">)</span>
@@ -563,7 +563,7 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;create_box </span><span class="si">{}</span><span class="s1"> domain&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;nSS&#39;</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupParticles"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupParticles">[docs]</a>  <span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupParticles"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupParticles">[docs]</a>  <span class="k">def</span> <span class="nf">setupParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Setup particle for insertion if requested by the user &quot;&quot;&quot;</span>
 
     <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]:</span>
@@ -609,7 +609,7 @@
         <span class="c1">#Do NOT unfix randName! Will cause a memory corruption error</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pddName</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pddName</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy.insert"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.insert">[docs]</a>  <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.insert"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.insert">[docs]</a>  <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">species</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function inserts particles, and assigns particle velocities if requested by the user. If species is &#39;all&#39;,</span>
 <span class="sd">    all components specified in SS are inserted. Otherwise, species must be the id of the component to be inserted.</span>
@@ -740,7 +740,7 @@
 
     <span class="k">return</span> <span class="n">randName</span></div>
 
-<div class="viewcode-block" id="DEMPy.run"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.run">[docs]</a>  <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.run"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.run">[docs]</a>  <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Runs a simulation for number of steps specified by the user</span>
 <span class="sd">     @itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)</span>
 <span class="sd">     @dt = timestep&quot;&quot;&quot;</span>
@@ -764,7 +764,7 @@
 
     <span class="k">return</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="DEMPy.moveMesh"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.moveMesh">[docs]</a>  <span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.moveMesh"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.moveMesh">[docs]</a>  <span class="k">def</span> <span class="nf">moveMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Control how a mesh (specified by name) moves in time</span>
 
 <span class="sd">    @name: string specifying mesh ID/name</span>
@@ -779,7 +779,7 @@
 
     <span class="k">return</span> <span class="n">randName</span></div>
 
-<div class="viewcode-block" id="DEMPy.importMeshes"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.importMeshes">[docs]</a>  <span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.importMeshes"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.importMeshes">[docs]</a>  <span class="k">def</span> <span class="nf">importMeshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Imports all meshes and sets them up as walls. Can import only one mesh specified by the &#39;name&#39; keyword.</span>
 <span class="sd">    @file: mesh filename</span>
 <span class="sd">    @mtype: mesh type</span>
@@ -810,7 +810,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setupWall</span><span class="p">(</span><span class="n">wtype</span><span class="o">=</span><span class="s1">&#39;mesh&#39;</span><span class="p">)</span></div>
     
 
-<div class="viewcode-block" id="DEMPy.importMesh"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.importMesh">[docs]</a>  <span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.importMesh"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.importMesh">[docs]</a>  <span class="k">def</span> <span class="nf">importMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Imports a specific surface mesh requested by the user</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -821,7 +821,7 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;fix </span><span class="si">{}</span><span class="s1"> all </span><span class="si">{}</span><span class="s1"> file </span><span class="si">{}</span><span class="s1"> type </span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mtype</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">material</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupWall"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupWall">[docs]</a>  <span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupWall"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupWall">[docs]</a>  <span class="k">def</span> <span class="nf">setupWall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wtype</span><span class="p">,</span> <span class="n">species</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plane</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">peq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a wall</span>
 <span class="sd">    @ wtype: type of the wall (primitive or mesh)</span>
@@ -871,7 +871,7 @@
 
     <span class="k">return</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="DEMPy.remove"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.remove">[docs]</a>  <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.remove"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.remove">[docs]</a>  <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deletes a specified fix. If the fix is for a mesh, we must unfix it and re-import all meshes again and setup them</span>
 <span class="sd">    up as walls. Very tedious!</span>
@@ -909,7 +909,7 @@
     <span class="c1"># Otherwise, we are just unfixing a non-mesh fix</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;unfix </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.createGroup"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createGroup">[docs]</a>  <span class="k">def</span> <span class="nf">createGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">group</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.createGroup"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createGroup">[docs]</a>  <span class="k">def</span> <span class="nf">createGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">group</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Create groups of atoms. If group is empty, groups{i} are created for every i species.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
@@ -921,7 +921,7 @@
     <span class="k">else</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;group &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">group</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.createParticles"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createParticles">[docs]</a>  <span class="k">def</span> <span class="nf">createParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.createParticles"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createParticles">[docs]</a>  <span class="k">def</span> <span class="nf">createParticles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates particles of type &#39;type&#39; (1,2, ...) using style &#39;style&#39; (box or region or single or random)</span>
 <span class="sd">    @[args]: &#39;basis&#39; or &#39;remap&#39; or &#39;units&#39; or &#39;all_in&#39; </span>
@@ -933,11 +933,11 @@
     <span class="c1"># new code below: ~ should be the same. Double check this.</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">createParticles</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy.set"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.set">[docs]</a>  <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.set"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.set">[docs]</a>  <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Set group/atom attributes &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupNeighbor"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupNeighbor">[docs]</a>  <span class="k">def</span> <span class="nf">setupNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupNeighbor"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupNeighbor">[docs]</a>  <span class="k">def</span> <span class="nf">setupNeighbor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sets up NNS list parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -959,7 +959,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;neighbor </span><span class="si">{nns_skin}</span><span class="s1"> </span><span class="si">{nns_type}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;neigh_modify delay 0 every </span><span class="si">{nns_freq}</span><span class="s1"> check yes&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.createProperty"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createProperty">[docs]</a>  <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.createProperty"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.createProperty">[docs]</a>  <span class="k">def</span> <span class="nf">createProperty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Material and interaction properties required</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -968,7 +968,7 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;fix </span><span class="si">{}</span><span class="s1"> all property/global&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupPhysics"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupPhysics">[docs]</a>  <span class="k">def</span> <span class="nf">setupPhysics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupPhysics"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupPhysics">[docs]</a>  <span class="k">def</span> <span class="nf">setupPhysics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specify the interation forces</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -980,7 +980,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;pair_style &#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;pair_coeff * *&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy.velocity"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.velocity">[docs]</a>  <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.velocity"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.velocity">[docs]</a>  <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assigns velocity to selected particles.</span>
 <span class="sd">    :param args: group-ID style args keyword value</span>
@@ -991,14 +991,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; </span><span class="si">{}</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupGravity"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupGravity">[docs]</a>  <span class="k">def</span> <span class="nf">setupGravity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupGravity"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupGravity">[docs]</a>  <span class="k">def</span> <span class="nf">setupGravity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specify in which direction the gravitational force acts</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s1">&#39;gravity&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;fix myGravity all gravity </span><span class="si">{}</span><span class="s1"> vector </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;gravity&#39;</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="DEMPy.initialize"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.initialize">[docs]</a>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.initialize"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.initialize">[docs]</a>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1045,7 +1045,7 @@
     <span class="k">else</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">writeSetup</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="DEMPy.setupIntegrate"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupIntegrate">[docs]</a>  <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.setupIntegrate"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.setupIntegrate">[docs]</a>  <span class="k">def</span> <span class="nf">setupIntegrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">itype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specify how Newton&#39;s eqs are integrated in time. MUST BE EXECUTED ONLY ONCE.</span>
 <span class="sd">    TODO: extend this to SQ particles</span>
@@ -1101,7 +1101,7 @@
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span></div>
 
-<div class="viewcode-block" id="DEMPy.integrate"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.integrate">[docs]</a>  <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.integrate"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.integrate">[docs]</a>  <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run simulation in time</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1116,7 +1116,7 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;run </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">steps</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.printSetup"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.printSetup">[docs]</a>  <span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.printSetup"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.printSetup">[docs]</a>  <span class="k">def</span> <span class="nf">printSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Specify which variables to write to file, and their format</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1129,7 +1129,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;thermo </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;thermo_modify norm no lost ignore&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy.writeSetup"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.writeSetup">[docs]</a>  <span class="k">def</span> <span class="nf">writeSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.writeSetup"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.writeSetup">[docs]</a>  <span class="k">def</span> <span class="nf">writeSetup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This creates dumps for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during</span>
 <span class="sd">    the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.</span>
@@ -1199,7 +1199,7 @@
 
     <span class="k">return</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="DEMPy.extractCoords"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.extractCoords">[docs]</a>  <span class="k">def</span> <span class="nf">extractCoords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.extractCoords"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.extractCoords">[docs]</a>  <span class="k">def</span> <span class="nf">extractCoords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts atomic positions from a certian frame and adds it to coords</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1227,7 +1227,7 @@
 
     <span class="k">return</span> <span class="n">coords</span></div>
 
-<div class="viewcode-block" id="DEMPy.monitor"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.monitor">[docs]</a>  <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.monitor"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.monitor">[docs]</a>  <span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes time-averaged quantities of a global vector.</span>
 <span class="sd">    @species:</span>
@@ -1260,7 +1260,7 @@
 
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;my</span><span class="si">{name}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.addViscous"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.addViscous">[docs]</a>  <span class="k">def</span> <span class="nf">addViscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.addViscous"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.addViscous">[docs]</a>  <span class="k">def</span> <span class="nf">addViscous</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Adds a viscous damping force :math:`F` proportional</span>
 <span class="sd">    to each particle&#39;s velocity :math:`v`:</span>
 <span class="sd">    </span>
@@ -1288,7 +1288,7 @@
 
     <span class="k">return</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="DEMPy.plot"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.plot">[docs]</a>  <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.plot"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.plot">[docs]</a>  <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">xlabel</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xscale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
@@ -1310,7 +1310,7 @@
       <span class="k">except</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unexpected error:&quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="DEMPy.saveas"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.saveas">[docs]</a>  <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.saveas"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.saveas">[docs]</a>  <span class="k">def</span> <span class="nf">saveas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
@@ -1320,13 +1320,13 @@
       <span class="k">except</span><span class="p">:</span>
          <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unexpected error:&quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="DEMPy.command"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.command"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.command">[docs]</a>  <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Passes a specific command to LIGGGHTS</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DEMPy.resume"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.resume">[docs]</a>  <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.resume"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.resume">[docs]</a>  <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rdir</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/*&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;restart&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
@@ -1338,7 +1338,7 @@
 
     <span class="bp">self</span><span class="o">.</span><span class="n">lmp</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;read_restart </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rfile</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="DEMPy.readData"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.readData">[docs]</a>  <span class="k">def</span> <span class="nf">readData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DEMPy.readData"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.engine_liggghts.html#simulation.PyGranSim.engine_liggghts.DEMPy.readData">[docs]</a>  <span class="k">def</span> <span class="nf">readData</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pargs</span><span class="p">[</span><span class="s1">&#39;read_data&#39;</span><span class="p">]</span>

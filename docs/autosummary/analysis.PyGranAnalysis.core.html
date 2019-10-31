@@ -105,7 +105,7 @@
     <li>analysis.PyGranAnalysis.core</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/_autosummary/analysis.PyGranAnalysis.core.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/autosummary/analysis.PyGranAnalysis.core.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -149,7 +149,7 @@ and LICENSE files.</p>
 <td><p>A sorting function by numerical numbers for glob.glob</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.core.select" title="analysis.PyGranAnalysis.core.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>(data, *region)</p></td>
-<td><p>Create a selection of particles based on a subsystem defined by region &#64; region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax).</p></td>
+<td><p>Create a selection of particles based on a region-defined subsystem.</p></td>
 </tr>
 </tbody>
 </table>
@@ -163,7 +163,7 @@ and LICENSE files.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.core.Factory" title="analysis.PyGranAnalysis.core.Factory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Factory</span></code></a></p></td>
 <td><p>A factory for system class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.core.Mesh" title="analysis.PyGranAnalysis.core.Mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mesh</span></code></a>(fname, **args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.core.Mesh" title="analysis.PyGranAnalysis.core.Mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mesh</span></code></a>(**args)</p></td>
 <td><p>The Mesh class stores a list of meshes and their associated attributes / methods.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.core.Particles" title="analysis.PyGranAnalysis.core.Particles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Particles</span></code></a>(**args)</p></td>
@@ -187,9 +187,16 @@ and LICENSE files.</p>
 <dd class="field-odd"><p><strong>units</strong> (<em>string</em>) – unit system</p>
 </dd>
 <dt class="field-even">Note</dt>
-<dd class="field-even"><p>see <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/modules/tools/__init__.py">link</a> for available unit systems</p>
+<dd class="field-even"><p>see <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py">link</a> for available unit systems</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="analysis.PyGranAnalysis.core.SubSystem._initialize">
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
+such as _resetSubSystem</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.keys">
 <code class="descname">keys</code><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.keys" title="Permalink to this definition">¶</a></dt>
@@ -225,7 +232,10 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dt id="analysis.PyGranAnalysis.core.SubSystem.conversion">
 <code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
-<p>TODO: support all possible variables (is this possible???)</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="admonition-title">Todo</p>
+<p>support all possible variables (is this possible???)</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -262,11 +272,22 @@ units:  si, micro, cgs, or nano</p>
 
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.Mesh">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Mesh</code><span class="sig-paren">(</span><em>fname</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Mesh</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#analysis.PyGranAnalysis.core.SubSystem" title="analysis.PyGranAnalysis.core.SubSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">analysis.PyGranAnalysis.core.SubSystem</span></code></a></p>
 <p>The Mesh class stores a list of meshes and their associated attributes / methods.
 This class is iterable but NOT an iterator.</p>
-<p>&#64;fname: mesh filename</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em>) – mesh filename</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="analysis.PyGranAnalysis.core.Mesh._initialize">
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
+such as _resetSubSystem</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh._updateSystem">
 <code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._updateSystem" title="Permalink to this definition">¶</a></dt>
@@ -302,7 +323,10 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dt id="analysis.PyGranAnalysis.core.Mesh.conversion">
 <code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
-<p>TODO: support all possible variables (is this possible???)</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="admonition-title">Todo</p>
+<p>support all possible variables (is this possible???)</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -356,6 +380,13 @@ units:  si, micro, cgs, or nano</p>
 <p>The Particle class stores all particle properties and the methods that operate on
 these properties. This class is iterable but NOT an iterator.</p>
 <dl class="method">
+<dt id="analysis.PyGranAnalysis.core.Particles._initialize">
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
+such as _resetSubSystem</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._updateSystem">
 <code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._updateSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class function for updating the state of Particles</p>
@@ -364,7 +395,7 @@ these properties. This class is iterable but NOT an iterator.</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._resetSubSystem">
 <code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._resetSubSystem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mainly used by System for rewinding traj back to frame 0</p>
+<dd><p>Get Particles back to initial state</p>
 </dd></dl>
 
 <dl class="method">
@@ -493,7 +524,7 @@ along an axis specified by the user</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._goto">
-<code class="descname">_goto</code><span class="sig-paren">(</span><em>iframe</em>, <em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._goto" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_goto</code><span class="sig-paren">(</span><em>current_frame</em>, <em>go_frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._goto" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function assumes we’re reading a non-const N trajectory.</p>
 </dd></dl>
 
@@ -539,7 +570,10 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dt id="analysis.PyGranAnalysis.core.Particles.conversion">
 <code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
-<p>TODO: support all possible variables (is this possible???)</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="admonition-title">Todo</p>
+<p>support all possible variables (is this possible???)</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -617,17 +651,30 @@ read from the trajectory file (variables such as positions, momenta, angular vel
 forces, stresses, radii, etc.). Objects that can be created by this class must be of the
 ‘Particles’ or ‘Mesh’ type. Multiple objects can be created by this class if a list of
 filenames are passed to its constructors.</p>
-<p>&#64;[Particles]: filename (or list of filenames) for the particle trajectory
-&#64;[Mesh]: filename (or list of filenames) for the mesh trajectory
-&#64;[units](si): unit system can be either ‘si’ or ‘micro’
-&#64;[module]: for user-defined dervied SubSystems, ‘module’ must be a string that specifies the name of
-the module in which the user-defined class is defined.</p>
-<p>How time stepping works: when looping over System (traj file), the frame is controlled only by System
-through methods defined in a SubSystem sublass (read/write functions).</p>
-<p>This class is an iterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SubSystem</strong> (<em>str / list</em><em>[</em><em>str</em><em>]</em>) – SubSystem (or its subclass) definition e.g. Particles or Mesh</p></li>
+<li><p><strong>units</strong> (<em>str</em>) – unit system can be either ‘si’ or ‘micro’</p></li>
+<li><p><strong>module</strong> – for user-defined dervied SubSystems, module specifies the name of</p></li>
+</ul>
+</dd>
+</dl>
+<p>the module in which the user-defined class is defined.
+:type module: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>units</strong> (<em>str</em>) – unit system specification for input data, defaults to ‘si’</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class is an iterator that enables time stepping: when looping over System (storing a traj file),</p>
+</div>
+<p>the frame is controlled only by System through methods defined in a SubSystem sublass (read/write functions).</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.units">
-<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">units</code><span class="sig-paren">(</span><em>iunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change unit system to units ore return units if None
 units:  si, micro, cgs, or nano</p>
 </dd></dl>
@@ -661,7 +708,7 @@ non-zero elements</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.next">
 <code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method updates the system attributes!</p>
+<dd><p>This method updates the system attributes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -682,8 +729,28 @@ a frame change.</p>
 <dl class="function">
 <dt id="analysis.PyGranAnalysis.core.select">
 <code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data</em>, <em>*region</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a selection of particles based on a subsystem defined by region
-&#64; region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax). If undefined, all particles are considered.</p>
+<dd><p>Create a selection of particles based on a region-defined subsystem.
+:param data: input data
+:type data:  dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>region</strong> (<em>tuple</em>) – defines the region in the form: (xmin, xmax, ymin, ymax, zmin, zmax).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>indices of selected atoms</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-3">
+<p class="admonition-title">Todo</p>
+<p>Make this function more generic and compliant with the rest of this module</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>when region is not supplied, all particle indices are returned</p>
+</div>
 </dd></dl>
 
 </div>

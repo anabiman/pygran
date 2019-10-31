@@ -6,7 +6,7 @@ Submodules
 ##########
 .. autosummary::
 
-   :toctree: _autosummary
+   :toctree: autosummary
 
    simulation.PyGranSim.dem
    simulation.PyGranSim.generator
@@ -102,10 +102,10 @@ Examples
 
  .. code-block:: python
 
-      import PyGran.Simulator as Sim
+      import PyGran.simulation as sim
       from numpy import arange, fabs
 
-      cModel = Sim.models.ThorntonNing
+      Model = sim.models.ThorntonNing
 
       # Define material properties
       powderX = {
@@ -124,9 +124,9 @@ Examples
       for yieldPress in pressure:
 
             powderX['yieldPress'] = yieldPress
-            model = cModel(material=powderX)
+            Cmodel = Model(material=powderX)
 
-            time, disp, force = model.displacement()
+            time, disp, force = Cmodel.displacement()
             deltav = disp[:,1]
 
             COR.append(fabs(deltav[-1] / deltav[0]))
@@ -199,4 +199,4 @@ Any PyGran engine must provide a ``simulation.DEMPy`` class that is instantiated
 
 where `args` is a Python dictionary that contains keywords specific to the `engine` selected to setup and run the DEM simulation. The keyword `engine` (by default ``simulation.engines.liggghts``) in `args` is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only *LIGGGHTS* :cite:`kloss2011liggghts` as an N-body solver. For that purpose, *LIGGGHTS* must be installed as a shared library (see `Configuration with LIGGGHTS <introduction.html#configureliggghtslabel>`__). The ``__init__`` constructor in `simulation.DEM` creates and/or changes directory to the user-specified output directory and initiates logging for *PyGran* (pygran.log) and *LIGGGHTS* (liggghts.log).
 
-Other keywords for DEM engines are covered in `simulation.DEM <_autosummary/simulation.dem.html#module-modules.simulation.dem>`_.
+Other keywords for DEM engines are covered in `simulation.DEM <autosummary/simulation.dem.html#module-modules.simulation.dem>`_.

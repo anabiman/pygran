@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>simulation.PyGranSim.model_liggghts &mdash; PyGran 1.2.0 documentation</title>
+  <title>analysis.PyGranAnalysis.dynamics &mdash; PyGran 1.2.0 documentation</title>
   
 
   
@@ -102,10 +102,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>simulation.PyGranSim.model_liggghts</li>
+    <li>analysis.PyGranAnalysis.dynamics</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/_autosummary/simulation.PyGranSim.model_liggghts.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/autosummary/analysis.PyGranAnalysis.dynamics.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -113,10 +113,10 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="module-simulation.PyGranSim.model_liggghts">
-<span id="simulation-pygransim-model-liggghts"></span><h1>simulation.PyGranSim.model_liggghts<a class="headerlink" href="#module-simulation.PyGranSim.model_liggghts" title="Permalink to this headline">¶</a></h1>
-<p>A module for creating contact models on the fly for LIGGGHTS</p>
-<p>Created on July 1, 2016</p>
+  <div class="section" id="module-analysis.PyGranAnalysis.dynamics">
+<span id="analysis-pygrananalysis-dynamics"></span><h1>analysis.PyGranAnalysis.dynamics<a class="headerlink" href="#module-analysis.PyGranAnalysis.dynamics" title="Permalink to this headline">¶</a></h1>
+<p>This module provides classes for time-dependent analysis.</p>
+<p>Created on July 11, 2016</p>
 <p>Author: Andrew Abi-Mansour</p>
 <p>This is the:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
@@ -138,57 +138,92 @@ of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
 received a copy of the GNU General Public License along with PyGran.
 If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
 and LICENSE files.</p>
-<p class="rubric">Functions</p>
+<p class="rubric">Classes</p>
 <table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.model_liggghts.register" title="simulation.PyGranSim.model_liggghts.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>(**args)</p></td>
-<td><p>Generates a c++ header file for a contact model and compiles it during runtime.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.dynamics.Temporal" title="analysis.PyGranAnalysis.dynamics.Temporal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Temporal</span></code></a>(System)</p></td>
+<td><p>A generic class that enables time-dependent analysis of DEM data</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="function">
-<dt id="simulation.PyGranSim.model_liggghts._find_number_models">
-<code class="descclassname">simulation.PyGranSim.model_liggghts.</code><code class="descname">_find_number_models</code><span class="sig-paren">(</span><em>src_dir</em>, <em>mtype='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/model_liggghts.html#_find_number_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.model_liggghts._find_number_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the total number of contact models available in the liggghts src dir</p>
-<p>&#64;src_dir: directory to search the contact model header files in
-&#64;[mtype]: ‘normal’ (default) or ‘tangential’ contact models to search for</p>
+<dl class="class">
+<dt id="analysis.PyGranAnalysis.dynamics.Temporal">
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.dynamics.</code><code class="descname">Temporal</code><span class="sig-paren">(</span><em>System</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generic class that enables time-dependent analysis of DEM data</p>
+<dl class="method">
+<dt id="analysis.PyGranAnalysis.dynamics.Temporal.series">
+<code class="descname">series</code><span class="sig-paren">(</span><em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts a time series for a supplied <em>attr</em> stored in self.System</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attr</strong> (<em>string</em>) – attribute to extract time series for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>time series</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array of dimensions nframes x dim_attr</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="simulation.PyGranSim.model_liggghts.register">
-<code class="descclassname">simulation.PyGranSim.model_liggghts.</code><code class="descname">register</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/model_liggghts.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.model_liggghts.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a c++ header file for a contact model and compiles it during runtime.</p>
+<dl class="method">
+<dt id="analysis.PyGranAnalysis.dynamics.Temporal.flow">
+<code class="descname">flow</code><span class="sig-paren">(</span><em>density=None</em>, <em>dt=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes flow rate. When <em>density</em> is supplied, the computed rate is the mass per unit of time, otherwise it is the number of particles per unit of time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stiffness</strong> (<em>str</em>) – analytical form of the stiffness = force / deltan</p></li>
-<li><p><strong>viscosity</strong> (<em>str</em>) – analytical form of the viscosity term (force = viscosity * vn).</p></li>
+<li><p><strong>density</strong> (<em>float</em>) – true mass density</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – timestep in units of time, default 1.</p></li>
 </ul>
 </dd>
-</dl>
-<p>Material parameters that can be used:
-Yeff: effective Young’s modulus
-Geff: effective Shear modulus
-meff: effective mass
-reff: effective radius
-charVel: characteristic impact velocity
-restLog: log of the coefficient of restitution
-deltan: normal displacement
-vn: velocity of the normal displacement
-kn: stiffness
-PI: constant (3.14 …)</p>
-<dl class="field-list">
-<dt class="field-odd">Example</dt>
-<dd class="field-odd"><p>register(name=’my_model’,
-stiffness = ‘6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)’,
-viscosity = ‘sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))’)</p>
-<p>produces a template header file for the spring-dashpot model called ‘my_model’.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flow rate</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1D numpy array</p>
 </dd>
 </dl>
+<div class="admonition-todo admonition" id="index-0">
+<p class="admonition-title">Todo</p>
+<p>Make this routine more efficient</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="analysis.PyGranAnalysis.dynamics.Temporal.wallCollision">
+<code class="descname">wallCollision</code><span class="sig-paren">(</span><em>**boundary</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/dynamics.html#Temporal.wallCollision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.dynamics.Temporal.wallCollision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the frequency of particle-wall collisions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xmin</strong> (<em>float</em>) – bound that specifies the left-hand wall pependicular to the y-z plane</p></li>
+<li><p><strong>xmax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the y-z plane</p></li>
+<li><p><strong>ymin</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-z plane</p></li>
+<li><p><strong>ymax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-z plane</p></li>
+<li><p><strong>zmin</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-y plane</p></li>
+<li><p><strong>zmax</strong> (<em>float</em>) – bound that specifies the right-hand wall pependicular to the x-y plane</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wall collision frequency</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This routines supports only 3D systems</p>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 </div>

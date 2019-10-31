@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>simulation.PyGranSim.generator &mdash; PyGran 1.2.0 documentation</title>
+  <title>simulation.PyGranSim.model_liggghts &mdash; PyGran 1.2.0 documentation</title>
   
 
   
@@ -102,10 +102,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>simulation.PyGranSim.generator</li>
+    <li>simulation.PyGranSim.model_liggghts</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/_autosummary/simulation.PyGranSim.generator.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/autosummary/simulation.PyGranSim.model_liggghts.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -113,10 +113,10 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="module-simulation.PyGranSim.generator">
-<span id="simulation-pygransim-generator"></span><h1>simulation.PyGranSim.generator<a class="headerlink" href="#module-simulation.PyGranSim.generator" title="Permalink to this headline">¶</a></h1>
-<p>A set of routines for generating particle configurations</p>
-<p>Created on March 30, 2016</p>
+  <div class="section" id="module-simulation.PyGranSim.model_liggghts">
+<span id="simulation-pygransim-model-liggghts"></span><h1>simulation.PyGranSim.model_liggghts<a class="headerlink" href="#module-simulation.PyGranSim.model_liggghts" title="Permalink to this headline">¶</a></h1>
+<p>A module for creating contact models on the fly for LIGGGHTS</p>
+<p>Created on July 1, 2016</p>
 <p>Author: Andrew Abi-Mansour</p>
 <p>This is the:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
@@ -145,52 +145,48 @@ and LICENSE files.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.generator.hcp" title="simulation.PyGranSim.generator.hcp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hcp</span></code></a>(natoms, radius)</p></td>
-<td><p>Generates a Hexagonal Close Packed structure</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#simulation.PyGranSim.generator.rand" title="simulation.PyGranSim.generator.rand"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rand</span></code></a>(natoms, radius[, overlapping, factor])</p></td>
-<td><p>Creates a set of randomly placed non-overlapping particles</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.model_liggghts.register" title="simulation.PyGranSim.model_liggghts.register"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register</span></code></a>(**args)</p></td>
+<td><p>Generates a c++ header file for a contact model and compiles it during runtime.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="function">
-<dt id="simulation.PyGranSim.generator.rand">
-<code class="descclassname">simulation.PyGranSim.generator.</code><code class="descname">rand</code><span class="sig-paren">(</span><em>natoms</em>, <em>radius</em>, <em>overlapping=True</em>, <em>factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/generator.html#rand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.generator.rand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a set of randomly placed non-overlapping particles</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>natoms</strong> (<em>int</em>) – number of particles to create</p></li>
-<li><p><strong>radius</strong> (<em>float</em><em> or </em><em>array of length natoms</em>) – particle radius</p></li>
-<li><p><strong>overlapping</strong> (<em>bool</em>) – ensures all particles are allowed to overlap or not</p></li>
-<li><p><strong>factor</strong> (<em>float</em>) – number to scale noise with (w.r.t particle radius) when correcting for overlapping particles</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a new Particles object</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles" title="analysis.PyGranAnalysis.core.Particles">Particles</a></p>
-</dd>
-</dl>
+<dt id="simulation.PyGranSim.model_liggghts._find_number_models">
+<code class="descclassname">simulation.PyGranSim.model_liggghts.</code><code class="descname">_find_number_models</code><span class="sig-paren">(</span><em>src_dir</em>, <em>mtype='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/model_liggghts.html#_find_number_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.model_liggghts._find_number_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the total number of contact models available in the liggghts src dir</p>
+<p>&#64;src_dir: directory to search the contact model header files in
+&#64;[mtype]: ‘normal’ (default) or ‘tangential’ contact models to search for</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="simulation.PyGranSim.generator.hcp">
-<code class="descclassname">simulation.PyGranSim.generator.</code><code class="descname">hcp</code><span class="sig-paren">(</span><em>natoms</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/generator.html#hcp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.generator.hcp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a Hexagonal Close Packed structure</p>
+<dt id="simulation.PyGranSim.model_liggghts.register">
+<code class="descclassname">simulation.PyGranSim.model_liggghts.</code><code class="descname">register</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/model_liggghts.html#register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.model_liggghts.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a c++ header file for a contact model and compiles it during runtime.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>natoms</strong> (<em>int</em>) – number of particles to create</p></li>
-<li><p><strong>radius</strong> (<em>float</em><em> or </em><em>array of length natoms</em>) – particle radius</p></li>
+<li><p><strong>stiffness</strong> (<em>str</em>) – analytical form of the stiffness = force / deltan</p></li>
+<li><p><strong>viscosity</strong> (<em>str</em>) – analytical form of the viscosity term (force = viscosity * vn).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a new Particles object</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles" title="analysis.PyGranAnalysis.core.Particles">Particles</a></p>
+</dl>
+<p>Material parameters that can be used:
+Yeff: effective Young’s modulus
+Geff: effective Shear modulus
+meff: effective mass
+reff: effective radius
+charVel: characteristic impact velocity
+restLog: log of the coefficient of restitution
+deltan: normal displacement
+vn: velocity of the normal displacement
+kn: stiffness
+PI: constant (3.14 …)</p>
+<dl class="field-list">
+<dt class="field-odd">Example</dt>
+<dd class="field-odd"><p>register(name=’my_model’,
+stiffness = ‘6./15.*sqrt(reff)*(Yeff)*pow(15.*meff*charVel*charVel/(16.*sqrt(reff)*Yeff),0.2)’,
+viscosity = ‘sqrt(4.*meff*kn*restLogChosen*restLogChosen/(restLogChosen*restLogChosen+PI*PI))’)</p>
+<p>produces a template header file for the spring-dashpot model called ‘my_model’.</p>
 </dd>
 </dl>
 </dd></dl>

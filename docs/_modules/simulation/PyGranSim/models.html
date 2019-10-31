@@ -161,7 +161,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="k">import</span> <span class="n">MPI</span>
 
-<div class="viewcode-block" id="template_tablet"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.template_tablet">[docs]</a><span class="k">def</span> <span class="nf">template_tablet</span><span class="p">(</span><span class="n">nspheres</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+<div class="viewcode-block" id="template_tablet"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.template_tablet">[docs]</a><span class="k">def</span> <span class="nf">template_tablet</span><span class="p">(</span><span class="n">nspheres</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; This function creates a multi-sphere tablet (cylinder) of</span>
 <span class="sd">	radius &quot;radius&quot; and height &quot;length&quot; constituting &quot;nspheres&quot; spheres.</span>
 <span class="sd">	This is used for multisphere simulations.</span>
@@ -187,7 +187,7 @@
 
 	<span class="k">return</span> <span class="n">ms</span></div>
 
-<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS) or numerical experiments for simulating particle-wall collisions.</span>
 
 <span class="sd">    :param mesh: a dictionary that defines all meshes and their properties</span>
@@ -452,12 +452,12 @@
 		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;density&#39;</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">density</span> <span class="o">*</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mf">3.0</span>
 
-<div class="viewcode-block" id="Model.setupProps"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.setupProps">[docs]</a>	<span class="k">def</span> <span class="nf">setupProps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.setupProps"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.setupProps">[docs]</a>	<span class="k">def</span> <span class="nf">setupProps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Creates class attributes for all material properties &quot;&quot;&quot;</span>
 		<span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">materials</span><span class="p">:</span>
 			<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">materials</span><span class="p">[</span><span class="n">prop</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="Model.contactTime"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.contactTime">[docs]</a>	<span class="k">def</span> <span class="nf">contactTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.contactTime"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.contactTime">[docs]</a>	<span class="k">def</span> <span class="nf">contactTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the characteristic collision time assuming for a spring dashpot model </span>
 
 <span class="sd">		:return: the contact time</span>
@@ -479,7 +479,7 @@
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">kn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.displacement"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.displacement">[docs]</a>	<span class="k">def</span> <span class="nf">displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.displacement"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.displacement">[docs]</a>	<span class="k">def</span> <span class="nf">displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Generator that computes (iteratively) the overlap distance (displacement) as a function of time </span>
 
 <span class="sd">		:param dt: timestep used by the ODE integrator, by default it is 0.1% of contact duration</span>
@@ -564,7 +564,7 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_contRadius</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Model._contactRadius"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model._contactRadius">[docs]</a>	<span class="k">def</span> <span class="nf">_contactRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+<div class="viewcode-block" id="Model._contactRadius"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model._contactRadius">[docs]</a>	<span class="k">def</span> <span class="nf">_contactRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Internal function that computes the contact radius for Hertzian and JKR models</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -648,7 +648,7 @@
 	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Not yet implemented&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Model.numericalForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.numericalForce">[docs]</a>	<span class="k">def</span> <span class="nf">numericalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.numericalForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.Model.numericalForce">[docs]</a>	<span class="k">def</span> <span class="nf">numericalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the force used for numerical solvers &quot;&quot;&quot;</span>
 
 		<span class="n">force</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalForce</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
@@ -660,7 +660,7 @@
 	<span class="k">def</span> <span class="nf">tangForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deltav</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Not yet implemented&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SpringDashpot"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot">[docs]</a><span class="k">class</span> <span class="nc">SpringDashpot</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot">[docs]</a><span class="k">class</span> <span class="nc">SpringDashpot</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A class that implements the linear spring model for granular materials</span>
 
@@ -686,7 +686,7 @@
 		<span class="k">if</span> <span class="s1">&#39;limitForce&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">limitForce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;limitForce&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="SpringDashpot.springStiff"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.springStiff"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the spring constant (:math:`k_n`) for the normal force :math:`F_n = k_n \delta_n`.</span>
 
 <span class="sd">		:param delta: normal displacement (:math:`\delta_n`)</span>
@@ -707,7 +707,7 @@
 		<span class="k">return</span> <span class="mf">16.0</span><span class="o">/</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">*</span> <span class="n">yMod</span> <span class="o">*</span> <span class="p">(</span><span class="mf">15.0</span> <span class="o">*</span> <span class="n">mass</span> \
 			<span class="o">*</span> <span class="n">v0</span> <span class="o">**</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">16.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">*</span> <span class="n">yMod</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">5.0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.dissCoef"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.dissCoef">[docs]</a>	<span class="k">def</span> <span class="nf">dissCoef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.dissCoef"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.dissCoef">[docs]</a>	<span class="k">def</span> <span class="nf">dissCoef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the normal dissipative coefficient (:math:`c_n`) for the dissipative force :math:`F_d = - c_n \dot{\delta_n}`</span>
 
 <span class="sd">		:return: dissipative coefficient (:math:`c_n`) </span>
@@ -725,7 +725,7 @@
 
 		<span class="k">return</span> <span class="n">loge</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">mass</span> <span class="o">*</span> <span class="n">kn</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">loge</span><span class="o">**</span><span class="mf">2.0</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.dissForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.dissForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the dissipative (viscous) force: :math:`F_d = - c_n \dot{\delta_n}`</span>
 <span class="sd">		where :math:`c_n` is the dissipative coefficient.</span>
 
@@ -741,7 +741,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissCoef</span><span class="p">()</span> <span class="o">*</span> <span class="n">deltav</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.displacementAnalytical"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.displacementAnalytical">[docs]</a>	<span class="k">def</span> <span class="nf">displacementAnalytical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.displacementAnalytical"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.displacementAnalytical">[docs]</a>	<span class="k">def</span> <span class="nf">displacementAnalytical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the displacement based on the analytical solution for</span>
 <span class="sd">		a spring-dashpot model.</span>
 
@@ -781,7 +781,7 @@
 
 		<span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.elasticForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.elasticForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the elastic force based on Hooke&#39;s law: :math:`F_n = k_n \delta_n` </span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -795,7 +795,7 @@
 
 		<span class="k">return</span> <span class="n">kn</span> <span class="o">*</span> <span class="n">delta</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.cohesiveForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.cohesiveForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the cohesive force :math:`F_c` (for the SJKR model) </span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -807,7 +807,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cohesionEnergyDensity</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">radius</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.normalForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.normalForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the total normal force :math:`F_n + F_d + F_c`</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -825,11 +825,11 @@
 
 		<span class="k">return</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="SpringDashpot.tangForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.tangForce">[docs]</a>	<span class="k">def</span> <span class="nf">tangForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="SpringDashpot.tangForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.SpringDashpot.tangForce">[docs]</a>	<span class="k">def</span> <span class="nf">tangForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the total tangential force based on the Coulomb model &quot;&quot;&quot;</span>
 		<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Not yet implemented&#39;</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="HertzMindlin"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin">[docs]</a><span class="k">class</span> <span class="nc">HertzMindlin</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin">[docs]</a><span class="k">class</span> <span class="nc">HertzMindlin</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A class that implements the linear spring model for granular materials</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -848,7 +848,7 @@
 		<span class="k">if</span> <span class="s1">&#39;limitForce&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">limitForce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;limitForce&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="HertzMindlin.springStiff"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.springStiff"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the spring constant :math:`k_n` for `F_n = k_n \delta_n^{3/2}`</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -865,7 +865,7 @@
 
 		<span class="k">return</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">yEff</span> <span class="o">*</span> <span class="n">contRadius</span></div>
 
-<div class="viewcode-block" id="HertzMindlin.elasticForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.elasticForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the Hertzian elastic force :math:`F_n = k_n \delta_n^{3/2}`</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -878,7 +878,7 @@
 		
 		<span class="k">return</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="HertzMindlin.dissCoef"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.dissCoef">[docs]</a>	<span class="k">def</span> <span class="nf">dissCoef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.dissCoef"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.dissCoef">[docs]</a>	<span class="k">def</span> <span class="nf">dissCoef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the dissipative force coefficient </span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -898,7 +898,7 @@
 		<span class="k">return</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">5.0</span><span class="o">/</span><span class="mf">6.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> \
 					<span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">yEff</span> <span class="o">*</span> <span class="n">contRadius</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HertzMindlin.dissForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.dissForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the dissipative force</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -911,7 +911,7 @@
 <span class="sd">		 &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissCoef</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="n">deltav</span></div>
 
-<div class="viewcode-block" id="HertzMindlin.normalForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.normalForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the total normal force :math:`F_n + F_d + F_c`</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -930,7 +930,7 @@
 
 		<span class="k">return</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="HertzMindlin.cohesiveForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="HertzMindlin.cohesiveForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.HertzMindlin.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the cohesive force for the simplified JKR model</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -942,7 +942,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cohesionEnergyDensity</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">radius</span></div></div>
 
-<div class="viewcode-block" id="ThorntonNing"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing">[docs]</a><span class="k">class</span> <span class="nc">ThorntonNing</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing">[docs]</a><span class="k">class</span> <span class="nc">ThorntonNing</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A basic class that implements the Thornton elasto-plastic model based on :cite:`thornton1998theoretical`. </span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -967,7 +967,7 @@
 			<span class="bp">self</span><span class="o">.</span><span class="n">unloading</span> <span class="o">=</span> <span class="kc">False</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">noCheck</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="ThorntonNing.computeYieldRadius"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.computeYieldRadius">[docs]</a>	<span class="k">def</span> <span class="nf">computeYieldRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.computeYieldRadius"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.computeYieldRadius">[docs]</a>	<span class="k">def</span> <span class="nf">computeYieldRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the contact radius at the yield point based on Eq. (65) in :cite:`thornton1998theoretical` </span>
 
 <span class="sd">		return: yielding contact radius</span>
@@ -1000,7 +1000,7 @@
 
 		<span class="k">return</span> <span class="n">contRadius</span></div>
 
-<div class="viewcode-block" id="ThorntonNing.springStiff"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.springStiff"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.springStiff">[docs]</a>	<span class="k">def</span> <span class="nf">springStiff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the spring constant :math:`k_n` for `F_n = k_n \delta_n^{3/2}`</span>
 <span class="sd">		</span>
 <span class="sd">		:param delta: normal displacement</span>
@@ -1015,7 +1015,7 @@
 
 		<span class="k">return</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">yEff</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contactRadius</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ThorntonNing.elasticForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.elasticForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.elasticForce">[docs]</a>	<span class="k">def</span> <span class="nf">elasticForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the Hertzian-like elastic force</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -1084,7 +1084,7 @@
 
 			<span class="k">return</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="ThorntonNing.dissForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.dissForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.dissForce">[docs]</a>	<span class="k">def</span> <span class="nf">dissForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the piece-wise defined elastic force </span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -1107,7 +1107,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="ThorntonNing.normalForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.normalForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.normalForce">[docs]</a>	<span class="k">def</span> <span class="nf">normalForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">deltav</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the total normal force</span>
 
 <span class="sd">		:param delta: normal displacement</span>
@@ -1126,7 +1126,7 @@
 
 		<span class="k">return</span> <span class="n">force</span></div>
 
-<div class="viewcode-block" id="ThorntonNing.cohesiveForce"><a class="viewcode-back" href="../../../_autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ThorntonNing.cohesiveForce"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.ThorntonNing.cohesiveForce">[docs]</a>	<span class="k">def</span> <span class="nf">cohesiveForce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the JKR cohesive force</span>
 
 <span class="sd">		:param delta: useless variable kept here for syntax consistency</span>

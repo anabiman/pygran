@@ -166,21 +166,27 @@
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
 
-<div class="viewcode-block" id="SubSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem">[docs]</a><span class="k">class</span> <span class="nc">SubSystem</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem">[docs]</a><span class="k">class</span> <span class="nc">SubSystem</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \</span>
 <span class="sd">these properties. This class is iterable but NOT an iterator. </span>
 
 <span class="sd">	:param units: unit system</span>
 <span class="sd">	:type units: string </span>
 
-<span class="sd">	:note: see `link &lt;https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/modules/tools/__init__.py&gt;`_ for available unit systems</span>
+<span class="sd">	:note: see `link &lt;https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py&gt;`_ for available unit systems</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initilize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SubSystem._initialize"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._initialize">[docs]</a>	<span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods </span>
+<span class="sd">		such as _resetSubSystem &quot;&quot;&quot;</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="s1">&#39;si&#39;</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_args</span> <span class="o">=</span> <span class="n">args</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_iargs</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># used for re-initializing system</span>
 
 		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 
@@ -214,6 +220,9 @@
 				<span class="k">else</span><span class="p">:</span>
 					<span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;units must be supplied when creating SubSystem from a data dictionary.&#39;</span><span class="p">)</span>
 
+				<span class="c1"># update unit system</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">)</span>
+
 			<span class="k">if</span> <span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
 
@@ -222,7 +231,7 @@
 
 		<span class="c1"># If data is already copied from Particles, do nothing</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">):</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span> <span class="c1"># am ordered dict that contains either arrays</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span> <span class="c1"># an ordered dict that contains either arrays</span></div>
 			<span class="c1">#(for storing pos, vels, forces, etc.), scalars (natoms, ) or tuples (box size).</span>
 			<span class="c1"># ONLY arrays can be slices based on user selection.</span>
 
@@ -234,7 +243,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="SubSystem._metaget"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._metaget">[docs]</a>	<span class="k">def</span> <span class="nf">_metaget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem._metaget"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._metaget">[docs]</a>	<span class="k">def</span> <span class="nf">_metaget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;A meta function for returning dynamic class attributes treated as lists (for easy slicing)</span>
 <span class="sd">		and return as numpy arrays for numerical computations / manipulations&quot;&quot;&quot;</span>
 
@@ -243,14 +252,12 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="SubSystem._resetSubSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem._resetSubSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Mainly used by System for rewinding traj back to frame 0 &quot;&quot;&quot;</span>
-
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
-
 		<span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="SubSystem._constructAttributes"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._constructAttributes">[docs]</a>	<span class="k">def</span> <span class="nf">_constructAttributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem._constructAttributes"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem._constructAttributes">[docs]</a>	<span class="k">def</span> <span class="nf">_constructAttributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mesh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Constructs dynamic functions (getters) for all keys found in the trajectory &quot;&quot;&quot;</span>
 
 		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -314,7 +321,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="c1"># Get the type of the class (not necessarily SubSystem for derived classes)</span>
 			<span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-			
+
 		<span class="n">cName</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">cName</span><span class="p">(</span><span class="n">sel</span><span class="o">=</span><span class="n">sel</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -322,7 +329,7 @@
 	<span class="k">def</span> <span class="nf">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Boolean logical operator on particles &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SubSystem.copy"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.copy">[docs]</a>	<span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem.copy"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.copy">[docs]</a>	<span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns a hard copy of the SubSystem &quot;&quot;&quot;</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -334,10 +341,10 @@
 
 		<span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SubSystem.conversion"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.conversion">[docs]</a>	<span class="k">def</span> <span class="nf">conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem.conversion"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.conversion">[docs]</a>	<span class="k">def</span> <span class="nf">conversion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Convesion factors from S.I., micro, cgs, or nano, and vice versa </span>
 
-<span class="sd">		TODO: support all possible variables (is this possible???) &quot;&quot;&quot;</span>
+<span class="sd">		.. todo:: support all possible variables (is this possible???) &quot;&quot;&quot;</span>
 
 		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
@@ -345,7 +352,7 @@
 
 				<span class="k">if</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">True</span>
-				
+
 				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">*=</span> <span class="n">factors</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 				<span class="k">if</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -383,7 +390,7 @@
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">pass</span></div>
 
-<div class="viewcode-block" id="SubSystem.units"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.units">[docs]</a>	<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SubSystem.units"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.units">[docs]</a>	<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Change unit system to units ore return units if None</span>
 <span class="sd">		units:  si, micro, cgs, or nano &quot;&quot;&quot;</span>
 
@@ -408,7 +415,7 @@
 
 	<span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Adds two classes together, or operates scalars/vectors on particle radii/positions</span>
-<span class="sd">		TODO: get this working with meshes.&quot;&quot;&quot;</span>
+<span class="sd">		.. todo:: get this working with meshes.&quot;&quot;&quot;</span>
 
 		<span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 
@@ -434,7 +441,7 @@
 
 	<span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Subtracts scalars/vectors from particle radii/positions</span>
-<span class="sd">		TODO: get this working with meshes &quot;&quot;&quot;</span>
+<span class="sd">		.. todo:: get this working with meshes &quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
 			<span class="n">obj</span><span class="p">,</span> <span class="n">att</span> <span class="o">=</span> <span class="n">obj</span>
@@ -450,7 +457,7 @@
 
 	<span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Multiplies scalars/vectors from particle radii/positions</span>
-<span class="sd">		TODO: get this working with meshes &quot;&quot;&quot;</span>
+<span class="sd">		.. todo:: get this working with meshes &quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 			<span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Two subsystems with different types cannot be multiplied.&#39;</span><span class="p">)</span>
@@ -476,7 +483,7 @@
 
 	<span class="k">def</span> <span class="nf">__div__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Divides scalars/vectors from particle radii/positions</span>
-<span class="sd">		TODO: get this working with meshes &quot;&quot;&quot;</span>
+<span class="sd">		.. todo:: get this working with meshes &quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
 			<span class="n">obj</span><span class="p">,</span> <span class="n">att</span> <span class="o">=</span> <span class="n">obj</span>
@@ -510,7 +517,7 @@
 		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
 			<span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-<div class="viewcode-block" id="SubSystem.scale"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.scale">[docs]</a>	<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
+<div class="viewcode-block" id="SubSystem.scale"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.scale">[docs]</a>	<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
 		<span class="sd">&quot;&quot;&quot; Scales all ss elements by a float or int &#39;value&#39;</span>
 
 <span class="sd">		@[attr]: attribute to scale (positions by default)</span>
@@ -528,7 +535,7 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SubSystem.translate"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.translate">[docs]</a>	<span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
+<div class="viewcode-block" id="SubSystem.translate"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.translate">[docs]</a>	<span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
 		<span class="sd">&quot;&quot;&quot; Translates all ss elements by a tuple of integers or floats</span>
 
 <span class="sd">		@value: tuple of float or int by which to translate the system</span>
@@ -551,7 +558,7 @@
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="SubSystem.noise"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.noise">[docs]</a>	<span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
+<div class="viewcode-block" id="SubSystem.noise"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.noise">[docs]</a>	<span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
 		<span class="sd">&quot;&quot;&quot; Adds white noise of standard deviation `sigma&#39; to all elements with attribute &#39;attr&#39;.</span>
 
 <span class="sd">		@sigma: standard deviation of the Gaussian (white) noise</span>
@@ -586,16 +593,21 @@
 	<span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Mesh"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh">[docs]</a><span class="k">class</span> <span class="nc">Mesh</span><span class="p">(</span><span class="n">SubSystem</span><span class="p">):</span>
+<div class="viewcode-block" id="Mesh"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh">[docs]</a><span class="k">class</span> <span class="nc">Mesh</span><span class="p">(</span><span class="n">SubSystem</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;  The Mesh class stores a list of meshes and their associated attributes / methods.</span>
 <span class="sd">	This class is iterable but NOT an iterator.</span>
 
-<span class="sd">	@fname: mesh filename</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<span class="sd">	:param fname: mesh filename</span>
+<span class="sd">	:type fname: str</span>
 
-		<span class="k">if</span> <span class="s1">&#39;avgCellData&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-			<span class="n">args</span><span class="p">[</span><span class="s1">&#39;avgCellData&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Mesh._initialize"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._initialize">[docs]</a>	<span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+
+		<span class="k">if</span> <span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
 
 		<span class="k">if</span> <span class="s1">&#39;vtk_type&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span>
@@ -613,9 +625,12 @@
 			<span class="k">try</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
 			<span class="k">except</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>			
+				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
 
-		<span class="nb">super</span><span class="p">(</span><span class="n">Mesh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">Mesh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="s1">&#39;avgCellData&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+			<span class="n">args</span><span class="p">[</span><span class="s1">&#39;avgCellData&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
 		<span class="c1"># Assert mesh input filname is VTK</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_mesh&#39;</span><span class="p">):</span>
@@ -703,7 +718,7 @@
 
 					<span class="k">elif</span> <span class="s1">&#39;CellVol&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
 						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">newkey</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;CellVol&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">newkey</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;CellVol&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-						
+
 				<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">break</span>
@@ -718,9 +733,9 @@
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">break</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-		
-<div class="viewcode-block" id="Mesh._updateSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">(</span><span class="n">mesh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Mesh._updateSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Class function for updating the state of a Mesh &quot;&quot;&quot;</span>
 		<span class="c1"># Must make sure fname is passed in case we&#39;re looping over a trajectory</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">[</span><span class="s1">&#39;mesh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span>
@@ -728,7 +743,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span> <span class="c1"># it&#39;s imp to pass args so that any subsystem-specific args are</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span> <span class="c1"># it&#39;s imp to pass args so that any subsystem-specific args are</span>
 		<span class="c1"># passed along to the next frame (e.g. vtk_type, etc.)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span></div>
 
@@ -753,7 +768,7 @@
 
 		<span class="k">return</span> <span class="n">frame</span>
 
-<div class="viewcode-block" id="Mesh._readFile"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._readFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="Mesh._readFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._readFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Reads a mesh file &quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="s1">&#39;skip&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">:</span>
@@ -765,38 +780,39 @@
 
 		<span class="k">return</span> <span class="n">frame</span> <span class="o">+</span> <span class="mi">1</span></div>
 
-<div class="viewcode-block" id="Mesh._resetSubSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span> 
+<div class="viewcode-block" id="Mesh._resetSubSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Mesh._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_iargs</span><span class="p">)</span>
 		<span class="nb">super</span><span class="p">(</span><span class="n">Mesh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
 
 		<span class="k">return</span> <span class="mi">0</span></div>
 
 	<span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
 		<span class="n">SubSystem</span><span class="o">.</span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles">[docs]</a><span class="k">class</span> <span class="nc">Particles</span><span class="p">(</span><span class="n">SubSystem</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles">[docs]</a><span class="k">class</span> <span class="nc">Particles</span><span class="p">(</span><span class="n">SubSystem</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; The Particle class stores all particle properties and the methods that operate on</span>
 <span class="sd">	these properties. This class is iterable but NOT an iterator. &quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Particles._initialize"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._initialize">[docs]</a>	<span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
 
 		<span class="k">if</span> <span class="s1">&#39;sel&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="n">sel</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;sel&#39;</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">sel</span> <span class="o">=</span> <span class="kc">None</span>
 
-		<span class="nb">super</span><span class="p">(</span><span class="n">Particles</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">(</span><span class="n">Particles</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fp&#39;</span><span class="p">):</span> <span class="c1"># Make sure a file is already not open</span>
 			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fname&#39;</span><span class="p">):</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
 					<span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span> <span class="c1"># need a way to figure out this is a LIGGGHTS/LAMMPS file</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span> <span class="c1"># need a better way to figure out this is a LIGGGHTS/LAMMPS file</span>
 
-						<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+						<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">numericalSort</span><span class="p">)</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 						<span class="k">else</span><span class="p">:</span>
@@ -877,25 +893,25 @@
 			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;molecules&#39;</span><span class="p">):</span>
 				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span>
 
-			<span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles._updateSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles._updateSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Class function for updating the state of Particles &quot;&quot;&quot;</span>
 		<span class="c1"># Must make sure fname is passed in case we&#39;re looping over a trajectory</span>
 
 		<span class="c1"># If we are updating (looping over traj) we wanna keep the id (ref) of the class constant</span>
 		<span class="c1"># (soft copy)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="n">sel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Particles._resetSubSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span> 
+<div class="viewcode-block" id="Particles._resetSubSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._resetSubSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_resetSubSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Get Particles back to initial state</span>
+<span class="sd">		 &quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">)</span>
 		<span class="nb">super</span><span class="p">(</span><span class="n">Particles</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
-
 		<span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="Particles.computeROG"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeROG">[docs]</a>	<span class="k">def</span> <span class="nf">computeROG</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeROG"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeROG">[docs]</a>	<span class="k">def</span> <span class="nf">computeROG</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the radius of gyration (ROG) for an N-particle system:</span>
 <span class="sd">		ROG = &lt;\sqrt(\sum_i (r_i - rm)^2)&gt; where rm is the mean position of all</span>
 <span class="sd">		particles, and &lt;...&gt; is the ensemble average. Alternatively, one can</span>
@@ -913,13 +929,13 @@
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rog</span><span class="o">/</span><span class="n">N</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles.computeCOM"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeCOM">[docs]</a>	<span class="k">def</span> <span class="nf">computeCOM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeCOM"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeCOM">[docs]</a>	<span class="k">def</span> <span class="nf">computeCOM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns center of mass &quot;&quot;&quot;</span>
 		<span class="n">vol</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span>
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">vol</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">vol</span><span class="p">)])</span> <span class="o">/</span> <span class="n">vol</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Particles.computeGCOM"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeGCOM">[docs]</a>	<span class="k">def</span> <span class="nf">computeGCOM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeGCOM"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeGCOM">[docs]</a>	<span class="k">def</span> <span class="nf">computeGCOM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns the geometric center of mass &quot;&quot;&quot;</span>
 		<span class="n">vol</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span>
 		<span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span>
@@ -927,7 +943,7 @@
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">vol</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="Particles.computeRadius"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRadius">[docs]</a>	<span class="k">def</span> <span class="nf">computeRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeRadius"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRadius">[docs]</a>	<span class="k">def</span> <span class="nf">computeRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the maximum radius of an N-particle (spherical) system</span>
 <span class="sd">		by sorting the radial components and returning the average of the sqrt</span>
 <span class="sd">		of the radius of the first N max data points.</span>
@@ -941,7 +957,7 @@
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="n">N</span><span class="p">:])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Particles.computeRDF"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRDF">[docs]</a>	<span class="k">def</span> <span class="nf">computeRDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rMax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeRDF"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRDF">[docs]</a>	<span class="k">def</span> <span class="nf">computeRDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rMax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the three-dimensional radial distribution function for a set of</span>
 <span class="sd">		spherical particles contained in a cube with side length S.  This simple</span>
 <span class="sd">		function finds reference particles such that a sphere of radius rMax drawn</span>
@@ -976,7 +992,7 @@
 			<span class="n">x</span> <span class="o">-=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 			<span class="n">y</span> <span class="o">-=</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 			<span class="n">z</span> <span class="o">-=</span> <span class="n">z</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-		
+
 		<span class="n">S</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
 
 		<span class="k">if</span> <span class="n">rMax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1030,7 +1046,7 @@
 		<span class="c1"># Number of particles in shell/total number of particles/volume of shell/number density</span>
 		<span class="c1"># shell volume = 4/3*pi(r_outer**3-r_inner**3)</span>
 
-<div class="viewcode-block" id="Particles.computeAngleRepose"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeAngleRepose">[docs]</a>	<span class="k">def</span> <span class="nf">computeAngleRepose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeAngleRepose"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeAngleRepose">[docs]</a>	<span class="k">def</span> <span class="nf">computeAngleRepose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Computes the angle of repos theta = arctan(h_max/L)</span>
 <span class="sd">		in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]</span>
@@ -1041,7 +1057,7 @@
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">z_max</span> <span class="o">/</span> <span class="n">dL</span><span class="p">)</span> <span class="o">*</span> <span class="mf">180.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span></div>
 		
-<div class="viewcode-block" id="Particles.computeMass"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeMass">[docs]</a>	<span class="k">def</span> <span class="nf">computeMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdensity</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeMass"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeMass">[docs]</a>	<span class="k">def</span> <span class="nf">computeMass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdensity</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the mass of all particles </span>
 
 <span class="sd">		@tdensity: true density of the powder</span>
@@ -1056,7 +1072,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Particles.computeIntensitySegregation"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeIntensitySegregation">[docs]</a>	<span class="k">def</span> <span class="nf">computeIntensitySegregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeIntensitySegregation"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeIntensitySegregation">[docs]</a>	<span class="k">def</span> <span class="nf">computeIntensitySegregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the intensity of segregation for binary mixture</span>
 <span class="sd">		as defined by Danckwerts:</span>
 
@@ -1101,7 +1117,7 @@
 
 		<span class="k">return</span> <span class="n">aStd</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">aMean</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">aMean</span><span class="p">)),</span> <span class="n">indices_a</span><span class="p">,</span> <span class="n">indices</span></div>
 
-<div class="viewcode-block" id="Particles.computeScaleSegregation"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeScaleSegregation">[docs]</a>	<span class="k">def</span> <span class="nf">computeScaleSegregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nTrials</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">resol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Npts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">maxDist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeScaleSegregation"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeScaleSegregation">[docs]</a>	<span class="k">def</span> <span class="nf">computeScaleSegregation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nTrials</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">resol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Npts</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">maxDist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the correlation coefficient as defined by Danckwerts:</span>
 <span class="sd">		R(r) = a * b / std(a)**2</span>
 
@@ -1117,13 +1133,13 @@
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">resol</span><span class="p">:</span>
 			<span class="n">resol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-	
+
 		<span class="n">_</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensitySegregation</span><span class="p">(</span><span class="n">resol</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">maxDist</span><span class="p">:</span>
 			<span class="n">maxDim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 			<span class="n">maxDist</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">maxDim</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-		
+
 		<span class="n">volMean</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 		<span class="n">volVar</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span>
 
@@ -1153,7 +1169,7 @@
 
 		<span class="k">return</span> <span class="n">corrfunc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">corrfunc</span><span class="p">))],</span> <span class="n">distance</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">corrfunc</span><span class="p">))]</span> <span class="o">*</span> <span class="n">resol</span></div>
 
-<div class="viewcode-block" id="Particles.computeDensity"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensity">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdensity</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeDensity"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensity">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdensity</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Computes the bulk density for a selection of particles from their *true* density.</span>
 <span class="sd">		The volume is determined approximately by constructing a box/cylinder/cone</span>
@@ -1163,10 +1179,10 @@
 <span class="sd">		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z</span>
 
 <span class="sd">		&quot;&quot;&quot;</span>
-		
+
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeMass</span><span class="p">(</span><span class="n">tdensity</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeVolume</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles.computeDensityLocal"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensityLocal">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensityLocal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bdensity</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeDensityLocal"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensityLocal">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensityLocal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bdensity</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;&quot; Computes a localized density at a series of discretized regions of thickness &#39;dr&#39;</span>
 <span class="sd">		along an axis specified by the user &quot;&quot;&quot;</span>
 
@@ -1196,7 +1212,7 @@
 
 		<span class="k">return</span> <span class="n">thick</span><span class="p">,</span> <span class="n">odensity</span></div>
 
-<div class="viewcode-block" id="Particles.computeVolume"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeVolume">[docs]</a>	<span class="k">def</span> <span class="nf">computeVolume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="s1">&#39;box&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeVolume"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeVolume">[docs]</a>	<span class="k">def</span> <span class="nf">computeVolume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="s1">&#39;box&#39;</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the volume of a granular system based on a simple geometry </span>
 <span class="sd">		@[shape]: box, cylinder-x, cylinder-y, or cylinder-z&quot;&quot;&quot;</span>
 
@@ -1229,14 +1245,14 @@
 
 		<span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="Particles._goto"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._goto">[docs]</a>	<span class="k">def</span> <span class="nf">_goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iframe</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles._goto"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._goto">[docs]</a>	<span class="k">def</span> <span class="nf">_goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_frame</span><span class="p">,</span> <span class="n">go_frame</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; This function assumes we&#39;re reading a non-const N trajectory.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="c1"># find the right frame number</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singleFile</span><span class="p">:</span>
 			<span class="c1"># We must be reading a single particle trajectory file (i.e. not a mesh)</span>
-			<span class="k">while</span> <span class="n">frame</span> <span class="o">&lt;</span> <span class="n">iframe</span> <span class="ow">or</span> <span class="n">iframe</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="k">while</span> <span class="n">current_frame</span> <span class="o">&lt;</span> <span class="n">go_frame</span> <span class="ow">or</span> <span class="n">go_frame</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 
 				<span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 
@@ -1250,45 +1266,43 @@
 
 			<span class="c1"># assert self.frame == frame else something&#39;s wrong</span>
 			<span class="c1"># or the user wants to go to the last frame</span>
-			<span class="k">if</span> <span class="n">iframe</span> <span class="o">==</span> <span class="n">frame</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="n">go_frame</span><span class="p">:</span>
 
-				<span class="n">ts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
+				<span class="c1">#ts = int(self._fp.readline())</span>
+				<span class="c1">#self.data[&#39;timestep&#39;] = ts</span>
+				<span class="c1">#self._constructAttributes()</span>
 
-				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">go_frame</span><span class="p">)</span>
 
-			<span class="k">elif</span> <span class="n">iframe</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="k">elif</span> <span class="n">go_frame</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 				<span class="n">tmp</span> <span class="o">=</span> <span class="n">frame</span>
 				<span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
 
-				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-				<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
+				<span class="c1"># why delete _fp? it creates problems in lines 1288 del self._fp</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+				<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span> <span class="c1"># why do this?!</span>
 			<span class="k">else</span><span class="p">:</span>
-				<span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;Cannot find frame </span><span class="si">{}</span><span class="s1"> in current trajectory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find frame </span><span class="si">{}</span><span class="s1"> in current trajectory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
 
 		<span class="k">else</span><span class="p">:</span> <span class="c1"># no need to find the input frame, just select the right file if available</span>
 
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">iframe</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">):</span>
-					<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input frame exceeds max number of frames&#39;</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">go_frame</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">):</span>
+					<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input frame exceeds max number of frames&#39;</span><span class="p">)</span>
 				<span class="k">else</span><span class="p">:</span>
-					<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="n">iframe</span><span class="p">:</span>
-						<span class="k">pass</span>
+					<span class="k">if</span> <span class="n">current_frame</span> <span class="o">==</span> <span class="n">go_frame</span><span class="p">:</span>
+						<span class="n">frame</span> <span class="o">=</span> <span class="n">current_frame</span>
 					<span class="k">else</span><span class="p">:</span>
-						<span class="k">if</span> <span class="n">iframe</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-							<span class="n">iframe</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+						<span class="k">if</span> <span class="n">go_frame</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+							<span class="n">frame</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">frame</span> <span class="o">=</span> <span class="n">go_frame</span>
 
-						<span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">frame</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
-						<span class="n">frame</span> <span class="o">=</span> <span class="n">iframe</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">_readDumpFile</span><span class="p">()</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">frame</span></div>
 
-<div class="viewcode-block" id="Particles._readDumpFile"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles._readDumpFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Reads a single dump file&quot;&quot;&quot;</span>
 		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="n">ts</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1340,7 +1354,7 @@
 
 		<span class="k">return</span> <span class="n">ts</span></div>
 
-<div class="viewcode-block" id="Particles.write"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.write">[docs]</a>	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.write"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.write">[docs]</a>	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Write a single output file &quot;&quot;&quot;</span>
 		<span class="n">ftype</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 		<span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span>
@@ -1348,7 +1362,7 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="Particles._writeDumpFile"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._writeDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_writeDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles._writeDumpFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._writeDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_writeDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Writes a single dump file&quot;&quot;&quot;</span>
 		<span class="k">with</span>  <span class="nb">open</span><span class="p">(</span><span class="n">filename</span> <span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
 
@@ -1389,7 +1403,7 @@
 				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span> <span class="o">*</span> <span class="n">nVars</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">var</span><span class="p">))</span>
 				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles._readFile"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles._readFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Read a particle trajectory file </span>
 
 <span class="sd">		TODO: Support skip for single dump file</span>
@@ -1400,13 +1414,13 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">skip</span> <span class="o">=</span> <span class="mi">0</span>
 
-		<span class="c1"># We are opening the traj file for the 1st time</span>
+		<span class="c1"># This means we are opening the traj file for the 1st time</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fp&#39;</span><span class="p">):</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_singleFile&#39;</span><span class="p">):</span>
 
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+			<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_singleFile</span> <span class="o">=</span> <span class="kc">False</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_singleFile</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1416,10 +1430,8 @@
 				<span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDumpFile</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
-
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> format is not a supported trajectory file.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span><span class="p">))</span>
-
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span>
 
@@ -1488,7 +1500,7 @@
 
 		<span class="k">return</span> <span class="n">frame</span> <span class="o">+</span> <span class="mi">1</span></div></div>
 
-<div class="viewcode-block" id="Factory"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Factory">[docs]</a><span class="k">class</span> <span class="nc">Factory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Factory"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Factory">[docs]</a><span class="k">class</span> <span class="nc">Factory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;A factory for system class. It creates subclasses of SubSystems. Its only two methods</span>
 <span class="sd">	are static, thus no need to instantiate this class.</span>
 
@@ -1496,7 +1508,7 @@
 <span class="sd">	@[units](si): unit system can be either &#39;si&#39; or &#39;micro&#39;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Factory.factory"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Factory.factory">[docs]</a>	<span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Factory.factory"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Factory.factory">[docs]</a>	<span class="k">def</span> <span class="nf">factory</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Returns a list of Subsystems </span>
 
 <span class="sd">		System(Obj1=[(value11, args11), (value12, args12), ... (value1N, args1N)], ...)</span>
@@ -1589,7 +1601,7 @@
 	<span class="n">_str_to_class</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_str_to_class</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="System"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System">[docs]</a><span class="k">class</span> <span class="nc">System</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="System"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System">[docs]</a><span class="k">class</span> <span class="nc">System</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;A System contains all the information describing a DEM system.</span>
 <span class="sd">	A meaningful system always requires at least one trajectory file to read. A trajectory is a (time)</span>
 <span class="sd">	series corresponding to the coordinates of all particles/meshes/objects in the system.</span>
@@ -1600,29 +1612,41 @@
 <span class="sd">	&#39;Particles&#39; or &#39;Mesh&#39; type. Multiple objects can be created by this class if a list of </span>
 <span class="sd">	filenames are passed to its constructors.</span>
 
-<span class="sd">	@[Particles]: filename (or list of filenames) for the particle trajectory</span>
-<span class="sd">	@[Mesh]: filename (or list of filenames) for the mesh trajectory</span>
-<span class="sd">	@[units](si): unit system can be either &#39;si&#39; or &#39;micro&#39;</span>
-<span class="sd">	@[module]: for user-defined dervied SubSystems, &#39;module&#39; must be a string that specifies the name of </span>
+<span class="sd">	:param SubSystem: SubSystem (or its subclass) definition e.g. Particles or Mesh</span>
+<span class="sd">	:type SubSystem: str / list[str]</span>
+
+<span class="sd">	:param units: unit system can be either &#39;si&#39; or &#39;micro&#39;</span>
+<span class="sd">	:type units: str</span>
+
+<span class="sd">	:param module: for user-defined dervied SubSystems, module specifies the name of </span>
 <span class="sd">	the module in which the user-defined class is defined.</span>
+<span class="sd">	:type module: str</span>
 
-<span class="sd">	How time stepping works: when looping over System (traj file), the frame is controlled only by System</span>
-<span class="sd">	through methods defined in a SubSystem sublass (read/write functions).</span>
+<span class="sd">	:param units: unit system specification for input data, defaults to &#39;si&#39;</span>
+<span class="sd">	:type units: str</span>
 
-<span class="sd">	This class is an iterator.</span>
+<span class="sd">	.. note:: This class is an iterator that enables time stepping: when looping over System (storing a traj file), </span>
+<span class="sd">	the frame is controlled only by System through methods defined in a SubSystem sublass (read/write functions).</span>
+
+<span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+		<span class="c1"># SubSystem cannot handle any units</span>
+		<span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+			<span class="k">del</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+
 		<span class="n">objs</span> <span class="o">=</span> <span class="n">Factory</span><span class="o">.</span><span class="n">factory</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
 
 		<span class="k">for</span> <span class="n">ss</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">:</span>
 			<span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
 
-		<span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
+		<span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">])</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="s1">&#39;si&#39;</span><span class="p">)</span>
 
@@ -1630,64 +1654,68 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
 		<span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="System.units"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.units">[docs]</a>	<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="System.units"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.units">[docs]</a>	<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iunits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Change unit system to units ore return units if None</span>
 <span class="sd">		units:  si, micro, cgs, or nano &quot;&quot;&quot;</span>
 
-		<span class="k">if</span> <span class="ow">not</span> <span class="n">units</span><span class="p">:</span>
+		<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">conversion</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">iunits</span><span class="p">:</span>
 			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_units</span>
 
-		<span class="k">if</span> <span class="p">(</span><span class="n">units</span> <span class="o">==</span> <span class="s1">&#39;si&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">units</span> <span class="o">==</span> <span class="s1">&#39;micro&#39;</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">iunits</span> <span class="ow">in</span> <span class="n">conversion</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 			<span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
 				<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="s1">&#39;units&#39;</span><span class="p">):</span>
-					<span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">units</span><span class="p">(</span><span class="n">iunits</span><span class="p">)</span>
 
-			<span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="n">units</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_units</span> <span class="o">=</span> <span class="n">iunits</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Only S.I. and micro units currently supported&#39;</span><span class="p">)</span></div>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unit system </span><span class="si">{}</span><span class="s1"> not supported&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iunits</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="System.goto"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.goto">[docs]</a>	<span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+<div class="viewcode-block" id="System.goto"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.goto">[docs]</a>	<span class="k">def</span> <span class="nf">goto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Go to a specific frame in the trajectory. If frame is -1</span>
 <span class="sd">		then this function will read the last frame &quot;&quot;&quot;</span>
 
 		<span class="c1"># nothing to do</span>
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">:</span>
-			<span class="k">return</span> <span class="mi">0</span>
+			<span class="k">return</span> <span class="n">frame</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">newFrame</span> <span class="o">=</span> <span class="kc">None</span>
 
 		<span class="c1"># rewind if necessary (better than reading file backwards?)</span>
 		<span class="k">if</span> <span class="n">frame</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="ow">and</span> <span class="n">frame</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewind</span><span class="p">()</span>
+			<span class="n">newFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 		<span class="k">elif</span> <span class="n">frame</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># rewind</span>
 			<span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
 				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
 					<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]:</span>
 						<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;_resetSubSystem&#39;</span><span class="p">):</span>
-							<span class="bp">self</span><span class="o">.</span><span class="n">frame</span>  <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
+							<span class="n">newFrame</span>  <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
 
 				<span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="s1">&#39;_resetSubSystem&#39;</span><span class="p">):</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">frame</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
+					<span class="n">newFrame</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">_resetSubSystem</span><span class="p">()</span>
 
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
 				<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
 					<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]:</span>
 						<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;_goto&#39;</span><span class="p">):</span>
-							<span class="n">newFrame</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
 
 				<span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="s1">&#39;_goto&#39;</span><span class="p">):</span>
-					<span class="n">newFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
-
-			<span class="k">if</span> <span class="n">newFrame</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">newFrame</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
 
 			<span class="c1"># Rewind already updates the system, so we call _updateSystem only if</span>
 			<span class="c1"># the frame is moving forward</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">_updateSystem</span><span class="p">()</span></div>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_updateSystem</span><span class="p">()</span>
 
-<div class="viewcode-block" id="System.skip"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.skip">[docs]</a>	<span class="k">def</span> <span class="nf">skip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">newFrame</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">newFrame</span>
+
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span></div>
+
+<div class="viewcode-block" id="System.skip"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.skip">[docs]</a>	<span class="k">def</span> <span class="nf">skip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Skips all empty frames i.e. moves the trajectory to the 1st frame containing</span>
 <span class="sd">		non-zero elements &quot;&quot;&quot;</span>
 		<span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1712,17 +1740,16 @@
 		<span class="sd">&quot;&quot;&quot; returns the key objects found in the trajctory files &quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-<div class="viewcode-block" id="System.rewind"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.rewind">[docs]</a>	<span class="k">def</span> <span class="nf">rewind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="System.rewind"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.rewind">[docs]</a>	<span class="k">def</span> <span class="nf">rewind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Read trajectory from the beginning&quot;&quot;&quot;</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goto</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 	<span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;Forward one step to next frame when using the next builtin function.&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
 
-<div class="viewcode-block" id="System.next"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.next">[docs]</a>	<span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; This method updates the system attributes! &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="System.next"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.next">[docs]</a>	<span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; This method updates the system attributes. &quot;&quot;&quot;</span>
 		<span class="n">update_frame</span> <span class="o">=</span> <span class="kc">False</span>
 
 		<span class="k">try</span><span class="p">:</span>
@@ -1757,7 +1784,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span></div>
 
-<div class="viewcode-block" id="System._updateSystem"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="System._updateSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Makes sure the system is aware of any update in its attributes caused by</span>
 <span class="sd">		a frame change. &quot;&quot;&quot;</span>
 
@@ -1779,7 +1806,7 @@
 				<span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="s1">&#39;_updateSystem&#39;</span><span class="p">):</span>
 					<span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span><span class="o">.</span><span class="n">_updateSystem</span><span class="p">()</span></div></div>
 
-<div class="viewcode-block" id="numericalSort"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.numericalSort">[docs]</a><span class="k">def</span> <span class="nf">numericalSort</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="numericalSort"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.numericalSort">[docs]</a><span class="k">def</span> <span class="nf">numericalSort</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; A sorting function by numerical numbers for glob.glob &quot;&quot;&quot;</span>
 
 	<span class="n">numbers</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+)&#39;</span><span class="p">)</span>
@@ -1787,15 +1814,26 @@
 	<span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">])</span>
 	<span class="k">return</span> <span class="n">parts</span></div>
 
-<div class="viewcode-block" id="select"><a class="viewcode-back" href="../../../_autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.select">[docs]</a><span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">region</span><span class="p">):</span>
+<div class="viewcode-block" id="select"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.select">[docs]</a><span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">region</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Create a selection of particles based on a subsystem defined by region</span>
-<span class="sd">	@ region: a tuple (xmin, xmax, ymin, ymax, zmin, zmax). If undefined, all particles are considered.</span>
+<span class="sd">	Create a selection of particles based on a region-defined subsystem.</span>
+<span class="sd">	:param data: input data</span>
+<span class="sd">	:type data:  dict</span>
+
+<span class="sd">	:param region: defines the region in the form: (xmin, xmax, ymin, ymax, zmin, zmax). </span>
+<span class="sd">	:type region: tuple</span>
+
+<span class="sd">	:return: indices of selected atoms</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	</span>
+<span class="sd">	.. todo:: Make this function more generic and compliant with the rest of this module</span>
+
+<span class="sd">	.. note:: when region is not supplied, all particle indices are returned</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">try</span><span class="p">:</span>
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">region</span><span class="p">):</span>
-			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;NATOMS&#39;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;NATOMS&#39;</span><span class="p">])]</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">region</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">:</span>
 				<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length of region must be 6: (xmin, xmax, ymin, ymax, zmin, zmax)&#39;</span><span class="p">)</span>
