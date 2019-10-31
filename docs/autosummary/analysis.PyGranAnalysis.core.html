@@ -105,7 +105,7 @@
     <li>analysis.PyGranAnalysis.core</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/autosummary/analysis.PyGranAnalysis.core.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../sources/autosummary/analysis.PyGranAnalysis.core.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -179,7 +179,7 @@ and LICENSE files.</p>
 </table>
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.SubSystem">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">SubSystem</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">SubSystem</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on these properties. This class is iterable but NOT an iterator.</p>
 <dl class="field-list simple">
@@ -192,7 +192,7 @@ and LICENSE files.</p>
 </dl>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem._initialize">
-<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._initialize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
 such as _resetSubSystem</p>
 </dd></dl>
@@ -205,32 +205,32 @@ such as _resetSubSystem</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem._metaget">
-<code class="descname">_metaget</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem._metaget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._metaget" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_metaget</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem._metaget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._metaget" title="Permalink to this definition">¶</a></dt>
 <dd><p>A meta function for returning dynamic class attributes treated as lists (for easy slicing)
 and return as numpy arrays for numerical computations / manipulations</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem._resetSubSystem">
-<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._resetSubSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mainly used by System for rewinding traj back to frame 0</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem._constructAttributes">
-<code class="descname">_constructAttributes</code><span class="sig-paren">(</span><em>sel=None</em>, <em>mesh=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem._constructAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._constructAttributes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_constructAttributes</code><span class="sig-paren">(</span><em>sel=None</em>, <em>mesh=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem._constructAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem._constructAttributes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs dynamic functions (getters) for all keys found in the trajectory</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a hard copy of the SubSystem</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.conversion">
-<code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.conversion" title="Permalink to this definition">¶</a></dt>
+<code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.conversion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
 <div class="admonition-todo admonition" id="index-0">
 <p class="admonition-title">Todo</p>
@@ -240,21 +240,21 @@ and return as numpy arrays for numerical computations / manipulations</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.units">
-<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">units</code><span class="sig-paren">(</span><em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change unit system to units ore return units if None
 units:  si, micro, cgs, or nano</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.scale">
-<code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.scale" title="Permalink to this definition">¶</a></dt>
+<code class="descname">scale</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.scale" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scales all ss elements by a float or int ‘value’</p>
 <p>&#64;[attr]: attribute to scale (positions by default)</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.translate">
-<code class="descname">translate</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.translate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">translate</code><span class="sig-paren">(</span><em>value</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.translate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translates all ss elements by a tuple of integers or floats</p>
 <p>&#64;value: tuple of float or int by which to translate the system
 &#64;[attr]: tuple of attributes to translate system by (positions by default)</p>
@@ -262,7 +262,7 @@ units:  si, micro, cgs, or nano</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.noise">
-<code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#SubSystem.noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.noise" title="Permalink to this definition">¶</a></dt>
+<code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.noise" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds white noise of standard deviation <a href="#id1"><span class="problematic" id="id2">`</span></a>sigma’ to all elements with attribute ‘attr’.</p>
 <p>&#64;sigma: standard deviation of the Gaussian (white) noise
 &#64;[attr]: attribute to perturb (positions by default)</p>
@@ -272,7 +272,7 @@ units:  si, micro, cgs, or nano</p>
 
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.Mesh">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Mesh</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Mesh</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#analysis.PyGranAnalysis.core.SubSystem" title="analysis.PyGranAnalysis.core.SubSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">analysis.PyGranAnalysis.core.SubSystem</span></code></a></p>
 <p>The Mesh class stores a list of meshes and their associated attributes / methods.
 This class is iterable but NOT an iterator.</p>
@@ -283,26 +283,26 @@ This class is iterable but NOT an iterator.</p>
 </dl>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh._initialize">
-<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._initialize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Mesh._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
 such as _resetSubSystem</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh._updateSystem">
-<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._updateSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Mesh._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._updateSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class function for updating the state of a Mesh</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh._readFile">
-<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._readFile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Mesh._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._readFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a mesh file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh._resetSubSystem">
-<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Mesh._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Mesh._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh._resetSubSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mainly used by System for rewinding traj back to frame 0</p>
 </dd></dl>
 
@@ -375,32 +375,32 @@ units:  si, micro, cgs, or nano</p>
 
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.Particles">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Particles</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Particles</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#analysis.PyGranAnalysis.core.SubSystem" title="analysis.PyGranAnalysis.core.SubSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">analysis.PyGranAnalysis.core.SubSystem</span></code></a></p>
 <p>The Particle class stores all particle properties and the methods that operate on
 these properties. This class is iterable but NOT an iterator.</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._initialize">
-<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._initialize" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_initialize</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function exists mostly for convenience. It does everything expected from __init__ and is used by other methods
 such as _resetSubSystem</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._updateSystem">
-<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._updateSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._updateSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class function for updating the state of Particles</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._resetSubSystem">
-<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._resetSubSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_resetSubSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._resetSubSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._resetSubSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Particles back to initial state</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeROG">
-<code class="descname">computeROG</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeROG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeROG" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeROG</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeROG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeROG" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the radius of gyration (ROG) for an N-particle system:
 ROG = &lt;sqrt(sum_i (r_i - rm)^2)&gt; where rm is the mean position of all
 particles, and &lt;…&gt; is the ensemble average. Alternatively, one can
@@ -409,19 +409,19 @@ compute ROG as sum_i &lt;r_i^T r_i&gt; - rm ^T rm</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeCOM">
-<code class="descname">computeCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeCOM" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeCOM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns center of mass</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeGCOM">
-<code class="descname">computeGCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeGCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeGCOM" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeGCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeGCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeGCOM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the geometric center of mass</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeRadius">
-<code class="descname">computeRadius</code><span class="sig-paren">(</span><em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRadius" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeRadius</code><span class="sig-paren">(</span><em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRadius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the maximum radius of an N-particle (spherical) system
 by sorting the radial components and returning the average of the sqrt
 of the radius of the first N max data points.</p>
@@ -429,7 +429,7 @@ of the radius of the first N max data points.</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeRDF">
-<code class="descname">computeRDF</code><span class="sig-paren">(</span><em>dr=None</em>, <em>center=True</em>, <em>rMax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRDF" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeRDF</code><span class="sig-paren">(</span><em>dr=None</em>, <em>center=True</em>, <em>rMax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRDF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the three-dimensional radial distribution function for a set of
 spherical particles contained in a cube with side length S.  This simple
 function finds reference particles such that a sphere of radius rMax drawn
@@ -462,14 +462,14 @@ radii           a numpy array containing the radii of the</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeAngleRepose">
-<code class="descname">computeAngleRepose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeAngleRepose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeAngleRepose" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeAngleRepose</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeAngleRepose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeAngleRepose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the angle of repos theta = arctan(h_max/L)
 in a sim box defined by [-Lx, Lx] x [-Ly, Ly] x [0, Lz]</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeMass">
-<code class="descname">computeMass</code><span class="sig-paren">(</span><em>tdensity</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeMass" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeMass</code><span class="sig-paren">(</span><em>tdensity</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeMass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeMass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the mass of all particles</p>
 <p>&#64;tdensity: true density of the powder
 returns the summation of the mass of all particles</p>
@@ -477,7 +477,7 @@ returns the summation of the mass of all particles</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeIntensitySegregation">
-<code class="descname">computeIntensitySegregation</code><span class="sig-paren">(</span><em>resol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeIntensitySegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeIntensitySegregation" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeIntensitySegregation</code><span class="sig-paren">(</span><em>resol=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeIntensitySegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeIntensitySegregation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the intensity of segregation for binary mixture
 as defined by Danckwerts:</p>
 <p>I = sigma_a**2 / (mean_a (1 - mean_a))</p>
@@ -487,7 +487,7 @@ returns scalar intensity</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeScaleSegregation">
-<code class="descname">computeScaleSegregation</code><span class="sig-paren">(</span><em>nTrials=1000</em>, <em>resol=None</em>, <em>Npts=50</em>, <em>maxDist=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeScaleSegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeScaleSegregation" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeScaleSegregation</code><span class="sig-paren">(</span><em>nTrials=1000</em>, <em>resol=None</em>, <em>Npts=50</em>, <em>maxDist=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeScaleSegregation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeScaleSegregation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the correlation coefficient as defined by Danckwerts:
 R(r) = a * b / std(a)**2</p>
 <p>This is done via a Monte Carlo simulation.</p>
@@ -500,7 +500,7 @@ R(r) = a * b / std(a)**2</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeDensity">
-<code class="descname">computeDensity</code><span class="sig-paren">(</span><em>tdensity</em>, <em>shape='box'</em>, <em>bounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensity" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeDensity</code><span class="sig-paren">(</span><em>tdensity</em>, <em>shape='box'</em>, <em>bounds=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeDensity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the bulk density for a selection of particles from their <em>true</em> density.
 The volume is determined approximately by constructing a box/cylinder/cone
 embedding the particles. Particles are assumed to be spherical in shape.</p>
@@ -510,45 +510,45 @@ embedding the particles. Particles are assumed to be spherical in shape.</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeDensityLocal">
-<code class="descname">computeDensityLocal</code><span class="sig-paren">(</span><em>bdensity</em>, <em>dr</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeDensityLocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensityLocal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeDensityLocal</code><span class="sig-paren">(</span><em>bdensity</em>, <em>dr</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeDensityLocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensityLocal" title="Permalink to this definition">¶</a></dt>
 <dd><p>” Computes a localized density at a series of discretized regions of thickness ‘dr’
 along an axis specified by the user</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeVolume">
-<code class="descname">computeVolume</code><span class="sig-paren">(</span><em>shape='box'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.computeVolume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeVolume" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeVolume</code><span class="sig-paren">(</span><em>shape='box'</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeVolume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeVolume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the volume of a granular system based on a simple geometry
 &#64;[shape]: box, cylinder-x, cylinder-y, or cylinder-z</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._goto">
-<code class="descname">_goto</code><span class="sig-paren">(</span><em>current_frame</em>, <em>go_frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._goto" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_goto</code><span class="sig-paren">(</span><em>current_frame</em>, <em>go_frame</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._goto" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function assumes we’re reading a non-const N trajectory.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._readDumpFile">
-<code class="descname">_readDumpFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._readDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readDumpFile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_readDumpFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._readDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readDumpFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a single dump file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.write">
-<code class="descname">write</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.write" title="Permalink to this definition">¶</a></dt>
+<code class="descname">write</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a single output file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._writeDumpFile">
-<code class="descname">_writeDumpFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._writeDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._writeDumpFile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_writeDumpFile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._writeDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._writeDumpFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a single dump file</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._readFile">
-<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Particles._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readFile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a particle trajectory file</p>
 <p>TODO: Support skip for single dump file</p>
 </dd></dl>
@@ -622,7 +622,7 @@ units:  si, micro, cgs, or nano</p>
 
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.Factory">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Factory</code><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Factory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">Factory</code><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A factory for system class. It creates subclasses of SubSystems. Its only two methods
 are static, thus no need to instantiate this class.</p>
@@ -630,7 +630,7 @@ are static, thus no need to instantiate this class.</p>
 &#64;[units](si): unit system can be either ‘si’ or ‘micro’</p>
 <dl class="staticmethod">
 <dt id="analysis.PyGranAnalysis.core.Factory.factory">
-<em class="property">static </em><code class="descname">factory</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#Factory.factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Factory.factory" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">factory</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Factory.factory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Factory.factory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a list of Subsystems</p>
 <p>System(Obj1=[(value11, args11), (value12, args12), … (value1N, args1N)], …)</p>
 <p>args11, args12, etc. are dictionaries of keywords args for objects of type obj1.</p>
@@ -640,7 +640,7 @@ are static, thus no need to instantiate this class.</p>
 
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.core.System">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">System</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">System</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A System contains all the information describing a DEM system.
 A meaningful system always requires at least one trajectory file to read. A trajectory is a (time)
@@ -674,21 +674,21 @@ filenames are passed to its constructors.</p>
 <p>the frame is controlled only by System through methods defined in a SubSystem sublass (read/write functions).</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.units">
-<code class="descname">units</code><span class="sig-paren">(</span><em>iunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">units</code><span class="sig-paren">(</span><em>iunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change unit system to units ore return units if None
 units:  si, micro, cgs, or nano</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.goto">
-<code class="descname">goto</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.goto" title="Permalink to this definition">¶</a></dt>
+<code class="descname">goto</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.goto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.goto" title="Permalink to this definition">¶</a></dt>
 <dd><p>Go to a specific frame in the trajectory. If frame is -1
 then this function will read the last frame</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.skip">
-<code class="descname">skip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.skip" title="Permalink to this definition">¶</a></dt>
+<code class="descname">skip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.skip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Skips all empty frames i.e. moves the trajectory to the 1st frame containing
 non-zero elements</p>
 </dd></dl>
@@ -701,19 +701,19 @@ non-zero elements</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.rewind">
-<code class="descname">rewind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.rewind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.rewind" title="Permalink to this definition">¶</a></dt>
+<code class="descname">rewind</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.rewind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.rewind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read trajectory from the beginning</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.next">
-<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.next" title="Permalink to this definition">¶</a></dt>
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.next" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method updates the system attributes.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System._updateSystem">
-<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#System._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System._updateSystem" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_updateSystem</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System._updateSystem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System._updateSystem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes sure the system is aware of any update in its attributes caused by
 a frame change.</p>
 </dd></dl>
@@ -722,13 +722,13 @@ a frame change.</p>
 
 <dl class="function">
 <dt id="analysis.PyGranAnalysis.core.numericalSort">
-<code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">numericalSort</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#numericalSort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.numericalSort" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">numericalSort</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#numericalSort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.numericalSort" title="Permalink to this definition">¶</a></dt>
 <dd><p>A sorting function by numerical numbers for glob.glob</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="analysis.PyGranAnalysis.core.select">
-<code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data</em>, <em>*region</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/core.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.select" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">analysis.PyGranAnalysis.core.</code><code class="descname">select</code><span class="sig-paren">(</span><em>data</em>, <em>*region</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a selection of particles based on a region-defined subsystem.
 :param data: input data
 :type data:  dict</p>

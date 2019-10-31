@@ -105,7 +105,7 @@
     <li>simulation.PyGranSim.models</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/autosummary/simulation.PyGranSim.models.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../sources/autosummary/simulation.PyGranSim.models.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -182,7 +182,7 @@ reduced mass, radius, etc. i.e. <img class="math" src="../images/math/0797a34dc6
 </table>
 <dl class="function">
 <dt id="simulation.PyGranSim.models.template_tablet">
-<code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">template_tablet</code><span class="sig-paren">(</span><em>nspheres</em>, <em>radius</em>, <em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#template_tablet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.template_tablet" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">template_tablet</code><span class="sig-paren">(</span><em>nspheres</em>, <em>radius</em>, <em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#template_tablet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.template_tablet" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a multi-sphere tablet (cylinder) of
 radius “radius” and height “length” constituting “nspheres” spheres.
 This is used for multisphere simulations.</p>
@@ -205,7 +205,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="class">
 <dt id="simulation.PyGranSim.models.Model">
-<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">Model</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This class implements a contact model. It can be used to run a DEM simulation (e.g. with LIGGGHTS) or numerical experiments for simulating particle-wall collisions.</p>
 <dl class="field-list simple">
@@ -230,13 +230,13 @@ This is used for multisphere simulations.</p>
 </div>
 <dl class="method">
 <dt id="simulation.PyGranSim.models.Model.setupProps">
-<code class="descname">setupProps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model.setupProps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.setupProps" title="Permalink to this definition">¶</a></dt>
+<code class="descname">setupProps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model.setupProps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.setupProps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates class attributes for all material properties</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.Model.contactTime">
-<code class="descname">contactTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model.contactTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.contactTime" title="Permalink to this definition">¶</a></dt>
+<code class="descname">contactTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model.contactTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.contactTime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the characteristic collision time assuming for a spring dashpot model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -250,7 +250,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.Model.displacement">
-<code class="descname">displacement</code><span class="sig-paren">(</span><em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model.displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.displacement" title="Permalink to this definition">¶</a></dt>
+<code class="descname">displacement</code><span class="sig-paren">(</span><em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model.displacement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.displacement" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generator that computes (iteratively) the overlap distance (displacement) as a function of time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -289,7 +289,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.Model._contactRadius">
-<code class="descname">_contactRadius</code><span class="sig-paren">(</span><em>delta</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model._contactRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model._contactRadius" title="Permalink to this definition">¶</a></dt>
+<code class="descname">_contactRadius</code><span class="sig-paren">(</span><em>delta</em>, <em>radius</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model._contactRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model._contactRadius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Internal function that computes the contact radius for Hertzian and JKR models</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -309,7 +309,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.Model.numericalForce">
-<code class="descname">numericalForce</code><span class="sig-paren">(</span><em>time</em>, <em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#Model.numericalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.numericalForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">numericalForce</code><span class="sig-paren">(</span><em>time</em>, <em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#Model.numericalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.Model.numericalForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the force used for numerical solvers</p>
 </dd></dl>
 
@@ -317,7 +317,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="class">
 <dt id="simulation.PyGranSim.models.SpringDashpot">
-<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">SpringDashpot</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">SpringDashpot</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#simulation.PyGranSim.models.Model" title="simulation.PyGranSim.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">simulation.PyGranSim.models.Model</span></code></a></p>
 <p>A class that implements the linear spring model for granular materials</p>
 <dl class="field-list simple">
@@ -330,7 +330,7 @@ This is used for multisphere simulations.</p>
 </dl>
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.springStiff">
-<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.springStiff" title="Permalink to this definition">¶</a></dt>
+<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.springStiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the spring constant (<img class="math" src="../images/math/e8082d4f9b7dfa49370bbf2cebb770d246c66f7d.png" alt="k_n"/>) for the normal force <img class="math" src="../images/math/73fc827ca4e36b262d4fb0afcdc9f3d5df4cff19.png" alt="F_n = k_n \delta_n"/>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -347,7 +347,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.dissCoef">
-<code class="descname">dissCoef</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.dissCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.dissCoef" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dissCoef</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.dissCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.dissCoef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the normal dissipative coefficient (<img class="math" src="../images/math/6c165cbd8acc050f9d9a0855fefad221ccbfe0eb.png" alt="c_n"/>) for the dissipative force <img class="math" src="../images/math/85ee475eb6bfb8104e0831efd087b3aa144683d8.png" alt="F_d = - c_n \dot{\delta_n}"/></p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -361,7 +361,7 @@ This is used for multisphere simulations.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.dissForce">
-<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.dissForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.dissForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dissipative (viscous) force: <img class="math" src="../images/math/85ee475eb6bfb8104e0831efd087b3aa144683d8.png" alt="F_d = - c_n \dot{\delta_n}"/>
 where <img class="math" src="../images/math/6c165cbd8acc050f9d9a0855fefad221ccbfe0eb.png" alt="c_n"/> is the dissipative coefficient.</p>
 <dl class="field-list simple">
@@ -382,7 +382,7 @@ where <img class="math" src="../images/math/6c165cbd8acc050f9d9a0855fefad221ccbf
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.displacementAnalytical">
-<code class="descname">displacementAnalytical</code><span class="sig-paren">(</span><em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.displacementAnalytical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.displacementAnalytical" title="Permalink to this definition">¶</a></dt>
+<code class="descname">displacementAnalytical</code><span class="sig-paren">(</span><em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.displacementAnalytical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.displacementAnalytical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the displacement based on the analytical solution for
 a spring-dashpot model.</p>
 <dl class="field-list simple">
@@ -404,7 +404,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.elasticForce">
-<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.elasticForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.elasticForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the elastic force based on Hooke’s law: <img class="math" src="../images/math/73fc827ca4e36b262d4fb0afcdc9f3d5df4cff19.png" alt="F_n = k_n \delta_n"/></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -421,7 +421,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.cohesiveForce">
-<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.cohesiveForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.cohesiveForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the cohesive force <img class="math" src="../images/math/5169a3d155a81a651e664d3ed7c2ec2e1e39f160.png" alt="F_c"/> (for the SJKR model)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -438,7 +438,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.normalForce">
-<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.normalForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.normalForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total normal force <img class="math" src="../images/math/af9f9d8c9ff983f770d56f37eb8d11806f31cf5c.png" alt="F_n + F_d + F_c"/></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -458,7 +458,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.SpringDashpot.tangForce">
-<code class="descname">tangForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#SpringDashpot.tangForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.tangForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">tangForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#SpringDashpot.tangForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.SpringDashpot.tangForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total tangential force based on the Coulomb model</p>
 </dd></dl>
 
@@ -551,12 +551,12 @@ a spring-dashpot model.</p>
 
 <dl class="class">
 <dt id="simulation.PyGranSim.models.HertzMindlin">
-<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">HertzMindlin</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">HertzMindlin</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#simulation.PyGranSim.models.Model" title="simulation.PyGranSim.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">simulation.PyGranSim.models.Model</span></code></a></p>
 <p>A class that implements the linear spring model for granular materials</p>
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.springStiff">
-<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.springStiff" title="Permalink to this definition">¶</a></dt>
+<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.springStiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the spring constant <img class="math" src="../images/math/e8082d4f9b7dfa49370bbf2cebb770d246c66f7d.png" alt="k_n"/> for <cite>F_n = k_n delta_n^{3/2}</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -573,7 +573,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.elasticForce">
-<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.elasticForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.elasticForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the Hertzian elastic force <img class="math" src="../images/math/9ae9cc527b64546d5f116b4a95cb41e3b110312b.png" alt="F_n = k_n \delta_n^{3/2}"/></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -590,7 +590,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.dissCoef">
-<code class="descname">dissCoef</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.dissCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.dissCoef" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dissCoef</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.dissCoef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.dissCoef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dissipative force coefficient</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -607,7 +607,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.dissForce">
-<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.dissForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.dissForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dissipative force</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -627,7 +627,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.normalForce">
-<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.normalForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.normalForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total normal force <img class="math" src="../images/math/af9f9d8c9ff983f770d56f37eb8d11806f31cf5c.png" alt="F_n + F_d + F_c"/></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -647,7 +647,7 @@ a spring-dashpot model.</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.HertzMindlin.cohesiveForce">
-<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#HertzMindlin.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.cohesiveForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#HertzMindlin.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.HertzMindlin.cohesiveForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the cohesive force for the simplified JKR model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -751,12 +751,12 @@ a spring-dashpot model.</p>
 
 <dl class="class">
 <dt id="simulation.PyGranSim.models.ThorntonNing">
-<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">ThorntonNing</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">ThorntonNing</code><span class="sig-paren">(</span><em>**params</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#simulation.PyGranSim.models.Model" title="simulation.PyGranSim.models.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">simulation.PyGranSim.models.Model</span></code></a></p>
 <p>A basic class that implements the Thornton elasto-plastic model based on <a class="reference internal" href="../references.html#thornton1998theoretical" id="id2">[TN98]</a>.</p>
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.computeYieldRadius">
-<code class="descname">computeYieldRadius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.computeYieldRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.computeYieldRadius" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeYieldRadius</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.computeYieldRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.computeYieldRadius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the contact radius at the yield point based on Eq. (65) in <a class="reference internal" href="../references.html#thornton1998theoretical" id="id3">[TN98]</a></p>
 <p>return: yielding contact radius
 rtype: float</p>
@@ -764,7 +764,7 @@ rtype: float</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.springStiff">
-<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.springStiff" title="Permalink to this definition">¶</a></dt>
+<code class="descname">springStiff</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.springStiff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.springStiff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the spring constant <img class="math" src="../images/math/e8082d4f9b7dfa49370bbf2cebb770d246c66f7d.png" alt="k_n"/> for <cite>F_n = k_n delta_n^{3/2}</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -781,7 +781,7 @@ rtype: float</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.elasticForce">
-<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.elasticForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">elasticForce</code><span class="sig-paren">(</span><em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.elasticForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.elasticForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the Hertzian-like elastic force</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -798,7 +798,7 @@ rtype: float</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.dissForce">
-<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.dissForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dissForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.dissForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.dissForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the piece-wise defined elastic force</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -891,7 +891,7 @@ rtype: float</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.normalForce">
-<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.normalForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">normalForce</code><span class="sig-paren">(</span><em>delta</em>, <em>deltav</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.normalForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.normalForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total normal force</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -923,7 +923,7 @@ rtype: float</p>
 
 <dl class="method">
 <dt id="simulation.PyGranSim.models.ThorntonNing.cohesiveForce">
-<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/models.html#ThorntonNing.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.cohesiveForce" title="Permalink to this definition">¶</a></dt>
+<code class="descname">cohesiveForce</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#ThorntonNing.cohesiveForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.ThorntonNing.cohesiveForce" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the JKR cohesive force</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

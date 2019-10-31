@@ -105,7 +105,7 @@
     <li>analysis.PyGranAnalysis.equilibrium</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/autosummary/analysis.PyGranAnalysis.equilibrium.rst.txt" rel="nofollow"> View page source</a>
+          <a href="../sources/autosummary/analysis.PyGranAnalysis.equilibrium.rst.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -152,7 +152,7 @@ and LICENSE files.</p>
 </table>
 <dl class="class">
 <dt id="analysis.PyGranAnalysis.equilibrium.Neighbors">
-<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.equilibrium.</code><code class="descname">Neighbors</code><span class="sig-paren">(</span><em>Particles</em>, <em>material=None</em>, <em>cutoff=None</em>, <em>binary=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.equilibrium.</code><code class="descname">Neighbors</code><span class="sig-paren">(</span><em>Particles</em>, <em>material=None</em>, <em>cutoff=None</em>, <em>binary=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A dynamic class that contains all the particle-particle (and optionally particle-wall)
 neighbors from which contacts, overlaps, force chains, etc. can be determined.</p>
@@ -180,7 +180,7 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.equilibrium.Neighbors.coon">
-<code class="descname">coon</code><span class="sig-paren">(</span><em>type1=1</em>, <em>type2=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.coon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.coon" title="Permalink to this definition">¶</a></dt>
+<code class="descname">coon</code><span class="sig-paren">(</span><em>type1=1</em>, <em>type2=2</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.coon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.coon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the coordination number per particle. For binary mixtures
 the default coordinations numbers are returned as two cross coordination
 number arrays (tuple). For auto (self) coordination numbers, specify type1
@@ -208,7 +208,7 @@ indices</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.equilibrium.Neighbors.filter">
-<code class="descname">filter</code><span class="sig-paren">(</span><em>percent</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.filter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filter</code><span class="sig-paren">(</span><em>percent</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Particles object in which particles overlap no more than <a href="#id1"><span class="problematic" id="id2">`</span></a>percent’ of their effective radius</p>
 <p>&#64;[percent]: filter all particles overlapping by a certain percentage.</p>
 <p>Returns a new Particles class</p>
@@ -216,7 +216,7 @@ indices</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.equilibrium.Neighbors.forceChain">
-<code class="descname">forceChain</code><span class="sig-paren">(</span><em>axes=(0</em>, <em>2)</em>, <em>alpha=0.7853981633974483</em>, <em>plot_stress=True</em>, <em>plot_parts=False</em>, <em>peters=True</em>, <em>threshold=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.forceChain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.forceChain" title="Permalink to this definition">¶</a></dt>
+<code class="descname">forceChain</code><span class="sig-paren">(</span><em>axes=(0</em>, <em>2)</em>, <em>alpha=0.7853981633974483</em>, <em>plot_stress=True</em>, <em>plot_parts=False</em>, <em>peters=True</em>, <em>threshold=1</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors.forceChain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors.forceChain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the force chain based on an algorithm published in Phys. Rev. E. 72, 041307 (2005):
 ‘Characterization of force chains in granular material’.</p>
 <p>&#64; [axes]: a tuple of size 2 that specifies the two axes to use for computing the force chain, e.g. axes=(0,1) -&gt; (x,y)
