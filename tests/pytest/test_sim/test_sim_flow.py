@@ -1,7 +1,8 @@
 from PyGran import simulation
 from PyGran.params import organic, glass
+import os
 
-def test_run():
+def test_run(mpath):
 
 	params = {
 
@@ -26,12 +27,12 @@ def test_run():
 
 		# Import hopper mesh
 	 	'mesh': {
-			'hopper': {'file': 'mesh/silo.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': {'scale': 1e-3}},
-			'impeller': {'file': 'mesh/valve.stl', 'mtype': 'mesh/surface', 'material': glass, 'args': {'move': (0, 0, 1), 'scale':1e-3}}
+			'hopper': {'file': os.path.join(mpath, 'mesh', 'silo.stl'), 'mtype': 'mesh/surface', 'material': glass, 'args': {'scale': 1e-3}},
+			'impeller': {'file': os.path.join(mpath, 'mesh', 'valve.stl'), 'mtype': 'mesh/surface', 'material': glass, 'args': {'move': (0, 0, 1), 'scale':1e-3}}
 		},
 
 		# Stage runs
-		'stages': {'insertion': 1e5, 'run': 1e5},
+		'stages': {'insertion': 1e4, 'run': 1e4},
 	}
 
 	# Create an instance of the DEM class
