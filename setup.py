@@ -143,7 +143,7 @@ setup(
 	package_dir={'PyGran': os.path.join('src','PyGran')},
 	include_package_data=True,
 	install_requires=['numpy', 'scipy'],
-	extras_require={'extra': ['vtk', 'mpi4py', 'Pillow', 'pytest']},
+	extras_require={'extra': ['vtk', 'mpi4py', 'Pillow', 'pytest', 'pytest-cov']},
 	long_description='A DEM toolbox for rapid quantitative analysis of granular/powder systems. See http://www.pygran.org.',
 	classifiers=[
 			"Development Status :: 4 - Beta",
