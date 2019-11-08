@@ -41,9 +41,10 @@ jobs:
       - run:
           name: run tests
           command: |
-            python3 -m tests DEM flow
-            python3 tests/scripts/Particle-Analysis/basics/basics.py "DEM_flow/traj/particles*.dump"
+            pytest --cov PyGran tests/pytest/test_sim --mpath tests/pytest/test_sim
+            pytest --cov PyGran tests/pytest/test_analysis --trajf "DEM_flow/traj/particles*.dump"
             mkdir test-results
+            codecov
 
       - store_test_results:
           path: test-results
