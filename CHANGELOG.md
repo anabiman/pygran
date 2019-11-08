@@ -37,4 +37,5 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - Fixed bug with user-created scripts importing themselves (leading to double execution)
 - Renamed method `add_viscous' to `addViscous' in engine_liggghts and dem modules
 - DEM engine config files are stored in ~/.config/engine_name.ini
-- System method 'units' applies to all frames and not just the currently loaded frame
+- System method 'units' always applies to the currently loaded frame
+- System method 'units' always returns current unit system (str) 
