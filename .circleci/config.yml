@@ -8,7 +8,6 @@ jobs:
 
     docker:
       - image: circleci/python:3.7.1
-      - image: circleci/python:2.7
 
     working_directory: ~/repo
 
@@ -41,10 +40,10 @@ jobs:
       - run:
           name: run tests
           command: |
-            pytest --cov PyGran tests/pytest/test_sim --mpath tests/pytest/test_sim
-            pytest --cov PyGran tests/pytest/test_analysis --trajf "DEM_flow/traj/particles*.dump"
+            python3 -m pytest --cov PyGran tests/pytest/test_sim --mpath tests/pytest/test_sim
+            python3 -m pytest --cov PyGran tests/pytest/test_analysis --trajf "DEM_flow/traj/particles*.dump"
             mkdir test-results
-            codecov
+            python3 -m codecov
 
       - store_test_results:
           path: test-results
