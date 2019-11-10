@@ -63,7 +63,7 @@ class Track(install):
 		popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True, cwd=cwd, shell=True)
 
 		for stdout_line in iter(popen.stdout.readline, ""):
-			yield stdout_line 
+			yield stdout_line
 
 		popen.stdout.close()
 		return_code = popen.wait()
