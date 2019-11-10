@@ -1,7 +1,7 @@
 ***************
 What is PyGran?
 ***************
-*PyGran* is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of *PyGran*  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing *PyGran*  for Unix systems, this manual focuses on 2 core modules (:numref:`fig_pygran`) in *PyGran* : ``simulation`` which provides ``engines`` for running DEM simulation and enables analysis of contact mechanical models, and ``analysis`` which contains methods and submodules for processing DEM data. *PyGran*  is released under the GNU General Public License (`GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_), and its code base is available from `github <https://www.github.com/Andrew-AbiMansour/PyGran>`_.
+*PyGran* is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of *PyGran*  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing *PyGran*  for Unix systems, this manual focuses on 2 core modules (:numref:`fig_pygran`) in *PyGran* : ``simulation`` which provides ``engines`` for running DEM simulation and enables analysis of contact mechanical models, and ``analysis`` which contains methods and submodules for processing DEM data. *PyGran*  is released under the GNU General Public License (`GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_), and its code base is available from `github <https://github.com/Andrew-AbiMansour/PyGran>`_.
 
 .. _fig_pygran:
 .. figure:: images/PyGran-design.png
@@ -53,7 +53,7 @@ Prerequisites
 #############
 OS support
 **********
-In the current version, *PyGran* is configured to run on Unix or Unix-like operating systems. While *PyGran* can be run on a Windows platform, it has not yet been fully tested. *PyGran* supports Python 3.X and is fully backwards compatible with Python 2.2 (and later verions). The table in :doc:`index` summarizes some of the technical details of the *PyGran* source code.
+In the current version, *PyGran* is configured to run on Unix or Unix-like operating systems. While *PyGran* can be run on a Windows platform, it has not yet been fully tested. *PyGran* supports Python 3.X and is fully backwards compatible with Python 2.7 (and later verions). The table in :doc:`index` summarizes some of the technical details of the *PyGran* source code.
 
 Dependencies
 ************
@@ -107,7 +107,7 @@ For updating an existing repository, *git* can be used to sync the source code w
 
     git pull origin master
 
-Alternatively, one can download the source code as a tar ball (or zip file) from `github <https://www.github.com>`_, and then manually extract the files.
+Alternatively, one can download the source code as a tar ball (or zip file) from `github`_, and then manually extract the files.
 *PyGran* uses Python's `setuptools` to check for and/or download dependencies. As of version 1.2.0, *PyGran* uses a submodular design. In order to clone all the core submodules, you must run::
 
     git submodule init
@@ -125,7 +125,7 @@ For a comprehensive list of options on running `setup.py`, see the doc strings i
 
 Development source code
 ***********************
-An experimental version of the code can be downloaded from `github <https://andrew-abimansour.github.io/PyGran>`_ and then installed using the method described in the `Stable source code`_ subsection, except the branch to pull the source code from is ``develop``::
+An experimental version of the code can be downloaded from `github`_ and then installed using the method described in the `Stable source code`_ subsection, except the branch to pull the source code from is ``develop``::
 
     git checkout develop
 
@@ -155,7 +155,7 @@ If ``config.ini`` file is not found, *PyGran* will create one.
 
 Compiling LIGGGHTS
 ******************
-*PyGran*'s setup enables the compilation of *LIGGGHTS-PUBLIC* from its source code on `github <https://github.com/CFDEMproject/LIGGGHTS-PUBLIC>`_ via::
+*PyGran*'s setup enables the compilation of *LIGGGHTS-PUBLIC* from its source code available on the `CFDEM github <https://github.com/CFDEMproject/LIGGGHTS-PUBLIC>`_ repository via::
     
     python setup.py build_liggghts
 

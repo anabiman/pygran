@@ -13,7 +13,7 @@ PyGran's documentation
    introduction
    simulation
    analysis
-   references
+   zreferences
 
 Features
 ~~~~~~~~

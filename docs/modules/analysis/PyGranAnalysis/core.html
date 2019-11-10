@@ -79,7 +79,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../references.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">Bibliography</a></li>
 </ul>
 
         
@@ -116,7 +116,7 @@
             
   <h1>Source code for analysis.PyGranAnalysis.core</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">A module that provides the fundamental classes used in the analysis module</span>
+<span class="sd">A submodule that provides the fundamental classes used in the analysis module</span>
 
 <span class="sd">Created on July 10, 2016</span>
 
@@ -173,7 +173,7 @@
 <span class="sd">	:param units: unit system</span>
 <span class="sd">	:type units: string </span>
 
-<span class="sd">	:note: see `link &lt;https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py&gt;`_ for available unit systems</span>
+<span class="sd">	:note: See `code &lt;https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py&gt;`_ for available unit systems</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
@@ -559,7 +559,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="SubSystem.noise"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem.noise">[docs]</a>	<span class="k">def</span> <span class="nf">noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">)):</span>
-		<span class="sd">&quot;&quot;&quot; Adds white noise of standard deviation `sigma&#39; to all elements with attribute &#39;attr&#39;.</span>
+		<span class="sd">&quot;&quot;&quot; Adds white noise of standard deviation &#39;sigma&#39; to all elements with attribute &#39;attr&#39;.</span>
 
 <span class="sd">		@sigma: standard deviation of the Gaussian (white) noise</span>
 <span class="sd">		@[attr]: attribute to perturb (positions by default)</span>
@@ -965,21 +965,14 @@
 <span class="sd">		to compensate for edge effects.  If no such particles exist, an error is</span>
 <span class="sd">		returned.  Try a smaller rMax...or write some code to handle edge effects! ;)</span>
 
-<span class="sd">		Arguments:</span>
+<span class="sd">		:param dr: increment for increasing radius of spherical shell</span>
+<span class="sd">		:type dr: float</span>
 
-<span class="sd">			S               length of each side of the cube in space</span>
-<span class="sd">			rMax            outer diameter of largest spherical shell</span>
-<span class="sd">			dr              increment for increasing radius of spherical shell</span>
-<span class="sd">		Implicit arguments:</span>
-<span class="sd">			x               an array of x positions of centers of particles</span>
-<span class="sd">			y               an array of y positions of centers of particles</span>
-<span class="sd">			z               an array of z positions of centers of particles</span>
+<span class="sd">		:param rMax: outer diameter of largest spherical shell</span>
+<span class="sd">		:type rMax: float</span>
 
-<span class="sd">		Returns a tuple: (g, radii, interior_indices)</span>
-<span class="sd">			g(r)            a numpy array containing the correlation function g(r)</span>
-<span class="sd">			radii           a numpy array containing the radii of the</span>
-<span class="sd">							spherical shells used to compute g(r)</span>
-<span class="sd">			reference_indices   indices of reference particles</span>
+<span class="sd">		:return: (rdf as numpy array, radii of spherical shells as numpy array, indices of particles)</span>
+<span class="sd">		:rtype: tuple</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
@@ -1256,9 +1249,9 @@
 
 				<span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 
-				<span class="k">if</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">iframe</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">go_frame</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
 					<span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">(</span><span class="s1">&#39;End of file reached.&#39;</span><span class="p">)</span>
-				<span class="k">elif</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">iframe</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+				<span class="k">elif</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">go_frame</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
 					<span class="k">break</span>
 
 				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;TIMESTEP&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1627,8 +1620,6 @@
 
 <span class="sd">	.. note:: This class is an iterator that enables time stepping: when looping over System (storing a traj file), </span>
 <span class="sd">	the frame is controlled only by System through methods defined in a SubSystem sublass (read/write functions).</span>
-
-<span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
@@ -1655,7 +1646,7 @@
 		<span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="System.units"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.System.units">[docs]</a>	<span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iunits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Change unit system to units ore return units if None</span>
+		<span class="sd">&quot;&quot;&quot; Change unit system to units or return units if None</span>
 <span class="sd">		units:  si, micro, cgs, or nano &quot;&quot;&quot;</span>
 
 		<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">conversion</span>
@@ -1828,7 +1819,7 @@
 <span class="sd">	</span>
 <span class="sd">	.. todo:: Make this function more generic and compliant with the rest of this module</span>
 
-<span class="sd">	.. note:: when region is not supplied, all particle indices are returned</span>
+<span class="sd">	.. note:: When region is not supplied, all particle indices are returned</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
 	<span class="k">try</span><span class="p">:</span>
@@ -1858,7 +1849,7 @@
 
 		<span class="k">return</span> <span class="n">indices</span>
 
-	<span class="k">except</span><span class="p">:</span>
+	<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
 		<span class="k">raise</span></div>
 </pre></div>
 

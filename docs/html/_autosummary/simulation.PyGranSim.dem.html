@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>simulation.PyGranSim.dem &mdash; PyGran 1.2.0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/main.css" type="text/css" />
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PyGran 1.2.0 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../zreferences.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>simulation.PyGranSim.dem</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/_autosummary/simulation.PyGranSim.dem.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="module-simulation.PyGranSim.dem">
+<span id="simulation-pygransim-dem"></span><h1>simulation.PyGranSim.dem<a class="headerlink" href="#module-simulation.PyGranSim.dem" title="Permalink to this headline">¶</a></h1>
+<p>Python interface for running DEM engines</p>
+<p>Created on April 25, 2016</p>
+<p>Author: Andrew Abi-Mansour</p>
+<p>This is the:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+</pre></div>
+</div>
+<p>DEM simulation and analysis toolkit
+<a class="reference external" href="http://www.pygran.org">http://www.pygran.org</a>, <a class="reference external" href="mailto:support&#37;&#52;&#48;pygran&#46;org">support<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>Core developer and main author:
+Andrew Abi-Mansour, <a class="reference external" href="mailto:andrew&#46;abi&#46;mansour&#37;&#52;&#48;pygran&#46;org">andrew<span>&#46;</span>abi<span>&#46;</span>mansour<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
+and LICENSE files.</p>
+<p class="rubric">Classes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.dem.DEM" title="simulation.PyGranSim.dem.DEM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEM</span></code></a>(**pargs)</p></td>
+<td><p>A generic class that handles communication for a DEM object in a way that is independent of the engine used</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="simulation.PyGranSim.dem.DEM">
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.dem.</code><code class="descname">DEM</code><span class="sig-paren">(</span><em>**pargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A generic class that handles communication for a DEM object in a way that
+is independent of the engine used</p>
+<p>Upon instantiation, this object initializes an MPI communicator and
+partitions proccesors based on user input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>model</em>) – contact mechanical model (default SpringDashpot)</p>
+</dd>
+</dl>
+<div class="admonition-todo admonition" id="index-0">
+<p class="admonition-title">Todo</p>
+<p>Provide a description of each arg in pargs</p>
+</div>
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.velocity">
+<code class="descname">velocity</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.velocity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assigns velocity to selected particles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> (<em>tuple</em>) – group-ID style args keyword value</p>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>See <a class="reference external" href="https://www.cfdem.com/media/DEM/docu/velocity.html">link</a>
+for info on keywords and their associated values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.addViscous">
+<code class="descname">addViscous</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.addViscous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.addViscous" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a viscous damping force <img class="math" src="../_images/math/a3965ac90c9513644606210339d525386626dcb2.png" alt="F"/> proportional
+to each particle’s velocity <img class="math" src="../_images/math/8d230554a01423c4c6560104b2918b65607c9406.png" alt="v"/>:</p>
+<p><img class="math" src="../_images/math/9aec06f00222608686025ffff11206ce2eafb64a.png" alt="F = - \gamma v"/></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>species</strong> (<em>int</em>) – species index (0, 1, …)</p></li>
+<li><p><strong>gamma</strong> (<em>positive float</em>) – viscosity coefficient (<img class="math" src="../_images/math/3666981dc77862de77b6ecfcb64aad59b425cbaf.png" alt="\gamma"/>)</p></li>
+<li><p><strong>scale</strong> (<em>tuple</em>) – (species, ratio) tuple to scale gamma with</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.setupParticles">
+<code class="descname">setupParticles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.setupParticles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.setupParticles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function used to create particles in LIGGGHTS</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.createProperty">
+<code class="descname">createProperty</code><span class="sig-paren">(</span><em>name</em>, <em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.createProperty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.createProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function used to create material and interaction properties</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.importMeshes">
+<code class="descname">importMeshes</code><span class="sig-paren">(</span><em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.importMeshes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.importMeshes" title="Permalink to this definition">¶</a></dt>
+<dd><p>An internal function that is called during DEM initialization for importing meshes.
+Unless <cite>name</cite> is supplied, this function by default imports all meshes and sets
+them up as walls.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – mesh name</p>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>Can import only one mesh specified by the <cite>name</cite> keyword.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.importMesh">
+<code class="descname">importMesh</code><span class="sig-paren">(</span><em>name</em>, <em>file</em>, <em>mtype</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.importMesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.importMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports a mesh file (STL or VTK)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – define mesh name</p></li>
+<li><p><strong>file</strong> (<em>str</em>) – mesh file pathname</p></li>
+<li><p><strong>mtype</strong> (<em>str</em>) – mesh type (mesh/surface, mesh/surface/stress/deform, etc.)</p></li>
+<li><p><strong>args</strong> (<em>dict</em>) – mesh_keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Note</dt>
+<dd class="field-even"><p>see <a class="reference external" href="https://www.cfdem.com/media/DEM/docu/fix_mesh_surface.html">link</a>
+for further info on <cite>mtype</cite> and <cite>args</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.setupWall">
+<code class="descname">setupWall</code><span class="sig-paren">(</span><em>wtype</em>, <em>species=None</em>, <em>plane=None</em>, <em>peq=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.setupWall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.setupWall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a primitive (virtual) or surface (mesh) wall</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wtype</strong> (<em>string</em>) – type of the wall (primitive or mesh)</p></li>
+<li><p><strong>species</strong> (<em>int</em>) – species type or primitive (virtual) walls</p></li>
+<li><p><strong>plane</strong> (<em>string</em>) – x, y, or z plane for primitive (virtual) walls</p></li>
+<li><p><strong>peq</strong> (<em>float</em>) – plane equation for primitive (virtual) walls</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wall name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+<dt class="field-even">Example</dt>
+<dd class="field-even"><p>primitiveWall = setupWall(species=1, wtype=’primitive’, plane = ‘zplane’, peq = 0.0)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.printSetup">
+<code class="descname">printSetup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.printSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.printSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the print setup used to set which variables to write to file,
+and their format.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.writeSetup">
+<code class="descname">writeSetup</code><span class="sig-paren">(</span><em>only_mesh=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.writeSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.writeSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>This creates dump files for particles and meshes in the system. In LIGGGHTS, all meshes must be declared once, so if a mesh is removed during
+the simulation, this function has to be called again, usually with only_mesh=True to keep the particle dump intact.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>only_mesh</strong> (<em>bool</em>) – controls if the particle dump is updated</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name of the particle dump</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mesh dump ID(s)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str or list(str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.setupIntegrate">
+<code class="descname">setupIntegrate</code><span class="sig-paren">(</span><em>itype='nve/sphere'</em>, <em>group='all'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.setupIntegrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.setupIntegrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Controls how Newton’s eqs are integrated in time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>itype</strong> (<em>str</em>) – integrator type (‘nve/sphere’ or ‘multisphere’)</p></li>
+<li><p><strong>group</strong> (<em>str</em>) – particle group ID to apply the integration for</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.integrate">
+<code class="descname">integrate</code><span class="sig-paren">(</span><em>steps</em>, <em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.integrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Advance system in time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>steps</strong> (<em>int</em>) – number of steps</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – timestep</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete variable/object by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of variable/object to unfix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.monitor">
+<code class="descname">monitor</code><span class="sig-paren">(</span><em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet documented</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.plot">
+<code class="descname">plot</code><span class="sig-paren">(</span><em>fname</em>, <em>xlabel</em>, <em>ylabel</em>, <em>output=None</em>, <em>xscale=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet documented</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.moveMesh">
+<code class="descname">moveMesh</code><span class="sig-paren">(</span><em>name</em>, <em>**args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.moveMesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.moveMesh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet documented</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.saveas">
+<code class="descname">saveas</code><span class="sig-paren">(</span><em>name</em>, <em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.saveas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.saveas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet documented</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.command">
+<code class="descname">command</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a command to DEM engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cmd</strong> (<em>str</em>) – command specific to the DEM engine</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.PyGranSim.dem.DEM.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simulation/PyGranSim/dem.html#DEM.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.dem.DEM.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal function that frees allocated memory and changes directory back to current working directory.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2014 drove.io is a <b>connectical</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

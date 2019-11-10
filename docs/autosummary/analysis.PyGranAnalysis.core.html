@@ -78,7 +78,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../references.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zreferences.html">Bibliography</a></li>
 </ul>
 
         
@@ -115,7 +115,7 @@
             
   <div class="section" id="module-analysis.PyGranAnalysis.core">
 <span id="analysis-pygrananalysis-core"></span><h1>analysis.PyGranAnalysis.core<a class="headerlink" href="#module-analysis.PyGranAnalysis.core" title="Permalink to this headline">¶</a></h1>
-<p>A module that provides the fundamental classes used in the analysis module</p>
+<p>A submodule that provides the fundamental classes used in the analysis module</p>
 <p>Created on July 10, 2016</p>
 <p>Author: Andrew Abi-Mansour</p>
 <p>This is the:</p>
@@ -187,7 +187,7 @@ and LICENSE files.</p>
 <dd class="field-odd"><p><strong>units</strong> (<em>string</em>) – unit system</p>
 </dd>
 <dt class="field-even">Note</dt>
-<dd class="field-even"><p>see <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py">link</a> for available unit systems</p>
+<dd class="field-even"><p>See <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranAnalysis/blob/master/PyGranAnalysis/tools.py">code</a> for available unit systems</p>
 </dd>
 </dl>
 <dl class="method">
@@ -263,7 +263,7 @@ units:  si, micro, cgs, or nano</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.SubSystem.noise">
 <code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#SubSystem.noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.SubSystem.noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds white noise of standard deviation <a href="#id1"><span class="problematic" id="id2">`</span></a>sigma’ to all elements with attribute ‘attr’.</p>
+<dd><p>Adds white noise of standard deviation ‘sigma’ to all elements with attribute ‘attr’.</p>
 <p>&#64;sigma: standard deviation of the Gaussian (white) noise
 &#64;[attr]: attribute to perturb (positions by default)</p>
 </dd></dl>
@@ -344,7 +344,7 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Mesh.noise">
 <code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PyGranAnalysis.core.Mesh.noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds white noise of standard deviation <a href="#id3"><span class="problematic" id="id4">`</span></a>sigma’ to all elements with attribute ‘attr’.</p>
+<dd><p>Adds white noise of standard deviation ‘sigma’ to all elements with attribute ‘attr’.</p>
 <p>&#64;sigma: standard deviation of the Gaussian (white) noise
 &#64;[attr]: attribute to perturb (positions by default)</p>
 </dd></dl>
@@ -439,23 +439,15 @@ returned.  Try a smaller rMax…or write some code to handle edge effects! ;)</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>length of each side of the cube in space</strong> (<em>S</em>) – </p></li>
-<li><p><strong>outer diameter of largest spherical shell</strong> (<em>rMax</em>) – </p></li>
-<li><p><strong>increment for increasing radius of spherical shell</strong> (<em>dr</em>) – </p></li>
+<li><p><strong>dr</strong> (<em>float</em>) – increment for increasing radius of spherical shell</p></li>
+<li><p><strong>rMax</strong> (<em>float</em>) – outer diameter of largest spherical shell</p></li>
 </ul>
 </dd>
-</dl>
-<dl>
-<dt>Implicit arguments:</dt><dd><p>x               an array of x positions of centers of particles
-y               an array of y positions of centers of particles
-z               an array of z positions of centers of particles</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(rdf as numpy array, radii of spherical shells as numpy array, indices of particles)</p>
 </dd>
-<dt>Returns a tuple: (g, radii, interior_indices)</dt><dd><p>g(r)            a numpy array containing the correlation function g(r)
-radii           a numpy array containing the radii of the</p>
-<blockquote>
-<div><p>spherical shells used to compute g(r)</p>
-</div></blockquote>
-<p>reference_indices   indices of reference particles</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -591,7 +583,7 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.noise">
 <code class="descname">noise</code><span class="sig-paren">(</span><em>sigma</em>, <em>attr=('x'</em>, <em>'y'</em>, <em>'z')</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.noise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds white noise of standard deviation <a href="#id5"><span class="problematic" id="id6">`</span></a>sigma’ to all elements with attribute ‘attr’.</p>
+<dd><p>Adds white noise of standard deviation ‘sigma’ to all elements with attribute ‘attr’.</p>
 <p>&#64;sigma: standard deviation of the Gaussian (white) noise
 &#64;[attr]: attribute to perturb (positions by default)</p>
 </dd></dl>
@@ -675,7 +667,7 @@ filenames are passed to its constructors.</p>
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.System.units">
 <code class="descname">units</code><span class="sig-paren">(</span><em>iunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#System.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.System.units" title="Permalink to this definition">¶</a></dt>
-<dd><p>Change unit system to units ore return units if None
+<dd><p>Change unit system to units or return units if None
 units:  si, micro, cgs, or nano</p>
 </dd></dl>
 
@@ -749,7 +741,7 @@ a frame change.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>when region is not supplied, all particle indices are returned</p>
+<p>When region is not supplied, all particle indices are returned</p>
 </div>
 </dd></dl>
 

@@ -17,7 +17,7 @@ Submodules
 Introduction
 ############
 
-The `simulation <https://github.com/Andrew-AbiMansour/PyGran/tree/master/src/PyGran/simulation/PyGranSim>`_ module in *PyGran* enables users to run DEM simulation using external N-body solvers for large systems, or PyGran's numerical solver for investigating contact models. A convenient way for users to define materials in *PyGran* as input for DEM simulation is via Python dictionaries provided in the `params <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/params/PyGranParams>`_ module. For instance, properties of stearic acid (in S.I. units) shown below are available in this module:: 
+The `simulation <https://github.com/Andrew-AbiMansour/PyGranSim>`_ module in *PyGran* enables users to run DEM simulation using external N-body solvers for large systems, or PyGran's numerical solver for investigating contact models. A convenient way for users to define materials in *PyGran* as input for DEM simulation is via Python dictionaries provided in the `params <https://github.com/Andrew-AbiMansour/PyGranParams>`_ module. For instance, properties of stearic acid (in S.I. units) shown below are available in this module:: 
 
     stearicAcid = {
             'youngsModulus': 4.15e7,
@@ -32,7 +32,7 @@ The `simulation <https://github.com/Andrew-AbiMansour/PyGran/tree/master/src/PyG
             'density': 997.164
             }
 
-This dictionary can then be used for running simulation or performing analysis. The `simulation.models <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/simulation/PyGranSim/models.py>`_ module contains classes for contact mechanical models that can be used to run a DEM simulation with *LIGGGHTS*, or investigating numerical aspects of particle-wall collisions as shown in the next sections.
+This dictionary can then be used for running simulation or performing analysis. The `simulation.models <https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py>`_ module contains classes for contact mechanical models that can be used to run a DEM simulation with *LIGGGHTS*, or investigating numerical aspects of particle-wall collisions as shown in the next sections.
 
 .. seealso:: `Examples <http://andrew-abimansour.github.io/PyGran/tests/simulation.html>`_ of DEM simulation scripts
 
@@ -56,7 +56,7 @@ Examples
 ********
 * **Hertz-Mindlin vs Spring-Dashpot**:
 
- When instantiating a subclass of `PyGran.simulation.models.model <https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/simulation/PyGranSim/models.py>`_, it is important to specify the particle radius in the parameters dictionary (`powderX` below). The code below shows how ``PyGran.simulation`` can be used to compute the force-displacement curves for two different visco-elastic models: spring-dashpot, and Hertz-Mindlin models for a particle of effective radius equal to 100 microns.
+ When instantiating a subclass of `PyGran.simulation.models.model`, it is important to specify the particle radius in the parameters dictionary (`powderX` below). The code below shows how the `simulation`_ module can be used to compute the force-displacement curves for two different visco-elastic models: spring-dashpot, and Hertz-Mindlin models for a particle of effective radius equal to 100 microns.
 
  .. code-block:: python
 
@@ -94,11 +94,11 @@ Examples
     :alt: contact models
     :figclass: align-center
 
-    Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the `simulation.models` module.
+    Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in `simulation.models`_.
 
 * **Coefficient of restitution**:
 
- An elasto-plastic contact model suggested by Thornton and Ning :cite:`thornton1998theoretical` is available in the ``PyGran.simulation`` module used in the following example script to demonstrate the computation of the elasto-plastic force between two spheres of effective radius set to :math:`100` microns is shown below.
+ An elasto-plastic contact model suggested by Thornton and Ning :cite:`thornton1998theoretical` is available in the `simulation`_ module used in the following example script to demonstrate the computation of the elasto-plastic force between two spheres of effective radius set to :math:`100` microns is shown below.
 
  .. code-block:: python
 
@@ -139,7 +139,7 @@ Examples
     :alt: coefficient of restitution
     :figclass: align-center
 
-    The coefficient of restitution for two spheres of reduced radius of :math:`100` microns computed using the Thornton-Ning model available in the ``simulation`` module.
+    The coefficient of restitution for two spheres of reduced radius of :math:`100` microns computed using the Thornton-Ning model available in the `simulation`_ module.
 
  .. note:: Artificial (**attractive**) normal forces in viscoelastic models are by default ignored in PyGran.
 
@@ -167,7 +167,7 @@ Examples
     :alt: force-disp curve
     :figclass: align-center
 
-    Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the `simulation.models` module. 
+    Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the `simulation.models`_ module. 
 
  .. _fig_time_disp:
  .. figure:: images/time-disp-coh.*
@@ -186,7 +186,7 @@ DEM simulation
 
 Engines in PyGran
 *****************
-External N-body (DEM) solvers such as *LAMMPS* or *LIGGGHTS* can be called from ``PyGran.simulation`` provided there is a supported interface that can import this solver as a separate module (in the form of a shared object on Unix or dynamic link library on Windows). An `engine` provides an interface for PyGran to call specific methods in the DEM solver. While *PyGran* provides an `engine` for *LIGGGHTS*, it can be readily used for post-processing with solvers such as *Yade* and *ESyS-particle* that have their own Python APIs. 
+External N-body (DEM) solvers such as *LAMMPS* or *LIGGGHTS* can be called from `PyGran.simulation` provided there is a supported interface that can import this solver as a separate module (in the form of a shared object on Unix or dynamic link library on Windows). An `engine` provides an interface for PyGran to call specific methods in the DEM solver. While *PyGran* provides an `engine` for *LIGGGHTS*, it can be readily used for post-processing with solvers such as *Yade* and *ESyS-particle* that have their own Python APIs. 
 
 
 Fundamentals
@@ -197,6 +197,6 @@ Any PyGran engine must provide a ``simulation.DEMPy`` class that is instantiated
 
       sim = simulation.DEM(**args)
 
-where `args` is a Python dictionary that contains keywords specific to the `engine` selected to setup and run the DEM simulation. The keyword `engine` (by default ``simulation.engines.liggghts``) in `args` is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only *LIGGGHTS* :cite:`kloss2011liggghts` as an N-body solver. For that purpose, *LIGGGHTS* must be installed as a shared library (see `Configuration with LIGGGHTS <introduction.html#configureliggghtslabel>`__). The ``__init__`` constructor in `simulation.DEM` creates and/or changes directory to the user-specified output directory and initiates logging for *PyGran* (pygran.log) and *LIGGGHTS* (liggghts.log).
+where `args` is a Python dictionary that contains keywords specific to the `engine` selected to setup and run the DEM simulation. The keyword `engine` (by default ``simulation.engines.liggghts``) in `args` is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only *LIGGGHTS* :cite:`kloss2011liggghts` as an N-body solver. For that purpose, *LIGGGHTS* must be installed as a shared library (see `Configuration with LIGGGHTS <introduction.html#configureliggghtslabel>`__). The ``__init__`` constructor in ``simulation.DEM`` creates and/or changes directory to the user-specified output directory and initiates logging for *PyGran* (pygran.log) and *LIGGGHTS* (liggghts.log).
 
-Other keywords for DEM engines are covered in `simulation.DEM <autosummary/simulation.dem.html#module-modules.simulation.dem>`_.
+Other keywords for DEM engines are covered in `simulation.DEM <autosummary/simulation.PyGranSim.dem.html#module-modules.simulation.dem>`_.

@@ -80,7 +80,7 @@
 <li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="references.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">Bibliography</a></li>
 </ul>
 
         
@@ -145,7 +145,7 @@
 </div>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran/tree/master/src/PyGran/simulation/PyGranSim">simulation</a> module in <em>PyGran</em> enables users to run DEM simulation using external N-body solvers for large systems, or PyGran’s numerical solver for investigating contact models. A convenient way for users to define materials in <em>PyGran</em> as input for DEM simulation is via Python dictionaries provided in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/params/PyGranParams">params</a> module. For instance, properties of stearic acid (in S.I. units) shown below are available in this module:</p>
+<p>The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module in <em>PyGran</em> enables users to run DEM simulation using external N-body solvers for large systems, or PyGran’s numerical solver for investigating contact models. A convenient way for users to define materials in <em>PyGran</em> as input for DEM simulation is via Python dictionaries provided in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranParams">params</a> module. For instance, properties of stearic acid (in S.I. units) shown below are available in this module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stearicAcid</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">4.15e7</span><span class="p">,</span>
         <span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
@@ -160,7 +160,7 @@
         <span class="p">}</span>
 </pre></div>
 </div>
-<p>This dictionary can then be used for running simulation or performing analysis. The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/simulation/PyGranSim/models.py">simulation.models</a> module contains classes for contact mechanical models that can be used to run a DEM simulation with <em>LIGGGHTS</em>, or investigating numerical aspects of particle-wall collisions as shown in the next sections.</p>
+<p>This dictionary can then be used for running simulation or performing analysis. The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a> module contains classes for contact mechanical models that can be used to run a DEM simulation with <em>LIGGGHTS</em>, or investigating numerical aspects of particle-wall collisions as shown in the next sections.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference external" href="http://andrew-abimansour.github.io/PyGran/tests/simulation.html">Examples</a> of DEM simulation scripts</p>
@@ -176,9 +176,9 @@
 <h3>Contact mechanical models<a class="headerlink" href="#contact-mechanical-models" title="Permalink to this headline">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">simulation.models.model</span></code> is the basic class from which contact models are derived. This class contains methods that are overwritten by a sublcass that implements a specific contact model. The 3 contact models avaiable are:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">SpringDashpot</span></code> <span>[cundall1979discrete]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">HertzMindlin</span></code> <span>[hertz1882ueber]</span> <span>[mindlin1949compliance]</span></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ThorntonNing</span></code> <a class="reference internal" href="references.html#thornton1998theoretical" id="id5">[TN98]</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SpringDashpot</span></code> <a class="reference internal" href="zreferences.html#cundall1979discrete" id="id2">[CS79]</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HertzMindlin</span></code> <a class="reference internal" href="zreferences.html#hertz1882ueber" id="id3">[Her82]</a> <a class="reference internal" href="zreferences.html#mindlin1949compliance" id="id4">[Min49]</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ThorntonNing</span></code> <a class="reference internal" href="zreferences.html#thornton1998theoretical" id="id5">[TN98]</a></p></li>
 </ul>
 <p>The next section demonstrates how these models can be used to perform simple numerical experiments.</p>
 </div>
@@ -188,7 +188,7 @@
 <li><p><strong>Hertz-Mindlin vs Spring-Dashpot</strong>:</p></li>
 </ul>
 <blockquote>
-<div><p>When instantiating a subclass of <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran/blob/master/src/PyGran/simulation/PyGranSim/models.py">PyGran.simulation.models.model</a>, it is important to specify the particle radius in the parameters dictionary (<cite>powderX</cite> below). The code below shows how <code class="docutils literal notranslate"><span class="pre">PyGran.simulation</span></code> can be used to compute the force-displacement curves for two different visco-elastic models: spring-dashpot, and Hertz-Mindlin models for a particle of effective radius equal to 100 microns.</p>
+<div><p>When instantiating a subclass of <cite>PyGran.simulation.models.model</cite>, it is important to specify the particle radius in the parameters dictionary (<cite>powderX</cite> below). The code below shows how the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module can be used to compute the force-displacement curves for two different visco-elastic models: spring-dashpot, and Hertz-Mindlin models for a particle of effective radius equal to 100 microns.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran.simulation</span> <span class="kn">as</span> <span class="nn">sim</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="kn">as</span> <span class="nn">plt</span>
 
@@ -219,14 +219,14 @@
 </div>
 <div class="align-center figure" id="id9">
 <span id="fig-models"></span><a class="reference internal image-reference" href="images/models.png"><img alt="contact models" src="images/models.png" style="width: 853.3px; height: 643.3px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the <cite>simulation.models</cite> module.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a>.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
 </div>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Coefficient of restitution</strong>:</p></li>
 </ul>
 <blockquote>
-<div><p>An elasto-plastic contact model suggested by Thornton and Ning <a class="reference internal" href="references.html#thornton1998theoretical" id="id7">[TN98]</a> is available in the <code class="docutils literal notranslate"><span class="pre">PyGran.simulation</span></code> module used in the following example script to demonstrate the computation of the elasto-plastic force between two spheres of effective radius set to <img class="math" src="images/math/a009608d5e3a60fa749ca5e449f9c14903693486.png" alt="100"/> microns is shown below.</p>
+<div><p>An elasto-plastic contact model suggested by Thornton and Ning <a class="reference internal" href="zreferences.html#thornton1998theoretical" id="id7">[TN98]</a> is available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module used in the following example script to demonstrate the computation of the elasto-plastic force between two spheres of effective radius set to <img class="math" src="images/math/a009608d5e3a60fa749ca5e449f9c14903693486.png" alt="100"/> microns is shown below.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran.simulation</span> <span class="kn">as</span> <span class="nn">sim</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">arange</span><span class="p">,</span> <span class="n">fabs</span>
 
@@ -259,7 +259,7 @@
 </div>
 <div class="align-center figure" id="id10">
 <span id="fig-cor"></span><a class="reference internal image-reference" href="images/cor.png"><img alt="coefficient of restitution" src="images/cor.png" style="width: 853.3px; height: 643.3px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">The coefficient of restitution for two spheres of reduced radius of <img class="math" src="images/math/a009608d5e3a60fa749ca5e449f9c14903693486.png" alt="100"/> microns computed using the Thornton-Ning model available in the <code class="docutils literal notranslate"><span class="pre">simulation</span></code> module.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">The coefficient of restitution for two spheres of reduced radius of <img class="math" src="images/math/a009608d5e3a60fa749ca5e449f9c14903693486.png" alt="100"/> microns computed using the Thornton-Ning model available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -284,7 +284,7 @@
 <p>The curves shown below are computed for a sphere of reduced radius <img class="math" src="images/math/2f419de2f03008aa6615aa274980767887844629.png" alt="100 \mu m"/> and surface energy <img class="math" src="images/math/d4f6fb82dc358264c488b9f98449d7735af7524a.png" alt="0.04 J/m^2"/> using the Thornton-Ning model implemented in PyGran.</p>
 <div class="align-center figure" id="id11">
 <span id="fig-force-disp"></span><a class="reference internal image-reference" href="images/force-disp-coh.png"><img alt="force-disp curve" src="images/force-disp-coh.png" style="width: 720.0px; height: 540.0px;" /></a>
-<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the <cite>simulation.models</cite> module.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a> module.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
 </div>
 <div class="align-center figure" id="id12">
 <span id="fig-time-disp"></span><a class="reference internal image-reference" href="images/time-disp-coh.png"><img alt="time-disp curve" src="images/time-disp-coh.png" style="width: 720.0px; height: 540.0px;" /></a>
@@ -301,7 +301,7 @@
 <h2>DEM simulation<a class="headerlink" href="#dem-simulation" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="engines-in-pygran">
 <h3>Engines in PyGran<a class="headerlink" href="#engines-in-pygran" title="Permalink to this headline">¶</a></h3>
-<p>External N-body (DEM) solvers such as <em>LAMMPS</em> or <em>LIGGGHTS</em> can be called from <code class="docutils literal notranslate"><span class="pre">PyGran.simulation</span></code> provided there is a supported interface that can import this solver as a separate module (in the form of a shared object on Unix or dynamic link library on Windows). An <cite>engine</cite> provides an interface for PyGran to call specific methods in the DEM solver. While <em>PyGran</em> provides an <cite>engine</cite> for <em>LIGGGHTS</em>, it can be readily used for post-processing with solvers such as <em>Yade</em> and <em>ESyS-particle</em> that have their own Python APIs.</p>
+<p>External N-body (DEM) solvers such as <em>LAMMPS</em> or <em>LIGGGHTS</em> can be called from <cite>PyGran.simulation</cite> provided there is a supported interface that can import this solver as a separate module (in the form of a shared object on Unix or dynamic link library on Windows). An <cite>engine</cite> provides an interface for PyGran to call specific methods in the DEM solver. While <em>PyGran</em> provides an <cite>engine</cite> for <em>LIGGGHTS</em>, it can be readily used for post-processing with solvers such as <em>Yade</em> and <em>ESyS-particle</em> that have their own Python APIs.</p>
 </div>
 <div class="section" id="fundamentals">
 <h3>Fundamentals<a class="headerlink" href="#fundamentals" title="Permalink to this headline">¶</a></h3>
@@ -311,8 +311,8 @@
 </pre></div>
 </div>
 </div></blockquote>
-<p>where <cite>args</cite> is a Python dictionary that contains keywords specific to the <cite>engine</cite> selected to setup and run the DEM simulation. The keyword <cite>engine</cite> (by default <code class="docutils literal notranslate"><span class="pre">simulation.engines.liggghts</span></code>) in <cite>args</cite> is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only <em>LIGGGHTS</em> <a class="reference internal" href="references.html#kloss2011liggghts" id="id8">[KG11]</a> as an N-body solver. For that purpose, <em>LIGGGHTS</em> must be installed as a shared library (see <a class="reference external" href="introduction.html#configureliggghtslabel">Configuration with LIGGGHTS</a>). The <code class="docutils literal notranslate"><span class="pre">__init__</span></code> constructor in <cite>simulation.DEM</cite> creates and/or changes directory to the user-specified output directory and initiates logging for <em>PyGran</em> (pygran.log) and <em>LIGGGHTS</em> (liggghts.log).</p>
-<p>Other keywords for DEM engines are covered in <a class="reference external" href="autosummary/simulation.dem.html#module-modules.simulation.dem">simulation.DEM</a>.</p>
+<p>where <cite>args</cite> is a Python dictionary that contains keywords specific to the <cite>engine</cite> selected to setup and run the DEM simulation. The keyword <cite>engine</cite> (by default <code class="docutils literal notranslate"><span class="pre">simulation.engines.liggghts</span></code>) in <cite>args</cite> is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only <em>LIGGGHTS</em> <a class="reference internal" href="zreferences.html#kloss2011liggghts" id="id8">[KG11]</a> as an N-body solver. For that purpose, <em>LIGGGHTS</em> must be installed as a shared library (see <a class="reference external" href="introduction.html#configureliggghtslabel">Configuration with LIGGGHTS</a>). The <code class="docutils literal notranslate"><span class="pre">__init__</span></code> constructor in <code class="docutils literal notranslate"><span class="pre">simulation.DEM</span></code> creates and/or changes directory to the user-specified output directory and initiates logging for <em>PyGran</em> (pygran.log) and <em>LIGGGHTS</em> (liggghts.log).</p>
+<p>Other keywords for DEM engines are covered in <a class="reference external" href="autosummary/simulation.PyGranSim.dem.html#module-modules.simulation.dem">simulation.DEM</a>.</p>
 </div>
 </div>
 </div>
