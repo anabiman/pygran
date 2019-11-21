@@ -39,3 +39,11 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - DEM engine config files are stored in ~/.config/engine_name.ini
 - System method 'units' always applies to the currently loaded frame
 - System method 'units' always returns current unit system (str) 
+
+## [1.2.1]
+### Added
+- A random prime number generator for LIGGGHTS (in engine_ligggghts.py)
+- Support for polydisperse systems (normal psd, lognormal psd, and discrete distribution)
+
+### Changed
+- Fixed bug in Particles._goto() method
