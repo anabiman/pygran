@@ -47,3 +47,14 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 
 ### Changed
 - Fixed bug in Particles._goto() method
+
+## [1.2.2]
+### Added
+- New interface for user-defined functions used in multisphere particles
+
+### Changed
+- Fixed bugs in intensitySegergation routines in analysis.core.py*
+- Improved docstrings in analysis.core.py* and analysis.equilibrium.py
+
+### Removed
+- Method computeGCOM() in analysis.core.py*
