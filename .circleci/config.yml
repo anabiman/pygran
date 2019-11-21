@@ -42,8 +42,7 @@ jobs:
           command: |
             python3 -m pytest --cov src/PyGran tests/pytest/test_sim --mpath tests/pytest/test_sim
             python3 -m pytest --cov src/PyGran tests/pytest/test_analysis --trajf "DEM_flow/traj/particles*.dump"
-            mkdir test-results
             python3 -m codecov
 
       - store_test_results:
-          path: test-results
+          path: .
