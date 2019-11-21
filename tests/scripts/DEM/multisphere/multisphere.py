@@ -6,6 +6,9 @@ Created on March 3, 2018
 from PyGran import simulation
 from PyGran.params import organic
 
+def template_multisphere():
+	return [(0, 0, i*1e-2, 0.02) for i in range(4)] 
+
 # Create a dictionary of physical parameters
 params = {
 
@@ -14,7 +17,7 @@ params = {
 	'box':  (-1, 1, -1 , 1, -1, 1), # simulation box size
 
 	# Define component(s)
-	'species': ({'material': organic, 'style': 'multisphere/tablet', 'nspheres': 12, 'radius': 2e-2, 'length': 1e-1},
+	'species': ({'material': organic, 'style': 'multisphere', 'function': template_multisphere},
 				),
 
 	# Set skin distance to be 1/4 particle diameter 
