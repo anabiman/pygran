@@ -3,9 +3,6 @@ Created on March 3, 2018
 @author: Andrew Abi-Mansour
 '''
 
-# !/usr/bin/python
-# -*- coding: utf8 -*-
-
 from PyGran import simulation
 from PyGran.params import organic
 
@@ -17,7 +14,7 @@ params = {
 	'box':  (-1, 1, -1 , 1, -1, 1), # simulation box size
 
 	# Define component(s)
-	'species': ({'material': organic, 'style': 'multisphere', 'nspheres': 12, 'radius': 2e-2, 'length': 1e-1},
+	'species': ({'material': organic, 'style': 'multisphere/tablet', 'nspheres': 12, 'radius': 2e-2, 'length': 1e-1},
 				),
 
 	# Set skin distance to be 1/4 particle diameter 
@@ -47,10 +44,10 @@ def run(**params):
 	sim = simulation.DEM(**params)
 
 	# Insert 800 particles in a cylindrical region
-	insert = sim.insert(species=1, value=1, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4)) #, args={'orientation': 'random'})
+	insert = sim.insert(species=1, value=800, region=('cylinder', 'y', 0, 0, 0.7, -0.4, 0.4), args={'orientation': 'random'})
 
 	# Add viscous force
-	air_resistance = sim.add_viscous(species=1, gamma=0.1)
+	air_resistance = sim.addViscous(species=1, gamma=0.1)
 
 	# Run insertion stage
 	sim.run(params['stages']['insertion'], params['dt'])
