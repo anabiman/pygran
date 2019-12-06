@@ -58,7 +58,7 @@ def run(**params):
 	sim.setupWall(species=1, wtype='primitive', plane = 'zplane', peq = 0.0)
 
 	# Insert particles by volume fraction
-	sim.insert(species=1, value=1.0, mech='volumefraction_region', region=('block', '-{} {} -{} {} 0 {}'.format(xdim, xdim, xdim, xdim, xdim*8)))
+	sim.insert(species=1, value=1.0, mech='volumefraction_region', region=('block', -xdim, xdim, -xdim, xdim, 0, xdim*8))
 
 	# Run the simulation
 	sim.run(params['run'], params['dt'])
