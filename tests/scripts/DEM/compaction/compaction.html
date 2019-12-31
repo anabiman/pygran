@@ -13199,7 +13199,7 @@ div#notebook {
 <span class="n">sim</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">moveZ</span><span class="p">)</span>
 
 <span class="c1"># Relax the system (move wall upwards)</span>
-<span class="n">moveZ</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">moveMesh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">wallZ</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+<span class="n">moveZ</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">moveMesh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n"><span class="s1">&#39;wallZ&#39;</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
 <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;nsteps&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
 </pre></div>
 
