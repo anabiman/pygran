@@ -28,3 +28,4 @@
 
 from . import simulation, analysis, params
 from .simulation.PyGranSim.tools import configure
+from ._version import __version__, __author__, __email__
