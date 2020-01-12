@@ -44,6 +44,7 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 ### Added
 - A random prime number generator for LIGGGHTS (in engine_ligggghts.py)
 - Support for polydisperse systems (normal psd, lognormal psd, and discrete distribution)
+- PyGran.simulation version printed to pygran.log file
 
 ### Changed
 - Fixed bug in Particles._goto() method
@@ -51,10 +52,15 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 ## [1.2.2]
 ### Added
 - New interface for user-defined functions used in multisphere particles
+- version, author, and email available from __init__ module
+- New polydisperse example for DEM simulation
 
 ### Changed
 - Fixed bugs in intensitySegergation routines in analysis.core.py*
 - Improved docstrings in analysis.core.py* and analysis.equilibrium.py
+- Renamed Particles.molecules to Particles.Molecules
+- Fixed typo in compaction.html file (missing quotes for wallZ)
 
 ### Removed
 - Method computeGCOM() in analysis.core.py*
+- Attribute 'length' for Particles.molecule
