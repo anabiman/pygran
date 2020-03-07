@@ -27,5 +27,5 @@
   '''
 
 __author__ = 'Andrew Abi-Mansour'
-__version__ = '1.2.2'
+__version__ = '1.3.0'
 __email__ = 'support@pygran.org'
