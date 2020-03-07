@@ -49,17 +49,20 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 ### Changed
 - Fixed bug in Particles._goto() method
 
-## [1.2.2]
+## [1.3.0]
 ### Added
 - New interface for user-defined functions used in multisphere particles
 - version, author, and email available from __init__ module
 - New polydisperse example for DEM simulation
+- Support for multiple VTK file formats (vtp, vtu)
 
 ### Changed
 - Fixed bugs in intensitySegergation routines in analysis.core.py*
 - Improved docstrings in analysis.core.py* and analysis.equilibrium.py
 - Renamed Particles.molecules to Particles.Molecules
 - Fixed typo in compaction.html file (missing quotes for wallZ)
+- Moved simulation.generator submodule to analysis
+- Fixed bug in simulation.models with cylindrical boxes
 
 ### Removed
 - Method computeGCOM() in analysis.core.py*
