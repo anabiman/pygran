@@ -165,6 +165,9 @@
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">binned_statistic</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">numbers</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+<span class="n">_vtk_formats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.vtk&#39;</span><span class="p">,</span> <span class="s1">&#39;.vtu&#39;</span><span class="p">,</span> <span class="s1">&#39;.vtp&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="SubSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.SubSystem">[docs]</a><span class="k">class</span> <span class="nc">SubSystem</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot; The SubSystem is an abstract class the implementation of which stores all DEM object properties and the methods that operate on \</span>
@@ -225,6 +228,21 @@
 
 			<span class="k">if</span> <span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
+
+			<span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
+				<span class="k">if</span> <span class="s1">&#39;vtk_type&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="s1">&#39;polydata&#39;</span>
+
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;polydata&#39;</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataReader</span><span class="p">()</span>
+				<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;ugrid&#39;</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
+				<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;xml_polydata&#39;</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLPolyDataReader</span><span class="p">()</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;File format </span><span class="si">{}</span><span class="s1"> not understood&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span><span class="p">))</span>
 
 		<span class="k">if</span> <span class="s1">&#39;__module__&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;__module__&#39;</span><span class="p">]</span>
@@ -609,24 +627,6 @@
 		<span class="k">if</span> <span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
 
-		<span class="k">if</span> <span class="s1">&#39;vtk_type&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="kc">None</span>
-
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;poly&#39;</span><span class="p">:</span>
-			<span class="c1"># Try polydata otherwise unstructured reader ... need to make this better</span>
-			<span class="c1"># The try-except control makes self._vtk kinda useless, right?</span>
-			<span class="k">try</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataReader</span><span class="p">()</span>
-			<span class="k">except</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">try</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
-			<span class="k">except</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
-
 		<span class="nb">super</span><span class="p">(</span><span class="n">Mesh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="s1">&#39;avgCellData&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
@@ -808,9 +808,12 @@
 		<span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fp&#39;</span><span class="p">):</span> <span class="c1"># Make sure a file is already not open</span>
 			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fname&#39;</span><span class="p">):</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span> <span class="c1"># need a better way to figure out this is a LIGGGHTS/LAMMPS file</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span>
+					<span class="c1"># Do some checking here on the traj extension to make sure</span>
+					<span class="c1"># it&#39;s supported</span>
+
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;.dump&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;.data&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;.lammps&#39;</span><span class="p">:</span> <span class="c1"># need a better way to figure out this is a LIGGGHTS/LAMMPS file</span>
 
 						<span class="k">if</span> <span class="s1">&#39;*&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">numericalSort</span><span class="p">)</span>
@@ -820,15 +823,8 @@
 
 						<span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="kc">None</span>
 
-						<span class="c1"># Do some checking here on the traj extension to make sure</span>
-						<span class="c1"># it&#39;s supported</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-						<span class="c1"># Read 1st frame</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;vtk&#39;</span><span class="p">:</span>
-						<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
+						<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
 							<span class="bp">self</span><span class="o">.</span><span class="n">_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="n">numericalSort</span><span class="p">)</span>
 
 							<span class="k">for</span> <span class="n">filen</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">:</span>
@@ -841,6 +837,9 @@
 					<span class="k">else</span><span class="p">:</span>
 						<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Input trajectory must be a valid LAMMPS/LIGGGHTS (dump) or vtk file.&#39;</span><span class="p">)</span>
 
+					<span class="c1"># Read 1st frame</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">(</span><span class="n">sel</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -848,7 +847,6 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
 
 		<span class="c1"># see if multi-spheres are present</span>
-		<span class="c1"># TODO: support polydisperse multisphere</span>
 		<span class="k">if</span> <span class="s1">&#39;mol&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
 			<span class="n">nmols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
@@ -869,31 +867,11 @@
 
 			<span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nmols</span>
 
-			<span class="c1"># Compute length of multispheres</span>
-			<span class="n">dim</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># ~ HACKISH!</span>
-			<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nmols</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
-
-			<span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">):</span>
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-				<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">[</span><span class="n">atom</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="p">[</span><span class="n">atom</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
-
-			<span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nmols</span><span class="p">)</span>
-
-			<span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
-				<span class="n">tmp</span> <span class="o">+=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][:,</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">][:,</span><span class="n">dim</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
-
-			<span class="n">data</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-
 			<span class="c1"># Make sure molecules can be updated if reading a trajectory, so we delete it</span>
-			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;molecules&#39;</span><span class="p">):</span>
-				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span>
+			<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Molecules&#39;</span><span class="p">):</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">Molecules</span>
 
-			<span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+			<span class="bp">self</span><span class="o">.</span><span class="n">Molecules</span> <span class="o">=</span> <span class="n">Particles</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Particles._updateSystem"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._updateSystem">[docs]</a>	<span class="k">def</span> <span class="nf">_updateSystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Class function for updating the state of Particles &quot;&quot;&quot;</span>
@@ -934,14 +912,6 @@
 		<span class="n">vol</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span>
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">vol</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">vol</span><span class="p">)])</span> <span class="o">/</span> <span class="n">vol</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="Particles.computeGCOM"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeGCOM">[docs]</a>	<span class="k">def</span> <span class="nf">computeGCOM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Returns the geometric center of mass &quot;&quot;&quot;</span>
-		<span class="n">vol</span> <span class="o">=</span> <span class="mf">4.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">**</span><span class="mi">3</span>
-		<span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vol</span><span class="p">)</span>
-
-		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span><span class="o">**</span><span class="n">r</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">vol</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
-
 
 <div class="viewcode-block" id="Particles.computeRadius"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRadius">[docs]</a>	<span class="k">def</span> <span class="nf">computeRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the maximum radius of an N-particle (spherical) system</span>
@@ -1071,26 +1041,34 @@
 
 <span class="sd">		I = sigma_a**2 / (mean_a (1 - mean_a))</span>
 
-<span class="sd">		@[resol]: bin size for grid construction (default 3 * diameter)</span>
-<span class="sd">		returns scalar intensity </span>
+<span class="sd">		:param resol: bin size for grid construction (default 3 * diameter)</span>
+<span class="sd">		:type resol: float</span>
+
+<span class="sd">		:return: intensity</span>
+<span class="sd">		:rtype: float </span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">resol</span><span class="p">:</span>
 			<span class="n">resol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">*</span> <span class="mi">3</span>
 
-		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;types&#39;</span><span class="p">):</span>
+			<span class="n">ptypes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">ptypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ptypes</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Intensity of segergation can be computed only for a binary system.&quot;</span><span class="p">)</span>
 			<span class="c1"># should I support tertiary systems or more ???</span>
-
+		
 		<span class="n">nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">resol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 		<span class="n">ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">resol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 		<span class="n">nz</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="n">resol</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
 		<span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">nz</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
 
-		<span class="k">for</span> <span class="n">sn</span><span class="p">,</span> <span class="n">ctype</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">sn</span><span class="p">,</span> <span class="n">ctype</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ptypes</span><span class="p">)):</span>
 
-			<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">==</span><span class="n">ctype</span><span class="p">]</span>
+			<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">ptypes</span><span class="o">==</span><span class="n">ctype</span><span class="p">]</span>
 
 			<span class="n">parts</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">parts</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="o">-</span><span class="n">parts</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="o">-</span><span class="n">parts</span><span class="o">.</span><span class="n">z</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">attr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;z&#39;</span><span class="p">))</span>
 
@@ -1127,7 +1105,7 @@
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">resol</span><span class="p">:</span>
 			<span class="n">resol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
 
-		<span class="n">_</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensitySegregation</span><span class="p">(</span><span class="n">resol</span><span class="p">)</span>
+		<span class="n">_</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeIntensitySegregation</span><span class="p">(</span><span class="n">resol</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="ow">not</span> <span class="n">maxDist</span><span class="p">:</span>
 			<span class="n">maxDim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -1175,7 +1153,7 @@
 
 		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeMass</span><span class="p">(</span><span class="n">tdensity</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">computeVolume</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Particles.computeDensityLocal"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensityLocal">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensityLocal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bdensity</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeDensityLocal"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeDensityLocal">[docs]</a>	<span class="k">def</span> <span class="nf">computeDensityLocal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tdensity</span><span class="p">,</span> <span class="n">dr</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;&quot; Computes a localized density at a series of discretized regions of thickness &#39;dr&#39;</span>
 <span class="sd">		along an axis specified by the user &quot;&quot;&quot;</span>
 
@@ -1195,11 +1173,11 @@
 			<span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">r</span> <span class="o">&lt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]]</span>
 
 			<span class="k">if</span> <span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span>
-				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">bdensity</span><span class="p">)</span>
+				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">computeDensity</span><span class="p">(</span><span class="n">tdensity</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span>
-				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">bdensity</span><span class="p">)</span>
+				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">computeDensity</span><span class="p">(</span><span class="n">tdensity</span><span class="p">)</span>
 			<span class="k">elif</span> <span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span>
-				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">density</span><span class="p">(</span><span class="n">bdensity</span><span class="p">)</span>
+				<span class="n">denLoc</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">parts</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;=</span> <span class="n">thick</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">computeDensity</span><span class="p">(</span><span class="n">tdensity</span><span class="p">)</span>
 
 			<span class="n">odensity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">denLoc</span> <span class="p">)</span>
 
@@ -1255,27 +1233,28 @@
 					<span class="k">break</span>
 
 				<span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;TIMESTEP&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="n">frame</span> <span class="o">+=</span> <span class="mi">1</span>
+					<span class="n">current_frame</span> <span class="o">+=</span> <span class="mi">1</span>
 
 			<span class="c1"># assert self.frame == frame else something&#39;s wrong</span>
 			<span class="c1"># or the user wants to go to the last frame</span>
-			<span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="n">go_frame</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">current_frame</span> <span class="o">==</span> <span class="n">go_frame</span><span class="p">:</span>
 
 				<span class="c1">#ts = int(self._fp.readline())</span>
 				<span class="c1">#self.data[&#39;timestep&#39;] = ts</span>
 				<span class="c1">#self._constructAttributes()</span>
 
 				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">go_frame</span><span class="p">)</span>
+				<span class="k">return</span> <span class="n">go_frame</span>
 
 			<span class="k">elif</span> <span class="n">go_frame</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-				<span class="n">tmp</span> <span class="o">=</span> <span class="n">frame</span>
+				<span class="n">tmp</span> <span class="o">=</span> <span class="n">current_frame</span>
 				<span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
 
-				<span class="c1"># why delete _fp? it creates problems in lines 1288 del self._fp</span>
+				<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-				<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span> <span class="c1"># why do this?!</span>
+				<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_goto</span><span class="p">(</span><span class="n">frame</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span> 
 			<span class="k">else</span><span class="p">:</span>
-				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find frame </span><span class="si">{}</span><span class="s1"> in current trajectory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot find frame </span><span class="si">{}</span><span class="s1"> in current trajectory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">current_frame</span><span class="p">))</span>
 
 		<span class="k">else</span><span class="p">:</span> <span class="c1"># no need to find the input frame, just select the right file if available</span>
 
@@ -1294,6 +1273,101 @@
 						<span class="bp">self</span><span class="o">.</span><span class="n">_readFile</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">frame</span></div>
+
+<div class="viewcode-block" id="Particles.write"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.write">[docs]</a>	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Write a single output file &quot;&quot;&quot;</span>
+		<span class="n">ftype</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">_writeDumpFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="Particles._writeDumpFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._writeDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_writeDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot; Writes a single dump file&quot;&quot;&quot;</span>
+		<span class="k">with</span>  <span class="nb">open</span><span class="p">(</span><span class="n">filename</span> <span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+
+			<span class="k">if</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+			<span class="k">if</span> <span class="s1">&#39;box&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+				<span class="n">maxR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
+									<span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
+									<span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
+									<span class="p">)</span>
+
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: TIMESTEP</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]))</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: NUMBER OF ATOMS</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]))</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: BOX BOUNDS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]:</span>
+				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+			<span class="n">var</span> <span class="o">=</span> <span class="s1">&#39;ITEM: ATOMS &#39;</span>
+			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;natoms&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;box&#39;</span><span class="p">:</span>
+					<span class="n">var</span> <span class="o">=</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]):</span>
+				<span class="n">var</span> <span class="o">=</span> <span class="p">()</span>
+				<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+					<span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;natoms&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;box&#39;</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
+							<span class="n">var</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]),)</span>
+						<span class="k">else</span><span class="p">:</span>
+							<span class="n">var</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">],)</span>
+
+				<span class="n">nVars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span> <span class="o">*</span> <span class="n">nVars</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">var</span><span class="p">))</span>
+				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+	<span class="k">def</span> <span class="nf">_readVTKFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span> <span class="c1"># Needed if we need to call GetScalarRange</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">GetOutput</span><span class="p">()</span>
+
+		<span class="n">pos</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span><span class="o">.</span><span class="n">GetData</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+
+		<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetCellData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArrayName</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">key</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetCellData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArray</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+				<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArrayName</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">key</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArray</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+				<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">break</span>
+
+		<span class="c1"># This doesnot work for 2D / 1D systems</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">1</span><span class="p">]</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">2</span><span class="p">]</span>
+
+						<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+		<span class="k">return</span> <span class="mi">0</span> <span class="c1"># how to return timestep?</span>
 
 <div class="viewcode-block" id="Particles._readDumpFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Reads a single dump file&quot;&quot;&quot;</span>
@@ -1347,59 +1421,10 @@
 
 		<span class="k">return</span> <span class="n">ts</span></div>
 
-<div class="viewcode-block" id="Particles.write"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.write">[docs]</a>	<span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Write a single output file &quot;&quot;&quot;</span>
-		<span class="n">ftype</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-		<span class="k">if</span> <span class="n">ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">_writeDumpFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-
-<div class="viewcode-block" id="Particles._writeDumpFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._writeDumpFile">[docs]</a>	<span class="k">def</span> <span class="nf">_writeDumpFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Writes a single dump file&quot;&quot;&quot;</span>
-		<span class="k">with</span>  <span class="nb">open</span><span class="p">(</span><span class="n">filename</span> <span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-
-			<span class="k">if</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-
-			<span class="k">if</span> <span class="s1">&#39;box&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-				<span class="n">maxR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
-									<span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
-									<span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">maxR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">maxR</span><span class="p">],</span> \
-									<span class="p">)</span>
-
-			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: TIMESTEP</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]))</span>
-			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: NUMBER OF ATOMS</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]))</span>
-			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;ITEM: BOX BOUNDS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">box</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]:</span>
-				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-
-			<span class="n">var</span> <span class="o">=</span> <span class="s1">&#39;ITEM: ATOMS &#39;</span>
-			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-				<span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;natoms&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;box&#39;</span><span class="p">:</span>
-					<span class="n">var</span> <span class="o">=</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-			<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]):</span>
-				<span class="n">var</span> <span class="o">=</span> <span class="p">()</span>
-				<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-					<span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;timestep&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;natoms&#39;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;box&#39;</span><span class="p">:</span>
-						<span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
-							<span class="n">var</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">]),)</span>
-						<span class="k">else</span><span class="p">:</span>
-							<span class="n">var</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">i</span><span class="p">],)</span>
-
-				<span class="n">nVars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
-				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> &#39;</span> <span class="o">*</span> <span class="n">nVars</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">var</span><span class="p">))</span>
-				<span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="Particles._readFile"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles._readFile">[docs]</a>	<span class="k">def</span> <span class="nf">_readFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot; Read a particle trajectory file </span>
+		<span class="sd">&quot;&quot;&quot; Read a particle trajectory file.</span>
 
-<span class="sd">		TODO: Support skip for single dump file</span>
+<span class="sd">		.. todo:: Support skip for single dump file</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 
 		<span class="k">if</span> <span class="s1">&#39;skip&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">:</span>
@@ -1419,14 +1444,17 @@
 				<span class="bp">self</span><span class="o">.</span><span class="n">_singleFile</span> <span class="o">=</span> <span class="kc">True</span>
 
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singleFile</span><span class="p">:</span> <span class="c1"># must support skip</span>
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span> 
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;.dump&#39;</span><span class="p">:</span> 
 				<span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDumpFile</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_readVTKFile</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> format is not a supported trajectory file.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span><span class="p">))</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;dump&#39;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;.dump&#39;</span><span class="p">:</span>
 
 				<span class="k">if</span> <span class="n">frame</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
 					<span class="k">raise</span> <span class="ne">StopIteration</span>
@@ -1437,7 +1465,7 @@
 				<span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readDumpFile</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
 
-			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="o">==</span> <span class="s1">&#39;vtk&#39;</span><span class="p">:</span>
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ftype</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
 
 				<span class="k">if</span> <span class="n">frame</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
 					<span class="k">raise</span> <span class="ne">StopIteration</span>
@@ -1445,50 +1473,7 @@
 				<span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">frame</span> <span class="o">+</span> <span class="n">skip</span> <span class="o">*</span> <span class="n">frame</span><span class="p">]</span>
 
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataReader</span><span class="p">()</span>
-
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span> <span class="c1"># Needed if we need to call GetScalarRange</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">GetOutput</span><span class="p">()</span>
-
-				<span class="n">pos</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span><span class="o">.</span><span class="n">GetData</span><span class="p">())</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
-
-				<span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
-
-				<span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pos</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
-
-				<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-				<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-					<span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetCellData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArrayName</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-					<span class="k">if</span> <span class="n">key</span><span class="p">:</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetCellData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArray</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
-						<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-					<span class="k">else</span><span class="p">:</span>
-						<span class="k">break</span>
-
-				<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-				<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-					<span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArrayName</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-					<span class="k">if</span> <span class="n">key</span><span class="p">:</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vtk_to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">GetPointData</span><span class="p">()</span><span class="o">.</span><span class="n">GetArray</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
-						<span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-					<span class="k">else</span><span class="p">:</span>
-						<span class="k">break</span>
-
-				<span class="c1"># This doesnot work for 2D / 1D systems</span>
-				<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-					<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-						<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-							<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-								<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">0</span><span class="p">]</span>
-								<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">1</span><span class="p">]</span>
-								<span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">][:,</span><span class="mi">2</span><span class="p">]</span>
-
-								<span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
+				<span class="bp">self</span><span class="o">.</span><span class="n">_readVTKFile</span><span class="p">()</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_constructAttributes</span><span class="p">()</span>
 
 		<span class="k">return</span> <span class="n">frame</span> <span class="o">+</span> <span class="mi">1</span></div></div>
@@ -1523,7 +1508,7 @@
 				<span class="c1"># make sure selected class definition exists, otherwise, this had better be a list</span>
 				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;System takes only keywords of classes that are defined. Class type </span><span class="si">{}</span><span class="s1"> not found.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">]))</span>
 
-			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span> <span class="c1"># we need to create a list of objects</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span> <span class="c1"># we need to create a list of objects</span>
 
 				<span class="n">objs</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1543,7 +1528,7 @@
 					<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">sclass</span><span class="p">):</span>
 						<span class="n">objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 					<span class="k">else</span><span class="p">:</span>
-						<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect keyarg supplied to System: </span><span class="si">{}</span><span class="s1"> when creating </span><span class="si">{}</span><span class="s1"> SubSystem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ss</span><span class="p">))</span>
+						<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect keyword supplied to System: </span><span class="si">{}</span><span class="s1"> when creating </span><span class="si">{}</span><span class="s1"> SubSystem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ss</span><span class="p">))</span>
 
 				<span class="k">if</span> <span class="n">objs</span><span class="p">:</span>
 					<span class="n">obj</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ss</span><span class="p">,</span> <span class="n">objs</span><span class="p">])</span>
@@ -1558,7 +1543,7 @@
 				<span class="n">obj_fname</span><span class="p">,</span> <span class="n">obj_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">]</span>
 				<span class="n">obj</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ss</span><span class="p">,</span> <span class="n">sclass</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">obj_fname</span><span class="p">,</span> <span class="o">**</span><span class="n">obj_args</span><span class="p">)])</span>
 
-			<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="n">sclass</span><span class="p">):</span>
+			<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="n">sclass</span><span class="p">):</span> <span class="c1"># copy constructor</span>
 				<span class="n">obj</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ss</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">]])</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Incorrect keyarg supplied to System: </span><span class="si">{}</span><span class="s1"> when creating </span><span class="si">{}</span><span class="s1"> SubSystem&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">ss</span><span class="p">],</span> <span class="n">ss</span><span class="p">))</span>

@@ -414,12 +414,6 @@ compute ROG as sum_i &lt;r_i^T r_i&gt; - rm ^T rm</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="analysis.PyGranAnalysis.core.Particles.computeGCOM">
-<code class="descname">computeGCOM</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeGCOM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeGCOM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the geometric center of mass</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeRadius">
 <code class="descname">computeRadius</code><span class="sig-paren">(</span><em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeRadius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRadius" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the maximum radius of an N-particle (spherical) system
@@ -473,8 +467,17 @@ returns the summation of the mass of all particles</p>
 <dd><p>Computes the intensity of segregation for binary mixture
 as defined by Danckwerts:</p>
 <p>I = sigma_a**2 / (mean_a (1 - mean_a))</p>
-<p>&#64;[resol]: bin size for grid construction (default 3 * diameter)
-returns scalar intensity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resol</strong> (<em>float</em>) – bin size for grid construction (default 3 * diameter)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>intensity</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -502,7 +505,7 @@ embedding the particles. Particles are assumed to be spherical in shape.</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeDensityLocal">
-<code class="descname">computeDensityLocal</code><span class="sig-paren">(</span><em>bdensity</em>, <em>dr</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeDensityLocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensityLocal" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeDensityLocal</code><span class="sig-paren">(</span><em>tdensity</em>, <em>dr</em>, <em>axis</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeDensityLocal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeDensityLocal" title="Permalink to this definition">¶</a></dt>
 <dd><p>” Computes a localized density at a series of discretized regions of thickness ‘dr’
 along an axis specified by the user</p>
 </dd></dl>
@@ -521,12 +524,6 @@ along an axis specified by the user</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="analysis.PyGranAnalysis.core.Particles._readDumpFile">
-<code class="descname">_readDumpFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._readDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readDumpFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a single dump file</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.write">
 <code class="descname">write</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a single output file</p>
@@ -539,10 +536,19 @@ along an axis specified by the user</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="analysis.PyGranAnalysis.core.Particles._readDumpFile">
+<code class="descname">_readDumpFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._readDumpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readDumpFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a single dump file</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles._readFile">
 <code class="descname">_readFile</code><span class="sig-paren">(</span><em>frame</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles._readFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles._readFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read a particle trajectory file</p>
-<p>TODO: Support skip for single dump file</p>
+<dd><p>Read a particle trajectory file.</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="admonition-title">Todo</p>
+<p>Support skip for single dump file</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -562,7 +568,7 @@ and return as numpy arrays for numerical computations / manipulations</p>
 <dt id="analysis.PyGranAnalysis.core.Particles.conversion">
 <code class="descname">conversion</code><span class="sig-paren">(</span><em>factors</em><span class="sig-paren">)</span><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convesion factors from S.I., micro, cgs, or nano, and vice versa</p>
-<div class="admonition-todo admonition" id="index-2">
+<div class="admonition-todo admonition" id="index-3">
 <p class="admonition-title">Todo</p>
 <p>support all possible variables (is this possible???)</p>
 </div>
@@ -735,7 +741,7 @@ a frame change.</p>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-3">
+<div class="admonition-todo admonition" id="index-4">
 <p class="admonition-title">Todo</p>
 <p>Make this function more generic and compliant with the rest of this module</p>
 </div>

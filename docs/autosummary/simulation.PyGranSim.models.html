@@ -186,6 +186,10 @@ reduced mass, radius, etc. i.e. <img class="math" src="../images/math/0797a34dc6
 <dd><p>This function creates a multi-sphere tablet (cylinder) of
 radius “radius” and height “length” constituting “nspheres” spheres.
 This is used for multisphere simulations.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="admonition-title">Todo</p>
+<p>Move this function elsewhere.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -199,6 +203,18 @@ This is used for multisphere simulations.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.PyGranSim.models.template_multisphere">
+<code class="descclassname">simulation.PyGranSim.models.</code><code class="descname">template_multisphere</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/models.html#template_multisphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.models.template_multisphere" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a generic multi-sphere particle
+based on a user-supplied function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>function</em>) – returns a list of tuples: [(x1,y1,z1,radius1), …]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -224,7 +240,7 @@ This is used for multisphere simulations.</p>
 </ul>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-1">
+<div class="admonition-todo admonition" id="index-2">
 <p class="admonition-title">Todo</p>
 <p>Support particle-particle collisions</p>
 </div>
@@ -263,7 +279,7 @@ This is used for multisphere simulations.</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-2">
+<div class="admonition-todo admonition" id="index-3">
 <p class="admonition-title">Todo</p>
 <p>Enable the user control the timestep resolution (number of timesteps).</p>
 </div>
@@ -396,7 +412,7 @@ a spring-dashpot model.</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-3">
+<div class="admonition-todo admonition" id="index-4">
 <p class="admonition-title">Todo</p>
 <p>Take cohesion (simplified JKR) into account</p>
 </div>
@@ -529,7 +545,7 @@ a spring-dashpot model.</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-4">
+<div class="admonition-todo admonition" id="index-5">
 <p class="admonition-title">Todo</p>
 <p>Enable the user control the timestep resolution (number of timesteps).</p>
 </div>
@@ -729,7 +745,7 @@ a spring-dashpot model.</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-5">
+<div class="admonition-todo admonition" id="index-6">
 <p class="admonition-title">Todo</p>
 <p>Enable the user control the timestep resolution (number of timesteps).</p>
 </div>
@@ -883,7 +899,7 @@ rtype: float</p>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
-<div class="admonition-todo admonition" id="index-6">
+<div class="admonition-todo admonition" id="index-7">
 <p class="admonition-title">Todo</p>
 <p>Enable the user control the timestep resolution (number of timesteps).</p>
 </div>

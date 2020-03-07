@@ -157,14 +157,28 @@ the GNU General Public License.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#simulation.PyGranSim.engine_liggghts.DEMPy" title="simulation.PyGranSim.engine_liggghts.DEMPy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEMPy</span></code></a>(split, library, style, **pargs)</p></td>
 <td><p>A class that implements a python interface for DEM computations</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#simulation.PyGranSim.engine_liggghts.liggghts" title="simulation.PyGranSim.engine_liggghts.liggghts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">liggghts</span></code></a>([library, style, dim, units, path, …])</p></td>
-<td><p>A class that provides API-like access to LIGGGHTS-PUBLIC</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">liggghts</span></code></p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="class">
-<dt id="simulation.PyGranSim.engine_liggghts.liggghts">
-<em class="property">class </em><code class="descclassname">simulation.PyGranSim.engine_liggghts.</code><code class="descname">liggghts</code><span class="sig-paren">(</span><em>library=None</em>, <em>style='spherical'</em>, <em>dim=3</em>, <em>units='si'</em>, <em>path=None</em>, <em>cmdargs=[]</em>, <em>comm=None</em>, <em>ptr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#liggghts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.liggghts" title="Permalink to this definition">¶</a></dt>
+<dt id="simulation.PyGranSim.engine_liggghts.RandPrime">
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.engine_liggghts.</code><code class="descname">RandPrime</code><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#RandPrime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.RandPrime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Random prime number generator with memory. The idea is to generate a unique prime number
+for LIGGGHTS.</p>
+<dl class="method">
+<dt id="simulation.PyGranSim.engine_liggghts.RandPrime.gen">
+<code class="descname">gen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#RandPrime.gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.RandPrime.gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hackish ~ silly way of LIGGGHTS using prime numbers &gt; 10000 for unfounded reasons</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.PyGranSim.engine_liggghts.Liggghts">
+<em class="property">class </em><code class="descclassname">simulation.PyGranSim.engine_liggghts.</code><code class="descname">Liggghts</code><span class="sig-paren">(</span><em>library=None</em>, <em>style='spherical'</em>, <em>dim=3</em>, <em>units='si'</em>, <em>path=None</em>, <em>cmdargs=[]</em>, <em>comm=None</em>, <em>ptr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#Liggghts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.Liggghts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class that provides API-like access to LIGGGHTS-PUBLIC</p>
 <dl class="field-list simple">
@@ -178,8 +192,8 @@ the GNU General Public License.</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="simulation.PyGranSim.engine_liggghts.liggghts.file">
-<code class="descname">file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#liggghts.file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.liggghts.file" title="Permalink to this definition">¶</a></dt>
+<dt id="simulation.PyGranSim.engine_liggghts.Liggghts.file">
+<code class="descname">file</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#Liggghts.file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.Liggghts.file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for loading LIGGGHTS input file scripts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -193,8 +207,8 @@ the GNU General Public License.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="simulation.PyGranSim.engine_liggghts.liggghts.command">
-<code class="descname">command</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#liggghts.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.liggghts.command" title="Permalink to this definition">¶</a></dt>
+<dt id="simulation.PyGranSim.engine_liggghts.Liggghts.command">
+<code class="descname">command</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#Liggghts.command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.Liggghts.command" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for executing a LIGGGHTS command</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -208,8 +222,8 @@ the GNU General Public License.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="simulation.PyGranSim.engine_liggghts.liggghts.MPI">
-<code class="descname">MPI</code><em class="property"> = &lt;module 'mpi4py.MPI' from '/usr/lib/python3/dist-packages/mpi4py/MPI.cpython-37m-x86_64-linux-gnu.so'&gt;</em><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.liggghts.MPI" title="Permalink to this definition">¶</a></dt>
+<dt id="simulation.PyGranSim.engine_liggghts.Liggghts.MPI">
+<code class="descname">MPI</code><em class="property"> = &lt;module 'mpi4py.MPI' from '/usr/lib/python3/dist-packages/mpi4py/MPI.cpython-37m-x86_64-linux-gnu.so'&gt;</em><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.Liggghts.MPI" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -264,7 +278,7 @@ the whole system.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>species</strong> – species id (‘all’, or 1, 2, … )</p></li>
-<li><p><strong>value</strong> – </p></li>
+<li><p><strong>value</strong> (<em>float</em>) – number of particles, or volume fraction, or mass fraction, or etc.</p></li>
 <li><p><strong>region</strong> (<em>tuple</em>) – define region via (‘shape’, (xmin, xmax, ymin, ymax, zmin, zmax)) or (‘shape’, xmin, xmax, ymin, ymax, zmin, zmax)</p></li>
 </ul>
 </dd>
@@ -278,9 +292,16 @@ the whole system.</p>
 <dl class="method">
 <dt id="simulation.PyGranSim.engine_liggghts.DEMPy.run">
 <code class="descname">run</code><span class="sig-paren">(</span><em>nsteps</em>, <em>dt=None</em>, <em>itype=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#DEMPy.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.DEMPy.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs a simulation for number of steps specified by the user
-&#64;itype = sphere (rotational motion on) or rigid_sphere (rotational motion off)
-&#64;dt = timestep</p>
+<dd><p>Runs a simulation for number of steps specified by the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nsteps</strong> (<em>int</em>) – number of steps the integrator should take</p></li>
+<li><p><strong>itype</strong> (<em>str</em>) – specifies integrator type: ‘sphere’ (rotational motion on) or ‘rigid_sphere’ (rotational motion off)</p></li>
+<li><p><strong>dt</strong> (<em>float</em>) – timestep</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -314,7 +335,10 @@ the whole system.</p>
 &#64; plane: x, y, or z plane for primitive walls
 &#64; peq: plane equation for primitive walls</p>
 <p>This function can be called only ONCE for setting up all mesh walls (restriction from LIGGGHTS)</p>
-<p>TODO: support additional keywords (shear, etc.) for primitive walls</p>
+<div class="admonition-todo admonition" id="index-2">
+<p class="admonition-title">Todo</p>
+<p>Support additional keywords (shear, etc.) for primitive walls</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -390,7 +414,7 @@ for info on keywords and their associated values.</p>
 <dt id="simulation.PyGranSim.engine_liggghts.DEMPy.setupIntegrate">
 <code class="descname">setupIntegrate</code><span class="sig-paren">(</span><em>itype=None</em>, <em>group=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/simulation/PyGranSim/engine_liggghts.html#DEMPy.setupIntegrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#simulation.PyGranSim.engine_liggghts.DEMPy.setupIntegrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specify how Newton’s eqs are integrated in time. MUST BE EXECUTED ONLY ONCE.
-TODO: extend this to SQ particles</p>
+.. todo:: Extend this to super-quadric particles</p>
 </dd></dl>
 
 <dl class="method">

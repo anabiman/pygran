@@ -166,6 +166,8 @@
 <span class="sd">	radius &quot;radius&quot; and height &quot;length&quot; constituting &quot;nspheres&quot; spheres.</span>
 <span class="sd">	This is used for multisphere simulations.</span>
 
+<span class="sd">	.. todo:: Move this function elsewhere.</span>
+
 <span class="sd">	:param nspheres: number of spheres each tablet consists of</span>
 <span class="sd">	:type nspheres: int</span>
 <span class="sd">	:param radius: particle radius</span>
@@ -182,6 +184,25 @@
 
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspheres</span><span class="p">):</span>
 		<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius</span> <span class="o">-</span> <span class="n">delta</span> <span class="p">)</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">radius</span><span class="p">,)</span>
+
+	<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;type 1&#39;</span><span class="p">,)</span>
+
+	<span class="k">return</span> <span class="n">ms</span></div>
+
+<div class="viewcode-block" id="template_multisphere"><a class="viewcode-back" href="../../../autosummary/simulation.PyGranSim.models.html#simulation.PyGranSim.models.template_multisphere">[docs]</a><span class="k">def</span> <span class="nf">template_multisphere</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot; This function creates a generic multi-sphere particle</span>
+<span class="sd">	based on a user-supplied function.</span>
+
+<span class="sd">	:param func: returns a list of tuples: [(x1,y1,z1,radius1), ...]</span>
+<span class="sd">	:type func: function</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="n">parts</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>
+	<span class="n">nspheres</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+	<span class="n">ms</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;nspheres </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nspheres</span><span class="p">),</span> <span class="s1">&#39;ntry 1000000 spheres&#39;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+		<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="n">part</span>
 
 	<span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;type 1&#39;</span><span class="p">,)</span>
 
@@ -277,7 +298,10 @@
 		<span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;si&#39;</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="k">if</span> <span class="s1">&#39;box&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="s1">&#39;cylinder&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
 
 		<span class="k">if</span> <span class="s1">&#39;nns_type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;nns_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bin&#39;</span>
@@ -336,7 +360,7 @@
 						<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
 							<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">]</span>
 
-						<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;multisphere&#39;</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;multisphere/tablet&#39;</span><span class="p">:</span>
 
 							<span class="c1"># user might have defined the length and nspheres or maybe just passed args</span>
 							<span class="k">if</span> <span class="s1">&#39;length&#39;</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
@@ -352,12 +376,25 @@
 									<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;args cannot be defined along with nspheres/length for multisphere.&#39;</span><span class="p">)</span>
 								<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
 									<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">]</span>
+						<span class="k">elif</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;multisphere&#39;</span><span class="p">:</span>
+							<span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;SSMP mode not yet supported for a custom multisphere class.&#39;</span><span class="p">)</span>
 
 				<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;material&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pygranToLIGGGHTS</span><span class="p">(</span><span class="o">**</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;material&#39;</span><span class="p">])</span>
 
-				<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;multisphere&#39;</span> <span class="ow">and</span> <span class="s1">&#39;args&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
-					<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_tablet</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;nspheres&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">])</span>
-					<span class="k">del</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span>
+				<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;multisphere/tablet&#39;</span><span class="p">:</span>
+					<span class="c1"># Now we can treat this as if it&#39;s a general multisphere case</span>
+					<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;multisphere&#39;</span>
+					<span class="k">if</span> <span class="s1">&#39;args&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
+						<span class="k">if</span> <span class="s1">&#39;nspheres&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span> <span class="ow">or</span> <span class="s1">&#39;radius&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span> <span class="ow">or</span> <span class="s1">&#39;length&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
+							<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;With multisphere/tablet, nspheres, radius, and length must be supplied.&#39;</span><span class="p">)</span>
+						<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_tablet</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;nspheres&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">])</span>
+						<span class="k">del</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">],</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span>
+
+				<span class="k">elif</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;multisphere&#39;</span> <span class="ow">and</span> <span class="s1">&#39;args&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;function&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ss</span><span class="p">:</span>
+						<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;style multisphere requires &quot;function&quot; definition.&#39;</span><span class="p">)</span>
+					<span class="n">ss</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_multisphere</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="s1">&#39;function&#39;</span><span class="p">])</span>
+
 
 			<span class="c1"># Use 1st component to find all material params ~ hackish!!! </span>
 			<span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -411,7 +448,7 @@
 		<span class="n">ms</span> <span class="o">=</span> <span class="kc">False</span>
 		<span class="k">if</span> <span class="s1">&#39;species&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]:</span>
-				<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="s1">&#39;multisphere&#39;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="s1">&#39;style&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;multisphere&#39;</span><span class="p">):</span>
 					<span class="n">ms</span> <span class="o">=</span> <span class="kc">True</span>
 
 		<span class="n">traj</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sel&#39;</span><span class="p">:</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;dir&#39;</span><span class="p">:</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="s1">&#39;style&#39;</span><span class="p">:</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="s1">&#39;pfile&#39;</span><span class="p">:</span> <span class="s1">&#39;traj.dump&#39;</span><span class="p">,</span> \

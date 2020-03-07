@@ -30,7 +30,7 @@ Requirements
 =====  ===========================  =======================
 Nr.    Code metadata description    ..
 =====  ===========================  =======================
-C1           code version            1.2.0
+C1           code version            1.2.2
 C2     code repository                `github <https://github.com/Andrew-AbiMansour/PyGran>`_
 C3     legal code license            `GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_
 C4     version-control system used    `git <https://git-scm.com>`_

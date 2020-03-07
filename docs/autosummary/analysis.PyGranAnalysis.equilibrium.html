@@ -115,7 +115,7 @@
             
   <div class="section" id="module-analysis.PyGranAnalysis.equilibrium">
 <span id="analysis-pygrananalysis-equilibrium"></span><h1>analysis.PyGranAnalysis.equilibrium<a class="headerlink" href="#module-analysis.PyGranAnalysis.equilibrium" title="Permalink to this headline">¶</a></h1>
-<p>This module provids static/structural methods of analysis.</p>
+<p>This module provides static/structural methods of analysis.</p>
 <p>Created on March 10, 2017</p>
 <p>Author: Andrew Abi-Mansour</p>
 <p>This is the:</p>
@@ -146,7 +146,7 @@ and LICENSE files.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#analysis.PyGranAnalysis.equilibrium.Neighbors" title="analysis.PyGranAnalysis.equilibrium.Neighbors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Neighbors</span></code></a>(Particles[, material, cutoff, binary])</p></td>
-<td><p>A dynamic class that contains all the particle-particle (and optionally particle-wall) neighbors from which contacts, overlaps, force chains, etc.</p></td>
+<td><p>A class that contains all the particle-particle (and optionally particle-wall) neighbors from which contacts, overlaps, force chains, etc.</p></td>
 </tr>
 </tbody>
 </table>
@@ -154,7 +154,7 @@ and LICENSE files.</p>
 <dt id="analysis.PyGranAnalysis.equilibrium.Neighbors">
 <em class="property">class </em><code class="descclassname">analysis.PyGranAnalysis.equilibrium.</code><code class="descname">Neighbors</code><span class="sig-paren">(</span><em>Particles</em>, <em>material=None</em>, <em>cutoff=None</em>, <em>binary=False</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/equilibrium.html#Neighbors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.equilibrium.Neighbors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A dynamic class that contains all the particle-particle (and optionally particle-wall)
+<p>A class that contains all the particle-particle (and optionally particle-wall)
 neighbors from which contacts, overlaps, force chains, etc. can be determined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -185,8 +185,14 @@ neighbors from which contacts, overlaps, force chains, etc. can be determined.</
 the default coordinations numbers are returned as two cross coordination
 number arrays (tuple). For auto (self) coordination numbers, specify type1
 and type2 accordingly.</p>
-<p>[type1]: which type to compute 1st coon for in a binay mixture
-[type2]:  which type to compute 2nd coon for in a binay mixture</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>type1</strong> (<em>int</em>) – which type to compute 1st coon for in a binay mixture</p></li>
+<li><p><strong>type2</strong> (<em>int</em>) – which type to compute 2nd coon for in a binay mixture</p></li>
+</ul>
+</dd>
+</dl>
 <div class="admonition-todo admonition" id="index-0">
 <p class="admonition-title">Todo</p>
 <p>support multi-body entities for single component systems</p>

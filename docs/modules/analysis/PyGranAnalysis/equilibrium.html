@@ -116,7 +116,7 @@
             
   <h1>Source code for analysis.PyGranAnalysis.equilibrium</h1><div class="highlight"><pre>
 <span></span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">This module provids static/structural methods of analysis.</span>
+<span class="sd">This module provides static/structural methods of analysis.</span>
 
 <span class="sd">Created on March 10, 2017</span>
 
@@ -153,7 +153,7 @@
 <span class="c1">#from ..simulation.models import SpringDashpot</span>
 
 <div class="viewcode-block" id="Neighbors"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.equilibrium.html#analysis.PyGranAnalysis.equilibrium.Neighbors">[docs]</a><span class="k">class</span> <span class="nc">Neighbors</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot; A dynamic class that contains all the particle-particle (and optionally particle-wall)</span>
+	<span class="sd">&quot;&quot;&quot; A class that contains all the particle-particle (and optionally particle-wall)</span>
 <span class="sd">	neighbors from which contacts, overlaps, force chains, etc. can be determined.</span>
 
 <span class="sd">	:param Particles: collection of particle(s) to be analyzed</span>
@@ -227,8 +227,11 @@
 <span class="sd">		number arrays (tuple). For auto (self) coordination numbers, specify type1</span>
 <span class="sd">		and type2 accordingly.</span>
 
-<span class="sd">		[type1]: which type to compute 1st coon for in a binay mixture</span>
-<span class="sd">		[type2]:  which type to compute 2nd coon for in a binay mixture</span>
+<span class="sd">		:param type1: which type to compute 1st coon for in a binay mixture</span>
+<span class="sd">		:type type1: int</span>
+
+<span class="sd">		:param type2:  which type to compute 2nd coon for in a binay mixture</span>
+<span class="sd">		:type type2: int</span>
 
 <span class="sd">		.. todo:: support multi-body entities for single component systems</span>
 <span class="sd">		.. todo:: support tertiary systems </span>
