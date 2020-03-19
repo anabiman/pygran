@@ -173,12 +173,14 @@ Let's now clone the PyGran  source code::
 
     git clone https://github.com/Andrew-AbiMansour/PyGran.git
     cd PyGran
+    git submodule init
+    git submodule update
 
-Let's locally install PyGran dependencies with pip3::
+Let's locally install PyGran dependencies with pip::
 
     pip3 install -e .[extra] --user
 
-In order to compile LIGGGHTS, run::
+If LIGGGHTS is not available as a shared library, run::
 
     python3 setup.py build_liggghts
 
