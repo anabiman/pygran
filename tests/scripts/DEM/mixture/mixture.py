@@ -1,16 +1,18 @@
 
-from PyGran import simulation as sim
+from PyGran import simulation
 from PyGran.params import stearicAcid, glass
 import numpy as np
 
 def run(**params):
 
 	# Create an instance of the DEM class
-	sim = sim.DEM(**params)
+	sim = simulation.DEM(**params)
 
 	# Insert all particles throughout the sim box
 	for species in [1,2]:
-		insert = sim.insert(species, value=100)
+		insert = sim.insert(species=species, value=100)
+
+		# Run for a single step to make the insertion
 		sim.run(1, params['dt'])
 
 		# Remove insertion
@@ -18,7 +20,6 @@ def run(**params):
 
 	# Run the simulation
 	sim.run(params['stages']['insertion'], params['dt'])
-
 
 	# Setup params for vibrating mesh
 	freq = 40 * 2 * np.pi
@@ -51,7 +52,7 @@ if __name__ == '__main__':
 
 		# Setup I/O
 		'traj': {'freq': 100000, 'pfile': 'traj.dump'},
-		'output': 'Binary',
+		'output': 'Mixture',
 
 		# Write a restart file (restart.binary.*) every 5000 steps to 'restart' dir 
 		'restart': (5000, 'restart', 'restart.binary', False, None),
