@@ -35,17 +35,17 @@ def run(**params):
 	# Setup a primitive wall along the xoy plane at z=0
 	sim.setupWall(species=1, wtype='primitive', plane='zplane', peq = 0.0)
 
-	# Insert 200 particles
+	# Insert 200 particles periodically every 8333 steps
 	insert = sim.insert(species=1, value=200, freq=params['nsteps']/3)
 	sim.run(params['nsteps'], params['dt'])
 	sim.remove(insert)
 
-	# Move wall at constant speed
+	# Move wall at constant speed (0.03 m/s) in the negative z direction
 	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, -0.03))
 	sim.run(params['nsteps'] * 2, params['dt'])
 	sim.remove(moveZ)
 
-	# Relax the system
+	# Relax the system by moving mesh upwards at 0.01 m/s speed in the positive z direction
 	moveZ = sim.moveMesh(name='wallZ', linear=(0, 0, 0.01))
 	sim.run(params['nsteps'] * 2, params['dt'])
 
