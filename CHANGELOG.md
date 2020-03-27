@@ -55,6 +55,7 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 - version, author, and email available from __init__ module
 - New polydisperse example for DEM simulation
 - Support for multiple VTK file formats (vtp, vtu)
+- Documentation for Mesh class in Analysis section
 
 ### Changed
 - Fixed bugs in intensitySegergation routines in analysis.core.py*
