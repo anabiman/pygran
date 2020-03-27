@@ -88,24 +88,35 @@ yields a new `Particles`_  object containing :math:`n_i + n_j n_k` particles and
 
 Basic methods
 ~~~~~~~~~~~~~
-Some of the basic methods available to `Particles`_  are shown in :numref:`fig_classes`. Furthermore, the ``PyGran.analysis`` module provides a \emph{Neighbors} class that is instantiated with a `Particles`_  object to provide methods for nearest neighbor analysis. With this class, properties such as coordination numbers, overlap distances, and force chains can be readily computed (see subsection \ref{ss:nns}).
+Some of the basic methods available to `Particles`_  are shown in :numref:`fig_classes`. Furthermore, the ``PyGran.analysis`` module provides a `Neighbors <autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.equilibrium.Neighbors>`_ class that is instantiated with a `Particles`_  object to provide methods for nearest neighbor analysis. With this class, properties such as coordination numbers, overlap distances, and force chains can be readily computed.
 
-\subsubsection*{\textbf{Input/output}}
-Any class derived from `SubSystem`_ must implement read/write methods. In the currecnt version, \emph{PyGran} supports reading and writing particle trajectory files for \emph{LIGGGHTS}. The input trajectory can be a dump or a vtk \cite{schroeder2004visualization} file.
+Input/output
+************
+Any class derived from `SubSystem`_ must implement read/write methods. In the current version, *PyGran* supports reading and writing particle trajectory files for *LIGGGHTS*. The input trajectory can be a dump or a vtk :cite:`schroeder2004visualization` file.
 
-\subsubsection*{\textbf{Custom SubSystems}}
-User-defined subclasses of `SubSystem`_ can be easily created by using Python's inheritence feature. The keyword `\_\_module\_\_' must be passed to the subclass constructor in order to make sure \emph{PyGran} imports the module containing the subclass.
+Custom SubSystems
+*****************
+User-defined subclasses of `SubSystem`_ can be easily created by using Python's inheritence feature. The keyword ``module`` must be passed to the subclass constructor in order to make sure *PyGran* imports the module containing the subclass.
 
-*PyGran*'s extensible and object-oriented design makes it ideal for creating user-defined particles. Since `System`_ uses a Factory class to instantiate a `Particles`_  or \emph{Mesh} object, it can in principle be used to instantiate a user-defined class. This is demonstrated in the code below for a simple coarse-grained class that demonstrates the use of the \emph{filter} method to eliminate particles overlapping by a certain \%.
+*PyGran*'s extensible and object-oriented design makes it ideal for creating user-defined particles. Since `System`_ uses a Factory class to instantiate a `Particles`_  or `Mesh`_ object, it can in principle be used to instantiate a user-defined class. This is demonstrated in the code below for a simple coarse-grained class that demonstrates the use of the ``filter`` method to eliminate particles overlapping by a certain %.
 
-A simple user-defined \emph{CoarseParticles} class can be defined as a subclass of `Particles`_  with two key arguments: `scale', which controls the level of coarse-graining (or reduction) and `percent' which is used to eliminate the resultant coarse-grained particles overlapping by a certain percentage with respect to their radius. A script that implements this class is shown below.
-\lstinputlisting[language=Python, basicstyle=\scriptsize, label=CG-code]{coarseGrained.py}
+A simple user-defined ``CoarseParticles`` class can be defined as a subclass of `Particles`_  with two key arguments: ``scale``, which controls the level of coarse-graining (or reduction) and ``percent`` which is used to eliminate the resultant coarse-grained particles overlapping by a certain percentage with respect to their radius. A script that implements this class is shown below::
 
-The \emph{CoarseParticles} object uses a recursive call to instantiate a derivative of the `Particles`_  class and therefore inherits all of the latter's properties and methods.
+	class CoarseParticles(analysis.Particles):
+        	def __init__(self, **args):
+                	super().__init__(**args)
+
+                	if 'scale' in args and 'percent' in args:
+                        	self.scale(args['scale'], ('radius',))
+                        	CG = analysis.equilibrium.Neighbors(self).filter(percent=args['percent'])
+
+                        	self.__init__(CoarseParticles=CG)
+
+The ``CoarseParticles`` object uses a recursive call to instantiate a derivative of the `Particles`_  class and therefore inherits all of the latter's properties and methods.
 
 Mesh
 ====
 The `Mesh`_ class uses the VTK library to read input mesh files and expose the stored attributes (nodes, positions, stresses, etc.) to the user.
 
-Surface walls are represented in *PyGran* by the `Mesh`_ class, a subclass of `SubSystem`_ (Fig. (\ref{fig:uml})). This class uses the VTK library \cite{schroeder2004visualization} to read an input mesh trajectory (one or more sequence of VTK file(s)) and expose all of the stored file variables to the user. This is particularly useful for analyzing DEM simulation involving mesh-particle interaction or coupled CFD-DEM simulations as demonstrated in section \ref{ss:cfdem}. In its current version (\version), \emph{PyGran} supports reading only \emph{vtk} and \emph{vtu} input ASCII or binary files.
+Surface walls are represented in *PyGran* by the `Mesh`_ class, a subclass of `SubSystem`_ (see :numref:`fig_classes`). This class uses the VTK library :cite:`schroeder2004visualization` to read an input mesh trajectory (one or more sequence of VTK file(s)) and expose all of the stored file variables to the user. This is particularly useful for analyzing DEM simulation involving mesh-particle interaction or coupled CFD-DEM simulations.
 

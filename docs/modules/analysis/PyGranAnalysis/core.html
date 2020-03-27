@@ -229,20 +229,21 @@
 			<span class="k">if</span> <span class="s1">&#39;fname&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 				<span class="bp">self</span><span class="o">.</span><span class="n">_fname</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;fname&#39;</span><span class="p">]</span>
 
-			<span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
-				<span class="k">if</span> <span class="s1">&#39;vtk_type&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="s1">&#39;polydata&#39;</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fname</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="n">_vtk_formats</span><span class="p">:</span>
+					<span class="k">if</span> <span class="s1">&#39;vtk_type&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;vtk_type&#39;</span><span class="p">]</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">=</span> <span class="s1">&#39;polydata&#39;</span>
 
-				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;polydata&#39;</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataReader</span><span class="p">()</span>
-				<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;ugrid&#39;</span><span class="p">:</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
-				<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;xml_polydata&#39;</span><span class="p">:</span>
-						<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLPolyDataReader</span><span class="p">()</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;File format </span><span class="si">{}</span><span class="s1"> not understood&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span><span class="p">))</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;polydata&#39;</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataReader</span><span class="p">()</span>
+					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;ugrid&#39;</span><span class="p">:</span>
+						<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkUnstructuredGridReader</span><span class="p">()</span>
+					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span> <span class="o">==</span> <span class="s1">&#39;xml_polydata&#39;</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLPolyDataReader</span><span class="p">()</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;File format </span><span class="si">{}</span><span class="s1"> not understood&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vtk</span><span class="p">))</span>
 
 		<span class="k">if</span> <span class="s1">&#39;__module__&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;__module__&#39;</span><span class="p">]</span>
@@ -927,7 +928,7 @@
 
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="o">-</span><span class="n">N</span><span class="p">:])</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Particles.computeRDF"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRDF">[docs]</a>	<span class="k">def</span> <span class="nf">computeRDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rMax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Particles.computeRDF"><a class="viewcode-back" href="../../../autosummary/analysis.PyGranAnalysis.core.html#analysis.PyGranAnalysis.core.Particles.computeRDF">[docs]</a>	<span class="k">def</span> <span class="nf">computeRDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rMax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">npts</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot; Computes the three-dimensional radial distribution function for a set of</span>
 <span class="sd">		spherical particles contained in a cube with side length S.  This simple</span>
 <span class="sd">		function finds reference particles such that a sphere of radius rMax drawn</span>
@@ -940,6 +941,9 @@
 
 <span class="sd">		:param rMax: outer diameter of largest spherical shell</span>
 <span class="sd">		:type rMax: float</span>
+
+<span class="sd">		:param npts: number of discretized points that form the shells. If dr is set, npts is ignored.</span>
+<span class="sd">		:type npts: int </span>
 
 <span class="sd">		:return: (rdf as numpy array, radii of spherical shells as numpy array, indices of particles)</span>
 <span class="sd">		:rtype: tuple</span>
@@ -962,7 +966,7 @@
 			<span class="n">rMax</span> <span class="o">=</span> <span class="n">S</span> <span class="o">/</span> <span class="mf">2.0</span>
 
 		<span class="k">if</span> <span class="n">dr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-			<span class="n">dr</span> <span class="o">=</span> <span class="n">rMax</span> <span class="o">/</span> <span class="mi">100</span>
+			<span class="n">dr</span> <span class="o">=</span> <span class="n">rMax</span> <span class="o">/</span> <span class="n">npts</span>
 
 		<span class="c1"># Find particles which are close enough to the cube center that a sphere of radius</span>
 		<span class="c1"># rMax will not cross any face of the cube</span>
@@ -981,7 +985,7 @@
 		<span class="n">num_interior_particles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interior_indices</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="n">num_interior_particles</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">raise</span>  <span class="ne">RuntimeError</span> <span class="p">(</span><span class="s2">&quot;No particles found for which a sphere of radius rMax will lie entirely within a cube of side length S.  Decrease rMax or increase the size of the cube.&quot;</span><span class="p">)</span>
+			<span class="k">raise</span>  <span class="ne">RuntimeError</span> <span class="p">(</span><span class="s2">&quot;No particles found for which a sphere of radius rMax will lie entirely within a cube of side length </span><span class="si">{}</span><span class="s2">.  Decrease rMax or increase the size of the cube.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">S</span><span class="p">))</span>
 
 		<span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="n">rMax</span> <span class="o">+</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">dr</span><span class="p">,</span> <span class="n">dr</span><span class="p">)</span>
 		<span class="n">num_increments</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>

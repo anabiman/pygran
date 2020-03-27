@@ -423,7 +423,7 @@ of the radius of the first N max data points.</p>
 
 <dl class="method">
 <dt id="analysis.PyGranAnalysis.core.Particles.computeRDF">
-<code class="descname">computeRDF</code><span class="sig-paren">(</span><em>dr=None</em>, <em>center=True</em>, <em>rMax=None</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRDF" title="Permalink to this definition">¶</a></dt>
+<code class="descname">computeRDF</code><span class="sig-paren">(</span><em>dr=None</em>, <em>center=True</em>, <em>rMax=None</em>, <em>npts=100</em><span class="sig-paren">)</span><a class="reference internal" href="../modules/analysis/PyGranAnalysis/core.html#Particles.computeRDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analysis.PyGranAnalysis.core.Particles.computeRDF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the three-dimensional radial distribution function for a set of
 spherical particles contained in a cube with side length S.  This simple
 function finds reference particles such that a sphere of radius rMax drawn
@@ -435,6 +435,7 @@ returned.  Try a smaller rMax…or write some code to handle edge effects! ;)</p
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dr</strong> (<em>float</em>) – increment for increasing radius of spherical shell</p></li>
 <li><p><strong>rMax</strong> (<em>float</em>) – outer diameter of largest spherical shell</p></li>
+<li><p><strong>npts</strong> (<em>int</em>) – number of discretized points that form the shells. If dr is set, npts is ignored.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
