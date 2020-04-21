@@ -1,6 +1,6 @@
 ---
 name: Data review
-about: Create a review report for submitted simulation data
+about: Create a review report for submitted data
 title: 'Data review: SUBMISSION_ID'
 labels: ''
 assignees: ''

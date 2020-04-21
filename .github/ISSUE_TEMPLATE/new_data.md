@@ -1,5 +1,5 @@
 ---
-name: Data review
+name: New data types
 about: Please suggest here new or refined types of stored data
 title: 'Request for data addition/refinement'
 labels: ''
