@@ -31,7 +31,7 @@ Explain the scientific process you used to review the submitted data. The tables
 | :---: | :---: | :---: | :---: |
 | Valid software/services dependencies | yes/no | ... | ... |
 | File integrity and validity | yes/no | ... | ... |
-| Valid proteins name | yes/no | ... | ... |
+| Valid protein name(s) | yes/no | ... | ... |
 | Execution of script files | yes/no | ... | ... |
 | Simulation run | yes/no | ... | ... |
 | Links to movies, trajectories, papers, etc. | yes/no | ... | ... |

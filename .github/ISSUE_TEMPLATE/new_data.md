@@ -11,5 +11,7 @@ assignees: ''
 A clear and concise explanation for adding new data entries / refining existing ones.
 
 **Please provide the schema for the new/refined data class of interest.** 
-List below all the keywords/values you would like to modify or add. **
+List below all the keywords/values you would like to modify or add.
 
+**Additional context**
+Add any other context about the problem here.
