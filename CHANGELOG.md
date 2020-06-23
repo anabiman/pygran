@@ -53,6 +53,7 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 ### Added
 - New interface for user-defined functions used in multisphere particles
 - version, author, and email available from __init__ module
+- New keyword 'psd_style' for specifying particle distribution
 - New polydisperse example for DEM simulation
 - Support for multiple VTK file formats (vtp, vtu)
 - Documentation for Mesh class in Analysis section
