@@ -1,6 +1,5 @@
-
 #!/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,7 +16,7 @@
 
 # -------------------------------------------------------------------------
 
-'''
+"""
 Created on Sep 11, 2013
 @author: Andrew Abi-Mansour
-'''
+"""

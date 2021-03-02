@@ -1,8 +1,7 @@
-
 # !/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 
-'''
+"""
 Created on July 10, 2016
 @author: Andrew Abi-Mansour
 
@@ -33,7 +32,7 @@ Created on July 10, 2016
 	Python module for visualing DEM simulations with VTK library
 -------------------------------------------------------------------------
 
-'''
+"""
 
 import vtk
 from vtk.util import numpy_support
@@ -45,286 +44,318 @@ import sys
 from numpy.linalg import norm
 import wx
 
+
 class Panel(wx.Panel):
-	""" A general purpose class for visualizing data using vtk """
+    """ A general purpose class for visualizing data using vtk """
 
-	def __init__(self, parent):
+    def __init__(self, parent):
 
-		wx.Panel.__init__(self, parent)
-		 
-		#to interact with the scene using the mouse use an instance of vtkRenderWindowInteractor. 
-		self.widget = wxVTKRenderWindowInteractor(self, -1)
-		self.widget.Enable(1)
-		self.widget.AddObserver("ExitEvent", lambda o,e,f=self: f.Close())
-		self.sizer = wx.BoxSizer(wx.VERTICAL)
-		self.sizer.Add(self.widget, 1, wx.EXPAND)
-		self.SetSizer(self.sizer)
-		self.Layout()
-		self.isploted = False
-		
-		self._init()
+        wx.Panel.__init__(self, parent)
 
-		self._pos = None
-		self._vel = None
-		self._rad = None
+        # to interact with the scene using the mouse use an instance of vtkRenderWindowInteractor.
+        self.widget = wxVTKRenderWindowInteractor(self, -1)
+        self.widget.Enable(1)
+        self.widget.AddObserver("ExitEvent", lambda o, e, f=self: f.Close())
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.widget, 1, wx.EXPAND)
+        self.SetSizer(self.sizer)
+        self.Layout()
+        self.isploted = False
 
-	def _init(self):
+        self._init()
 
-		self._axes = vtk.vtkAxesActor()
-		self._marker = vtk.vtkOrientationMarkerWidget()
-		self._marker.SetInteractor( self.widget._Iren )
-		self._marker.SetOrientationMarker( self._axes )
-		self._marker.SetViewport(0.75,0,1,0.25)
-		self._marker.SetEnabled(1)
+        self._pos = None
+        self._vel = None
+        self._rad = None
 
-		self._ren = vtk.vtkRenderer() 
-		self._camera = self._ren.GetActiveCamera()
+    def _init(self):
 
-		self._camera.SetFocalPoint(0, 0, 0.05)
-		self._camera.SetPosition(0,0,0)
-		self._ren.SetActiveCamera(self._camera)
+        self._axes = vtk.vtkAxesActor()
+        self._marker = vtk.vtkOrientationMarkerWidget()
+        self._marker.SetInteractor(self.widget._Iren)
+        self._marker.SetOrientationMarker(self._axes)
+        self._marker.SetViewport(0.75, 0, 1, 0.25)
+        self._marker.SetEnabled(1)
 
-		self._style = vtk.vtkInteractorStyleTrackballCamera()
+        self._ren = vtk.vtkRenderer()
+        self._camera = self._ren.GetActiveCamera()
 
-		self._renWin = self.widget.GetRenderWindow()
+        self._camera.SetFocalPoint(0, 0, 0.05)
+        self._camera.SetPosition(0, 0, 0)
+        self._ren.SetActiveCamera(self._camera)
 
-		self._renWin.AddRenderer(self._ren)
-		self._renWin.SetWindowName("DEM Visualizer")
-		
-		self.widget._Iren.SetRenderWindow(self._renWin)
+        self._style = vtk.vtkInteractorStyleTrackballCamera()
 
-		#self._ren.AddActor(self._axes)
+        self._renWin = self.widget.GetRenderWindow()
 
-	def _setupColorFunction(self, minV, maxV):
+        self._renWin.AddRenderer(self._ren)
+        self._renWin.SetWindowName("DEM Visualizer")
 
-		# Create a color transfer function to be used for both the balls and arrows.
-		self._colorTransferFunction = vtk.vtkColorTransferFunction()
-		self._colorTransferFunction.AddRGBPoint(minV, 1.0, 0.0, 0.0)
-		self._colorTransferFunction.AddRGBPoint(0.5*(minV + maxV), 0.0, 1.0, 0.0)
-		self._colorTransferFunction.AddRGBPoint(maxV, 0.0, 0.0, 1.0)
+        self.widget._Iren.SetRenderWindow(self._renWin)
 
-	def render(self):
-		""" initialize renderer """
-		
-		self._ren.SetBackground(0, 0, 0)
+        # self._ren.AddActor(self._axes)
 
-		#self._close_window()
+    def _setupColorFunction(self, minV, maxV):
 
-	def load_parts(self, Parts):
+        # Create a color transfer function to be used for both the balls and arrows.
+        self._colorTransferFunction = vtk.vtkColorTransferFunction()
+        self._colorTransferFunction.AddRGBPoint(minV, 1.0, 0.0, 0.0)
+        self._colorTransferFunction.AddRGBPoint(0.5 * (minV + maxV), 0.0, 1.0, 0.0)
+        self._colorTransferFunction.AddRGBPoint(maxV, 0.0, 0.0, 1.0)
 
-		self._pos = np.array([Parts.x, Parts.y, Parts.z]).T
-		self._vel = np.array([Parts.vx, Parts.vy, Parts.vz]).T
-		self._rad = Parts.radius
-		self._points = vtk.vtkPoints()
+    def render(self):
+        """ initialize renderer """
 
-		for i, r in enumerate(self._pos):
-			self._points.InsertPoint(i, r[0], r[1], r[2])
+        self._ren.SetBackground(0, 0, 0)
 
-	def attach_stl(self, fname, scale=None):
-		"""Load a given STL file into a vtkPolyData object"""
+        # self._close_window()
 
-		reader = vtk.vtkSTLReader()
-		reader.SetFileName(fname)
-		reader.Update() # polydata
+    def load_parts(self, Parts):
 
-		if scale is not None:
-			trans = vtk.vtkTransform()
-			trans.Scale(scale)
+        self._pos = np.array([Parts.x, Parts.y, Parts.z]).T
+        self._vel = np.array([Parts.vx, Parts.vy, Parts.vz]).T
+        self._rad = Parts.radius
+        self._points = vtk.vtkPoints()
 
-			filt = vtk.vtkTransformFilter()
+        for i, r in enumerate(self._pos):
+            self._points.InsertPoint(i, r[0], r[1], r[2])
 
-			if vtk.VTK_MAJOR_VERSION <= 5:
-				filt.SetInputConnection(reader.GetOutputPort)
-			else:
-				filt.SetInputConnection(reader.GetOutputPort())
-				   
-			filt.SetTransform(trans)
+    def attach_stl(self, fname, scale=None):
+        """Load a given STL file into a vtkPolyData object"""
 
-		mapper = vtk.vtkPolyDataMapper()
+        reader = vtk.vtkSTLReader()
+        reader.SetFileName(fname)
+        reader.Update()  # polydata
 
-		if vtk.VTK_MAJOR_VERSION <= 5:
-		   mapper.SetInput(filt.GetOutput())
-		else:
-		   mapper.SetInputConnection(filt.GetOutputPort())
+        if scale is not None:
+            trans = vtk.vtkTransform()
+            trans.Scale(scale)
 
-		actor = vtk.vtkActor()
-		actor.SetMapper(mapper)
+            filt = vtk.vtkTransformFilter()
 
-		self._ren.AddActor(actor)
+            if vtk.VTK_MAJOR_VERSION <= 5:
+                filt.SetInputConnection(reader.GetOutputPort)
+            else:
+                filt.SetInputConnection(reader.GetOutputPort())
 
-	def loadVtk(self, fname):
-		""" Load a given VTK file into a vtkPolyData object """
+            filt.SetTransform(trans)
 
-		reader = vtk.vtkUnstructuredGridReader()
-		reader.SetFileName(filename)
-		reader.Update()
-		self._vtk = reader.GetOutput()
+        mapper = vtk.vtkPolyDataMapper()
 
-	@property
-	def axes(self):
-		return self.axes
+        if vtk.VTK_MAJOR_VERSION <= 5:
+            mapper.SetInput(filt.GetOutput())
+        else:
+            mapper.SetInputConnection(filt.GetOutputPort())
 
-	def attach_pos(self):
+        actor = vtk.vtkActor()
+        actor.SetMapper(mapper)
 
-		pos = self._pos
-		rad = self._rad
+        self._ren.AddActor(actor)
 
-		if pos is not None and rad is not None:
-			positions_vtk = numpy_support.numpy_to_vtk(num_array=pos.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-			positions_vtk.SetName("positions")
+    def loadVtk(self, fname):
+        """ Load a given VTK file into a vtkPolyData object """
 
-			radius_vtk = numpy_support.numpy_to_vtk(num_array=rad.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-			radius_vtk.SetName("radius")
+        reader = vtk.vtkUnstructuredGridReader()
+        reader.SetFileName(filename)
+        reader.Update()
+        self._vtk = reader.GetOutput()
 
-			sphere = vtk.vtkSphereSource()
-			sphere.SetRadius(1.0)
+    @property
+    def axes(self):
+        return self.axes
 
-			ballGlyph = vtk.vtkGlyph3D()
+    def attach_pos(self):
 
-			if vtk.VTK_MAJOR_VERSION <= 5:
-				ballGlyph.SetSource(sphere.GetOutput())
-			else:
-				ballGlyph.SetSourceConnection(sphere.GetOutputPort())
+        pos = self._pos
+        rad = self._rad
 
-			polydata = vtk.vtkPolyData()
-			polydata.SetPoints(self._points)
-			polydata.GetPointData().AddArray(radius_vtk)
-			polydata.GetPointData().SetActiveScalars("radius") # this scales the source (sphere) radius (1.0)
-			
-			ballGlyph.SetInputData(polydata)
+        if pos is not None and rad is not None:
+            positions_vtk = numpy_support.numpy_to_vtk(
+                num_array=pos.ravel(), deep=True, array_type=vtk.VTK_FLOAT
+            )
+            positions_vtk.SetName("positions")
 
-			#ballGlyph.SetScaleModeToDataScalingOn() 
-			mapper = vtk.vtkPolyDataMapper()
+            radius_vtk = numpy_support.numpy_to_vtk(
+                num_array=rad.ravel(), deep=True, array_type=vtk.VTK_FLOAT
+            )
+            radius_vtk.SetName("radius")
 
-			if vtk.VTK_MAJOR_VERSION <= 5:
-			   mapper.SetInput(ballGlyph.GetOutput())
-			else:
-			   mapper.SetInputConnection(ballGlyph.GetOutputPort())
+            sphere = vtk.vtkSphereSource()
+            sphere.SetRadius(1.0)
 
-			# Set colors depending on the color transfer functions
-			# mapper.SetLookupTable(self.colorTransferFunction)
+            ballGlyph = vtk.vtkGlyph3D()
 
-			# actor
-			ballActor = vtk.vtkActor()
-			ballActor.GetProperty().SetColor(0,0,1)
-			ballActor.SetMapper(mapper)
+            if vtk.VTK_MAJOR_VERSION <= 5:
+                ballGlyph.SetSource(sphere.GetOutput())
+            else:
+                ballGlyph.SetSourceConnection(sphere.GetOutputPort())
 
-			#self._ren.AddActor(ballActor)
-			self._marker2 = vtk.vtkOrientationMarkerWidget()
-			self._marker2.SetInteractor( self.widget._Iren )
-			self._marker2.SetOrientationMarker( ballActor )
-			self._marker2.SetViewport(0.75,0,1,0.25)
-			self._marker2.SetEnabled(1)
+            polydata = vtk.vtkPolyData()
+            polydata.SetPoints(self._points)
+            polydata.GetPointData().AddArray(radius_vtk)
+            polydata.GetPointData().SetActiveScalars(
+                "radius"
+            )  # this scales the source (sphere) radius (1.0)
 
-		else:
-			print("No particles found. Make sure the particles loaded have positions and radii.")
+            ballGlyph.SetInputData(polydata)
 
-	def attach_vel(self):
+            # ballGlyph.SetScaleModeToDataScalingOn()
+            mapper = vtk.vtkPolyDataMapper()
 
-		vel = self._vel * 1e-2
-		rad = self._rad
+            if vtk.VTK_MAJOR_VERSION <= 5:
+                mapper.SetInput(ballGlyph.GetOutput())
+            else:
+                mapper.SetInputConnection(ballGlyph.GetOutputPort())
 
-		if vel is not None and rad is not None:
+            # Set colors depending on the color transfer functions
+            # mapper.SetLookupTable(self.colorTransferFunction)
 
-			velMag = norm(vel, axis=1)
-			velMag_vtk = numpy_support.numpy_to_vtk(num_array=velMag.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-			velMag_vtk.SetName("veloMag")
+            # actor
+            ballActor = vtk.vtkActor()
+            ballActor.GetProperty().SetColor(0, 0, 1)
+            ballActor.SetMapper(mapper)
 
-			vecVel = vtk.vtkFloatArray()
-			vecVel.SetNumberOfComponents(3)
+            # self._ren.AddActor(ballActor)
+            self._marker2 = vtk.vtkOrientationMarkerWidget()
+            self._marker2.SetInteractor(self.widget._Iren)
+            self._marker2.SetOrientationMarker(ballActor)
+            self._marker2.SetViewport(0.75, 0, 1, 0.25)
+            self._marker2.SetEnabled(1)
 
-			for i, v in enumerate(vel):
-				vecVel.InsertTuple3(i, v[0], v[1], v[2])
+        else:
+            print(
+                "No particles found. Make sure the particles loaded have positions and radii."
+            )
 
-			#Put an arrow (vector) at each ball
-			arrow = vtk.vtkArrowSource()
-			arrow.SetTipRadius(rad.mean() * 10)
-			arrow.SetShaftRadius(rad.mean() * 10)
+    def attach_vel(self):
 
-			poly = vtk.vtkPolyData()
-			poly.SetPoints(self._points)
+        vel = self._vel * 1e-2
+        rad = self._rad
 
-			poly.GetPointData().AddArray(velMag_vtk)
-			poly.GetPointData().SetActiveScalars("veloMag")
+        if vel is not None and rad is not None:
 
-			arrowGlyph = vtk.vtkGlyph3D()
-			
-			arrowGlyph.SetInputData(poly)
-			arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
-			arrowGlyph.SetVectorModeToUseVector()
+            velMag = norm(vel, axis=1)
+            velMag_vtk = numpy_support.numpy_to_vtk(
+                num_array=velMag.ravel(), deep=True, array_type=vtk.VTK_FLOAT
+            )
+            velMag_vtk.SetName("veloMag")
 
-			poly.GetPointData().SetVectors(vecVel)
+            vecVel = vtk.vtkFloatArray()
+            vecVel.SetNumberOfComponents(3)
 
-			# If we do not want the Arrow's size to depend on the Scalar
-			# then arrowGlyph.SetScaleModeToDataScalingOff() must be called
-			arrowMapper = vtk.vtkPolyDataMapper()
-			arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
+            for i, v in enumerate(vel):
+                vecVel.InsertTuple3(i, v[0], v[1], v[2])
 
-			self._addScalarBar(velMag)
-			arrowMapper.SetLookupTable(self._colorTransferFunction)
+            # Put an arrow (vector) at each ball
+            arrow = vtk.vtkArrowSource()
+            arrow.SetTipRadius(rad.mean() * 10)
+            arrow.SetShaftRadius(rad.mean() * 10)
 
-			arrowActor = vtk.vtkActor()
-			arrowActor.SetMapper(arrowMapper)
-			arrowActor.GetProperty().SetColor(1,1,0)
+            poly = vtk.vtkPolyData()
+            poly.SetPoints(self._points)
 
-			self._ren.AddActor(arrowActor)
-		else:
-			print("No particles found. Make sure the particles loaded have velocities and radii.")
+            poly.GetPointData().AddArray(velMag_vtk)
+            poly.GetPointData().SetActiveScalars("veloMag")
 
-	def _addScalarBar(self, val):
+            arrowGlyph = vtk.vtkGlyph3D()
 
-		if len(val.shape) > 1:
-			val = norm(val, axis=1)
+            arrowGlyph.SetInputData(poly)
+            arrowGlyph.SetSourceConnection(arrow.GetOutputPort())
+            arrowGlyph.SetVectorModeToUseVector()
 
-		self._setupColorFunction(val.min(), val.max())
-		self._scalarBar = vtk.vtkScalarBarActor()
-		self._scalarBar.SetLookupTable(self._colorTransferFunction)
-		self._scalarBar.SetTitle("Velocities (m/s)")
-		self._ren.AddActor2D(self._scalarBar)
+            poly.GetPointData().SetVectors(vecVel)
 
-	def _close_window(self):
-		""" kills any active renderer / windows """
-		render_window = self._iren.GetRenderWindow()
-		render_window.Finalize()
-		self._iren.TerminateApp()
+            # If we do not want the Arrow's size to depend on the Scalar
+            # then arrowGlyph.SetScaleModeToDataScalingOff() must be called
+            arrowMapper = vtk.vtkPolyDataMapper()
+            arrowMapper.SetInputConnection(arrowGlyph.GetOutputPort())
 
-		del render_window, self._iren, self._ren, self._renWin
+            self._addScalarBar(velMag)
+            arrowMapper.SetLookupTable(self._colorTransferFunction)
+
+            arrowActor = vtk.vtkActor()
+            arrowActor.SetMapper(arrowMapper)
+            arrowActor.GetProperty().SetColor(1, 1, 0)
+
+            self._ren.AddActor(arrowActor)
+        else:
+            print(
+                "No particles found. Make sure the particles loaded have velocities and radii."
+            )
+
+    def _addScalarBar(self, val):
+
+        if len(val.shape) > 1:
+            val = norm(val, axis=1)
+
+        self._setupColorFunction(val.min(), val.max())
+        self._scalarBar = vtk.vtkScalarBarActor()
+        self._scalarBar.SetLookupTable(self._colorTransferFunction)
+        self._scalarBar.SetTitle("Velocities (m/s)")
+        self._ren.AddActor2D(self._scalarBar)
+
+    def _close_window(self):
+        """ kills any active renderer / windows """
+        render_window = self._iren.GetRenderWindow()
+        render_window.Finalize()
+        self._iren.TerminateApp()
+
+        del render_window, self._iren, self._ren, self._renWin
+
 
 class Visualizer(wx.Frame):
-	def __init__(self,parent, particles, title):
+    def __init__(self, parent, particles, title):
 
-		self._Particles = particles
-		wx.Frame.__init__(self,parent,title=title,size=(800,600), style=wx.MINIMIZE_BOX|wx.SYSTEM_MENU| wx.CAPTION|wx.CLOSE_BOX|wx.CLIP_CHILDREN)
-		self.sp = wx.SplitterWindow(self)
-		self.p1 = Panel(self.sp)
-		self.p2 = wx.Panel(self.sp,style=wx.SUNKEN_BORDER)
-		 
-		self.sp.SplitHorizontally(self.p1,self.p2,470)
- 
-		self.statusbar = self.CreateStatusBar()
-		self.statusbar.SetStatusText("Click on the Plot Button")
-		 
-		self.plotbut = wx.Button(self.p2,-1,"plot", size=(80,40),pos=(10,10))
-		self.plotbut.Bind(wx.EVT_BUTTON, self.plot)
+        self._Particles = particles
+        wx.Frame.__init__(
+            self,
+            parent,
+            title=title,
+            size=(800, 600),
+            style=wx.MINIMIZE_BOX
+            | wx.SYSTEM_MENU
+            | wx.CAPTION
+            | wx.CLOSE_BOX
+            | wx.CLIP_CHILDREN,
+        )
+        self.sp = wx.SplitterWindow(self)
+        self.p1 = Panel(self.sp)
+        self.p2 = wx.Panel(self.sp, style=wx.SUNKEN_BORDER)
 
-		self.clearbut = wx.Button(self.p2,-1,"clear", size=(80,40),pos=(140,10))
-		self.clearbut.Bind(wx.EVT_BUTTON, self.plot)
+        self.sp.SplitHorizontally(self.p1, self.p2, 470)
 
-		self.loadbut = wx.Button(self.p2,-1,"load", size=(80,40),pos=(270,10))
-		self.loadbut.Bind(wx.EVT_BUTTON, self.plot)
-		 
-		self.slidebut = wx.Slider(self.p2, value=200, minValue=150, maxValue=500, pos=(400, 10), size=(250, -1), style=wx.SL_HORIZONTAL)
+        self.statusbar = self.CreateStatusBar()
+        self.statusbar.SetStatusText("Click on the Plot Button")
 
-		self.slidetxt = wx.StaticText(self.p2, label='resolution', pos=(475, 20)) 
- 
-	def plot(self,event):
+        self.plotbut = wx.Button(self.p2, -1, "plot", size=(80, 40), pos=(10, 10))
+        self.plotbut.Bind(wx.EVT_BUTTON, self.plot)
 
-		if not self.p1.isploted:
+        self.clearbut = wx.Button(self.p2, -1, "clear", size=(80, 40), pos=(140, 10))
+        self.clearbut.Bind(wx.EVT_BUTTON, self.plot)
 
-			self.p1.load_parts(self._Particles)
-			#self.p1.attach_pos()
-			#self.p1.attach_vel()
-			self.p1.attach_stl('hopper-20-6.stl', scale=(1, 1, 1))
+        self.loadbut = wx.Button(self.p2, -1, "load", size=(80, 40), pos=(270, 10))
+        self.loadbut.Bind(wx.EVT_BUTTON, self.plot)
 
-			self.statusbar.SetStatusText("Use your mouse to interact with the model")
-			self.p1.render()
+        self.slidebut = wx.Slider(
+            self.p2,
+            value=200,
+            minValue=150,
+            maxValue=500,
+            pos=(400, 10),
+            size=(250, -1),
+            style=wx.SL_HORIZONTAL,
+        )
+
+        self.slidetxt = wx.StaticText(self.p2, label="resolution", pos=(475, 20))
+
+    def plot(self, event):
+
+        if not self.p1.isploted:
+
+            self.p1.load_parts(self._Particles)
+            # self.p1.attach_pos()
+            # self.p1.attach_vel()
+            self.p1.attach_stl("hopper-20-6.stl", scale=(1, 1, 1))
+
+            self.statusbar.SetStatusText("Use your mouse to interact with the model")
+            self.p1.render()

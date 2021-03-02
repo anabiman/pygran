@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf8 -*- 
+# -*- coding: utf8 -*-
 
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -17,29 +17,30 @@
 # -------------------------------------------------------------------------
 
 
-'''
+"""
 Created on Sep 8, 2016
 @author: Andrew Abi-Mansour
-'''
-'''
+"""
+"""
 Created on Sep 11, 2013
 
 @author: Andrew Abi-Mansour
-'''
+"""
 
-__SofName__ = 'PyGran GUI'
+__SofName__ = "PyGran GUI"
+
 
 class French:
     def __init__(self):
         __SofName__ = __SofName__
-        self.File = '&Dossier'
-        self.Open = '&Ouvrir'
-        self.Close = '&Terminer'
-        self.Configure = '&Configurer'
-        self.Analysis = '&Analyse'
-        self.Help = '&Assistance'
-        self.ChangeDir = '&Changer Dir'
-        
+        self.File = "&Dossier"
+        self.Open = "&Ouvrir"
+        self.Close = "&Terminer"
+        self.Configure = "&Configurer"
+        self.Analysis = "&Analyse"
+        self.Help = "&Assistance"
+        self.ChangeDir = "&Changer Dir"
+
         self.description = """Analyse macromoléculaire et la modélisation est une boîte à 
         outils la construction et la manipulation des capsides virales. Les caractéristiques comprennent puissant haut-
 générateur de capside d'une unité monomère, des capacités avancées de recherche sur le Web, la production oligomères
@@ -49,31 +50,32 @@ etc, etc."""
 
 class Arabic:
     def __init__(self):
-        __SofName__ = '<<كرامر>>'
-        self.File = '&ملف'
-        self.Open = '&افتح'
-        self.Close = '&أغلق'
-        self.Configure = '&تكوين'
-        self.Analysis = '&تحليل'
-        self.Help = '&مساعدة'
-        self.ChangeDir = 'غير دليل'
-        
+        __SofName__ = "<<كرامر>>"
+        self.File = "&ملف"
+        self.Open = "&افتح"
+        self.Close = "&أغلق"
+        self.Configure = "&تكوين"
+        self.Analysis = "&تحليل"
+        self.Help = "&مساعدة"
+        self.ChangeDir = "غير دليل"
+
         self.description = """ تحليل الجزيئات والنمذجة هو مجموعة أدوات لبناء والتلاعب الفيروسية وتشمل الميزات 
         القوية المدمج في مولد قفيصة من وحدة مونومر، قدرات متطورة لتصفح الانترنت جيل قليل 
         وحدات والتلاعب، والتكامل مع قوة التصور البرمجيات مثل ,  وغيرها، وأكثر من 
         .ذلك
         """
-        
+
+
 class English:
     def __init__(self):
-        self.File = '&File'
-        self.Open = '&Open'
-        self.Close = '&Close'
-        self.Configure = '&Configure' 
-        self.Analysis = '&Analysis'
-        self.Help = '&Help'
-        self.ChaneDir ='Change &Dir'
-        
+        self.File = "&File"
+        self.Open = "&Open"
+        self.Close = "&Close"
+        self.Configure = "&Configure"
+        self.Analysis = "&Analysis"
+        self.Help = "&Help"
+        self.ChaneDir = "Change &Dir"
+
         self.description = """
         DEM simulation engine, released by 
         DCS Computing Gmbh, Linz, Austria
