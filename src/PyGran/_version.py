@@ -1,4 +1,4 @@
-'''
+"""
   Created on Oct 5, 2019
   Author: Andrew Abi-Mansour
 
@@ -24,8 +24,8 @@
   received a copy of the GNU General Public License along with PyGran.
   If not, see http://www.gnu.org/licenses . See also top-level README
   and LICENSE files.
-  '''
+  """
 
-__author__ = 'Andrew Abi-Mansour'
-__version__ = '1.3.1'
-__email__ = 'support@pygran.org'
+__author__ = "Andrew Abi-Mansour"
+__version__ = "1.3.1"
+__email__ = "support@pygran.org"
