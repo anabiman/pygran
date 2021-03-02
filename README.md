@@ -1,12 +1,12 @@
 # Welcome to the PyGran webpage!
 
-PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. It's recommended to use PyGran with Python 3.7 and later versions.
+PyGran is an open-source toolkit primarily designed for analyzing DEM simulation data. In addition to performing basic and custom post-processing, PyGran enables running DEM simulation with [LIGGGHTS](https://www.cfdem.com/liggghtsr-open-source-discrete-element-method-particle-simulation-code) in Python. It's recommended to use PyGran with Python 3.7 or higher versions. If you wish to use PyGran's mesh capabilities via VTK, Python<=3.8 is recommended.
 
 The main features of PyGran:
 
 - Interactive DEM simulation and/or analysis using Python 
 - Parallel "multiple parameter, single script" simulation for parametrization and sensitivity analysis
-- Intuitive (matlab-like) syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)
+- Intuitive syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)
 - Post-processing coupled particle-mesh DEM simulation with VTK
 - Quick and easy plotting of DEM data with matplotlib
 - Support for high-performance computing with MPI
@@ -17,7 +17,7 @@ The core modules in PyGran are:
 - [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides methods and algorithms for post-processing DEM data
 - [params](https://github.com/Andrew-AbiMansour/PyGranParams): defines material properties
 
-**If your find PyGran useful in your research, please consider citing the following paper:**
+**If you find PyGran useful in your research, please consider citing the following paper:**
 
 [![DOI for Citing PyGran](https://img.shields.io/badge/DOI-10.1016%2Fels.jsoftx.5b00056-blue.svg)](https://doi.org/10.1016/j.softx.2019.01.016)
 
@@ -37,7 +37,7 @@ The core modules in PyGran are:
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
 ```bash
-pip install PyGran --user
+pip install PyGran
 ```
 For more options and information on setting up PyGran on Ubuntu 18.04 (LTS), see the [installation](docs/introduction.html#installation-example-ubuntu-18-04-lts) page.
 
