@@ -24,7 +24,7 @@ jobs:
         submodules: recursive
     - name: Install binary dependencies
       run: |
-        sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin vtk6 libvtk6-dev
+        sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin libvtk6-dev
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -46,8 +46,8 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --cov src/PyGran tests/pytest/test_sim --mpath tests/pytest/test_sim
-        pytest --cov src/PyGran tests/pytest/test_analysis --trajf "DEM_flow/traj/particles*.dump"
+        pytest --cov src/PyGran tests/test_sim --mpath tests/test_sim
+        pytest --cov src/PyGran tests/test_analysis --trajf "DEM_flow/traj/particles*.dump"
         
     - name: CodeCov
       uses: codecov/codecov-action@v1
