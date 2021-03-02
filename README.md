@@ -52,33 +52,32 @@ PyGran also provides an interface for running DEM simulation with [LIGGGHTS](htt
 from PyGran import simulation
 from PyGran import params
 
-# Create a DEM parameter dictionary
-param = {
-
-	'boundary': ('f','f','f'),
-	'box':  (-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
-
-	'species': (
-                    {'material': params.stearicAcid, 'radius': ('constant', 5e-5)}, 
-		   ),
-		
-	'gravity': (9.81, 0, 0, -1),
-
-	'mesh': {
-                 'hopper': {'file': 'silo.stl', 'mtype': 'mesh/surface',
-		 'material': params.steel}, 
-                },
-}
-
-# Instantiate a DEM class
-sim = simulation.DEM(**param)
+# Create a DEM object for simulation
+sim = simulation.DEM(
+    boundary=("f", "f", "f"),
+    box=(-1e-3, 1e-3, -1e-3, 1e-3, 0, 4e-3),
+    species=(
+        {
+            "material": params.stearicAcid, 
+            "radius": ("constant", 5e-5)},
+        ),
+    gravity=(9.81, 0, 0, -1),
+    mesh={
+        "hopper": {
+            "file": "silo.stl",
+            "mtype": "mesh/surface",
+            "material": params.steel,
+        }
+    },
+)
 
 # Insert 1000 particles for species 1 (stearic acid)
-insert = sim.insert(species=1, value=1000) 
+insert = sim.insert(species=1, value=1000)
 
-# Evolve the system in time 
+# Evolve the system in time
 sim.run(nsteps=1e6, dt=1e-7)
 ```
+
 ### Post-processing DEM output data
 Using PyGran for doing post-analysis is also quite straight forward. Computing particle overlaps shown below for instance can be done in few lines of code:
 
@@ -94,4 +93,4 @@ Gran = analysis.System(Particles='granular.dump')
 NNS = analysis.Neighbors(Particles=Gran.Particles)
 overlaps = NNS.overlaps
 ```
-For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/tests/examples.html">examples</a> page.
+For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/examples/examples.html">examples</a> page.
