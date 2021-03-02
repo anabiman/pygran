@@ -78,6 +78,3 @@ def test_run(mpath="tests/test_sim"):
     # Remove stopper and monitor flow
     sim.remove(stopper)
     sim.run(params["stages"]["run"], params["dt"])
-
-
-test_run()
