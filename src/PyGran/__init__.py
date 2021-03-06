@@ -28,4 +28,11 @@
 
 from . import simulation, analysis, params
 from .simulation.PyGranSim.tools import configure
-from ._version import __version__, __author__, __email__
+
+# Handle versioneer
+from ._version import get_versions
+
+versions = get_versions()
+__version__ = versions["version"]
+__git_revision__ = versions["full-revisionid"]
+del get_versions, versions
