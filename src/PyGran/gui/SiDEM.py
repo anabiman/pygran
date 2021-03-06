@@ -38,8 +38,8 @@ import Settings.Language as Lang
 class MainWindow(wx.Frame):
     def __init__(self, parent, title, name):
         """
-    	This is the "constructor". It initializes the main frame and (so far) the two panels: upper panel and display pannel. 
-    	"""
+        This is the "constructor". It initializes the main frame and (so far) the two panels: upper panel and display pannel.
+        """
         self._LENGTH = 650
         self._WIDTH = 800
         self.iconsDir = os.path.dirname(os.path.realpath(__file__)) + "/Icons/"
@@ -251,8 +251,7 @@ class MainWindow(wx.Frame):
         self.SetMenuBar(menubar=self.MainMenuBar)
 
     def ToolBar(self):
-        """
-        """
+        """"""
         iconsDir = self.iconsDir
 
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
@@ -396,7 +395,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_TEXT_ENTER, self.onReadCmd, self.InputTxt)
 
     def onReadCmd(self, event):
-        """ reads text from InputBox, passes it asa command to Liggghts, updates the display panel,
+        """reads text from InputBox, passes it asa command to Liggghts, updates the display panel,
         and finally clears InputBox"""
 
         command = self.InputTxt.GetValue()
@@ -479,8 +478,8 @@ class MainWindow(wx.Frame):
 
     def onHelp(self, event):
         """
-    	This is not yet documented.
-    	"""
+        This is not yet documented.
+        """
 
         description = self.LanguageClass.description
 
@@ -559,7 +558,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
     def OnOpen(self, event):
         """
         This function Launches an instance of a new file dialog that allows the user
-		to select a specific input file.
+                to select a specific input file.
         """
         wildcard = "Python (*.py)|*.py|" "LIGGGHTS (*.in)|*.in|" "All files (*.*)|*.*"
 
@@ -689,8 +688,8 @@ Suite 330, Boston, MA  02111-1307  USA"""
             self.UpdateDisplayPanel("Load input script file first.")
 
     def execute(self, cmd):
-        """ A function that executed commands using 'yield' to output any line from the command-line
-        to the screen """
+        """A function that executed commands using 'yield' to output any line from the command-line
+        to the screen"""
         popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
         for stdout_line in iter(popen.stdout.readline, ""):
             yield stdout_line
@@ -706,8 +705,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.ShowModal()
 
     def OnHelpOlig(self, event):
-        """
-        """
+        """"""
         dlg = wx.MessageDialog(
             self,
             "This modules generates the oligmer indices based on the oligomer number. For instance, when this"
@@ -757,8 +755,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.Destroy()
 
     def OnAtomAnBtn(self, event):
-        """
-        """
+        """"""
         dlg = wx.Dialog(
             parent=self,
             title="Atomic Analysis",
@@ -842,8 +839,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.Destroy()
 
     def CustomDiag(self, event):
-        """
-        """
+        """"""
         font = wx.Font(11, wx.MODERN, wx.NORMAL, wx.NORMAL)
 
         self.mesh_dlg = wx.Dialog(
@@ -957,8 +953,8 @@ Suite 330, Boston, MA  02111-1307  USA"""
 
     def OnOlig(self, event):
         """
-    	Undocumented
-    	"""
+        Undocumented
+        """
         frame_tmp = wx.Frame(parent=self, id=-1, name="Oligomer indices generator")
         panel_tmp = wx.Panel(
             parent=frame_tmp,

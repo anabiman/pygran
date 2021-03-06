@@ -48,8 +48,8 @@ def _fmt(x, pos):
 
 def _initialize(Particles, fig, value, subplot, axes, **args):
     """
-	An internal function that initializes fig and extracts target value.
-	"""
+    An internal function that initializes fig and extracts target value.
+    """
 
     z = None
 
@@ -99,17 +99,17 @@ def quiver(
     **args
 ):
     """
-	Plots a 2D field of arrows for a set of particles
+    Plots a 2D field of arrows for a set of particles
 
-	@Particles: PyGran.analysis.SubSystem object
+    @Particles: PyGran.analysis.SubSystem object
 
-	@[value]: a string attribute such as 'v' (velocity), 'f' (force), 't' (torque), or ... any attribute contained in Particles.
-	or a tuple ('attr', array) with array being a list or numpy array of length natoms 
-	@[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz') 
-	@[title]: string specifying the title of the plot
-	@[color]: string specifying the color of the arrows (default black)
-	@[radius]: radii of the particles  (numpy array)
-	"""
+    @[value]: a string attribute such as 'v' (velocity), 'f' (force), 't' (torque), or ... any attribute contained in Particles.
+    or a tuple ('attr', array) with array being a list or numpy array of length natoms
+    @[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz')
+    @[title]: string specifying the title of the plot
+    @[color]: string specifying the color of the arrows (default black)
+    @[radius]: radii of the particles  (numpy array)
+    """
 
     fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes, **args)
 
@@ -157,17 +157,17 @@ def pcolor(
     **args
 ):
     """
-	Plots a 2D pcolor for a set of particles
+    Plots a 2D pcolor for a set of particles
 
-	@Particles: PyGran.analysis.SubSystem object
-	@value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), or ... any attribute contained in Particles.
-	or a tuple ('attr', array) with array being a list or numpy array of length natoms
+    @Particles: PyGran.analysis.SubSystem object
+    @value: a string attribute such as 'vx' (x-comp velocity), 'fy' (y-comp force), 'tz' (z-comp torque), or ... any attribute contained in Particles.
+    or a tuple ('attr', array) with array being a list or numpy array of length natoms
 
-	@[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz') 
-	@[title]: string specifying the title of the plot
-	@[color]: string specifying the color of the arrows (default black)
-	@[radius]: radii of the particles  (numpy array)
-	"""
+    @[axes]: a 2-letter string specifying which axes to plot ('xy', 'yz', or 'xz')
+    @[title]: string specifying the title of the plot
+    @[color]: string specifying the color of the arrows (default black)
+    @[radius]: radii of the particles  (numpy array)
+    """
 
     fig, ax, value, x, y, z = _initialize(Particles, fig, value, subplot, axes, **args)
 

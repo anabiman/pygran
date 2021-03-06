@@ -34,17 +34,17 @@ stearicAcid["yieldPress"] = 2.2e6
 
 
 def checkYieldNum(reff, **material):
-    """ Solves numerically the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
-		based on Thornton's elasto-plastic cohesive model:
+    """Solves numerically the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
+    based on Thornton's elasto-plastic cohesive model:
 
-		b = py * pi * reff / (2 * YoungEff)
-		c = reff * sqrt(gamma * pi / (2 * YoungEff))
+    b = py * pi * reff / (2 * YoungEff)
+    c = reff * sqrt(gamma * pi / (2 * YoungEff))
 
-		@reff: effective radius
-		@py: yielding pressure
-		@YoungEff: Young's effective modulus
-		@gamma: cohesion energy density
-	"""
+    @reff: effective radius
+    @py: yielding pressure
+    @YoungEff: Young's effective modulus
+    @gamma: cohesion energy density
+    """
 
     # Extract material params from supplied database
     py = material["yieldPress"]
@@ -70,17 +70,17 @@ def checkYieldNum(reff, **material):
 
 
 def checkYield(reff, **material):
-    """ Solves symbolically the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
-	based on Thornton's elasto-plastic cohesive model:
+    """Solves symbolically the cubic equation x^3 - b*x - c = 0 for yielding contact_radius = sqrt(x)
+    based on Thornton's elasto-plastic cohesive model:
 
-	b = py * pi * reff / (2 * YoungEff)
-	c = reff * sqrt(gamma * pi / (2 * YoungEff))
+    b = py * pi * reff / (2 * YoungEff)
+    c = reff * sqrt(gamma * pi / (2 * YoungEff))
 
-	@reff: effective radius
-	@py: yielding pressure
-	@YoungEff: Young's effective modulus
-	@gamma: cohesion energy density
-	"""
+    @reff: effective radius
+    @py: yielding pressure
+    @YoungEff: Young's effective modulus
+    @gamma: cohesion energy density
+    """
     # Extract material params from supplied database
     py = material["yieldPress"]
     poiss = material["poissonsRatio"]
