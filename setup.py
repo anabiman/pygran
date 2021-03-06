@@ -35,16 +35,15 @@ from setuptools import setup, find_packages
 import glob, shutil
 from distutils.command.install import install
 from distutils.command.clean import clean
+import versioneer
 
-# Extract metadata from simulation._version
-with open(os.path.join("src", "PyGran", "_version.py"), "r") as fp:
-    for line in fp.readlines():
-        if "__version__" in line:
-            __version__ = line.split("=")[-1].strip().strip("''")
-        elif "__email__" in line:
-            __email__ = line.split("=")[-1].strip().strip("''")
-        elif "__author__" in line:
-            __author__ = line.split("=")[-1].strip().strip("''")
+short_description = __doc__.split("\n")
+
+try:
+    with open("README.md", "r") as handle:
+        long_description = handle.read()
+except Exception:
+    long_description = "\n".join(short_description[2:])
 
 try:
     from Cython.Build import cythonize
@@ -80,15 +79,15 @@ class Track(install):
 
     def print_progress(self, iteration, prefix="", suffix="", decimals=1, total=100):
         """
-		Call in a loop to create terminal progress bar
-		@params:
-			iteration   - Required  : current iteration (Int)
-			total       - Required  : total iterations (Int)
-			prefix      - Optional  : prefix string (Str)
-			suffix      - Optional  : suffix string (Str)
-			decimals    - Optional  : positive number of decimals in percent complete (Int)
-			bar_length  - Optional  : character length of bar (Int)
-		"""
+        Call in a loop to create terminal progress bar
+        @params:
+                iteration   - Required  : current iteration (Int)
+                total       - Required  : total iterations (Int)
+                prefix      - Optional  : prefix string (Str)
+                suffix      - Optional  : suffix string (Str)
+                decimals    - Optional  : positive number of decimals in percent complete (Int)
+                bar_length  - Optional  : character length of bar (Int)
+        """
         str_format = "{0:." + str(decimals) + "f}"
         percents = str_format.format(100 * (iteration / float(total)))
         sys.stdout.write("\r %s%s %s" % (percents, "%", suffix))
@@ -133,21 +132,13 @@ class LIGGGHTS(Track):
         os.chdir(os.path.join("..", ".."))
 
 
-class Clean(clean):
-    def run(self):
-        for ddir in ["build", "dist", "PyGran.egg-info"]:
-            if os.path.isdir(ddir):
-                print("Deleting " + os.path.abspath(ddir))
-                shutil.rmtree(ddir)
-
-        super().run()
-
+cmdclass = versioneer.get_cmdclass()
+cmdclass["build_liggghts"] = LIGGGHTS
 
 setup(
     name="PyGran",
-    version=__version__,
-    author=__author__,
-    author_email=__email__,
+    author="Andrew Abi-Mansour",
+    author_email="support@pygran.org",
     description=(
         "A DEM toolkit for rapid quantitative analysis of granular/powder systems"
     ),
@@ -170,7 +161,8 @@ setup(
         "Programming Language :: Python :: 3.8" "Programming Language :: C",
         "Operating System :: POSIX :: Linux",
     ],
-    cmdclass={"build_liggghts": LIGGGHTS, "clean": Clean},
+    version=versioneer.get_version(),
+    cmdclass=cmdclass,
     zip_safe=False,
     ext_modules=optimal_list,
     include_dirs=include_dirs,
