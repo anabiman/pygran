@@ -87,10 +87,10 @@ Using PyGran for doing post-analysis is also quite straight forward. Computing p
 from PyGran import analysis
 
 # Instantiate a System class from a dump file
-Gran = analysis.System(Particles='granular.dump')
+sys = analysis.System(Particles='granular.dump')
 
 # Instantiate a nearest-neighbors class
-NNS = analysis.Neighbors(Particles=Gran.Particles)
+NNS = analysis.Neighbors(Particles=sys.Particles)
 overlaps = NNS.overlaps
 ```
 For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/examples/examples.html">examples</a> page.
