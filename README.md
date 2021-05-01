@@ -94,3 +94,11 @@ NNS = analysis.Neighbors(Particles=sys.Particles)
 overlaps = NNS.overlaps
 ```
 For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/examples/examples.html">examples</a> page.
+
+## Questions or suggestions?
+
+**If you'd like to chat with us, we are available on slack:**
+
+[![slack](https://img.shields.io/badge/chat-on_slack-808493.svg?longCache=true&style=flat&logo=slack)](https://levnon.slack.com/archives/CPSTMBVTR)
+
+For reporting bugs or suggesting new features/improvements to the code, please open an [issue](https://github.com/andrew-abimansour/PyGran/issues).
