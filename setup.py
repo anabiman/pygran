@@ -140,19 +140,19 @@ setup(
     author="Andrew Abi-Mansour",
     author_email="support@pygran.org",
     description=(
-        "A DEM toolkit for rapid quantitative analysis of granular/powder systems"
+        "A DEM toolkit for rapid quantitative analysis and simulation of granular/powder systems"
     ),
     license="GNU v2",
     keywords="Discrete Element Method, Granular Materials",
     url="https://github.com/Andrew-AbiMansour/PyGran",
     packages=find_packages("src"),
-    package_dir={"PyGran": os.path.join("src", "PyGran")},
+    package_dir={"pygran": "pygran"},
     include_package_data=True,
     install_requires=["numpy", "scipy"],
     extras_require={
         "extra": ["vtk", "mpi4py", "Pillow", "pytest", "pytest-cov", "codecov"]
     },
-    long_description="A DEM toolbox for rapid quantitative analysis of granular/powder systems. See http://www.pygran.org.",
+    long_description="A DEM toolbox for rapid quantitative analysis and simulation of granular/powder systems. See http://www.pygran.org.",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Topic :: Utilities",
