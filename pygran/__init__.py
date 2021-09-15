@@ -26,8 +26,9 @@
   and LICENSE files.
 """
 
-from . import simulation, analysis, params
-from .simulation.PyGranSim.tools import configure
+from . import simulation, params
+from .analysis import pygran_analysis as analysis 
+from .simulation.pygran_sim.tools import configure
 
 # Handle versioneer
 from ._version import get_versions
