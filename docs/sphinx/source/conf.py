@@ -20,11 +20,11 @@ sys.path.insert(0, os.path.abspath("../../../src/PyGran"))
 # -- Project information -----------------------------------------------------
 
 project = "PyGran"
-copyright = "2019, Andrew Abi-Mansour"
+copyright = "2021, Andrew Abi-Mansour"
 author = "Andrew Abi-Mansour"
 
 # The full version, including alpha/beta/rc tags
-release = "1.2.0"
+release = "1.3.1"
 
 # -- General configuration ------------------------------------------------
 autoclass_content = "both"  # include both class docstring and __init__
@@ -61,6 +61,7 @@ extensions = [
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
+bibtex_bibfiles = ['refs.bib']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

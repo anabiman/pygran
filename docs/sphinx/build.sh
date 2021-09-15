@@ -1,3 +1,5 @@
+make html
+
 grep -rl '_static' build/html | xargs sed -i 's/_static/static/g'
 grep -rl '_images' build/html | xargs sed -i 's/_images/images/g'
 grep -rl '_modules' build/html | xargs sed -i 's/_modules/modules/g'

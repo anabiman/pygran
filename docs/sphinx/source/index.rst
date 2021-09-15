@@ -22,7 +22,7 @@ Features
 * Intuitive (matlab-like) syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)
 * Post-processing coupled particle-mesh DEM simulation with VTK
 * Quick and easy plotting of DEM data with matplotlib
-* Support for high-performance computing with MPI
+* Support for high-performance distributed computing with MPI
 
 Requirements
 ~~~~~~~~~~~~
@@ -30,11 +30,11 @@ Requirements
 =====  ===========================  =======================
 Nr.    Code metadata description    ..
 =====  ===========================  =======================
-C1           code version            1.3.0
+C1           code version            1.3.1
 C2     code repository                `github <https://github.com/Andrew-AbiMansour/PyGran>`_
 C3     legal code license            `GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_
 C4     version-control system used    `git <https://git-scm.com>`_
-C5     languages & tools used       python 2/3, cython, MPI
+C5     languages & tools used       python 3, cython, MPI
 C6		email							support@pygran.org
 =====  ===========================  =======================
 

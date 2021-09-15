@@ -9,9 +9,9 @@ Submodules
    :toctree: _autosummary
 
    simulation.PyGranSim.dem
-   simulation.PyGranSim.models
-   simulation.PyGranSim.engine_liggghts
-   simulation.PyGranSim.model_liggghts
+   simulation.PyGranSim.base
+   simulation.PyGranSim.engine.liggghts.engine_liggghts
+   simulation.PyGranSim.engine.simple.engine_simple
 
 Introduction
 ############
