@@ -26,9 +26,10 @@
   and LICENSE files.
 """
 
-from . import simulation, params
-from .analysis import pygran_analysis as analysis 
-from .simulation.pygran_sim.tools import configure
+from .analysis import analysis
+import pygran_params as params
+import pygran_sim as simulation
+from pygran_sim.tools import configure
 
 # Handle versioneer
 from ._version import get_versions
@@ -38,5 +39,4 @@ __version__ = versions["version"]
 __git_revision__ = versions["full-revisionid"]
 del get_versions, versions
 
-from . import _version
-__version__ = _version.get_versions()['version']
+__all__ = ["params", "simulation", "analysis", "__version__"]
