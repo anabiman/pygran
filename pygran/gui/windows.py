@@ -27,7 +27,7 @@ class DerivedWindow(MainWindow):
         pass
 
     def onAddSS(self, event):
-        """"""
+        """ """
         if not self.component_frame:
 
             self.component_frame = wx.Frame(
@@ -120,12 +120,12 @@ class DerivedWindow(MainWindow):
             self.UpdateDisplayPanel("Simulation settings window already open")
 
     def onSimSetup(self, event):
-        """"""
+        """ """
 
         if not self.settings_frame:
 
             def settToolBar(frame):
-                """"""
+                """ """
                 ToolBar = frame.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
 
                 loadBtn = ToolBar.AddLabelTool(

@@ -251,7 +251,7 @@ class MainWindow(wx.Frame):
         self.SetMenuBar(menubar=self.MainMenuBar)
 
     def ToolBar(self):
-        """"""
+        """ """
         iconsDir = self.iconsDir
 
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
@@ -705,7 +705,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.ShowModal()
 
     def OnHelpOlig(self, event):
-        """"""
+        """ """
         dlg = wx.MessageDialog(
             self,
             "This modules generates the oligmer indices based on the oligomer number. For instance, when this"
@@ -755,7 +755,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.Destroy()
 
     def OnAtomAnBtn(self, event):
-        """"""
+        """ """
         dlg = wx.Dialog(
             parent=self,
             title="Atomic Analysis",
@@ -839,7 +839,7 @@ Suite 330, Boston, MA  02111-1307  USA"""
         dlg.Destroy()
 
     def CustomDiag(self, event):
-        """"""
+        """ """
         font = wx.Font(11, wx.MODERN, wx.NORMAL, wx.NORMAL)
 
         self.mesh_dlg = wx.Dialog(
