@@ -48,8 +48,8 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest --cov src/PyGran tests/test_sim --mpath tests/test_sim
-        pytest --cov src/PyGran tests/test_analysis --trajf "DEM_flow/traj/particles*.dump"
+        pytest -v --cov pygran pygran/tests/test_sim
+        pytest --cov pygran pygran/tests/test_analysis --trajf "DEM_flow/traj/particles*.dump"
         
     - name: CodeCov
       uses: codecov/codecov-action@v1
