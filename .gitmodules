@@ -1,9 +1,0 @@
-[submodule "src/PyGran/params"]
-	path = src/PyGran/params
-	url = https://www.github.com/Andrew-AbiMansour/PyGran.params.git
-[submodule "src/PyGran/analysis"]
-	path = src/PyGran/analysis
-	url = https://github.com/Andrew-AbiMansour/PyGran.analysis.git
-[submodule "src/PyGran/simulation"]
-	path = src/PyGran/simulation
-	url = https://github.com/Andrew-AbiMansour/PyGran.simulation.git

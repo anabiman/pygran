@@ -4,3 +4,4 @@ include versioneer.py
 
 global-include *.pyx
 recursive-include pygran *.stl *.html *.py *.so
+include pygran/_version.py
