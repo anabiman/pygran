@@ -1,9 +1,9 @@
-from PyGran import simulation
-from PyGran.params import organic, glass
+from pygran import simulation
+from pygran.params import organic, glass
 import os
 
 
-def test_run(mpath="tests/test_sim"):
+def test_run(mpath="pygran/tests/test_sim"):
 
     params = {
         # Define the system
