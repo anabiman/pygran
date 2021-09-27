@@ -32,10 +32,12 @@ and LICENSE files.
 import os, sys, shutil
 import subprocess
 from setuptools import setup, find_packages
-import glob, shutil
+import shutil, pathlib
 from distutils.command.install import install
 from distutils.command.clean import clean
 import versioneer
+import fileinput
+
 
 short_description = __doc__.split("\n")
 
@@ -50,18 +52,18 @@ try:
     import numpy
 
     optimal_list = cythonize(
-        "src/PyGran/analysis/PyGranAnalysis/core.pyx",
+        "pygran/analysis/pygran_analysis/core.pyx",
         compiler_directives={"language_level": sys.version_info[0]},
     )
     include_dirs = [numpy.get_include()]
-except:
+except Exception:
     print("Could not cythonize. Make sure Cython is properly installed.")
     optimal_list = []
     include_dirs = []
 
 
 class Track(install):
-    """ An install class that enables the tracking of installation/compilation progress """
+    """An install class that enables the tracking of installation/compilation progress"""
 
     def execute(self, cmd, cwd="."):
         popen = subprocess.Popen(
@@ -77,7 +79,7 @@ class Track(install):
         if return_code:
             raise subprocess.CalledProcessError(return_code, cmd)
 
-    def print_progress(self, iteration, prefix="", suffix="", decimals=1, total=100):
+    def print_progress(self, iteration, total, prefix="", suffix="", decimals=1):
         """
         Call in a loop to create terminal progress bar
         @params:
@@ -86,11 +88,10 @@ class Track(install):
                 prefix      - Optional  : prefix string (Str)
                 suffix      - Optional  : suffix string (Str)
                 decimals    - Optional  : positive number of decimals in percent complete (Int)
-                bar_length  - Optional  : character length of bar (Int)
         """
         str_format = "{0:." + str(decimals) + "f}"
-        percents = str_format.format(100 * (iteration / float(total)))
-        sys.stdout.write("\r %s%s %s" % (percents, "%", suffix))
+        percents = str_format.format(100 * iteration / total)
+        sys.stdout.write(f"\r{prefix} {percents}% {suffix}")
         sys.stdout.flush()
 
     def run(self):
@@ -101,7 +102,14 @@ class Track(install):
 
 
 class LIGGGHTS(Track):
-    """ A class that enables the compilation of LIGGGHTS-PUBLIC from github """
+    """A class that enables the compilation of LIGGGHTS-PUBLIC from github"""
+
+    def fix_mkfile(self, filename: str, search_txt: str, insert_txt: str):
+        with fileinput.input(files=(filename,), inplace=True, backup=".bak") as fileobj:
+            for line in fileobj:
+                if search_txt in line:
+                    line = line.strip() + " " + insert_txt + "\n"
+                print(line, end="")
 
     def do_pre_install_stuff(self):
 
@@ -113,20 +121,28 @@ class LIGGGHTS(Track):
             cmd=["git", "clone", "https://github.com/CFDEMproject/LIGGGHTS-PUBLIC.git"]
         )
 
-        files = glob.glob("LIGGGHTS-PUBLIC/src/*.cpp")
+        path = pathlib.Path("LIGGGHTS-PUBLIC", "src")
+        files = list(path.glob("*.cpp"))
 
         count = 0
-        os.chdir("LIGGGHTS-PUBLIC/src")
+        os.chdir(path)
         self.spawn(cmd=["make", "clean-all"])
 
-        print("Compiling LIGGGHTS as a shared library\n")
+        print("Configuring makefile ...")
+        mkfile = pathlib.Path("MAKE", "Makefile.auto")
+        self.fix_mkfile(mkfile, "-funroll-loops", "-w")
 
+        print("Compiling LIGGGHTS as a executable ...\n")
         for path in self.execute(cmd="make auto"):
             count += 1
             self.print_progress(
-                count, prefix="Progress:", suffix="Complete", total=len(files) * 2.05
+                count,
+                total=2*len(files)*1.0215, # makefile prints 2 lines per file
+                prefix="Progress:",
+                suffix="complete",
             )
 
+        print("\nGenerating shared object file ...\n")
         self.spawn(cmd=["make", "-f", "Makefile.shlib", "auto"])
         sys.stdout.write("\nInstallation of LIGGGHTS-PUBLIC complete\n")
         os.chdir(os.path.join("..", ".."))
@@ -136,7 +152,7 @@ cmdclass = versioneer.get_cmdclass()
 cmdclass["build_liggghts"] = LIGGGHTS
 
 setup(
-    name="PyGran",
+    name="pygran",
     author="Andrew Abi-Mansour",
     author_email="support@pygran.org",
     description=(
@@ -145,20 +161,21 @@ setup(
     license="GNU v2",
     keywords="Discrete Element Method, Granular Materials",
     url="https://github.com/Andrew-AbiMansour/PyGran",
-    packages=find_packages("src"),
-    package_dir={"pygran": "pygran"},
     include_package_data=True,
     install_requires=["numpy", "scipy"],
+    packages=find_packages(),
     extras_require={
         "extra": ["vtk", "mpi4py", "Pillow", "pytest", "pytest-cov", "codecov"]
     },
     long_description="A DEM toolbox for rapid quantitative analysis and simulation of granular/powder systems. See http://www.pygran.org.",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Topic :: Utilities",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8" "Programming Language :: C",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: C",
         "Operating System :: POSIX :: Linux",
     ],
     version=versioneer.get_version(),
