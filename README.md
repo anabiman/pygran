@@ -13,8 +13,8 @@ The main features of PyGran:
 
 The core modules in PyGran utilize the following stand-alone packages:
 
-- [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation based on the interoperability `pygran_sim` package.
-- [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides methods and algorithms for post-processing DEM data based on the `pygran_analysis` package.
+- [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation based on the `pygran_sim` package.
+- [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides routines for post-processing DEM data based on the `pygran_analysis` package.
 - [params](https://github.com/Andrew-AbiMansour/PyGranParams): provides material properties from the `pygran_params` package.
 
 **If you find PyGran useful in your research, please consider citing the following paper:**
