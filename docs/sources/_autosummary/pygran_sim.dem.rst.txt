@@ -1,7 +1,11 @@
-simulation.PyGranSim.dem
-========================
+﻿pygran\_sim.dem
+===============
 
-.. automodule:: simulation.PyGranSim.dem
+.. automodule:: pygran_sim.dem
+
+   
+   
+   
 
    
    
@@ -20,3 +24,6 @@ simulation.PyGranSim.dem
    
    
    
+
+
+

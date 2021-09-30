@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Simulation &mdash; PyGran v1.3.1+34.g0aab988.dirty documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="static/css/main.css" type="text/css" />
+
+  
+    <link rel="stylesheet" href="static/plot_directive.css" type="text/css" />
+  
+    <link rel="stylesheet" href="static/graphviz.css" type="text/css" />
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="PyGran v1.3.1+34.g0aab988.dirty documentation" href="index.html"/>
+        <link rel="next" title="Analysis" href="analysis.html"/>
+        <link rel="prev" title="What is PyGran?" href="introduction.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Simulation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="sources/simulation.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="simulation">
+<h1>Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="autosummary/pygran_sim.dem.html#module-pygran_sim.dem" title="pygran_sim.dem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pygran_sim.dem</span></code></a></p></td>
+<td><p>Python interface for running DEM engines</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="autosummary/pygran_sim.base.html#module-pygran_sim.base" title="pygran_sim.base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pygran_sim.base</span></code></a></p></td>
+<td><p>A module that provides contact models for running numerical experiments or DEM simulation</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="autosummary/pygran_sim.engine.liggghts.engine_liggghts.html#module-pygran_sim.engine.liggghts.engine_liggghts" title="pygran_sim.engine.liggghts.engine_liggghts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pygran_sim.engine.liggghts.engine_liggghts</span></code></a></p></td>
+<td><p>Python wrapper for LIGGGHTS library via ctypes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="autosummary/pygran_sim.engine.simple.engine_simple.html#module-pygran_sim.engine.simple.engine_simple" title="pygran_sim.engine.simple.engine_simple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pygran_sim.engine.simple.engine_simple</span></code></a></p></td>
+<td><p>The simple DEM Engine for basic contact analysis</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module in <em>PyGran</em> enables users to run DEM simulation using external N-body solvers for large systems, or PyGran’s numerical solver for investigating contact models. A convenient way for users to define materials in <em>PyGran</em> as input for DEM simulation is via Python dictionaries provided in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranParams">params</a> module. For instance, properties of stearic acid (in S.I. units) shown below are available in this module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stearicAcid</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">4.15e7</span><span class="p">,</span>
+        <span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+        <span class="s1">&#39;coefficientFriction&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="s1">&#39;coefficientRollingFriction&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.033</span><span class="p">,</span>
+        <span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+        <span class="s1">&#39;coefficientRollingViscousDamping&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">2.2e6</span><span class="p">,</span>
+        <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
+<p>This dictionary can then be used for running simulation or performing analysis. The <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a> module contains classes for contact mechanical models that can be used to run a DEM simulation with <em>LIGGGHTS</em>, or investigating numerical aspects of particle-wall collisions as shown in the next sections.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="http://andrew-abimansour.github.io/PyGran/tests/simulation.html">Examples</a> of DEM simulation scripts</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This module is experimental. Its API is not yet stable, but it is usable.</p>
+</div>
+</div>
+<div class="section" id="numerical-analysis">
+<h2>Numerical analysis<a class="headerlink" href="#numerical-analysis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="contact-mechanical-models">
+<h3>Contact mechanical models<a class="headerlink" href="#contact-mechanical-models" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">simulation.models.model</span></code> is the basic class from which contact models are derived. This class contains methods that are overwritten by a sublcass that implements a specific contact model. The 3 contact models avaiable are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SpringDashpot</span></code> <span id="id2">[<a class="reference internal" href="zreferences.html#id2" title="Peter A Cundall and Otto DL Strack. A discrete numerical model for granular assemblies. Geotechnique, 29(1):47–65, 1979.">CS79</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HertzMindlin</span></code> <span id="id3">[<a class="reference internal" href="zreferences.html#id24" title="Heinrich Hertz. Ueber die beruhrung fester elastischer korper. J reine angew Math, 92:156–171, 1882.">Her82</a>]</span> <span id="id4">[<a class="reference internal" href="zreferences.html#id25" title="RD Mindlin. Compliance of elastic bodies in contact. J. Appl. Mech., ASME, 16:259–268, 1949.">Min49</a>]</span></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ThorntonNing</span></code> <span id="id5">[<a class="reference internal" href="zreferences.html#id5" title="Colin Thornton and Zemin Ning. A theoretical model for the stick/bounce behaviour of adhesive, elastic-plastic spheres. Powder technology, 99(2):154–162, 1998.">TN98</a>]</span></p></li>
+</ul>
+<p>The next section demonstrates how these models can be used to perform simple numerical experiments.</p>
+</div>
+<div class="section" id="id6">
+<h3>Examples<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Hertz-Mindlin vs Spring-Dashpot</strong>:</p></li>
+</ul>
+<blockquote>
+<div><p>When instantiating a subclass of <cite>PyGran.simulation.models.model</cite>, it is important to specify the particle radius in the parameters dictionary (<cite>powderX</cite> below). The code below shows how the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module can be used to compute the force-displacement curves for two different visco-elastic models: spring-dashpot, and Hertz-Mindlin models for a particle of effective radius equal to 100 microns.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran.simulation</span> <span class="k">as</span> <span class="nn">sim</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># Use the following two viscoelastic models</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">sim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">SpringDashpot</span><span class="p">,</span> <span class="n">sim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">HertzMindlin</span><span class="p">]</span>
+
+<span class="c1"># Define material properties</span>
+<span class="n">powderX</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e8</span><span class="p">,</span>
+      <span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+      <span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+      <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+      <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span><span class="p">,</span>
+      <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">1e-4</span>
+<span class="p">}</span>
+
+<span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+
+      <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="n">powderX</span><span class="p">)</span>
+      <span class="n">time</span><span class="p">,</span> <span class="n">soln</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+
+      <span class="c1"># Extract normal displacement</span>
+      <span class="n">deltan</span> <span class="o">=</span> <span class="n">soln</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+      <span class="c1"># Plot force-displacement curves</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">deltan</span><span class="p">,</span> <span class="n">force</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="align-center figure" id="id9">
+<span id="fig-models"></span><a class="reference internal image-reference" href="images/models.png"><img alt="contact models" src="images/models.png" style="width: 853.3px; height: 643.3px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a>.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Coefficient of restitution</strong>:</p></li>
+</ul>
+<blockquote>
+<div><p>An elasto-plastic contact model suggested by Thornton and Ning <span id="id7">[<a class="reference internal" href="zreferences.html#id5" title="Colin Thornton and Zemin Ning. A theoretical model for the stick/bounce behaviour of adhesive, elastic-plastic spheres. Powder technology, 99(2):154–162, 1998.">TN98</a>]</span> is available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module used in the following example script to demonstrate the computation of the elasto-plastic force between two spheres of effective radius set to <span class="math notranslate nohighlight">\(100\)</span> microns is shown below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran.simulation</span> <span class="k">as</span> <span class="nn">sim</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">arange</span><span class="p">,</span> <span class="n">fabs</span>
+
+<span class="n">Model</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">ThorntonNing</span>
+
+<span class="c1"># Define material properties</span>
+<span class="n">powderX</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">1e8</span><span class="p">,</span>
+      <span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span>
+      <span class="s1">&#39;coefficientRestitution&#39;</span><span class="p">:</span> <span class="mf">0.9</span><span class="p">,</span>
+      <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+      <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">997.164</span><span class="p">,</span>
+      <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">1e-4</span>
+<span class="p">}</span>
+
+<span class="c1"># Initialize variables</span>
+<span class="n">COR</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">pressure</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">4e6</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">yieldPress</span> <span class="ow">in</span> <span class="n">pressure</span><span class="p">:</span>
+
+      <span class="n">powderX</span><span class="p">[</span><span class="s1">&#39;yieldPress&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">yieldPress</span>
+      <span class="n">Cmodel</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="n">powderX</span><span class="p">)</span>
+
+      <span class="n">time</span><span class="p">,</span> <span class="n">disp</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="n">Cmodel</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+      <span class="n">deltav</span> <span class="o">=</span> <span class="n">disp</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+      <span class="n">COR</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fabs</span><span class="p">(</span><span class="n">deltav</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">deltav</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="align-center figure" id="id10">
+<span id="fig-cor"></span><a class="reference internal image-reference" href="images/cor.png"><img alt="coefficient of restitution" src="images/cor.png" style="width: 853.3px; height: 643.3px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">The coefficient of restitution for two spheres of reduced radius of <span class="math notranslate nohighlight">\(100\)</span> microns computed using the Thornton-Ning model available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim">simulation</a> module.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Artificial (<strong>attractive</strong>) normal forces in viscoelastic models are by default ignored in PyGran.</p>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>Cohesive particles</strong>:</p></li>
+</ul>
+<blockquote>
+<div><p>Cohesion models are implemented in the 3 contact models discussed previously. The JKR model is available only in the Thornton-Ning model, which requires the <cite>cohesionEnergyDensity</cite> (in <span class="math notranslate nohighlight">\(J/m^2\)</span>) keyword when supplying the <cite>material</cite> dictionary to the model. The code below shows how the force-displacement curve is computed with the Thornton-Ning model for a cohesive wall-particle collision.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define powder properties with cohesion</span>
+<span class="n">powder</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">2e-5</span><span class="p">,</span> <span class="s1">&#39;yieldPress&#39;</span><span class="p">:</span> <span class="mf">4e7</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="mf">1500.0</span><span class="p">,</span>
+      <span class="s1">&#39;youngsModulus&#39;</span><span class="p">:</span> <span class="mf">6e9</span><span class="p">,</span> <span class="s1">&#39;cohesionEnergyDensity&#39;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">,</span>
+      <span class="s1">&#39;poissonsRatio&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s1">&#39;characteristicVelocity&#39;</span><span class="p">:</span> <span class="mf">0.04</span><span class="p">}</span>
+
+<span class="c1"># Compute the force-displacement curve</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">ThorntonNing</span><span class="p">(</span><span class="n">material</span><span class="o">=</span><span class="n">powder</span><span class="p">)</span>
+<span class="n">time</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">displacement</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The curves shown below are computed for a sphere of reduced radius <span class="math notranslate nohighlight">\(100 \mu m\)</span> and surface energy <span class="math notranslate nohighlight">\(0.04 J/m^2\)</span> using the Thornton-Ning model implemented in PyGran.</p>
+<div class="align-center figure" id="id11">
+<span id="fig-force-disp"></span><a class="reference internal image-reference" href="images/force-disp-coh.png"><img alt="force-disp curve" src="images/force-disp-coh.png" style="width: 720.0px; height: 540.0px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Force as a function of normal displacement computed for the Spring-Dashpot and Hertz-Mindlin models available in the <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGranSim/blob/master/PyGranSim/models.py">simulation.models</a> module.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+</div>
+<div class="align-center figure" id="id12">
+<span id="fig-time-disp"></span><a class="reference internal image-reference" href="images/time-disp-coh.png"><img alt="time-disp curve" src="images/time-disp-coh.png" style="width: 720.0px; height: 540.0px;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">Displacement curve as a function of time for elasto-plastic cohesive particles</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cohesion is turned on by supplying a <cite>cohesionEnergyDensity</cite> value to the contact models available in PyGran.</p>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="dem-simulation">
+<h2>DEM simulation<a class="headerlink" href="#dem-simulation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="engines-in-pygran">
+<h3>Engines in PyGran<a class="headerlink" href="#engines-in-pygran" title="Permalink to this headline">¶</a></h3>
+<p>External N-body (DEM) solvers such as <em>LAMMPS</em> or <em>LIGGGHTS</em> can be called from <cite>PyGran.simulation</cite> provided there is a supported interface that can import this solver as a separate module (in the form of a shared object on Unix or dynamic link library on Windows). An <cite>engine</cite> provides an interface for PyGran to call specific methods in the DEM solver. While <em>PyGran</em> provides an <cite>engine</cite> for <em>LIGGGHTS</em>, it can be readily used for post-processing with solvers such as <em>Yade</em> and <em>ESyS-particle</em> that have their own Python APIs.</p>
+</div>
+<div class="section" id="fundamentals">
+<h3>Fundamentals<a class="headerlink" href="#fundamentals" title="Permalink to this headline">¶</a></h3>
+<p>Any PyGran engine must provide a <code class="docutils literal notranslate"><span class="pre">simulation.DEMPy</span></code> class that is instantiated by a <code class="docutils literal notranslate"><span class="pre">simulation.DEM</span></code> object. The latter must be created by the user at the onset of any DEM simulation:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span> <span class="o">=</span> <span class="n">simulation</span><span class="o">.</span><span class="n">DEM</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>where <cite>args</cite> is a Python dictionary that contains keywords specific to the <cite>engine</cite> selected to setup and run the DEM simulation. The keyword <cite>engine</cite> (by default <code class="docutils literal notranslate"><span class="pre">simulation.engines.liggghts</span></code>) in <cite>args</cite> is used to specify which engine to use for running DEM simulation. Currently, PyGran supports only <em>LIGGGHTS</em> <span id="id8">[<a class="reference internal" href="zreferences.html#id28" title="Christoph Kloss and Christoph Goniva. LIGGGHTS-open source discrete element simulations of granular materials based on lammps. Supplemental Proceedings: Materials Fabrication, Properties, Characterization, and Modeling, Volume 2, pages 781–788, 2011.">KG11</a>]</span> as an N-body solver. For that purpose, <em>LIGGGHTS</em> must be installed as a shared library (see <a class="reference external" href="introduction.html#configureliggghtslabel">Configuration with LIGGGHTS</a>). The <code class="docutils literal notranslate"><span class="pre">__init__</span></code> constructor in <code class="docutils literal notranslate"><span class="pre">simulation.DEM</span></code> creates and/or changes directory to the user-specified output directory and initiates logging for <em>PyGran</em> (pygran.log) and <em>LIGGGHTS</em> (liggghts.log).</p>
+<p>Other keywords for DEM engines are covered in <a class="reference external" href="autosummary/simulation.PyGranSim.dem.html#module-modules.simulation.dem">simulation.DEM</a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="analysis.html" class="btn btn-neutral float-right" title="Analysis">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="introduction.html" class="btn btn-neutral" title="What is PyGran?"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2021 PyGran is a <b>DEM open-source</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v1.3.1+34.g0aab988.dirty',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

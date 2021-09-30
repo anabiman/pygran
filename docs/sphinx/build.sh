@@ -6,7 +6,8 @@ grep -rl '_modules' build/html | xargs sed -i 's/_modules/modules/g'
 grep -rl '_sources' build/html | xargs sed -i 's/_sources/sources/g'
 
 grep -rl '_autosummary' build/html | xargs sed -i 's/_autosummary/autosummary/g'
-grep -rl '2014 drove.io' build/html | xargs sed -i 's/2014 drove.io/2019 PyGran/g'
+grep -rl '2014 drove.io' build/html | xargs sed -i 's/2014 drove.io/2021 PyGran/g'
+grep -rl 'connectical' build/html | xargs sed -i 's/connectical/DEM open-source/g'
 
 mv build/html/_static build/html/static
 mv build/html/_images build/html/images

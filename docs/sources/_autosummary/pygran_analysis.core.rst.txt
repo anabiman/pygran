@@ -1,7 +1,11 @@
-analysis.PyGranAnalysis.core
-============================
+﻿pygran\_analysis.core
+=====================
 
-.. automodule:: analysis.PyGranAnalysis.core
+.. automodule:: pygran_analysis.core
+
+   
+   
+   
 
    
    
@@ -31,3 +35,6 @@ analysis.PyGranAnalysis.core
    
    
    
+
+
+

@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PyGran’s documentation &mdash; PyGran v1.3.1+34.g0aab988.dirty documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="static/css/main.css" type="text/css" />
+
+  
+    <link rel="stylesheet" href="static/plot_directive.css" type="text/css" />
+  
+    <link rel="stylesheet" href="static/graphviz.css" type="text/css" />
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="PyGran v1.3.1+34.g0aab988.dirty documentation" href="#"/>
+        <link rel="next" title="What is PyGran?" href="introduction.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="#" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>PyGran’s documentation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="sources/index.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="pygran-s-documentation">
+<h1>PyGran’s documentation<a class="headerlink" href="#pygran-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#os-support">OS support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#quick-installation-with-pypi">Quick installation with PyPi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#configuration-with-liggghts">Configuration with <em>LIGGGHTS</em></a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#compiling-liggghts">Compiling LIGGGHTS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#installation-example-ubuntu-18-04-lts">Installation example: ubuntu 18.04 (LTS)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#testing-pygran">Testing PyGran</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#numerical-analysis">Numerical analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simulation.html#contact-mechanical-models">Contact mechanical models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation.html#id6">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#dem-simulation">DEM simulation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simulation.html#engines-in-pygran">Engines in PyGran</a></li>
+<li class="toctree-l3"><a class="reference internal" href="simulation.html#fundamentals">Fundamentals</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="analysis.html#system-constructor">System constructor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysis.html#subsystem-constructor">SubSystem constructor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysis.html#id3">Particles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysis.html#binary-operations">Binary operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysis.html#basic-methods">Basic methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">Bibliography</a></li>
+</ul>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Interactive DEM simulation and/or analysis using Python</p></li>
+<li><p>Parallel <cite>multiple parameter, single script</cite> simulation for parametrization and sensitivity analysis</p></li>
+<li><p>Intuitive (matlab-like) syntax for particle manipulation and analysis (e.g. slicing, concatenating, etc.)</p></li>
+<li><p>Post-processing coupled particle-mesh DEM simulation with VTK</p></li>
+<li><p>Quick and easy plotting of DEM data with matplotlib</p></li>
+<li><p>Support for high-performance distributed computing with MPI</p></li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 26%" />
+<col style="width: 69%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Nr.</p></th>
+<th class="head"><p>Code metadata description</p></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>C1</p></td>
+<td><p>code version</p></td>
+<td><p>2.0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>C2</p></td>
+<td><p>code repository</p></td>
+<td><p><a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran">github</a></p></td>
+</tr>
+<tr class="row-even"><td><p>C3</p></td>
+<td><p>legal code license</p></td>
+<td><p><a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>C4</p></td>
+<td><p>version-control system used</p></td>
+<td><p><a class="reference external" href="https://git-scm.com">git</a></p></td>
+</tr>
+<tr class="row-even"><td><p>C5</p></td>
+<td><p>languages &amp; tools used</p></td>
+<td><p>python, cython, MPI</p></td>
+</tr>
+<tr class="row-odd"><td><p>C6</p></td>
+<td><p>email</p></td>
+<td><p><a class="reference external" href="mailto:support&#37;&#52;&#48;pygran&#46;org">support<span>&#64;</span>pygran<span>&#46;</span>org</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="introduction.html" class="btn btn-neutral float-right" title="What is PyGran?">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2021 PyGran is a <b>DEM open-source</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'v1.3.1+34.g0aab988.dirty',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

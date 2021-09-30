@@ -13,8 +13,7 @@
 import os
 import sys
 import sphinx_drove_theme
-
-sys.path.insert(0, os.path.abspath("../../../src/PyGran"))
+import pygran
 
 
 # -- Project information -----------------------------------------------------
@@ -24,7 +23,7 @@ copyright = "2021, Andrew Abi-Mansour"
 author = "Andrew Abi-Mansour"
 
 # The full version, including alpha/beta/rc tags
-release = "1.3.1"
+release = pygran.__version__
 
 # -- General configuration ------------------------------------------------
 autoclass_content = "both"  # include both class docstring and __init__
@@ -55,13 +54,27 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinxcontrib.bibtex",
     "matplotlib.sphinxext.plot_directive",
-    "sphinx.ext.imgmath",
+    # "sphinx.ext.imgmath",
     "sphinx.ext.todo",
+    # from Sphinx
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.graphviz",
+    "sphinx.ext.graphviz",
+    "sphinx_autodoc_typehints",
+    "sphinx.ext.autosectionlabel",
+    # from Astropy
+    "sphinx_automodapi.automodapi",
+    "sphinx_automodapi.automodsumm",
+    "sphinx_automodapi.smart_resolver",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
-bibtex_bibfiles = ['refs.bib']
+bibtex_bibfiles = ["refs.bib"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

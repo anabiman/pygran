@@ -6,7 +6,7 @@ Submodules
 ##########
 .. autosummary::
 
-   :toctree: _autosummary
+   :toctree: autosummary
 
    pygran_sim.dem
    pygran_sim.base
