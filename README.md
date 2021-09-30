@@ -11,11 +11,11 @@ The main features of PyGran:
 - Quick and easy plotting of DEM data with matplotlib
 - Support for high-performance computing with MPI
 
-The core modules in PyGran are:
+The core modules in PyGran utilize the following stand-alone packages:
 
-- [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation
-- [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides methods and algorithms for post-processing DEM data
-- [params](https://github.com/Andrew-AbiMansour/PyGranParams): defines material properties
+- [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation based on the interoperability `pygran_sim` package.
+- [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides methods and algorithms for post-processing DEM data based on the `pygran_analysis` package.
+- [params](https://github.com/Andrew-AbiMansour/PyGranParams): provides material properties from the `pygran_params` package.
 
 **If you find PyGran useful in your research, please consider citing the following paper:**
 
@@ -37,7 +37,7 @@ The core modules in PyGran are:
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
 ```bash
-pip install PyGran
+pip install pygran
 ```
 For more options and information on setting up PyGran on Ubuntu 18.04 (LTS), see the [installation](docs/introduction.html#installation-example-ubuntu-18-04-lts) page.
 
@@ -49,8 +49,7 @@ PyGran also provides an interface for running DEM simulation with [LIGGGHTS](htt
 <p style="text-align:center;"><img src="images/hopper.png" width="600"></p>
 
 ```python
-from PyGran import simulation
-from PyGran import params
+from pygran import simulation, params
 
 # Create a DEM object for simulation
 sim = simulation.DEM(
@@ -63,10 +62,10 @@ sim = simulation.DEM(
         ),
     gravity=(9.81, 0, 0, -1),
     mesh={
-        "hopper": {
-            "file": "silo.stl",
-            "mtype": "mesh/surface",
-            "material": params.steel,
+        "hopper": { # arbitrary mesh name
+            "file": "silo.stl", # mesh filename
+            "mtype": "mesh/surface", # mesh type
+            "material": params.steel, # mesh material
         }
     },
 )
