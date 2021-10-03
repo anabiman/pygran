@@ -42,7 +42,9 @@ class MainWindow(wx.Frame):
         """
         self._LENGTH = 650
         self._WIDTH = 800
-        self.iconsDir = os.path.dirname(os.path.realpath(__file__)) + "/Icons/"
+        self.iconsDir = ps.path.join(
+            os.path.dirname(os.path.realpath(__file__)), "icons"
+        )
 
         __slots__ = [
             "display_panel",
@@ -251,7 +253,7 @@ class MainWindow(wx.Frame):
         self.SetMenuBar(menubar=self.MainMenuBar)
 
     def ToolBar(self):
-        """ """
+        """..."""
         iconsDir = self.iconsDir
 
         self.ToolBar = self.CreateToolBar(style=wx.DEFAULT_DIALOG_STYLE)
@@ -483,22 +485,22 @@ class MainWindow(wx.Frame):
 
         description = self.LanguageClass.description
 
-        license = """SiDEM is free software; you can redistribute 
+        license = """PyGran is free software; you can redistribute 
 it and/or modify it under the terms of the GNU General Public License as 
 published by the Free Software Foundation; either version 2 of the License, 
 or (at your option) any later version.
 
-SiDEM is distributed in the hope that it will be useful, 
+PyGran is distributed in the hope that it will be useful, 
 but WITHOUT ANY WARRANTY; without even the implied warranty of 
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 See the GNU General Public License for more details. You should have 
-received a copy of the GNU General Public License along with SiDEM; 
+received a copy of the GNU General Public License along with PyGran; 
 if not, write to the Free Software Foundation, Inc., 59 Temple Place, 
 Suite 330, Boston, MA  02111-1307  USA"""
 
         info = wx.AboutDialogInfo()
         info.SetIcon(wx.Icon(self.iconsDir + "CAAM.png", wx.BITMAP_TYPE_PNG))
-        info.SetName("SiDEM")
+        info.SetName("PyGran")
         info.SetVersion("1.0")
         info.SetDescription(description)
         info.SetCopyright("(C) 2016 Andrew Abi Mansour")
