@@ -89,8 +89,8 @@ from pygran import analysis
 sys = analysis.System(Particles='granular.dump')
 
 # Instantiate a nearest-neighbors class
-NNS = analysis.Neighbors(Particles=sys.Particles)
-overlaps = NNS.overlaps
+nns = analysis.Neighbors(Particles=sys.Particles)
+overlaps = nns.overlaps
 ```
 For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/examples/examples.html">examples</a> page.
 
