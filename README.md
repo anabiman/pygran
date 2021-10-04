@@ -83,7 +83,7 @@ Using PyGran for doing post-analysis is also quite straight forward. Computing p
 <p style="text-align:center;"><img src="images/overlap-hist.png"></p>
 
 ```python
-from PyGran import analysis
+from pygran import analysis
 
 # Instantiate a System class from a dump file
 sys = analysis.System(Particles='granular.dump')
