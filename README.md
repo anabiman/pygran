@@ -35,7 +35,7 @@ The core modules in PyGran utilize the following stand-alone packages:
 ```
 
 ## Quick Installation
-Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip (or pip3) to install PyGran:
+Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran:
 ```bash
 pip install pygran
 ```
