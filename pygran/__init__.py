@@ -26,13 +26,16 @@
   and LICENSE files.
 """
 
-from .analysis import analysis
-from .simulation import simulation
-from . import params
 from pygran_sim.tools import configure
+
+from . import params
 
 # Handle versioneer
 from ._version import get_versions
+
+# Legacy submodules
+from .analysis import analysis
+from .simulation import simulation
 
 versions = get_versions()
 __version__ = versions["version"]
