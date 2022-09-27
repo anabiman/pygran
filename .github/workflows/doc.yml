@@ -1,0 +1,54 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: doc
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+
+    steps:
+    - name: Checkout repository and submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Install binary dependencies
+      run: |
+        sudo apt-get update && sudo apt-get install libopenmpi-dev openmpi-common openmpi-bin libvtk6-dev
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install pytest matplotlib sphinxcontrib.bibtex sphinx_drove_theme # for docs
+        python -m pip install -e .[extra]
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: compiling LIGGGHTS
+      run: |
+        python setup.py build_liggghts
+    - name: Install pygran
+      run: |
+        python -m pip install .
+    - name: Generate sphinx docs
+      run: |
+        cd docs/sphinx
+        bash clean.sh
+        bash build.sh
+  
+    - name: CodeCov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-${{ matrix.os }}-py${{ matrix.python-version }}
