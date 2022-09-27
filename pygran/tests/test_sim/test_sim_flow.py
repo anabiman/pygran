@@ -1,6 +1,7 @@
-from pygran import simulation
-from pygran.params import organic, glass
 import os
+
+from pygran import simulation
+from pygran.params import glass, organic
 
 
 def test_run(mpath="pygran/tests/test_sim"):

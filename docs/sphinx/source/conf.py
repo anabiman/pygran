@@ -12,9 +12,10 @@
 #
 import os
 import sys
-import sphinx_drove_theme
-import pygran
 
+import sphinx_drove_theme
+
+import pygran
 
 # -- Project information -----------------------------------------------------
 

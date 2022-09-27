@@ -1,7 +1,9 @@
 # Import the analysis module from PyGran
-from pygran import analysis
 import sys
+
 import pytest
+
+from pygran import analysis
 
 
 def test_foo(trajf):
