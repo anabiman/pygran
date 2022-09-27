@@ -27,8 +27,8 @@
 """
 
 from .analysis import analysis
-from .params import params
 from .simulation import simulation
+from . import params
 from pygran_sim.tools import configure
 
 # Handle versioneer
