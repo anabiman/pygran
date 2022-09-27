@@ -31,10 +31,11 @@
 
  """
 
-import sys, os
-from importlib import import_module
 import glob
 import logging
+import os
+import sys
+from importlib import import_module
 
 try:
     from mpi4py import MPI
