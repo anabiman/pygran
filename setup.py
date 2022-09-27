@@ -29,15 +29,18 @@ If not, see http://www.gnu.org/licenses . See also top-level README
 and LICENSE files.
 """
 
-import os, sys, shutil
-import subprocess
-from setuptools import setup, find_packages
-import shutil, pathlib
-from distutils.command.install import install
-from distutils.command.clean import clean
-import versioneer
 import fileinput
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+from distutils.command.clean import clean
+from distutils.command.install import install
 
+from setuptools import find_packages, setup
+
+import versioneer
 
 short_description = __doc__.split("\n")
 
@@ -48,8 +51,8 @@ except Exception:
     long_description = "\n".join(short_description[2:])
 
 try:
-    from Cython.Build import cythonize
     import numpy
+    from Cython.Build import cythonize
 
     optimal_list = cythonize(
         "pygran/analysis/pygran_analysis/core.pyx",
@@ -137,7 +140,7 @@ class LIGGGHTS(Track):
             count += 1
             self.print_progress(
                 count,
-                total=2*len(files)*1.0215, # makefile prints 2 lines per file
+                total=2 * len(files) * 1.0215,  # makefile prints 2 lines per file
                 prefix="Progress:",
                 suffix="complete",
             )
@@ -165,7 +168,9 @@ setup(
     install_requires=["numpy", "scipy"],
     packages=find_packages(),
     extras_require={
-        "extra": ["vtk", "mpi4py", "Pillow", "pytest", "pytest-cov", "codecov"]
+        "extra": ["vtk", "mpi4py", "Pillow", "pytest", "pytest-cov", "codecov"],
+        "analysis": ["pygran_analysis"],
+        "sim": ["pygran_sim"],
     },
     long_description="A DEM toolbox for rapid quantitative analysis and simulation of granular/powder systems. See http://www.pygran.org.",
     classifiers=[
