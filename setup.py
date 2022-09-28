@@ -165,7 +165,7 @@ setup(
     keywords="Discrete Element Method, Granular Materials",
     url="https://github.com/Andrew-AbiMansour/PyGran",
     include_package_data=True,
-    install_requires=["numpy", "scipy"],
+    install_requires=["numpy", "scipy", "pygran_analysis", "pygran_sim"],
     packages=find_packages(),
     extras_require={
         "extra": ["vtk", "mpi4py", "Pillow", "pytest", "pytest-cov", "codecov"],
