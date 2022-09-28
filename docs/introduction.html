@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>What is PyGran? &mdash; PyGran 0+untagged.1.ge433a94 documentation</title>
+  <title>What is PyGran? &mdash; PyGran 0+untagged.1.gfb883e1.dirty documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="PyGran 0+untagged.1.ge433a94 documentation" href="index.html"/>
+    <link rel="top" title="PyGran 0+untagged.1.gfb883e1.dirty documentation" href="index.html"/>
         <link rel="next" title="Simulation" href="simulation.html"/>
         <link rel="prev" title="PyGran’s documentation" href="index.html"/> 
 
@@ -71,7 +71,6 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">PyGran’s documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">What is PyGran?</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#brief-summary-of-dem">Brief summary of DEM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
 </ul>
 </li>
@@ -126,10 +125,10 @@
   <section id="what-is-pygran">
 <h1>What is PyGran?<a class="headerlink" href="#what-is-pygran" title="Permalink to this heading">¶</a></h1>
 <p><em>PyGran</em> is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of <em>PyGran</em>  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing <em>PyGran</em>  for Unix systems, this manual focuses on 2 core modules (<a class="reference internal" href="#fig-pygran"><span class="std std-numref">Fig. 1</span></a>) in <em>PyGran</em> : <code class="docutils literal notranslate"><span class="pre">simulation</span></code> which provides <code class="docutils literal notranslate"><span class="pre">engines</span></code> for running DEM simulation and enables analysis of contact mechanical models, and <code class="docutils literal notranslate"><span class="pre">analysis</span></code> which contains methods and submodules for processing DEM data. <em>PyGran</em>  is released under the GNU General Public License (<a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a>), and its code base is available from <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran">github</a>.</p>
-<figure class="align-center" id="id4">
+<figure class="align-center" id="id3">
 <span id="fig-pygran"></span><a class="reference internal image-reference" href="images/PyGran-design.png"><img alt="PyGran modules" src="images/PyGran-design.png" style="width: 502.0px; height: 292.0px;" /></a>
 <figcaption>
-<p><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules that can be imported from a Python script.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules that can be imported from a Python script.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 <section id="brief-summary-of-dem">
@@ -139,50 +138,20 @@
 <span class="eqno">(1)<a class="headerlink" href="#equation-introduction-0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}\rho V_i a_i &amp;= \sum_j F_{ij} + F_{b_i},\\I_i \alpha_i &amp;= \sum_j T_{ij}.\end{aligned}\end{align} \]</div>
 <p>The true mass density of the particles is <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(F_{ij}\)</span> is the surface contact force between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors (summed over <span class="math notranslate nohighlight">\(j\)</span>), <span class="math notranslate nohighlight">\(F_{b_i}\)</span> is a body force acting on particle <span class="math notranslate nohighlight">\(i\)</span> (such as gravity, i.e. <span class="math notranslate nohighlight">\(F_{b_i} = \rho V_i g\)</span>), and <span class="math notranslate nohighlight">\(T_{ij}\)</span> is the torque between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors that is limited by the static friction coefficient <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <p>DEM simulation involves the numerical solution of Eqs. (1) by decomposing the space the particles occupy into a grid of connected nearest-neighbor lists that enable fast and efficient computation of inter-particle surface forces. For every discrete timestep, all forces acting on each particle are computed, and the particle positions are updated based on the discretized form of Eqs. (1).</p>
-<figure class="align-center" id="id5">
+<figure class="align-center" id="id4">
 <span id="fig-dem"></span><a class="reference internal image-reference" href="images/DEM.png"><img alt="DEM cycle" src="images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
 <figcaption>
-<p><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <span id="id1">[<a class="reference internal" href="zreferences.html#id21" title="Thorsten Pöschel and Thomas Schwager. Computational granular dynamics: models and algorithms. Springer Science &amp; Business Media, 2005.">PoschelS05</a>]</span>.</p>
 <p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <span id="id2">[<a class="reference internal" href="zreferences.html#id20" title="H Kruggel-Emden, S Rickelt, S Wirtz, and V Scherer. A study on the validity of the multi-sphere discrete element method. Powder Technology, 188(2):153–165, 2008.">KERWS08</a>]</span>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
-<figure class="align-center" id="id6">
+<figure class="align-center" id="id5">
 <span id="fig-multisphere"></span><a class="reference internal image-reference" href="images/multisphere.png"><img alt="Multisphere particle" src="images/multisphere.png" style="width: 300px; height: 150px;" /></a>
 <figcaption>
-<p><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </figcaption>
 </figure>
-</section>
-<section id="prerequisites">
-<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">¶</a></h2>
-<section id="os-support">
-<h3>OS support<a class="headerlink" href="#os-support" title="Permalink to this heading">¶</a></h3>
-<p>In the current version, <em>PyGran</em> is configured to run on Unix or Unix-like operating systems. While <em>PyGran</em> can be run on a Windows platform, it has not yet been fully tested. <em>PyGran</em> supports Python 3.X and is fully backwards compatible with Python 2.7 (and later verions). The table in <a class="reference internal" href="index.html"><span class="doc">PyGran’s documentation</span></a> summarizes some of the technical details of the <em>PyGran</em> source code.</p>
-</section>
-<section id="dependencies">
-<h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h3>
-<section id="core-packages">
-<h4>Core packages<a class="headerlink" href="#core-packages" title="Permalink to this heading">¶</a></h4>
-<p><em>PyGran</em> is designed to work in conjunction with <em>NumPy</em>, <em>SciPy</em>, and other Python libraries. The following packages must be installed before <em>PyGran</em> is configured to run:</p>
-<blockquote>
-<div><p><a class="reference external" href="https://github.com/numpy/numpy">Numpy</a>: for exposing trajectory data as <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> objects and performing linear algebra floating-point operations</p>
-<p><a class="reference external" href="https://github.com/scipy/scipy">Scipy</a>: for efficient nearest neighbor searching routines, sorting, and non-linear solvers</p>
-</div></blockquote>
-</section>
-<section id="optional-packages">
-<h4>Optional packages<a class="headerlink" href="#optional-packages" title="Permalink to this heading">¶</a></h4>
-<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <span id="id3">[<a class="reference internal" href="zreferences.html#id28" title="Christoph Kloss and Christoph Goniva. LIGGGHTS-open source discrete element simulations of granular materials based on lammps. Supplemental Proceedings: Materials Fabrication, Properties, Characterization, and Modeling, Volume 2, pages 781–788, 2011.">KG11</a>]</span> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
-<blockquote>
-<div><p><a class="reference external" href="https://github.com/cython/cython">Cython</a>: for improved performance in <code class="docutils literal notranslate"><span class="pre">analysis.core</span></code> module</p>
-<p><a class="reference external" href="https://github.com/mpi4py/mpi4py">mpi4py</a>: for running DEM simulation in parallel with MPI</p>
-<p><a class="reference external" href="https://pypi.org/project/vtk">vtk</a>: for reading input files in VTK file format</p>
-<p><a class="reference external" href="https://matplotlib.org">matplotlib</a>: for generating 2D plots</p>
-<p><a class="reference external" href="http://www.pythonware.com/products/pil">PIL</a> : for XRCT image analysis</p>
-</div></blockquote>
-<p>If <em>PyGran</em> is installed via the Python Package Index (<a class="reference external" href="https://pypi.org">PyPi</a>), then all of the core dependencies will be installed as well. However, for optimal performance, it is recommended that cython is installed on the system. How to setup and install <em>PyGran</em> is explained in the next section.</p>
-</section>
-</section>
 </section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
@@ -297,7 +266,7 @@ Open a terminal and run from the source dir:</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0+untagged.1.ge433a94',
+            VERSION:'0+untagged.1.gfb883e1.dirty',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

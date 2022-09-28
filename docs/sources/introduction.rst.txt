@@ -49,38 +49,6 @@ As of version 1.1, *PyGran* supports non-spherical particle simulation with the 
 
     In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres
 
-Prerequisites
-#############
-OS support
-**********
-In the current version, *PyGran* is configured to run on Unix or Unix-like operating systems. While *PyGran* can be run on a Windows platform, it has not yet been fully tested. *PyGran* supports Python 3.X and is fully backwards compatible with Python 2.7 (and later verions). The table in :doc:`index` summarizes some of the technical details of the *PyGran* source code.
-
-Dependencies
-************
-Core packages
--------------
-*PyGran* is designed to work in conjunction with *NumPy*, *SciPy*, and other Python libraries. The following packages must be installed before *PyGran* is configured to run:
-
-    `Numpy <https://github.com/numpy/numpy>`_: for exposing trajectory data as ``ndarray`` objects and performing linear algebra floating-point operations
-
-    `Scipy <https://github.com/scipy/scipy>`_: for efficient nearest neighbor searching routines, sorting, and non-linear solvers
-
-Optional packages
------------------
-For running DEM simluation with `LIGGGHTS <https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code>`_ :cite:`kloss2011liggghts` in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in *PyGran* are:
-
-    `Cython <https://github.com/cython/cython>`_: for improved performance in ``analysis.core`` module
-
-    `mpi4py <https://github.com/mpi4py/mpi4py>`_: for running DEM simulation in parallel with MPI
-
-    `vtk <https://pypi.org/project/vtk>`_: for reading input files in VTK file format
-
-    `matplotlib <https://matplotlib.org>`_: for generating 2D plots
-
-    `PIL <http://www.pythonware.com/products/pil>`_ : for XRCT image analysis
-
-If *PyGran* is installed via the Python Package Index (`PyPi <https://pypi.org>`_), then all of the core dependencies will be installed as well. However, for optimal performance, it is recommended that cython is installed on the system. How to setup and install *PyGran* is explained in the next section.
-
 Installation
 ############
 Quick installation with PyPi
