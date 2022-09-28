@@ -89,7 +89,7 @@ The easiest way to install the latest stable version of *PyGran* is with PyPi::
 
     pip install pygran --user
 
-This will install *pygran_analysis*, *pygran_sim*, and *pygran_params* packages. If you're interested in running only analysis or simulation, then you should
+This will install *pygran_analysis* and *pygran_sim* packages. If you're interested in running only analysis or simulation, then you should
 install whichever package you require.
 
 .. _configureliggghtslabel:
@@ -132,14 +132,12 @@ First, fire up a terminal in order to update the system and install all dependen
 
 Let's now clone the PyGran  source code::
 
-    git clone https://github.com/Andrew-AbiMansour/PyGran.git
-    cd PyGran
-    git submodule init
-    git submodule update
+    git clone https://github.com/anabiman/pygran.git
+    cd pygran
 
-Let's locally install PyGran dependencies with pip::
+Install PyGran dependencies with pip::
 
-    pip3 install -e .[extra] --user
+    pip3 install .[extra]
 
 If LIGGGHTS is not available as a shared library, run::
 
@@ -147,7 +145,7 @@ If LIGGGHTS is not available as a shared library, run::
 
 This will clone the *LIGGGHTS-PUBLIC* repository and compile the code as a shared object. The process takes a few minutes to finish. Once this is done, we can finally install PyGran::
 
-    pip3 install . --user
+    pip3 install .
 
 Testing PyGran
 **************

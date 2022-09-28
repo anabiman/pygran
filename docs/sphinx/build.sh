@@ -13,4 +13,5 @@ mv build/html/_static build/html/static
 mv build/html/_images build/html/images
 mv build/html/_autosummary build/html/autosummary
 mv build/html/_sources build/html/sources
-#mv build/html/_modules build/html/modules
+
+mv build/html/* ..

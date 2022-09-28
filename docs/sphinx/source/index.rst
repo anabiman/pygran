@@ -31,7 +31,7 @@ Requirements
 Nr.    Code metadata description    ..
 =====  ===========================  =======================
 C1           code version            1.4.0
-C2     code repository                `github <https://github.com/Andrew-AbiMansour/PyGran>`_
+C2     code repository                `github <https://github.com/anabiman/pygran>`_
 C3     legal code license            `GPL v2.0 <https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>`_
 C4     version-control system used    `git <https://git-scm.com>`_
 C5     languages & tools used       python, cython, MPI
