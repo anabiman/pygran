@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.9]
 
     steps:
     - name: Checkout repository
@@ -46,10 +46,19 @@ jobs:
         cd docs/sphinx
         bash clean.sh
         bash build.sh
-  
-    - name: CodeCov
-      uses: codecov/codecov-action@v1
+
+    - name: Commit documentation changes
+      shell: bash -l {0}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "github-actions[bot]"
+        git add .
+        git commit -m "Update documentation" -a || true
+        # The above command will fail if no changes were present, so we ignore
+        # the return code.
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
       with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-${{ matrix.os }}-py${{ matrix.python-version }}
+        branch: ${{ github.ref }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
