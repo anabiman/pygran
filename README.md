@@ -13,8 +13,8 @@ The main features of PyGran:
 
 The core modules in PyGran utilize the following stand-alone packages:
 
-- [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation based on the `pygran_sim` package.
-- [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides routines for post-processing DEM data based on the `pygran_analysis` package.
+- [simulation](https://github.com/anabiman/pygran_sim): provides APIs for running DEM simulation based on the `pygran_sim` package.
+- [analysis](https://github.com/anabiman/pygran_analysis): provides routines for post-processing DEM data based on the `pygran_analysis` package.
 
 **If you find PyGran useful in your research, please consider citing the following paper:**
 
@@ -36,7 +36,12 @@ The core modules in PyGran utilize the following stand-alone packages:
 ## Quick Installation
 Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran with all its extra dependencies and modules:
 ```bash
-pip install pygran pygran[extras] pygran[analysis] pygran[sim]
+pip install pygran pygran[extras]
+```
+
+If you're interested in only using the [pygran_sim](https://github.com/anabiman/pygran_sim) component, then run:
+```bash
+pip install pygran[sim]
 ```
 
 ## Basic Usage
