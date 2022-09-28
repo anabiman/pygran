@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>What is PyGran? &mdash; PyGran 0+untagged.1.g9b1d691 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="static/css/main.css" type="text/css" />
+
+  
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="static/css/main.css" type="text/css" />
+  
+    <link rel="stylesheet" href="static/plot_directive.css" type="text/css" />
+  
+    <link rel="stylesheet" href="static/graphviz.css" type="text/css" />
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="PyGran 0+untagged.1.g9b1d691 documentation" href="index.html"/>
+        <link rel="next" title="Simulation" href="simulation.html"/>
+        <link rel="prev" title="PyGran’s documentation" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>What is PyGran?</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <section id="what-is-pygran">
+<h1>What is PyGran?<a class="headerlink" href="#what-is-pygran" title="Permalink to this heading">¶</a></h1>
+<p><em>PyGran</em> is an object-oriented library written primarily in Python for Discrete Element Method (DEM) simulation and analysis. The main purpose of <em>PyGran</em>  is to provide an easy and intuitive way for performing technical computing in DEM, enabling flexibility in how users interact with data from the onset of a simulation and until the post-processing stage. In addition to providing a brief tutorial on installing <em>PyGran</em>  for Unix systems, this manual focuses on 2 core modules (<a class="reference internal" href="#fig-pygran"><span class="std std-numref">Fig. 1</span></a>) in <em>PyGran</em> : <code class="docutils literal notranslate"><span class="pre">simulation</span></code> which provides <code class="docutils literal notranslate"><span class="pre">engines</span></code> for running DEM simulation and enables analysis of contact mechanical models, and <code class="docutils literal notranslate"><span class="pre">analysis</span></code> which contains methods and submodules for processing DEM data. <em>PyGran</em>  is released under the GNU General Public License (<a class="reference external" href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html">GPL v2.0</a>), and its code base is available from <a class="reference external" href="https://github.com/Andrew-AbiMansour/PyGran">github</a>.</p>
+<figure class="align-center" id="id4">
+<span id="fig-pygran"></span><a class="reference internal image-reference" href="images/PyGran-design.png"><img alt="PyGran modules" src="images/PyGran-design.png" style="width: 502.0px; height: 292.0px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">A diagram that shows the hierarchical structure of <em>PyGran</em> in terms of its core modules that can be imported from a Python script.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<section id="brief-summary-of-dem">
+<h2>Brief summary of DEM<a class="headerlink" href="#brief-summary-of-dem" title="Permalink to this heading">¶</a></h2>
+<p>The Discrete Element Method (DEM) is the application of Newtonian mechanics to a set of interacting particles that are usually assumed to be spherical in shape. For a spherical particle <span class="math notranslate nohighlight">\(i\)</span> that undergoes translation and rotation and of moment of inertia <span class="math notranslate nohighlight">\(I_i\)</span> and volume <span class="math notranslate nohighlight">\(V_i\)</span>, its dynamical equations are</p>
+<div class="math notranslate nohighlight" id="equation-introduction-0">
+<span class="eqno">(1)<a class="headerlink" href="#equation-introduction-0" title="Permalink to this equation">¶</a></span>\[ \begin{align}\begin{aligned}\rho V_i a_i &amp;= \sum_j F_{ij} + F_{b_i},\\I_i \alpha_i &amp;= \sum_j T_{ij}.\end{aligned}\end{align} \]</div>
+<p>The true mass density of the particles is <span class="math notranslate nohighlight">\(\rho\)</span>, <span class="math notranslate nohighlight">\(F_{ij}\)</span> is the surface contact force between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors (summed over <span class="math notranslate nohighlight">\(j\)</span>), <span class="math notranslate nohighlight">\(F_{b_i}\)</span> is a body force acting on particle <span class="math notranslate nohighlight">\(i\)</span> (such as gravity, i.e. <span class="math notranslate nohighlight">\(F_{b_i} = \rho V_i g\)</span>), and <span class="math notranslate nohighlight">\(T_{ij}\)</span> is the torque between particle <span class="math notranslate nohighlight">\(i\)</span> and its neighbors that is limited by the static friction coefficient <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
+<p>DEM simulation involves the numerical solution of Eqs. (1) by decomposing the space the particles occupy into a grid of connected nearest-neighbor lists that enable fast and efficient computation of inter-particle surface forces. For every discrete timestep, all forces acting on each particle are computed, and the particle positions are updated based on the discretized form of Eqs. (1).</p>
+<figure class="align-center" id="id5">
+<span id="fig-dem"></span><a class="reference internal image-reference" href="images/DEM.png"><img alt="DEM cycle" src="images/DEM.png" style="width: 396.9px; height: 271.59999999999997px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">A flowchart that shows the different stages involved in completing a single DEM timestep.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The form of the surface contact forces depends on the type of the bodies interacting with each other. Visco-elastic particles for instance can be modeled as two connected spring-dashpots. More sophisticated models assume particles behave as elasto-plastic spheres that undergo plastic deformation when the pressure exceeds a yield stress characteristic of the material the particles are composed of. Irrespective of the method energy dissipation is modeled, DEM usually assumes the two spherical particles in contact experience an elastic repulsive force that follows Hertz’ law. In addition to dissipation, the particles can experience an attractive cohesive force depending on their size. The contact models implemented in <em>PyGran</em> are discussed in the <a class="reference internal" href="simulation.html"><span class="doc">Simulation</span></a> pat. For a comprehensive review of DEM and contact mechanics, see <span id="id1">[<a class="reference internal" href="zreferences.html#id21" title="Thorsten Pöschel and Thomas Schwager. Computational granular dynamics: models and algorithms. Springer Science &amp; Business Media, 2005.">PoschelS05</a>]</span>.</p>
+<p>As of version 1.1, <em>PyGran</em> supports non-spherical particle simulation with the multisphere method (MS-DEM) <span id="id2">[<a class="reference internal" href="zreferences.html#id20" title="H Kruggel-Emden, S Rickelt, S Wirtz, and V Scherer. A study on the validity of the multi-sphere discrete element method. Powder Technology, 188(2):153–165, 2008.">KERWS08</a>]</span>. In this method, non-spherical particles are approximated by a series of spheres glued together as shown in <a class="reference internal" href="#fig-multisphere"><span class="std std-numref">Fig. 3</span></a>.</p>
+<figure class="align-center" id="id6">
+<span id="fig-multisphere"></span><a class="reference internal image-reference" href="images/multisphere.png"><img alt="Multisphere particle" src="images/multisphere.png" style="width: 300px; height: 150px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">In DEM, particles are usually represented as spheres (right); non-spherical particles (such as a rod, left) can be approximated with a group of glued spheres</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading">¶</a></h2>
+<section id="os-support">
+<h3>OS support<a class="headerlink" href="#os-support" title="Permalink to this heading">¶</a></h3>
+<p>In the current version, <em>PyGran</em> is configured to run on Unix or Unix-like operating systems. While <em>PyGran</em> can be run on a Windows platform, it has not yet been fully tested. <em>PyGran</em> supports Python 3.X and is fully backwards compatible with Python 2.7 (and later verions). The table in <a class="reference internal" href="index.html"><span class="doc">PyGran’s documentation</span></a> summarizes some of the technical details of the <em>PyGran</em> source code.</p>
+</section>
+<section id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h3>
+<section id="core-packages">
+<h4>Core packages<a class="headerlink" href="#core-packages" title="Permalink to this heading">¶</a></h4>
+<p><em>PyGran</em> is designed to work in conjunction with <em>NumPy</em>, <em>SciPy</em>, and other Python libraries. The following packages must be installed before <em>PyGran</em> is configured to run:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/numpy/numpy">Numpy</a>: for exposing trajectory data as <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> objects and performing linear algebra floating-point operations</p>
+<p><a class="reference external" href="https://github.com/scipy/scipy">Scipy</a>: for efficient nearest neighbor searching routines, sorting, and non-linear solvers</p>
+</div></blockquote>
+</section>
+<section id="optional-packages">
+<h4>Optional packages<a class="headerlink" href="#optional-packages" title="Permalink to this heading">¶</a></h4>
+<p>For running DEM simluation with <a class="reference external" href="https://www.cfdem.com/liggghts-open-source-discrete-element-method-particle-simulation-code">LIGGGHTS</a> <span id="id3">[<a class="reference internal" href="zreferences.html#id28" title="Christoph Kloss and Christoph Goniva. LIGGGHTS-open source discrete element simulations of granular materials based on lammps. Supplemental Proceedings: Materials Fabrication, Properties, Characterization, and Modeling, Volume 2, pages 781–788, 2011.">KG11</a>]</span> in parallel, OpenMPI or MPICH2 must be installed on the system. The packages are needed to achieve full optimal functionality in <em>PyGran</em> are:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/cython/cython">Cython</a>: for improved performance in <code class="docutils literal notranslate"><span class="pre">analysis.core</span></code> module</p>
+<p><a class="reference external" href="https://github.com/mpi4py/mpi4py">mpi4py</a>: for running DEM simulation in parallel with MPI</p>
+<p><a class="reference external" href="https://pypi.org/project/vtk">vtk</a>: for reading input files in VTK file format</p>
+<p><a class="reference external" href="https://matplotlib.org">matplotlib</a>: for generating 2D plots</p>
+<p><a class="reference external" href="http://www.pythonware.com/products/pil">PIL</a> : for XRCT image analysis</p>
+</div></blockquote>
+<p>If <em>PyGran</em> is installed via the Python Package Index (<a class="reference external" href="https://pypi.org">PyPi</a>), then all of the core dependencies will be installed as well. However, for optimal performance, it is recommended that cython is installed on the system. How to setup and install <em>PyGran</em> is explained in the next section.</p>
+</section>
+</section>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<section id="quick-installation-with-pypi">
+<h3>Quick installation with PyPi<a class="headerlink" href="#quick-installation-with-pypi" title="Permalink to this heading">¶</a></h3>
+<p>The easiest way to install the latest stable version of <em>PyGran</em> is with PyPi:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pygran</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>This will install <em>pygran_analysis</em> and <em>pygran_sim</em> packages. If you’re interested in running only analysis or simulation, then you should
+install whichever package you require.</p>
+</section>
+<section id="configuration-with-liggghts">
+<span id="configureliggghtslabel"></span><h3>Configuration with <em>LIGGGHTS</em><a class="headerlink" href="#configuration-with-liggghts" title="Permalink to this heading">¶</a></h3>
+<p><em>PyGran</em> has been tested with <a class="reference external" href="https://www.cfdem.com/download-liggghtsr-public">LIGGGHTS-PUBLIC</a> versions 3.4, 3.7, and 3.8. For running DEM simulation with <em>LIGGGHTS</em>, the latter must be compiled as a shared library (shared object on Unix/Linux systems), which <em>PyGran</em> will attempt to find. By default, <em>PyGran</em> searches for any available installation of <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code> and writes its path name to the 1st line in <code class="docutils literal notranslate"><span class="pre">~/.config/PyGran/liggghts.ini</span></code>. <em>PyGran</em> will also attempt to find the <em>LIGGGHTS</em> version and source path, and write each to the 2nd and 3rd lines, respectively, in the .ini file. Alternatively, in case multiple versions are installed on the system or if the library filename is not <code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>, users can specify the name of the shared object and optionally its source code path and version via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">PyGran</span>
+
+<span class="n">PyGran</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/home/user/.local/lib/custom_libliggghts.so&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s1">&#39;3.8.0&#39;</span><span class="p">,</span>
+    <span class="n">src</span><span class="o">=</span><span class="s1">&#39;/path/to/LIGGGHTS-3.8.0/src&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This produces a <code class="docutils literal notranslate"><span class="pre">~/.config/PyGran/liggghts.ini</span></code> file for <em>LIGGGHTS</em> v3.8 shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">library</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">custom_libliggghts</span><span class="o">.</span><span class="n">so</span>
+<span class="n">src</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">LIGGGHTS</span><span class="o">-</span><span class="mf">3.8.0</span><span class="o">/</span><span class="n">src</span>
+<span class="n">version</span><span class="o">=</span><span class="mf">3.8.0</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">config.ini</span></code> file is not found, <em>PyGran</em> will create one.</p>
+</section>
+<section id="compiling-liggghts">
+<h3>Compiling LIGGGHTS<a class="headerlink" href="#compiling-liggghts" title="Permalink to this heading">¶</a></h3>
+<p><em>PyGran</em>’s setup enables the compilation of <em>LIGGGHTS-PUBLIC</em> from its source code available from the <a class="reference external" href="https://github.com/CFDEMproject/LIGGGHTS-PUBLIC">CFDEM github</a> repository via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_liggghts</span>
+</pre></div>
+</div>
+<p>The command above will clone the <em>LIGGGHTS-PUBLIC</em> repository and compile the code as a shared library (<code class="docutils literal notranslate"><span class="pre">libliggghts.so</span></code>) in <code class="docutils literal notranslate"><span class="pre">LIGGGHTS-PUBLIC/src</span></code>. This requires <em>git</em>, <em>gcc</em>, and an MPI installation available on the system.</p>
+</section>
+<section id="installation-example-ubuntu-18-04-lts">
+<h3>Installation example: ubuntu 18.04 (LTS)<a class="headerlink" href="#installation-example-ubuntu-18-04-lts" title="Permalink to this heading">¶</a></h3>
+<p>The section below covers a fresh local installation of PyGran &amp; LIGGGHTS form source code. They have been tested with python 3, gcc v7.x, and LIGGGHTS v3.8. For global installs, remove <code class="docutils literal notranslate"><span class="pre">--user</span></code> from the commands and use <code class="docutils literal notranslate"><span class="pre">sudo</span></code> instead.</p>
+<p>First, fire up a terminal in order to update the system and install all dependencies via:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">gcc</span> <span class="n">libopenmpi</span><span class="o">-</span><span class="n">dev</span> <span class="n">python3</span><span class="o">-</span><span class="n">setuptools</span> <span class="n">python3</span><span class="o">-</span><span class="n">pip</span> <span class="n">ipython3</span> <span class="n">git</span> <span class="n">python3</span><span class="o">-</span><span class="n">matplotlib</span> <span class="n">libvtk6</span><span class="o">-</span><span class="n">dev</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>Let’s now clone the PyGran  source code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">anabiman</span><span class="o">/</span><span class="n">pygran</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">pygran</span>
+</pre></div>
+</div>
+<p>Install PyGran dependencies with pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">.</span><span class="p">[</span><span class="n">extra</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If LIGGGHTS is not available as a shared library, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_liggghts</span>
+</pre></div>
+</div>
+<p>This will clone the <em>LIGGGHTS-PUBLIC</em> repository and compile the code as a shared object. The process takes a few minutes to finish. Once this is done, we can finally install PyGran:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="testing-pygran">
+<h3>Testing PyGran<a class="headerlink" href="#testing-pygran" title="Permalink to this heading">¶</a></h3>
+<p>In order to test PyGran, we need to install pytest (<cite>pip install pytest</cite> does the trick). Now let’s run a simple flow problem in order to make sure everything works fine.
+Open a terminal and run from the source dir:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="n">pygran</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_sim</span>
+</pre></div>
+</div>
+<p>The process should take about 1-5 mins to finish, depending on the core clock cycle. If successful, this command should create an output directory (‘DEM_flow’) which contains the trajectory and restart files stored in ‘traj’ and ‘restart’ directories, respectively.</p>
+<p>In order to test the analysis module, run from the source dir:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span> <span class="o">-</span><span class="n">v</span> <span class="n">pygran</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">test_analysis</span> <span class="o">--</span><span class="n">trajf</span> <span class="s2">&quot;DEM_flow/traj/particles*.dump&quot;</span>
+</pre></div>
+</div>
+<p>The process should take few seconds to execute. If no exception is raised, then you know you can safely run PyGran for both simulation and analysis.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="simulation.html" class="btn btn-neutral float-right" title="Simulation">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="PyGran’s documentation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2022 PyGran is a <b>DEM open-source</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0+untagged.1.g9b1d691',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="static/documentation_options.js"></script>
+      <script type="text/javascript" src="static/jquery.js"></script>
+      <script type="text/javascript" src="static/underscore.js"></script>
+      <script type="text/javascript" src="static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script type="text/javascript" src="static/doctools.js"></script>
+      <script type="text/javascript" src="static/sphinx_highlight.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

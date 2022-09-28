@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pygran_sim.engine.simple.engine_simple &mdash; PyGran 0+untagged.1.g9b1d691 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../static/css/main.css" type="text/css" />
+
+  
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../static/css/main.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../static/plot_directive.css" type="text/css" />
+  
+    <link rel="stylesheet" href="../static/graphviz.css" type="text/css" />
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="PyGran 0+untagged.1.g9b1d691 documentation" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="../index.html" class="fa fa-home"> PyGran</a>
+        
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">PyGran’s documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">What is PyGran?</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#brief-summary-of-dem">Brief summary of DEM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../simulation.html">Simulation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#numerical-analysis">Numerical analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../simulation.html#dem-simulation">DEM simulation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html">Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analysis.html#systems-subsystems">Systems &amp; SubSystems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../zreferences.html">Bibliography</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">PyGran</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>pygran_sim.engine.simple.engine_simple</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../sources/autosummary/pygran_sim.engine.simple.engine_simple.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <section id="module-pygran_sim.engine.simple.engine_simple">
+<span id="pygran-sim-engine-simple-engine-simple"></span><h1>pygran_sim.engine.simple.engine_simple<a class="headerlink" href="#module-pygran_sim.engine.simple.engine_simple" title="Permalink to this heading">¶</a></h1>
+<p>The simple DEM Engine for basic contact analysis</p>
+<p>Created on April 10, 2021</p>
+<p>Author: Andrew Abi-Mansour</p>
+<p>This is the:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>██████╗ ██╗   ██╗ ██████╗ ██████╗  █████╗ ███╗   ██╗
+██╔══██╗╚██╗ ██╔╝██╔════╝ ██╔══██╗██╔══██╗████╗  ██║
+██████╔╝ ╚████╔╝ ██║  ███╗██████╔╝███████║██╔██╗ ██║
+██╔═══╝   ╚██╔╝  ██║   ██║██╔══██╗██╔══██║██║╚██╗██║
+██║        ██║   ╚██████╔╝██║  ██║██║  ██║██║ ╚████║
+╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+</pre></div>
+</div>
+<p>DEM simulation and analysis toolkit
+<a class="reference external" href="http://www.pygran.org">http://www.pygran.org</a>, <a class="reference external" href="mailto:support&#37;&#52;&#48;pygran&#46;org">support<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>Core developer and main author:
+Andrew Abi-Mansour, <a class="reference external" href="mailto:andrew&#46;abi&#46;mansour&#37;&#52;&#48;pygran&#46;org">andrew<span>&#46;</span>abi<span>&#46;</span>mansour<span>&#64;</span>pygran<span>&#46;</span>org</a></p>
+<p>PyGran is open-source, distributed under the terms of the GNU Public
+License, version 2 or later. It is distributed in the hope that it will
+be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. You should have
+received a copy of the GNU General Public License along with PyGran.
+If not, see <a class="reference external" href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a> . See also top-level README
+and LICENSE files.</p>
+<p>This file was modified from the LAMMPS source code.</p>
+<p>LAMMPS - Large-scale Atomic/Molecular Massively Parallel Simulator
+<a class="reference external" href="http://lammps.sandia.gov">http://lammps.sandia.gov</a>, Sandia National Laboratories
+Steve Plimpton, <a class="reference external" href="mailto:sjplimp&#37;&#52;&#48;sandia&#46;gov">sjplimp<span>&#64;</span>sandia<span>&#46;</span>gov</a></p>
+<p>Copyright (2003) Sandia Corporation.  Under the terms of Contract
+DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government retains
+certain rights in this software.  This software is distributed under
+the GNU General Public License.</p>
+<p>See the README file in the top-level LAMMPS directory.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleAPI</span></code>(*, split, library[, style, comm, ...])</p></td>
+<td><p>Initialize some settings and specifications</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          <footer>
+  
+
+  <div role="contentinfo">
+		<p class="centered">© 2022 PyGran is a <b>DEM open-source</b> project. <span class="nnlogo"></span></p>
+  </div>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0+untagged.1.g9b1d691',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/documentation_options.js"></script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/_sphinx_javascript_frameworks_compat.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="../static/sphinx_highlight.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
