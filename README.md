@@ -15,7 +15,6 @@ The core modules in PyGran utilize the following stand-alone packages:
 
 - [simulation](https://github.com/Andrew-AbiMansour/PyGranSim): provides APIs for running DEM simulation based on the `pygran_sim` package.
 - [analysis](https://github.com/Andrew-AbiMansour/PyGranAnalysis): provides routines for post-processing DEM data based on the `pygran_analysis` package.
-- [params](https://github.com/Andrew-AbiMansour/PyGranParams): provides material properties from the `pygran_params` package.
 
 **If you find PyGran useful in your research, please consider citing the following paper:**
 
@@ -35,11 +34,10 @@ The core modules in PyGran utilize the following stand-alone packages:
 ```
 
 ## Quick Installation
-Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran:
+Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran with all its extra dependencies and modules:
 ```bash
-pip install pygran
+pip install pygran pygran[extras] pygran[analysis] pygran[sim]
 ```
-For more options and information on setting up PyGran on Ubuntu 18.04 (LTS), see the [installation](docs/introduction.html#installation-example-ubuntu-18-04-lts) page.
 
 ## Basic Usage
 ### Running DEM simulation with LIGGGHTS
@@ -92,12 +90,8 @@ sys = analysis.System(Particles='granular.dump')
 nns = analysis.Neighbors(Particles=sys.Particles)
 overlaps = nns.overlaps
 ```
-For more examples on using PyGran for running DEM simulation, check out the <a href="http://andrew-abimansour.github.io/PyGran/examples/examples.html">examples</a> page.
+For more examples on using PyGran for running DEM simulation, check out the <a href="http://anabiman.github.io/pygran/examples/examples.html">examples</a> page.
 
 ## Questions or suggestions?
 
-**If you'd like to chat with us, we are available on slack:**
-
-[![slack](https://img.shields.io/badge/chat-on_slack-808493.svg?longCache=true&style=flat&logo=slack)](https://levnon.slack.com/archives/CPSTMBVTR)
-
-For reporting bugs or suggesting new features/improvements to the code, please open an [issue](https://github.com/andrew-abimansour/PyGran/issues).
+For reporting bugs or suggesting new features/improvements to the code, please open an [issue](https://github.com/anabiman/pygran/issues).
