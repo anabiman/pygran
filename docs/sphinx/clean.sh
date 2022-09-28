@@ -1,1 +1,1 @@
-rm -r ../autosummary/ ../static/ ../images/ ../sources  ../*.inv ../*.js ../*.html
+rm -rf ../autosummary/ ../static/ ../images/ ../sources  ../*.inv ../*.js ../*.html
