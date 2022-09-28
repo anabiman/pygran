@@ -74,3 +74,22 @@ and as of v1.2 this project adheres to [Semantic Versioning](https://semver.org/
 ### Changed
 - Fixed bug with analysis.core.computeIntensitySegregation: 'self.types'
 
+## [1.4.0]
+### Added
+- Versioneer for automated code versioning
+- Improved code structure 
+- Support for python 3.10
+- Separated analysis, sim, and params into separate packages.
+- New params module to replace pygran_params pkg
+
+### Changed
+- Improved code quality and compliance with PEP8
+- Made mpi4py an optional requirement
+- Switched to lower-case module names
+- Support for pygran_analysis vx.x.x
+- Support for pygran_sim vx.x.x
+- Improved liggghts compilation progress bar
+
+### Removed
+- Old versioning system
+- Support for python 3.7
