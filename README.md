@@ -34,14 +34,14 @@ The core modules in PyGran utilize the following stand-alone packages:
 ```
 
 ## Quick Installation
-Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran with all its extra dependencies and modules:
+Installing PyGran is quite straight forward on a Unix/Unix-like machine. Just fire up a terminal and then use pip to install PyGran:
 ```bash
-pip install pygran pygran[extras]
+pip install pygran
 ```
 
-If you're interested in only using the [pygran_sim](https://github.com/anabiman/pygran-sim) component, then run:
+This will install a basic version of pygran. For a full installation (that includes mpi4py, vtk, etc.), run:
 ```bash
-pip install pygran[sim]
+pip install pygran[extras]
 ```
 
 ## Basic Usage
