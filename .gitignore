@@ -10,7 +10,6 @@ log.*
 *.pyc~
 out*
 build
-PyDEM.egg-info
 dist
 .config
 *.c
@@ -19,3 +18,4 @@ PyGran.egg-info*
 PyGran/demo/scripts/DEM/multisphere/mesh/tumbler.stl
 LIGGGHTS-PUBLIC
 _manual
+pygran.egg-info
