@@ -41,7 +41,7 @@ pip install pygran
 
 This will install a basic version of pygran. For a full installation (that includes mpi4py, vtk, etc.), run:
 ```bash
-pip install pygran[extras]
+pip install pygran[extra]
 ```
 
 ## Basic Usage
